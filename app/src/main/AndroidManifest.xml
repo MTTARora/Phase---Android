@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.limelight">
+    package="com.rora.phase">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -45,7 +45,7 @@
         android:gwpAsanMode="always"
         android:theme="@style/AppTheme">
         <provider
-            android:name=".PosterContentProvider"
+            android:name="com.rora.phase.PosterContentProvider"
             android:authorities="poster.${applicationId}"
             android:enabled="true"
             android:exported="true">
@@ -63,7 +63,7 @@
              in each activity even though it is implied by targeting API 24+ -->
 
         <activity
-            android:name=".PcView"
+            android:name="com.rora.phase.PcView"
             android:resizeableActivity="true"
             android:configChanges="mcc|mnc|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection">
             <intent-filter>
@@ -77,43 +77,43 @@
         </activity>
         <!-- Small hack to support launcher shortcuts without relaunching over and over again when the back button is pressed -->
         <activity
-            android:name=".ShortcutTrampoline"
+            android:name="com.rora.phase.ShortcutTrampoline"
             android:noHistory="true"
             android:exported="true"
             android:resizeableActivity="true"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.limelight.PcView" />
+                android:value="com.rora.phase.PcView" />
         </activity>
         <activity
-            android:name=".AppView"
+            android:name="com.rora.phase.AppView"
             android:resizeableActivity="true"
             android:configChanges="mcc|mnc|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.limelight.PcView" />
+                android:value="com.rora.phase.PcView" />
         </activity>
         <activity
-            android:name=".preferences.StreamSettings"
+            android:name="com.rora.phase.preferences.StreamSettings"
             android:resizeableActivity="true"
             android:label="Streaming Settings">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.limelight.PcView" />
+                android:value="com.rora.phase.PcView" />
         </activity>
         <activity
-            android:name=".preferences.AddComputerManually"
+            android:name="com.rora.phase.preferences.AddComputerManually"
             android:resizeableActivity="true"
             android:windowSoftInputMode="stateVisible"
             android:label="Add Computer Manually">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.limelight.PcView" />
+                android:value="com.rora.phase.PcView" />
         </activity>
         <!-- This will fall back to sensorLandscape at runtime on Android 4.2 and below -->
         <activity
-            android:name=".Game"
+            android:name="com.rora.phase.Game"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
             android:screenOrientation="userLandscape"
             android:noHistory="true"
@@ -125,7 +125,7 @@
             android:preferMinimalPostProcessing="true">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.limelight.AppView" />
+                android:value="com.rora.phase.AppView" />
 
             <!-- Special metadata for NVIDIA Shield devices to prevent input buffering
                  and most importantly, opt out of mouse acceleration while streaming -->
@@ -138,22 +138,22 @@
         </activity>
 
         <service
-            android:name=".discovery.DiscoveryService"
+            android:name="com.rora.phase.discovery.DiscoveryService"
             android:label="mDNS PC Auto-Discovery Service" />
         <service
-            android:name=".computers.ComputerManagerService"
+            android:name="com.rora.phase.computers.ComputerManagerService"
             android:label="Computer Management Service" />
         <service
-            android:name=".binding.input.driver.UsbDriverService"
+            android:name="com.rora.phase.binding.input.driver.UsbDriverService"
             android:label="Usb Driver Service" />
 
         <activity
-            android:name=".HelpActivity"
+            android:name="com.rora.phase.HelpActivity"
             android:resizeableActivity="true"
             android:configChanges="mcc|mnc|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.limelight.PcView" />
+                android:value="com.rora.phase.PcView" />
         </activity>
     </application>
 
