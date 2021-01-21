@@ -3,9 +3,36 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+    <!-- Margins -->
+    <dimen name="minn_space">3dp</dimen>
+    <dimen name="min_space">5dp</dimen>
+    <dimen name="medium_space">10dp</dimen>
+    <dimen name="normal_space">16dp</dimen>
+    <dimen name="max_space">20dp</dimen>
+    <dimen name="maxx_space">28dp</dimen>
+
+    <!-- Radius -->
+    <dimen name="min_radius">2dp</dimen>
+    <dimen name="medium_radius">8dp</dimen>
+    <dimen name="max_radius">10dp</dimen>
+
+    <!--Elevation-->
+    <dimen name="min_elevation">2dp</dimen>
+    <dimen name="medium_elevation">5dp</dimen>
+
+
+    <!-- Text sizes -->
+    <dimen name="header_text_size">20sp</dimen>
+    <dimen name="title_text_size">18sp</dimen>
+    <dimen name="sub_title_text_size">14sp</dimen>
+    <dimen name="normal_text_size">12sp</dimen>
+
     <dimen name="tv_channel_logo_width">80dp</dimen>
     <dimen name="tv_channel_logo_height">80dp</dimen>
 
-    <dimen name="game_banner_height">200dp</dimen>
+    <dimen name="game_banner_height">180dp</dimen>
+    <dimen name="game_item_height">120dp</dimen>
+    <dimen name="viewpager_next_item_visible">26dp</dimen>
+    <dimen name="viewpager_current_item_horizontal_margin">42dp</dimen>
 
 </resources>

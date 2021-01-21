@@ -60,10 +60,8 @@
              in each activity even though it is implied by targeting API 24+ -->
         <activity
             android:name=".MainActivity"
-            android:label="@string/title_activity_main"
             android:configChanges="mcc|mnc|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
-            android:resizeableActivity="true"
-            android:theme="@style/Theme.AppCompat">
+            android:resizeableActivity="true">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

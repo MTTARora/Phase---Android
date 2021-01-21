@@ -2,16 +2,23 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.home.game.GameBannerFragment">
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="@dimen/max_radius"
+    android:paddingTop="@dimen/min_space"
+    android:paddingBottom="2dp"
+    android:paddingStart="@dimen/min_space"
+    android:layout_marginEnd="@dimen/medium_space">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/game_banner_height">
+        android:layout_height="@dimen/game_item_height">
         <ImageView
             android:id="@+id/game_banner_home"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:src="@drawable/banner_test"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>
