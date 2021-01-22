@@ -4,32 +4,36 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.rora.phase.R;
-import com.rora.phase.model.Game;
 import com.rora.phase.ui.home.game.adapter.BannerVPAdapter;
 import com.rora.phase.ui.home.game.adapter.GameRecyclerViewAdapter;
+import com.rora.phase.ui.home.viewmodel.HomeViewModel;
 import com.rora.phase.utils.ui.CustomViewPagerTransformer;
 import com.rora.phase.utils.ui.HorizontalMarginItemDecoration;
 
-import java.util.List;
 import java.util.Objects;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements View.OnClickListener {
 
     private RecyclerView rclvRecentPlay, rclvEditorsChoices, rclvHotGame;
     private SwipeRefreshLayout refreshLayout;
-    private ViewPager2 gameBannerVP;
+    private ViewPager2 vpGameBanner;
+    private LinearLayout llRecentPlaySection;
+    private ImageButton viewAllEditorsChoiceImb, viewAllHotGameImb;
+    private ImageView errEditorsChoiceImv, errHotGameImv;
 
     private HomeViewModel homeViewModel;
     private BannerVPAdapter bannerAdapter;
@@ -41,10 +45,17 @@ public class HomeFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 
         refreshLayout = root.findViewById(R.id.refresh_layout_home_screen);
-        gameBannerVP = root.findViewById(R.id.new_game_vp);
+        vpGameBanner = root.findViewById(R.id.new_game_vp);
         rclvRecentPlay = root.findViewById(R.id.recent_play_rclv_home_screen);
         rclvEditorsChoices = root.findViewById(R.id.editors_choice_rclv_home_screen);
         rclvHotGame = root.findViewById(R.id.hot_game_rclv_home_screen);
+        llRecentPlaySection = root.findViewById(R.id.recent_play_section_ll);
+        errEditorsChoiceImv = root.findViewById(R.id.error_data_editor_choice_imv);
+        errHotGameImv = root.findViewById(R.id.error_data_hot_game_imv);
+        viewAllEditorsChoiceImb = root.findViewById(R.id.btn_view_all_editor_choice);
+        viewAllHotGameImb = root.findViewById(R.id.btn_view_all_hot_game);
+
+        root.findViewById(R.id.btn_view_all_recent_play).setOnClickListener(this);
 
         initView();
         bindData();
@@ -53,10 +64,10 @@ public class HomeFragment extends Fragment {
 
     private void initView() {
         bannerAdapter = new BannerVPAdapter();
-        gameBannerVP.setAdapter(bannerAdapter);
-        gameBannerVP.setOffscreenPageLimit(1);
-        gameBannerVP.setPageTransformer(new CustomViewPagerTransformer());
-        gameBannerVP.addItemDecoration(new HorizontalMarginItemDecoration());
+        vpGameBanner.setAdapter(bannerAdapter);
+        vpGameBanner.setOffscreenPageLimit(1);
+        vpGameBanner.setPageTransformer(new CustomViewPagerTransformer());
+        vpGameBanner.addItemDecoration(new HorizontalMarginItemDecoration());
 
         refreshLayout.setOnRefreshListener(() -> {
             bindData();
@@ -78,17 +89,32 @@ public class HomeFragment extends Fragment {
         rclvHotGame.setAdapter(new GameRecyclerViewAdapter());
         rclvHotGame.setLayoutManager(setUpLayoutManager(2));
         rclvHotGame.setHasFixedSize(true);
+
+        viewAllEditorsChoiceImb.setOnClickListener(this);
+        viewAllHotGameImb.setOnClickListener(this);
     }
 
     private void bindData() {
 
         homeViewModel.getNewGameList().observe(getViewLifecycleOwner(), games -> bannerAdapter.bindData(games));
 
-        homeViewModel.getRecentPlayList().observe(getViewLifecycleOwner(), games -> ((GameRecyclerViewAdapter) Objects.requireNonNull(rclvRecentPlay.getAdapter())).bindData(games));
+        homeViewModel.getRecentPlayList().observe(getViewLifecycleOwner(), games -> {
+                llRecentPlaySection.setVisibility(games == null || games.size() == 0 ? View.GONE : View.VISIBLE);
+                ((GameRecyclerViewAdapter) Objects.requireNonNull(rclvRecentPlay.getAdapter())).bindData(games);
+            }
+        );
 
-        homeViewModel.getEditorsChoiceList().observe(getViewLifecycleOwner(), games -> ((GameRecyclerViewAdapter) Objects.requireNonNull(rclvEditorsChoices.getAdapter())).bindData(games));
+        homeViewModel.getEditorsChoiceList().observe(getViewLifecycleOwner(), games -> {
+            viewAllEditorsChoiceImb.setVisibility(games == null || games.size() == 0 ? View.GONE : View.VISIBLE);
+            errEditorsChoiceImv.setVisibility(games == null || games.size() == 0 ? View.VISIBLE : View.GONE);
+            ((GameRecyclerViewAdapter) Objects.requireNonNull(rclvEditorsChoices.getAdapter())).bindData(games);
+        });
 
-        homeViewModel.getHotGameList().observe(getViewLifecycleOwner(), games -> ((GameRecyclerViewAdapter) Objects.requireNonNull(rclvHotGame.getAdapter())).bindData(games));
+        homeViewModel.getHotGameList().observe(getViewLifecycleOwner(), games -> {
+            viewAllHotGameImb.setVisibility(games == null || games.size() == 0 ? View.GONE : View.VISIBLE);
+            errHotGameImv.setVisibility(games == null || games.size() == 0 ? View.VISIBLE : View.GONE);
+            ((GameRecyclerViewAdapter) Objects.requireNonNull(rclvHotGame.getAdapter())).bindData(games);
+        });
 
         homeViewModel.getNewGameListData();
         homeViewModel.getRecentPlayData();
@@ -105,5 +131,21 @@ public class HomeFragment extends Fragment {
                 return super.checkLayoutParams(lp);
             }
         };
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_view_all_recent_play:
+                NavHostFragment.findNavController(this).navigate(R.id.action_navigation_home_to_gameListFragment);
+                break;
+            case R.id.btn_view_all_editor_choice:
+                NavHostFragment.findNavController(this).navigate(R.id.action_navigation_home_to_gameListFragment);
+                break;
+            case R.id.btn_view_all_hot_game:
+                NavHostFragment.findNavController(this).navigate(R.id.action_navigation_home_to_gameListFragment);
+                break;
+            default: break;
+        }
     }
 }

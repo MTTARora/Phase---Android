@@ -227,5 +227,6 @@
     <string name="recent_play_title">Recent play</string>
     <string name="editors_choice_title">Editor\'s choice</string>
     <string name="hot_title">Hot</string>
+    <string name="view_all_txt">View all</string>
 
 </resources>

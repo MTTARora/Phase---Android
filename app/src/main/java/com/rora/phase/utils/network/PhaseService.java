@@ -9,9 +9,21 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 
 public interface PhaseService {
-    @GET("users/{user}/repos")
-    Call<List<Game>> getNewGames();
+    @GET("./")
+    Call<BaseResponse<List<Game>>> getNewGames();
 
-    @GET("users/{user}/repos")
-    Call<List<Game>> getGame(@Path("id") String gameId);
+    //@GET("/recent_play")
+    @GET("./")
+    Call<BaseResponse<List<Game>>> getRecentPlay();
+
+    //@GET("/editor-choice")
+    @GET("./")
+    Call<BaseResponse<List<Game>>> getEditorsChoice();
+
+    //@GET("/hot")
+    @GET("./")
+    Call<BaseResponse<List<Game>>> getHotGames();
+
+    @GET("/games/{id}")
+    Call<BaseResponse> getGame(String gameId);
 }

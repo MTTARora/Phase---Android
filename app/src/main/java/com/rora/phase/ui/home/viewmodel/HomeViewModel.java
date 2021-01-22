@@ -1,4 +1,4 @@
-package com.rora.phase.ui.home;
+package com.rora.phase.ui.home.viewmodel;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
@@ -18,7 +18,7 @@ public class HomeViewModel extends ViewModel {
         gameRepository = new GameRepository();
 
         newGameList = gameRepository.getNewGameList();
-        recentPlayList = gameRepository.getRecentPlay();
+        recentPlayList = gameRepository.getRecentPlayList();
         editorsChoiceList = gameRepository.getEditorsChoiceList();
         hotGameList = gameRepository.getHotGameList();
     }

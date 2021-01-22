@@ -32,7 +32,7 @@ public class BannerVPAdapter  extends RecyclerView.Adapter<GameBannerViewHolder>
 
     @Override
     public void onBindViewHolder(@NonNull GameBannerViewHolder holder, int position) {
-
+        holder.bindData(bannerList.get(position));
     }
 
     @Override
@@ -41,7 +41,7 @@ public class BannerVPAdapter  extends RecyclerView.Adapter<GameBannerViewHolder>
     }
 
     public void bindData(List<Game> bannerList) {
-        this.bannerList = bannerList;
+        this.bannerList = bannerList == null ? new ArrayList<>() : bannerList;
         notifyDataSetChanged();
     }
 }

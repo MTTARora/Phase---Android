@@ -1,4 +1,4 @@
-package com.rora.phase.ui.home;
+package com.rora.phase.ui.home.viewmodel;
 
 import android.content.ComponentName;
 import android.content.ServiceConnection;

@@ -17,8 +17,7 @@
             android:id="@+id/game_banner_home"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="fitXY"
-            android:src="@drawable/banner_test"/>
+            android:scaleType="fitXY"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>

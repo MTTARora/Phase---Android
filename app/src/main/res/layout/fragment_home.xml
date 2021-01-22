@@ -27,16 +27,18 @@
 
             <!--Recent Play-->
             <LinearLayout
+                android:id="@+id/recent_play_section_ll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:orientation="vertical"
-                android:layout_marginBottom="@dimen/medium_space">
+                android:layout_marginBottom="@dimen/normal_space">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="@dimen/min_space"
+                    android:paddingHorizontal="@dimen/normal_space"
                     android:layout_marginBottom="@dimen/min_space">
                     <TextView
                         android:layout_width="0dp"
@@ -45,17 +47,12 @@
                         android:text="@string/recent_play_title"
                         android:textSize="@dimen/title_text_size"
                         android:gravity="center_vertical"/>
-                    <!--<Button-->
-                    <!--    android:id="@+id/btn_add_task"-->
-                    <!--    android:layout_width="wrap_content"-->
-                    <!--    android:layout_height="wrap_content"-->
-                    <!--    android:text="@string/add"-->
-                    <!--    android:background="@android:color/transparent"-->
-                    <!--    android:textColor="@color/colorAccent"-->
-                    <!--    android:textAlignment="textEnd"-->
-                    <!--    android:textAllCaps="false"-->
-                    <!--    android:textSize="@dimen/title_text_size"-->
-                    <!--    android:textStyle="bold"/>-->
+                    <ImageButton
+                        android:id="@+id/btn_view_all_recent_play"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:src="@drawable/abc_vector_test"/>
                 </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -72,13 +69,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginBottom="@dimen/medium_space">
+                android:layout_marginBottom="@dimen/normal_space">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="@dimen/min_space"
+                    android:paddingHorizontal="@dimen/normal_space"
                     android:layout_marginBottom="@dimen/min_space">
                     <TextView
                         android:layout_width="0dp"
@@ -87,25 +84,32 @@
                         android:text="@string/editors_choice_title"
                         android:textSize="@dimen/title_text_size"
                         android:gravity="center_vertical"/>
-                    <!--<Button-->
-                    <!--    android:id="@+id/btn_add_task"-->
-                    <!--    android:layout_width="wrap_content"-->
-                    <!--    android:layout_height="wrap_content"-->
-                    <!--    android:text="@string/add"-->
-                    <!--    android:background="@android:color/transparent"-->
-                    <!--    android:textColor="@color/colorAccent"-->
-                    <!--    android:textAlignment="textEnd"-->
-                    <!--    android:textAllCaps="false"-->
-                    <!--    android:textSize="@dimen/title_text_size"-->
-                    <!--    android:textStyle="bold"/>-->
+                    <ImageButton
+                        android:id="@+id/btn_view_all_editor_choice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:src="@drawable/abc_vector_test"/>
                 </LinearLayout>
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/editors_choice_rclv_home_screen"
-                    android:clipToPadding="false"
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingHorizontal="@dimen/medium_space"/>
+                    android:layout_height="@dimen/game_item_height">
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/editors_choice_rclv_home_screen"
+                        android:clipToPadding="false"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="@dimen/medium_space"/>
+                    <ImageView
+                        android:id="@+id/error_data_editor_choice_imv"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="center"
+                        android:visibility="gone"
+                        android:src="?android:attr/alertDialogIcon"/>
+
+                </FrameLayout>
 
             </LinearLayout>
 
@@ -114,13 +118,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginBottom="@dimen/medium_space">
+                android:layout_marginBottom="@dimen/normal_space">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="@dimen/min_space"
+                    android:paddingHorizontal="@dimen/normal_space"
                     android:layout_marginBottom="@dimen/min_space">
                     <TextView
                         android:layout_width="0dp"
@@ -129,25 +133,33 @@
                         android:text="@string/hot_title"
                         android:textSize="@dimen/title_text_size"
                         android:gravity="center_vertical"/>
-                    <!--<Button-->
-                    <!--    android:id="@+id/btn_add_task"-->
-                    <!--    android:layout_width="wrap_content"-->
-                    <!--    android:layout_height="wrap_content"-->
-                    <!--    android:text="@string/add"-->
-                    <!--    android:background="@android:color/transparent"-->
-                    <!--    android:textColor="@color/colorAccent"-->
-                    <!--    android:textAlignment="textEnd"-->
-                    <!--    android:textAllCaps="false"-->
-                    <!--    android:textSize="@dimen/title_text_size"-->
-                    <!--    android:textStyle="bold"/>-->
+                    <ImageButton
+                        android:id="@+id/btn_view_all_hot_game"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:src="@drawable/abc_vector_test"/>
                 </LinearLayout>
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/hot_game_rclv_home_screen"
-                    android:clipToPadding="false"
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingHorizontal="@dimen/medium_space"/>
+                    android:layout_height="@dimen/game_item_height">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/hot_game_rclv_home_screen"
+                        android:clipToPadding="false"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="@dimen/medium_space"/>
+                    <ImageView
+                        android:id="@+id/error_data_hot_game_imv"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="center"
+                        android:visibility="gone"
+                        android:src="?android:attr/alertDialogIcon"/>
+
+                </FrameLayout>
 
             </LinearLayout>
 

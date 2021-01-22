@@ -1,4 +1,21 @@
 package com.rora.phase.utils.network;
 
-public class BaseResponse {
+import com.rora.phase.model.Game;
+
+import java.util.List;
+
+public class BaseResponse<T> {
+
+    private String status;
+    private int statusCode;
+    private String message;
+    private T data;
+
+    public static <T> T getResult(BaseResponse<T> response) {
+        if(response != null && response.statusCode == 200) {
+            return response.data;
+        }
+        return null;
+    }
+
 }

@@ -32,7 +32,7 @@ public class GameRecyclerViewAdapter extends RecyclerView.Adapter<GameBannerView
 
     @Override
     public void onBindViewHolder(@NonNull GameBannerViewHolder holder, int position) {
-
+        holder.bindData(gameList.get(position));
     }
 
     @Override
