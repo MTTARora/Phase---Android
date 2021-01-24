@@ -5,11 +5,11 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardCornerRadius="@dimen/max_radius"
-    tools:context=".ui.home.game.GameBannerViewHolder">
+    tools:context=".ui.home.game.BannerViewHolder">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/game_banner_height">
+        android:layout_height="@dimen/banner_height">
         <ImageView
             android:id="@+id/game_banner_home"
             android:layout_width="match_parent"

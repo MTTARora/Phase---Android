@@ -8,15 +8,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rora.phase.R;
-import com.rora.phase.model.Game;
-import com.rora.phase.ui.home.game.GameBannerViewHolder;
+import com.rora.phase.model.Banner;
+import com.rora.phase.ui.home.game.BannerViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BannerVPAdapter  extends RecyclerView.Adapter<GameBannerViewHolder> {
+public class BannerVPAdapter  extends RecyclerView.Adapter<BannerViewHolder> {
 
-    private List<Game> bannerList;
+    private List<Banner> bannerList;
 
     public BannerVPAdapter() {
         this.bannerList = new ArrayList<>();
@@ -24,14 +24,14 @@ public class BannerVPAdapter  extends RecyclerView.Adapter<GameBannerViewHolder>
 
     @NonNull
     @Override
-    public GameBannerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public BannerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View root = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_game_banner, parent, false);
 
-        return new GameBannerViewHolder(root);
+        return new BannerViewHolder(root);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull GameBannerViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull BannerViewHolder holder, int position) {
         holder.bindData(bannerList.get(position));
     }
 
@@ -40,7 +40,7 @@ public class BannerVPAdapter  extends RecyclerView.Adapter<GameBannerViewHolder>
         return bannerList.size();
     }
 
-    public void bindData(List<Game> bannerList) {
+    public void bindData(List<Banner> bannerList) {
         this.bannerList = bannerList == null ? new ArrayList<>() : bannerList;
         notifyDataSetChanged();
     }

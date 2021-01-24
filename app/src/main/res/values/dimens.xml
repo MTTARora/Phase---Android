@@ -29,10 +29,12 @@
 
     <dimen name="tv_channel_logo_width">80dp</dimen>
     <dimen name="tv_channel_logo_height">80dp</dimen>
-
-    <dimen name="game_banner_height">200dp</dimen>
-    <dimen name="game_item_height">120dp</dimen>
     <dimen name="viewpager_next_item_visible">26dp</dimen>
     <dimen name="viewpager_current_item_horizontal_margin">42dp</dimen>
+
+    <dimen name="banner_height">200dp</dimen>
+    <dimen name="game_item_height">150dp</dimen>
+    <dimen name="game_min_info_item_height">130dp</dimen>
+    <dimen name="game_info_item_height">220dp</dimen>
 
 </resources>

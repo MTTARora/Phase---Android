@@ -1,5 +1,6 @@
 package com.rora.phase.utils.network;
 
+import com.rora.phase.model.Banner;
 import com.rora.phase.model.Game;
 
 import java.util.List;
@@ -16,14 +17,21 @@ public interface PhaseService {
     @GET("./")
     Call<BaseResponse<List<Game>>> getRecentPlay();
 
-    //@GET("/editor-choice")
+    //@GET("/editor-choices")
     @GET("./")
     Call<BaseResponse<List<Game>>> getEditorsChoice();
 
-    //@GET("/hot")
+    //@GET("/hot-games")
     @GET("./")
     Call<BaseResponse<List<Game>>> getHotGames();
 
+    //@GET("/hot-games")
+    @GET("./")
+    Call<BaseResponse<List<Game>>> getTrending();
+
     @GET("/games/{id}")
     Call<BaseResponse> getGame(String gameId);
+
+    @GET("banner")
+    Call<BaseResponse<List<Banner>>> getBannerList();
 }

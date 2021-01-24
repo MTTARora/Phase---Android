@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.rora.phase.model.Game;
+import com.rora.phase.utils.DataHelper;
 import com.rora.phase.utils.network.BaseResponse;
 import com.rora.phase.utils.network.PhaseService;
 import com.rora.phase.utils.network.PhaseServiceHelper;
@@ -20,13 +21,18 @@ import retrofit2.Response;
 public class GameRepository {
 
     private PhaseService phaseService;
-    private MutableLiveData<List<Game>> newGameList, recentPlayList, editorsChoiceList, hotGameList;
+    private MutableLiveData<List<Game>> newGameList, recentPlayList, editorsChoiceList, hotGameList, trendingList;
+
+    private MutableLiveData<String> errMsg;
 
     public GameRepository() {
         newGameList = new MutableLiveData<>();
         recentPlayList = new MutableLiveData<>();
         editorsChoiceList = new MutableLiveData<>();
         hotGameList = new MutableLiveData<>();
+        trendingList = new MutableLiveData<>();
+
+        errMsg = new MutableLiveData<>();
 
         PhaseServiceHelper phaseServiceHelper = new PhaseServiceHelper();
         phaseService = phaseServiceHelper.getGamePhaseService();
@@ -51,6 +57,10 @@ public class GameRepository {
         return hotGameList;
     }
 
+    public MutableLiveData<List<Game>> getTrendingList() {
+        return trendingList;
+    }
+
     //----------------------------
 
 
@@ -65,9 +75,15 @@ public class GameRepository {
         phaseService.getNewGames().enqueue(new Callback<BaseResponse<List<Game>>>() {
             @Override
             public void onResponse(Call<BaseResponse<List<Game>>> call, Response<BaseResponse<List<Game>>> response) {
-                List<Game> listGame = BaseResponse.getResult(response.body());
-                listGame = listGame == null ? new ArrayList<>() : listGame;
-                newGameList.postValue(listGame);
+                DataHelper<BaseResponse<List<Game>>> dataResponse = PhaseServiceHelper.handleResponse(response);
+                if (dataResponse.getErrMsg() != null) {
+                    newGameList.postValue(new ArrayList<>());
+                    errMsg.postValue(dataResponse.getErrMsg());
+                } else {
+                    List<Game> listGame = BaseResponse.getResult(dataResponse.getData());
+                    listGame = listGame == null ? new ArrayList<>() : listGame;
+                    newGameList.postValue(listGame);
+                }
             }
 
             @Override
@@ -129,4 +145,20 @@ public class GameRepository {
         });
     }
 
+    public void getTrendingData() {
+        phaseService.getTrending().enqueue(new Callback<BaseResponse<List<Game>>>() {
+            @Override
+            public void onResponse(Call<BaseResponse<List<Game>>> call, Response<BaseResponse<List<Game>>> response) {
+                List<Game> listGame = BaseResponse.getResult(response.body());
+                listGame = listGame == null ? new ArrayList<>() : listGame;
+                trendingList.postValue(listGame);
+            }
+
+            @Override
+            public void onFailure(Call<BaseResponse<List<Game>>> call, Throwable t) {
+                Log.e(this.getClass().getSimpleName(), t.getMessage());
+                trendingList.postValue(new ArrayList<>());
+            }
+        });
+    }
 }

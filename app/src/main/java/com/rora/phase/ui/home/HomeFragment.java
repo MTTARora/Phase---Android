@@ -1,6 +1,7 @@
 package com.rora.phase.ui.home;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +20,8 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.rora.phase.R;
 import com.rora.phase.ui.home.game.adapter.BannerVPAdapter;
-import com.rora.phase.ui.home.game.adapter.GameRecyclerViewAdapter;
+import com.rora.phase.ui.home.game.adapter.GameInfoRecyclerViewAdapter;
+import com.rora.phase.ui.home.game.adapter.GameMinInfoRecyclerViewAdapter;
 import com.rora.phase.ui.home.viewmodel.HomeViewModel;
 import com.rora.phase.utils.ui.CustomViewPagerTransformer;
 import com.rora.phase.utils.ui.HorizontalMarginItemDecoration;
@@ -28,15 +30,29 @@ import java.util.Objects;
 
 public class HomeFragment extends Fragment implements View.OnClickListener {
 
-    private RecyclerView rclvRecentPlay, rclvEditorsChoices, rclvHotGame;
+    private RecyclerView rclvHotGame, rclvNewGame, rclvTrending, rclvEditorChoice;
     private SwipeRefreshLayout refreshLayout;
-    private ViewPager2 vpGameBanner;
-    private LinearLayout llRecentPlaySection;
-    private ImageButton viewAllEditorsChoiceImb, viewAllHotGameImb;
-    private ImageView errEditorsChoiceImv, errHotGameImv;
+    private ViewPager2 vpBanner;
+    private ImageButton viewAllNewImb, viewAllEditorChoiceImb, viewAllTrendingImb, viewAllHotGameImb;
+    private ImageView errEditorChoiceImv, errTrendingImv, errHotGameImv;
 
     private HomeViewModel homeViewModel;
     private BannerVPAdapter bannerAdapter;
+    private boolean isSlidingBanner = false;
+
+    private Handler bannerRunnableHandler = new Handler();
+    private Runnable bannerAutoSlideRunnable = new Runnable() {
+        @Override
+        public void run() {
+            isSlidingBanner = true;
+            int currentPos = vpBanner.getCurrentItem();
+            vpBanner.setCurrentItem(currentPos == bannerAdapter.getItemCount()-1 ? 0 : currentPos+1);
+            bannerRunnableHandler.postDelayed(this, 3000);
+        }
+    };
+
+
+    //------------------------ LIFECYCLE --------------------------
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -45,82 +61,108 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 
         refreshLayout = root.findViewById(R.id.refresh_layout_home_screen);
-        vpGameBanner = root.findViewById(R.id.new_game_vp);
-        rclvRecentPlay = root.findViewById(R.id.recent_play_rclv_home_screen);
-        rclvEditorsChoices = root.findViewById(R.id.editors_choice_rclv_home_screen);
-        rclvHotGame = root.findViewById(R.id.hot_game_rclv_home_screen);
-        llRecentPlaySection = root.findViewById(R.id.recent_play_section_ll);
-        errEditorsChoiceImv = root.findViewById(R.id.error_data_editor_choice_imv);
-        errHotGameImv = root.findViewById(R.id.error_data_hot_game_imv);
-        viewAllEditorsChoiceImb = root.findViewById(R.id.btn_view_all_editor_choice);
-        viewAllHotGameImb = root.findViewById(R.id.btn_view_all_hot_game);
+        vpBanner = root.findViewById(R.id.banner_vp);
 
-        root.findViewById(R.id.btn_view_all_recent_play).setOnClickListener(this);
+        rclvNewGame = root.findViewById(R.id.new_game_rclv_home_screen);
+        rclvEditorChoice = root.findViewById(R.id.editor_choice_rclv_home_screen);
+        rclvTrending = root.findViewById(R.id.trending_rclv_home_screen);
+        rclvHotGame = root.findViewById(R.id.hot_game_rclv_home_screen);
+
+        errEditorChoiceImv = root.findViewById(R.id.error_data_editor_choice_imv);
+        errTrendingImv = root.findViewById(R.id.error_data_trending_imv);
+        errHotGameImv = root.findViewById(R.id.error_data_hot_game_imv);
+
+        //viewAllNewImb = root.findViewById(R.id.btn_view_all_editor_choice);
+        viewAllEditorChoiceImb = root.findViewById(R.id.btn_view_all_editor_choice);
+        viewAllTrendingImb = root.findViewById(R.id.btn_view_all_trending);
+        viewAllHotGameImb = root.findViewById(R.id.btn_view_all_hot_game);
 
         initView();
         bindData();
         return root;
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        bannerRunnableHandler.removeCallbacks(bannerAutoSlideRunnable);
+        isSlidingBanner = false;
+    }
+
+    // ---------------------------------------------------
+
+
     private void initView() {
-        bannerAdapter = new BannerVPAdapter();
-        vpGameBanner.setAdapter(bannerAdapter);
-        vpGameBanner.setOffscreenPageLimit(1);
-        vpGameBanner.setPageTransformer(new CustomViewPagerTransformer());
-        vpGameBanner.addItemDecoration(new HorizontalMarginItemDecoration());
 
         refreshLayout.setOnRefreshListener(() -> {
-            bindData();
+            updateData();
             refreshLayout.setRefreshing(false);
         });
 
-        rclvRecentPlay.setAdapter(new GameRecyclerViewAdapter());
-        rclvRecentPlay.setLayoutManager(setUpLayoutManager(2));
-        rclvRecentPlay.setHasFixedSize(true);
+        bannerAdapter = new BannerVPAdapter();
+        vpBanner.setAdapter(bannerAdapter);
+        vpBanner.setOffscreenPageLimit(1);
+        vpBanner.setPageTransformer(new CustomViewPagerTransformer());
+        vpBanner.addItemDecoration(new HorizontalMarginItemDecoration());
 
-        rclvRecentPlay.setAdapter(new GameRecyclerViewAdapter());
-        rclvRecentPlay.setLayoutManager(setUpLayoutManager(2));
-        rclvRecentPlay.setHasFixedSize(true);
+        setupRecyclerView(rclvHotGame, new GameMinInfoRecyclerViewAdapter(), setUpLayoutManager(2));
+        setupRecyclerView(rclvNewGame, new GameInfoRecyclerViewAdapter(), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        setupRecyclerView(rclvEditorChoice, new GameMinInfoRecyclerViewAdapter(), setUpLayoutManager(2));
+        setupRecyclerView(rclvTrending, new GameMinInfoRecyclerViewAdapter(), setUpLayoutManager(2));
 
-        rclvEditorsChoices.setAdapter(new GameRecyclerViewAdapter());
-        rclvEditorsChoices.setLayoutManager(setUpLayoutManager(2));
-        rclvEditorsChoices.setHasFixedSize(true);
-
-        rclvHotGame.setAdapter(new GameRecyclerViewAdapter());
-        rclvHotGame.setLayoutManager(setUpLayoutManager(2));
-        rclvHotGame.setHasFixedSize(true);
-
-        viewAllEditorsChoiceImb.setOnClickListener(this);
         viewAllHotGameImb.setOnClickListener(this);
+        viewAllTrendingImb.setOnClickListener(this);
+        viewAllEditorChoiceImb.setOnClickListener(this);
     }
 
     private void bindData() {
 
-        homeViewModel.getNewGameList().observe(getViewLifecycleOwner(), games -> bannerAdapter.bindData(games));
-
-        homeViewModel.getRecentPlayList().observe(getViewLifecycleOwner(), games -> {
-                llRecentPlaySection.setVisibility(games == null || games.size() == 0 ? View.GONE : View.VISIBLE);
-                ((GameRecyclerViewAdapter) Objects.requireNonNull(rclvRecentPlay.getAdapter())).bindData(games);
-            }
-        );
-
-        homeViewModel.getEditorsChoiceList().observe(getViewLifecycleOwner(), games -> {
-            viewAllEditorsChoiceImb.setVisibility(games == null || games.size() == 0 ? View.GONE : View.VISIBLE);
-            errEditorsChoiceImv.setVisibility(games == null || games.size() == 0 ? View.VISIBLE : View.GONE);
-            ((GameRecyclerViewAdapter) Objects.requireNonNull(rclvEditorsChoices.getAdapter())).bindData(games);
+        homeViewModel.getBannerList().observe(getViewLifecycleOwner(), banners -> {
+            bannerAdapter.bindData(banners);
+            if (banners.size() != 0 && !isSlidingBanner)
+                bannerRunnableHandler.postDelayed(bannerAutoSlideRunnable, 3000);
         });
 
         homeViewModel.getHotGameList().observe(getViewLifecycleOwner(), games -> {
             viewAllHotGameImb.setVisibility(games == null || games.size() == 0 ? View.GONE : View.VISIBLE);
             errHotGameImv.setVisibility(games == null || games.size() == 0 ? View.VISIBLE : View.GONE);
-            ((GameRecyclerViewAdapter) Objects.requireNonNull(rclvHotGame.getAdapter())).bindData(games);
+            ((GameMinInfoRecyclerViewAdapter) Objects.requireNonNull(rclvHotGame.getAdapter())).bindData(games);
         });
 
+        homeViewModel.getNewGameList().observe(getViewLifecycleOwner(), games -> {
+            //viewAllNewImb.setVisibility(games == null || games.size() == 0 ? View.GONE : View.VISIBLE);
+            ((GameInfoRecyclerViewAdapter) Objects.requireNonNull(rclvNewGame.getAdapter())).bindData(games);
+        });
+
+        homeViewModel.getEditorChoiceList().observe(getViewLifecycleOwner(), games -> {
+            viewAllEditorChoiceImb.setVisibility(games == null || games.size() == 0 ? View.GONE : View.VISIBLE);
+            errEditorChoiceImv.setVisibility(games == null || games.size() == 0 ? View.VISIBLE : View.GONE);
+            ((GameMinInfoRecyclerViewAdapter) Objects.requireNonNull(rclvEditorChoice.getAdapter())).bindData(games);
+        });
+
+        homeViewModel.getTrendingList().observe(getViewLifecycleOwner(), games -> {
+            viewAllTrendingImb.setVisibility(games == null || games.size() == 0 ? View.GONE : View.VISIBLE);
+            errTrendingImv.setVisibility(games == null || games.size() == 0 ? View.VISIBLE : View.GONE);
+            ((GameMinInfoRecyclerViewAdapter) Objects.requireNonNull(rclvTrending.getAdapter())).bindData(games);
+        });
+
+        updateData();
+
+    }
+
+    private void updateData() {
+        homeViewModel.getBannerListData();
         homeViewModel.getNewGameListData();
         homeViewModel.getRecentPlayData();
         homeViewModel.getEditorsChoiceListData();
         homeViewModel.getHotGameListData();
+        homeViewModel.getTrendingListData();
+    }
 
+    private void setupRecyclerView(RecyclerView view, RecyclerView.Adapter adapter, RecyclerView.LayoutManager layoutManager) {
+        view.setAdapter(adapter);
+        view.setLayoutManager(layoutManager);
+        view.setHasFixedSize(true);
     }
 
     private LinearLayoutManager setUpLayoutManager(int scale) {
@@ -133,12 +175,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         };
     }
 
+
+    //----------------- EVENT ---------------
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_view_all_recent_play:
-                NavHostFragment.findNavController(this).navigate(R.id.action_navigation_home_to_gameListFragment);
-                break;
             case R.id.btn_view_all_editor_choice:
                 NavHostFragment.findNavController(this).navigate(R.id.action_navigation_home_to_gameListFragment);
                 break;
@@ -148,4 +190,5 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             default: break;
         }
     }
+
 }

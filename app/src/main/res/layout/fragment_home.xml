@@ -20,98 +20,10 @@
             android:paddingBottom="@dimen/normal_space">
 
             <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/new_game_vp"
+                android:id="@+id/banner_vp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/normal_space"/>
-
-            <!--Recent Play-->
-            <LinearLayout
-                android:id="@+id/recent_play_section_ll"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:orientation="vertical"
-                android:layout_marginBottom="@dimen/normal_space">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="@dimen/normal_space"
-                    android:layout_marginBottom="@dimen/min_space">
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:text="@string/recent_play_title"
-                        android:textSize="@dimen/title_text_size"
-                        android:gravity="center_vertical"/>
-                    <ImageButton
-                        android:id="@+id/btn_view_all_recent_play"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@android:color/transparent"
-                        android:src="@drawable/abc_vector_test"/>
-                </LinearLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recent_play_rclv_home_screen"
-                    android:clipToPadding="false"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingHorizontal="@dimen/medium_space"/>
-
-            </LinearLayout>
-
-            <!--Editor's choice-->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginBottom="@dimen/normal_space">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="@dimen/normal_space"
-                    android:layout_marginBottom="@dimen/min_space">
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:text="@string/editors_choice_title"
-                        android:textSize="@dimen/title_text_size"
-                        android:gravity="center_vertical"/>
-                    <ImageButton
-                        android:id="@+id/btn_view_all_editor_choice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@android:color/transparent"
-                        android:src="@drawable/abc_vector_test"/>
-                </LinearLayout>
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/game_item_height">
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/editors_choice_rclv_home_screen"
-                        android:clipToPadding="false"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingHorizontal="@dimen/medium_space"/>
-                    <ImageView
-                        android:id="@+id/error_data_editor_choice_imv"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="center"
-                        android:visibility="gone"
-                        android:src="?android:attr/alertDialogIcon"/>
-
-                </FrameLayout>
-
-            </LinearLayout>
+                android:layout_height="@dimen/banner_height"
+                android:layout_marginBottom="@dimen/maxx_space"/>
 
             <!--Hot-->
             <LinearLayout
@@ -125,7 +37,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:paddingHorizontal="@dimen/normal_space"
-                    android:layout_marginBottom="@dimen/min_space">
+                    android:layout_marginBottom="@dimen/medium_space">
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
@@ -143,8 +55,7 @@
 
                 <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/game_item_height">
-
+                    android:layout_height="@dimen/game_min_info_item_height">
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/hot_game_rclv_home_screen"
                         android:clipToPadding="false"
@@ -153,6 +64,152 @@
                         android:paddingHorizontal="@dimen/medium_space"/>
                     <ImageView
                         android:id="@+id/error_data_hot_game_imv"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="center"
+                        android:visibility="gone"
+                        android:src="?android:attr/alertDialogIcon"/>
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <!--New Game-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="@dimen/normal_space">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="@dimen/normal_space"
+                    android:layout_marginBottom="@dimen/min_space">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:text="@string/new_game_title"
+                        android:textSize="@dimen/title_text_size"
+                        android:gravity="center_vertical"/>
+                    <ImageButton
+                        android:id="@+id/btn_view_all_new_game"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:src="@drawable/abc_vector_test"/>
+                </LinearLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/new_game_rclv_home_screen"
+                        android:clipToPadding="false"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="@dimen/medium_space"/>
+                    <ImageView
+                        android:id="@+id/error_data_new_game_imv"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/game_info_item_height"
+                        android:scaleType="center"
+                        android:visibility="gone"
+                        android:src="?android:attr/alertDialogIcon"/>
+
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <!--Trending-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="@dimen/normal_space">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="@dimen/normal_space"
+                    android:layout_marginBottom="@dimen/medium_space">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:text="@string/trending_title"
+                        android:textSize="@dimen/title_text_size"
+                        android:gravity="center_vertical"/>
+                    <ImageButton
+                        android:id="@+id/btn_view_all_trending"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:src="@drawable/abc_vector_test"/>
+                </LinearLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/game_item_height">
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/trending_rclv_home_screen"
+                        android:clipToPadding="false"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="@dimen/medium_space"/>
+                    <ImageView
+                        android:id="@+id/error_data_trending_imv"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="center"
+                        android:visibility="gone"
+                        android:src="?android:attr/alertDialogIcon"/>
+
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <!--Editor's choice-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="@dimen/normal_space">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="@dimen/normal_space"
+                    android:layout_marginBottom="@dimen/medium_space">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:text="@string/editor_choice_title"
+                        android:textSize="@dimen/title_text_size"
+                        android:gravity="center_vertical"/>
+                    <ImageButton
+                        android:id="@+id/btn_view_all_editor_choice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:src="@drawable/abc_vector_test"/>
+                </LinearLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/game_item_height">
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/editor_choice_rclv_home_screen"
+                        android:clipToPadding="false"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="@dimen/medium_space"/>
+                    <ImageView
+                        android:id="@+id/error_data_editor_choice_imv"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scaleType="center"

@@ -9,29 +9,30 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.rora.phase.model.Game;
 import com.rora.phase.R;
-import com.rora.phase.ui.home.game.GameBannerViewHolder;
+import com.rora.phase.ui.home.game.BannerViewHolder;
+import com.rora.phase.ui.home.game.GameMinInfoViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameRecyclerViewAdapter extends RecyclerView.Adapter<GameBannerViewHolder> {
+public class GameMinInfoRecyclerViewAdapter extends RecyclerView.Adapter<GameMinInfoViewHolder> {
 
     private List<Game> gameList;
 
-    public GameRecyclerViewAdapter() {
+    public GameMinInfoRecyclerViewAdapter() {
         this.gameList = new ArrayList<>();
     }
 
     @NonNull
     @Override
-    public GameBannerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View root = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_game, parent, false);
+    public GameMinInfoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View root = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_game_min_info, parent, false);
 
-        return new GameBannerViewHolder(root);
+        return new GameMinInfoViewHolder(root);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull GameBannerViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull GameMinInfoViewHolder holder, int position) {
         holder.bindData(gameList.get(position));
     }
 

@@ -5,4 +5,5 @@
     <color name="colorAccent">#2D2E2E</color>
 
     <color name="divider">@color/cardview_dark_background</color>
+    <color name="dim">#D9000000</color>
 </resources>
