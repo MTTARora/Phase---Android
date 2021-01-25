@@ -1,20 +1,15 @@
-package com.rora.phase.ui.home.viewmodel;
+package com.rora.phase.ui.viewmodel;
 
 import android.content.ComponentName;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.widget.Toast;
 
 import androidx.lifecycle.ViewModel;
 
-import com.rora.phase.R;
 import com.rora.phase.computers.ComputerManagerService;
 import com.rora.phase.nvstream.http.ComputerDetails;
 import com.rora.phase.nvstream.jni.MoonBridge;
-import com.rora.phase.preferences.AddComputerManually;
-import com.rora.phase.utils.Dialog;
 import com.rora.phase.utils.ServerHelper;
-import com.rora.phase.utils.SpinnerDialog;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;

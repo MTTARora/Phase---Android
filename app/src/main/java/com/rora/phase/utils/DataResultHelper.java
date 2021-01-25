@@ -1,8 +1,16 @@
 package com.rora.phase.utils;
 
-public class DataHelper<T> {
+public class DataResultHelper<T> {
     private String errMsg;
     private T data;
+
+    public DataResultHelper() {
+    }
+
+    public DataResultHelper(String errMsg, T data) {
+        this.errMsg = errMsg;
+        this.data = data;
+    }
 
     public String getErrMsg() {
         return errMsg;

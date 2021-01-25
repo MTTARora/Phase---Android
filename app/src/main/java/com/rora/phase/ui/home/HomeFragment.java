@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -22,7 +21,7 @@ import com.rora.phase.R;
 import com.rora.phase.ui.home.game.adapter.BannerVPAdapter;
 import com.rora.phase.ui.home.game.adapter.GameInfoRecyclerViewAdapter;
 import com.rora.phase.ui.home.game.adapter.GameMinInfoRecyclerViewAdapter;
-import com.rora.phase.ui.home.viewmodel.HomeViewModel;
+import com.rora.phase.ui.viewmodel.HomeViewModel;
 import com.rora.phase.utils.ui.CustomViewPagerTransformer;
 import com.rora.phase.utils.ui.HorizontalMarginItemDecoration;
 

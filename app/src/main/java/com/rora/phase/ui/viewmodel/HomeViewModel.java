@@ -1,4 +1,4 @@
-package com.rora.phase.ui.home.viewmodel;
+package com.rora.phase.ui.viewmodel;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;

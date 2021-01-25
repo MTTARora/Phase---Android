@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.rora.phase.model.Game;
-import com.rora.phase.utils.DataHelper;
+import com.rora.phase.utils.DataResultHelper;
 import com.rora.phase.utils.network.BaseResponse;
 import com.rora.phase.utils.network.PhaseService;
 import com.rora.phase.utils.network.PhaseServiceHelper;
@@ -75,7 +75,7 @@ public class GameRepository {
         phaseService.getNewGames().enqueue(new Callback<BaseResponse<List<Game>>>() {
             @Override
             public void onResponse(Call<BaseResponse<List<Game>>> call, Response<BaseResponse<List<Game>>> response) {
-                DataHelper<BaseResponse<List<Game>>> dataResponse = PhaseServiceHelper.handleResponse(response);
+                DataResultHelper<BaseResponse<List<Game>>> dataResponse = PhaseServiceHelper.handleResponse(response);
                 if (dataResponse.getErrMsg() != null) {
                     newGameList.postValue(new ArrayList<>());
                     errMsg.postValue(dataResponse.getErrMsg());
