@@ -8,9 +8,9 @@ public class Tag {
     @SerializedName("tagId")
     @Expose
     private Integer tagId;
-    @SerializedName("tag")
+    @SerializedName("tagName")
     @Expose
-    private Object tag;
+    private String tag;
 
     public Integer getTagId() {
         return tagId;
@@ -20,11 +20,11 @@ public class Tag {
         this.tagId = tagId;
     }
 
-    public Object getTag() {
+    public String getTag() {
         return tag;
     }
 
-    public void setTag(Object tag) {
+    public void setTag(String tag) {
         this.tag = tag;
     }
 

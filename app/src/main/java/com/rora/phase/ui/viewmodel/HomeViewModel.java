@@ -1,24 +1,33 @@
 package com.rora.phase.ui.viewmodel;
 
+import android.app.Application;
+
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.rora.phase.model.Banner;
 import com.rora.phase.model.Game;
+import com.rora.phase.model.Tag;
 import com.rora.phase.repository.BannerRepository;
 import com.rora.phase.repository.GameRepository;
+import com.rora.phase.repository.UserRepository;
 
 import java.util.List;
 
-public class HomeViewModel extends ViewModel {
+public class HomeViewModel extends AndroidViewModel {
 
+    private UserRepository userRepository;
     private GameRepository gameRepository;
     private BannerRepository bannerRepository;
 
     private LiveData<List<Banner>> bannerList;
-    private LiveData<List<Game>> newGameList, recentPlayList, editorsChoiceList, hotGameList, trendingList;
+    private LiveData<List<Game>> newGameList, recentPlayList, editorsChoiceList, hotGameList, trendingList, gameByCategoryList, recommendedList, gameByPayTypeList;
+    private LiveData<List<Tag>> categoryList;
 
-    public HomeViewModel() {
+    public HomeViewModel(Application application) {
+        super(application);
+        userRepository = new UserRepository(application.getBaseContext());
         bannerRepository = new BannerRepository();
         gameRepository = new GameRepository();
 
@@ -28,6 +37,10 @@ public class HomeViewModel extends ViewModel {
         editorsChoiceList = gameRepository.getEditorsChoiceList();
         hotGameList = gameRepository.getHotGameList();
         trendingList = gameRepository.getTrendingList();
+        categoryList = gameRepository.getCategoryList();
+        gameByCategoryList = gameRepository.getGameByCategoryList();
+        recommendedList = userRepository.getRecommendedGameList();
+        gameByPayTypeList = gameRepository.getGamesByPayTypeList();
     }
 
 
@@ -41,10 +54,6 @@ public class HomeViewModel extends ViewModel {
         return newGameList;
     }
 
-    public LiveData<List<Game>> getRecentPlayList() {
-        return recentPlayList;
-    }
-
     public LiveData<List<Game>> getEditorChoiceList() {
         return editorsChoiceList;
     }
@@ -56,6 +65,27 @@ public class HomeViewModel extends ViewModel {
     public LiveData<List<Game>> getTrendingList() {
         return trendingList;
     }
+
+    public LiveData<List<Game>> getGameByCategoryList() {
+        return gameByCategoryList;
+    }
+
+    public LiveData<List<Tag>> getCategoryList() {
+        return categoryList;
+    }
+
+    public LiveData<List<Game>> getRecentPlayList() {
+        return recentPlayList;
+    }
+
+    public LiveData<List<Game>> getRecommendedGameList() {
+        return recommendedList;
+    }
+
+    public LiveData<List<Game>> getGamesByPayTypeList() {
+        return gameByPayTypeList;
+    }
+
 
     //----------------------------
 
@@ -82,6 +112,22 @@ public class HomeViewModel extends ViewModel {
 
     public void getTrendingListData() {
         gameRepository.getTrendingData();
+    }
+
+    public void getCategoryListData() {
+        gameRepository.getCategoryListData();
+    }
+
+    public void getGamesByCategoryListData(String tagName) {
+        gameRepository.getGamesByCategoryData(tagName);
+    }
+
+    public void getRecommendedGameListData() {
+        userRepository.getRecommendedGameListData();
+    }
+
+    public void getGameByPayTypeListData(int payType) {
+        gameRepository.getGamesByPayTypeData(payType);
     }
 
 }

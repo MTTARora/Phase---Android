@@ -1,4 +1,4 @@
-package com.rora.phase.ui.home.game.adapter;
+package com.rora.phase.ui.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,34 +10,34 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.rora.phase.R;
 import com.rora.phase.model.Game;
-import com.rora.phase.ui.home.game.RecentPlayViewHolder;
+import com.rora.phase.ui.home.game.GameInfoViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecentPlayRecyclerViewAdapter extends RecyclerView.Adapter<RecentPlayViewHolder> {
+public class GameInfoRecyclerViewAdapter extends RecyclerView.Adapter<GameInfoViewHolder> {
 
     private List<Game> gameList;
 
-    public RecentPlayRecyclerViewAdapter() {
+    public GameInfoRecyclerViewAdapter() {
         this.gameList = new ArrayList<>();
     }
 
     @NonNull
     @Override
-    public RecentPlayViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View root = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_recent_play, parent, false);
+    public GameInfoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View root = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_game_info, parent, false);
 
         int width = ((AppCompatActivity)parent.getContext()).getWindowManager().getDefaultDisplay().getWidth();
         ViewGroup.LayoutParams layoutParams = root.getLayoutParams();
         layoutParams.width = (int) (width * 0.75);
         root.setLayoutParams(layoutParams);
 
-        return new RecentPlayViewHolder(root);
+        return new GameInfoViewHolder(root);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecentPlayViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull GameInfoViewHolder holder, int position) {
         holder.bindData(gameList.get(position));
     }
 

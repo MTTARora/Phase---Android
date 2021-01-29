@@ -16,6 +16,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class PhaseServiceHelper {
 
     private PhaseService phaseService;
+    private UserPhaseService userPhaseService;
     private Context context;
     private SharedPreferenceHelper sharedPreferenceHelper;
 
@@ -43,6 +44,7 @@ public class PhaseServiceHelper {
                 .create(PhaseService.class);
 
         return phaseService;
+
     }
 
 
@@ -63,27 +65,27 @@ public class PhaseServiceHelper {
 
     /** Return service with game api url */
 
-    public PhaseService getUserPhaseService() {
+    public UserPhaseService getUserPhaseService() {
 
         //Add this for debugging
         //HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         //interceptor.level(HttpLoggingInterceptor.Level.BODY);
         //OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
-        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(chain -> {
-            Request newRequest  = chain.request().newBuilder()
-                    .addHeader("Authorization", "Bearer " + sharedPreferenceHelper.getUserToken())
-                    .build();
-            return chain.proceed(newRequest);
-        }).build();
+        //OkHttpClient client = new OkHttpClient.Builder().addInterceptor(chain -> {
+        //    Request newRequest  = chain.request().newBuilder()
+        //            .addHeader("Authorization", "Bearer " + sharedPreferenceHelper.getUserToken())
+        //            .build();
+        //    return chain.proceed(newRequest);
+        //}).build();
 
-        phaseService = new retrofit2.Retrofit.Builder()
-                .client(client)
+        userPhaseService = new retrofit2.Retrofit.Builder()
+                //.client(client)
                 .baseUrl(userBaseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
-                .create(PhaseService.class);
+                .create(UserPhaseService.class);
 
-        return phaseService;
+        return userPhaseService;
 
     }
 

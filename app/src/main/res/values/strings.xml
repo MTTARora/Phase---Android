@@ -225,8 +225,9 @@
     <string name="recent_play_title">Recent play</string>
     <string name="editor_choice_title">Editor\'s choice</string>
     <string name="trending_title">Trending</string>
-    <string name="hot_title">Hot</string>
-    <string name="new_game_title">New</string>
+    <string name="hot_title">What\'s Hot</string>
+    <string name="new_game_title">New Game</string>
+    <string name="discover_title">Discover something new</string>
     <string name="view_all_txt">View all</string>
     <string name="undetected_error">Something went wrong, please try again later!</string>
     <string name="total_play_time_txt">Total</string>

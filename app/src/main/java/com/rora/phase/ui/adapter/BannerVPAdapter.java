@@ -1,4 +1,4 @@
-package com.rora.phase.ui.home.game.adapter;
+package com.rora.phase.ui.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;

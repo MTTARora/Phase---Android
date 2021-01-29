@@ -33,9 +33,6 @@ public class Game implements Parcelable {
     @SerializedName("totalPlaytime")
     @Expose
     private Integer totalPlaytime;
-    @SerializedName("pay")
-    @Expose
-    private Boolean pay;
     @SerializedName("nowPlaying")
     @Expose
     private Integer nowPlaying;
@@ -60,12 +57,12 @@ public class Game implements Parcelable {
     @SerializedName("addedDate")
     @Expose
     private String addedDate;
-    @SerializedName("platformId")
+    @SerializedName("payTypeId")
     @Expose
-    private Integer platformId;
-    @SerializedName("platformName")
+    private int payTypeId;
+    @SerializedName("payTypeName")
     @Expose
-    private String platformName;
+    private String payTypeName;
     @SerializedName("userName")
     @Expose
     private String userName;
@@ -78,6 +75,15 @@ public class Game implements Parcelable {
     @SerializedName("background")
     @Expose
     private String background;
+    @SerializedName("banner")
+    @Expose
+    private String banner;
+    @SerializedName("seriesId")
+    @Expose
+    private int seriesId;
+    @SerializedName("seriesName")
+    @Expose
+    private String seriesName;
     @SerializedName("screenshots")
     @Expose
     private List<Screenshot> screenshots = null;
@@ -96,6 +102,9 @@ public class Game implements Parcelable {
     @SerializedName("numberOfPlayers")
     @Expose
     private List<NumberOfPlayer> numberOfPlayers = null;
+    @SerializedName("platforms")
+    @Expose
+    private List<Platform> platforms;
 
     public Integer getId() {
         return id;
@@ -159,14 +168,6 @@ public class Game implements Parcelable {
 
     public void setTotalPlaytime(Integer totalPlaytime) {
         this.totalPlaytime = totalPlaytime;
-    }
-
-    public Boolean getPay() {
-        return pay;
-    }
-
-    public void setPay(Boolean pay) {
-        this.pay = pay;
     }
 
     public Integer getNowPlaying() {
@@ -233,20 +234,52 @@ public class Game implements Parcelable {
         this.addedDate = addedDate;
     }
 
-    public Integer getPlatformId() {
-        return platformId;
+    public int getPayTypeId() {
+        return payTypeId;
     }
 
-    public void setPlatformId(Integer platformId) {
-        this.platformId = platformId;
+    public void setPayTypeId(int payTypeId) {
+        this.payTypeId = payTypeId;
     }
 
-    public String getPlatformName() {
-        return platformName;
+    public String getPayTypeName() {
+        return payTypeName;
     }
 
-    public void setPlatformName(String platformName) {
-        this.platformName = platformName;
+    public void setPayTypeName(String payTypeName) {
+        this.payTypeName = payTypeName;
+    }
+
+    public String getBanner() {
+        return banner;
+    }
+
+    public void setBanner(String banner) {
+        this.banner = banner;
+    }
+
+    public int getSeriesId() {
+        return seriesId;
+    }
+
+    public void setSeriesId(int seriesId) {
+        this.seriesId = seriesId;
+    }
+
+    public String getSeriesName() {
+        return seriesName;
+    }
+
+    public void setSeriesName(String seriesName) {
+        this.seriesName = seriesName;
+    }
+
+    public List<Platform> getPlatforms() {
+        return platforms;
+    }
+
+    public void setPlatforms(List<Platform> platforms) {
+        this.platforms = platforms;
     }
 
     public String getUserName() {

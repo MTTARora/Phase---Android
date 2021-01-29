@@ -6,10 +6,12 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.rora.phase.model.Game;
+import com.rora.phase.model.Tag;
 import com.rora.phase.utils.DataResultHelper;
 import com.rora.phase.utils.network.BaseResponse;
 import com.rora.phase.utils.network.PhaseService;
 import com.rora.phase.utils.network.PhaseServiceHelper;
+import com.rora.phase.utils.network.UserPhaseService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,8 +22,11 @@ import retrofit2.Response;
 
 public class GameRepository {
 
-    private PhaseService phaseService;
-    private MutableLiveData<List<Game>> newGameList, recentPlayList, editorsChoiceList, hotGameList, trendingList;
+    private PhaseService gameServices;
+    private PhaseService tagServices;
+    private UserPhaseService userServices;
+    private MutableLiveData<List<Game>> newGameList, recentPlayList, editorsChoiceList, hotGameList, trendingList, gameByCategoryList, gamesByPayTypeList;
+    private MutableLiveData<List<Tag>> categoryList;
 
     private MutableLiveData<String> errMsg;
 
@@ -31,11 +36,16 @@ public class GameRepository {
         editorsChoiceList = new MutableLiveData<>();
         hotGameList = new MutableLiveData<>();
         trendingList = new MutableLiveData<>();
+        categoryList = new MutableLiveData<>();
+        gameByCategoryList = new MutableLiveData<>();
+        gamesByPayTypeList = new MutableLiveData<>();
 
         errMsg = new MutableLiveData<>();
 
         PhaseServiceHelper phaseServiceHelper = new PhaseServiceHelper();
-        phaseService = phaseServiceHelper.getGamePhaseService();
+        gameServices = phaseServiceHelper.getGamePhaseService();
+        tagServices = phaseServiceHelper.getPhaseService();
+        userServices = phaseServiceHelper.getUserPhaseService();
     }
 
 
@@ -61,6 +71,18 @@ public class GameRepository {
         return trendingList;
     }
 
+    public MutableLiveData<List<Tag>> getCategoryList() {
+        return categoryList;
+    }
+
+    public MutableLiveData<List<Game>> getGameByCategoryList() {
+        return gameByCategoryList;
+    }
+
+    public MutableLiveData<List<Game>> getGamesByPayTypeList() {
+        return gamesByPayTypeList;
+    }
+
     //----------------------------
 
 
@@ -72,7 +94,7 @@ public class GameRepository {
         //dumGameList.add(new Game("4", "Game 4", "link"));
         //newGameList.postValue(dumGameList);
 
-        phaseService.getNewGames().enqueue(new Callback<BaseResponse<List<Game>>>() {
+        gameServices.getNewGames().enqueue(new Callback<BaseResponse<List<Game>>>() {
             @Override
             public void onResponse(Call<BaseResponse<List<Game>>> call, Response<BaseResponse<List<Game>>> response) {
                 DataResultHelper<BaseResponse<List<Game>>> dataResponse = PhaseServiceHelper.handleResponse(response);
@@ -95,7 +117,7 @@ public class GameRepository {
     }
 
     public void getRecentPlayListData() {
-        phaseService.getRecentPlay().enqueue(new Callback<BaseResponse<List<Game>>>() {
+        userServices.getRecentPlay().enqueue(new Callback<BaseResponse<List<Game>>>() {
             @Override
             public void onResponse(Call<BaseResponse<List<Game>>> call, Response<BaseResponse<List<Game>>> response) {
                 List<Game> listGame = BaseResponse.getResult(response.body());
@@ -112,7 +134,7 @@ public class GameRepository {
     }
 
     public void getEditorsChoiceListData() {
-        phaseService.getEditorsChoice().enqueue(new Callback<BaseResponse<List<Game>>>() {
+        gameServices.getEditorsChoice().enqueue(new Callback<BaseResponse<List<Game>>>() {
             @Override
             public void onResponse(Call<BaseResponse<List<Game>>> call, Response<BaseResponse<List<Game>>> response) {
                 List<Game> listGame = BaseResponse.getResult(response.body());
@@ -129,7 +151,7 @@ public class GameRepository {
     }
 
     public void getHotGameListData() {
-        phaseService.getHotGames().enqueue(new Callback<BaseResponse<List<Game>>>() {
+        gameServices.getHotGames().enqueue(new Callback<BaseResponse<List<Game>>>() {
             @Override
             public void onResponse(Call<BaseResponse<List<Game>>> call, Response<BaseResponse<List<Game>>> response) {
                 List<Game> listGame = BaseResponse.getResult(response.body());
@@ -146,7 +168,7 @@ public class GameRepository {
     }
 
     public void getTrendingData() {
-        phaseService.getTrending().enqueue(new Callback<BaseResponse<List<Game>>>() {
+        gameServices.getTrending().enqueue(new Callback<BaseResponse<List<Game>>>() {
             @Override
             public void onResponse(Call<BaseResponse<List<Game>>> call, Response<BaseResponse<List<Game>>> response) {
                 List<Game> listGame = BaseResponse.getResult(response.body());
@@ -161,4 +183,57 @@ public class GameRepository {
             }
         });
     }
+
+    public void getCategoryListData() {
+        tagServices.getCategoryList().enqueue(new Callback<BaseResponse<List<Tag>>>() {
+            @Override
+            public void onResponse(Call<BaseResponse<List<Tag>>> call, Response<BaseResponse<List<Tag>>> response) {
+                List<Tag> list = BaseResponse.getResult(response.body());
+                list = list == null ? new ArrayList<>() : list;
+                categoryList.postValue(list);
+                getGamesByCategoryData(list.get(0).getTag() != null ? list.get(0).getTag() : "");
+            }
+
+            @Override
+            public void onFailure(Call<BaseResponse<List<Tag>>> call, Throwable t) {
+                Log.e(this.getClass().getSimpleName(), t.getMessage());
+                categoryList.postValue(new ArrayList<>());
+            }
+        });
+    }
+
+    public void getGamesByCategoryData(String tagName) {
+        gameServices.getGameByCategoryList(tagName).enqueue(new Callback<BaseResponse<List<Game>>>() {
+            @Override
+            public void onResponse(Call<BaseResponse<List<Game>>> call, Response<BaseResponse<List<Game>>> response) {
+                List<Game> list = BaseResponse.getResult(response.body());
+                list = list == null ? new ArrayList<>() : list;
+                gameByCategoryList.postValue(list);
+            }
+
+            @Override
+            public void onFailure(Call<BaseResponse<List<Game>>> call, Throwable t) {
+                Log.e(this.getClass().getSimpleName(), t.getMessage());
+                gameByCategoryList.postValue(new ArrayList<>());
+            }
+        });
+    }
+
+    public void getGamesByPayTypeData(int payType) {
+        gameServices.getGameByPayType().enqueue(new Callback<BaseResponse<List<Game>>>() {
+            @Override
+            public void onResponse(Call<BaseResponse<List<Game>>> call, Response<BaseResponse<List<Game>>> response) {
+                List<Game> list = BaseResponse.getResult(response.body());
+                list = list == null ? new ArrayList<>() : list;
+                gamesByPayTypeList.postValue(list);
+            }
+
+            @Override
+            public void onFailure(Call<BaseResponse<List<Game>>> call, Throwable t) {
+                Log.e(this.getClass().getSimpleName(), t.getMessage());
+                gamesByPayTypeList.postValue(new ArrayList<>());
+            }
+        });
+    }
+
 }

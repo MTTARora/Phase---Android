@@ -2,6 +2,7 @@ package com.rora.phase.utils.network;
 
 import com.rora.phase.model.Banner;
 import com.rora.phase.model.Game;
+import com.rora.phase.model.Tag;
 import com.rora.phase.model.User;
 
 import java.util.List;
@@ -14,42 +15,9 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface PhaseService {
-
-    //------------------- USER -----------------------
-
-    @POST("/sign_up")
-    Call<BaseResponse> signUp(@Body String email, @Body String password);
-
-    @POST("/sign_in")
-    Call<BaseResponse<User>> signIn(@Body String email, @Body String password);
-
-    @POST("/forgot_password")
-    Call<BaseResponse> forgotPassword(@Body String email);
-
-    @GET("./")
-    Call<BaseResponse<User>> getUserInfo();
-
-    @POST("/user")
-    Call<BaseResponse> updateInfo(@Body User user);
-
-    @GET("/favorite")
-    Call<BaseResponse<List<Game>>> getFavorite();
-
-    @FormUrlEncoded
-    @POST("/favorite")
-    Call<BaseResponse> addFavorite(@Field("game_id") String gameId);
-
-    @FormUrlEncoded
-    @DELETE("/favorite")
-    Call<BaseResponse> removeFavorite(@Field("game_id") String gameId);
-
-    @GET("/recent_play")
-    Call<BaseResponse<List<Game>>> getRecentPlay();
-
-    //------------------------------------------------
-
 
     //------------------- GAME -----------------------
 
@@ -70,6 +38,15 @@ public interface PhaseService {
 
     @GET("/games/{id}")
     Call<BaseResponse> getGame(String gameId);
+
+    @GET("tags")
+    Call<BaseResponse<List<Tag>>> getCategoryList();
+
+    @GET("./")
+    Call<BaseResponse<List<Game>>> getGameByCategoryList(@Query("tagName") String tagName);
+
+    @GET("./")
+    Call<BaseResponse<List<Game>>> getGameByPayType();
 
     //--------------------------------------------------
 

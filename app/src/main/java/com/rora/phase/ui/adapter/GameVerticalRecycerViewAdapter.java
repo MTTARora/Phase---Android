@@ -1,45 +1,82 @@
-package com.rora.phase.ui.home.game;
+package com.rora.phase.ui.adapter;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.rora.phase.model.Game;
 import com.rora.phase.R;
-import com.rora.phase.ui.adapter.PlatformRecyclerViewAdapter;
-import com.rora.phase.utils.MediaHelper;
+import com.rora.phase.model.Game;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
-public class GameMinInfoViewHolder extends RecyclerView.ViewHolder {
+public class GameVerticalRecycerViewAdapter extends RecyclerView.Adapter<VerticalGameItemVH> {
 
-    private ImageView imvBanner;
+    private List<Game> gameList;
+
+    public GameVerticalRecycerViewAdapter() {
+        this.gameList = new ArrayList<>();
+    }
+
+    @NonNull
+    @Override
+    public VerticalGameItemVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View root = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_vertial_game, parent, false);
+
+        return new VerticalGameItemVH(root);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull VerticalGameItemVH holder, int position) {
+        holder.bindData(gameList.get(position));
+    }
+
+    @Override
+    public int getItemCount() {
+        return gameList.size();
+    }
+
+    public void bindData(List<Game> gameList) {
+        this.gameList = gameList != null ? gameList : new ArrayList<>();
+        notifyDataSetChanged();
+    }
+
+}
+
+class VerticalGameItemVH extends RecyclerView.ViewHolder {
+
     private TextView tvGameName, tvPayType;
+    private RecyclerView rclvTag;
     private RecyclerView rclvPlatform;
 
     private Context context;
 
-    public GameMinInfoViewHolder(@NonNull View itemView) {
+    public VerticalGameItemVH(@NonNull View itemView) {
         super(itemView);
-        imvBanner = itemView.findViewById(R.id.banner_game_min_info_imv);
-        tvGameName = itemView.findViewById(R.id.game_name_min_info_tv);
+        tvGameName = itemView.findViewById(R.id.game_name_vertical_item_txv);
         tvPayType = itemView.findViewById(R.id.pay_type_tv);
+        rclvTag = itemView.findViewById(R.id.category_item_game_rclv);
         rclvPlatform = itemView.findViewById(R.id.platform_rclv);
 
-        rclvPlatform.setLayoutManager(new LinearLayoutManager(itemView.getContext(), RecyclerView.HORIZONTAL, false));
+        rclvTag.setAdapter(new CategoryRecyclerViewAdapter(null, 0.10, true));
+        rclvTag.setLayoutManager(new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.HORIZONTAL , false));
+        rclvTag.setHasFixedSize(true);
+
         rclvPlatform.setAdapter(new PlatformRecyclerViewAdapter());
+        rclvPlatform.setLayoutManager(new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.HORIZONTAL , false));
         rclvPlatform.setHasFixedSize(true);
 
         this.context = itemView.getContext();
     }
 
     public void bindData(Game game) {
-        MediaHelper.loadImage(game.getBackground(), imvBanner);
         tvGameName.setText(game.getName());
         tvPayType.setText(game.getPayTypeName());
         switch (game.getPayTypeId()) {
@@ -63,6 +100,8 @@ public class GameMinInfoViewHolder extends RecyclerView.ViewHolder {
                 tvPayType.setBackgroundColor(context.getColor(R.color.grey));
                 break;
         }
+
+        ((CategoryRecyclerViewAdapter) Objects.requireNonNull(rclvTag.getAdapter())).bindData(game.getTags());
         ((PlatformRecyclerViewAdapter) Objects.requireNonNull(rclvPlatform.getAdapter())).bindData(game.getPlatforms());
     }
 

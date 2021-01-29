@@ -1,6 +1,7 @@
 package com.rora.phase.repository;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
@@ -8,9 +9,10 @@ import com.rora.phase.model.Game;
 import com.rora.phase.model.User;
 import com.rora.phase.utils.DataResultHelper;
 import com.rora.phase.utils.network.BaseResponse;
-import com.rora.phase.utils.network.PhaseService;
 import com.rora.phase.utils.network.PhaseServiceHelper;
+import com.rora.phase.utils.network.UserPhaseService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -19,19 +21,20 @@ import retrofit2.Response;
 
 public class UserRepository {
 
-    private PhaseService phaseService;
+    private UserPhaseService userServices;
 
     private MutableLiveData<User> user;
-    private MutableLiveData<List<Game>> favoriteList, recentPlayList;
+    private MutableLiveData<List<Game>> favoriteList, recentPlayList, recommendedList;
     private MutableLiveData<DataResultHelper> updatingDataResult;
 
     public UserRepository(Context context) {
         PhaseServiceHelper phaseServiceHelper = new PhaseServiceHelper(context);
-        phaseService = phaseServiceHelper.getUserPhaseService();
+        userServices = phaseServiceHelper.getUserPhaseService();
 
         user = new MutableLiveData<>();
         favoriteList =  new MutableLiveData<>();
         recentPlayList =  new MutableLiveData<>();
+        recommendedList = new MutableLiveData<>();
         updatingDataResult =  new MutableLiveData<>();
     }
 
@@ -53,11 +56,15 @@ public class UserRepository {
         return recentPlayList;
     }
 
+    public MutableLiveData<List<Game>> getRecommendedGameList() {
+        return recommendedList;
+    }
+
     //---------------------------------------------------------------
 
 
     public void signUp(String email, String password) {
-        phaseService.signUp(email, password).enqueue(new Callback<BaseResponse>() {
+        userServices.signUp(email, password).enqueue(new Callback<BaseResponse>() {
             @Override
             public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
                 updatingDataResult.postValue(new DataResultHelper());
@@ -71,7 +78,7 @@ public class UserRepository {
     }
 
     public void signIn(String email, String password) {
-        phaseService.signIn(email, password).enqueue(new Callback<BaseResponse<User>>() {
+        userServices.signIn(email, password).enqueue(new Callback<BaseResponse<User>>() {
             @Override
             public void onResponse(Call<BaseResponse<User>> call, Response<BaseResponse<User>> response) {
                 user.postValue(BaseResponse.getResult(response.body()));
@@ -86,7 +93,7 @@ public class UserRepository {
     }
 
     public void forgotPassword(String email) {
-        phaseService.forgotPassword(email).enqueue(new Callback<BaseResponse>() {
+        userServices.forgotPassword(email).enqueue(new Callback<BaseResponse>() {
             @Override
             public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
                 updatingDataResult.postValue(new DataResultHelper());
@@ -100,7 +107,7 @@ public class UserRepository {
     }
 
     public void getUserInfo() {
-        phaseService.getUserInfo().enqueue(new Callback<BaseResponse<User>>() {
+        userServices.getUserInfo().enqueue(new Callback<BaseResponse<User>>() {
             @Override
             public void onResponse(Call<BaseResponse<User>> call, Response<BaseResponse<User>> response) {
                 user.postValue(BaseResponse.getResult(response.body()));
@@ -115,7 +122,7 @@ public class UserRepository {
     }
 
     public void updateUser(User user) {
-        phaseService.updateInfo(user).enqueue(new Callback<BaseResponse>() {
+        userServices.updateInfo(user).enqueue(new Callback<BaseResponse>() {
             @Override
             public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
                 updatingDataResult.postValue(new DataResultHelper());
@@ -133,7 +140,7 @@ public class UserRepository {
     }
 
     public void addFavorite(String gameId) {
-        phaseService.addFavorite(gameId).enqueue(new Callback<BaseResponse>() {
+        userServices.addFavorite(gameId).enqueue(new Callback<BaseResponse>() {
             @Override
             public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
                 updatingDataResult.postValue(new DataResultHelper());
@@ -147,7 +154,7 @@ public class UserRepository {
     }
 
     public void removeFavorite(String gameId) {
-        phaseService.removeFavorite(gameId).enqueue(new Callback<BaseResponse>() {
+        userServices.removeFavorite(gameId).enqueue(new Callback<BaseResponse>() {
             @Override
             public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
                 updatingDataResult.postValue(new DataResultHelper());
@@ -156,6 +163,24 @@ public class UserRepository {
             @Override
             public void onFailure(Call<BaseResponse> call, Throwable t) {
                 updatingDataResult.postValue(new DataResultHelper("Please try again later!", null));
+            }
+        });
+    }
+
+
+    public void getRecommendedGameListData() {
+        userServices.getRecommended().enqueue(new Callback<BaseResponse<List<Game>>>() {
+            @Override
+            public void onResponse(Call<BaseResponse<List<Game>>> call, Response<BaseResponse<List<Game>>> response) {
+                List<Game> list = BaseResponse.getResult(response.body());
+                list = list == null ? new ArrayList<>() : list;
+                recommendedList.postValue(list);
+            }
+
+            @Override
+            public void onFailure(Call<BaseResponse<List<Game>>> call, Throwable t) {
+                Log.e(this.getClass().getSimpleName(), t.getMessage());
+                recommendedList.postValue(new ArrayList<>());
             }
         });
     }
