@@ -17,6 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter.MIN_SIZE;
+import static com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter.NORMAL_SIZE;
+
 public class GameVerticalRecycerViewAdapter extends RecyclerView.Adapter<VerticalGameItemVH> {
 
     private List<Game> gameList;
@@ -65,7 +68,7 @@ class VerticalGameItemVH extends RecyclerView.ViewHolder {
         rclvTag = itemView.findViewById(R.id.category_item_game_rclv);
         rclvPlatform = itemView.findViewById(R.id.platform_rclv);
 
-        rclvTag.setAdapter(new CategoryRecyclerViewAdapter(null, 0.10, true));
+        rclvTag.setAdapter(new CategoryRecyclerViewAdapter(null, 0.11, MIN_SIZE, false));
         rclvTag.setLayoutManager(new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.HORIZONTAL , false));
         rclvTag.setHasFixedSize(true);
 
@@ -97,7 +100,7 @@ class VerticalGameItemVH extends RecyclerView.ViewHolder {
                 tvPayType.setTextColor(context.getColor(R.color.green_dark));
                 break;
             default:
-                tvPayType.setBackgroundColor(context.getColor(R.color.grey));
+                tvPayType.setBackgroundColor(context.getColor(R.color.gray));
                 break;
         }
 

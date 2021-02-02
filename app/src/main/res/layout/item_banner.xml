@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<carbon.widget.FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    app:carbon_cornerRadius="@dimen/maxx_radius"
+    tools:context=".ui.home.game.BannerViewHolder">
+
+    <!--<carbon.widget.RelativeLayout-->
+    <!--    android:layout_width="match_parent"-->
+    <!--    android:layout_height="wrap_content"-->
+    <!--    android:layout_marginBottom="@dimen/min_space"-->
+    <!--    android:paddingHorizontal="@dimen/min_space"-->
+    <!--    android:clipToPadding="false"-->
+    <!--    android:clipChildren="false"-->
+    <!--    app:carbon_cornerRadius="@dimen/maxx_radius"-->
+    <!--    app:carbon_elevation="@dimen/medium_elevation">-->
+
+        <carbon.widget.ImageView
+            android:id="@+id/banner_home"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/banner_height"
+            android:scaleType="fitXY"
+            app:carbon_cornerRadius="@dimen/maxx_radius" />
+
+    <!--</carbon.widget.RelativeLayout>-->
+
+</carbon.widget.FrameLayout>

@@ -19,7 +19,7 @@
             android:layout_height="match_parent"
             android:layout_marginTop="@dimen/min_space"
             android:layout_marginStart="@dimen/min_space"
-            app:cardBackgroundColor="@android:color/holo_orange_dark"
+            app:cardBackgroundColor="@color/colorPrimary"
             android:elevation="@dimen/medium_elevation"
             app:cardCornerRadius="@dimen/max_radius"/>
 

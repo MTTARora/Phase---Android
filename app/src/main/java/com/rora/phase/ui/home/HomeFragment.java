@@ -9,10 +9,16 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -34,9 +40,12 @@ import com.rora.phase.utils.ui.HorizontalMarginItemDecoration;
 
 import java.util.Objects;
 
+import static com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter.MEDIUM_SIZE;
+import static com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter.NORMAL_SIZE;
+
 public class HomeFragment extends Fragment implements View.OnClickListener, OnItemSelectedListener {
 
-    private RecyclerView rclvHotGame, rclvNewGame, rclvTrending, rclvEditorChoice, rclvDiscover, rclvCategoryDiscover;
+    private RecyclerView rclvHotGame, rclvNewGame, rclvTrending, rclvEditorChoice, rclvDiscover, rclvCategoryDiscover, rclvCategory;
     private SwipeRefreshLayout refreshLayout;
     private ViewPager2 vpBanner, vpOtherGames;
     private TabLayout tbOtherGames;
@@ -55,12 +64,27 @@ public class HomeFragment extends Fragment implements View.OnClickListener, OnIt
             isSlidingBanner = true;
             int currentPos = vpBanner.getCurrentItem();
             vpBanner.setCurrentItem(currentPos == bannerAdapter.getItemCount()-1 ? 0 : currentPos+1);
-            bannerRunnableHandler.postDelayed(this, 3000);
+            bannerRunnableHandler.postDelayed(this, 5000);
         }
     };
 
 
     //------------------------ LIFECYCLE --------------------------
+
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        //super.onViewCreated(view, savedInstanceState);
+
+        NavController navController = Navigation.findNavController(view);
+        AppBarConfiguration appBarConfiguration =
+                new AppBarConfiguration.Builder(navController.getGraph()).build();
+        Toolbar toolbar = view.findViewById(R.id.toolbar);
+
+        NavigationUI.setupWithNavController( toolbar, navController, appBarConfiguration);
+        toolbar.setTitle("Phase");
+        toolbar.setTitleTextColor(getActivity().getColor(R.color.colorPrimary));
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
@@ -72,6 +96,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, OnIt
         vpOtherGames = root.findViewById(R.id.other_games_vp);
         tbOtherGames = root.findViewById(R.id.other_games_tab_layout);
 
+        rclvCategory = root.findViewById(R.id.category_rclv);
         rclvNewGame = root.findViewById(R.id.new_game_rclv_home_screen);
         rclvEditorChoice = root.findViewById(R.id.editor_choice_rclv_home_screen);
         rclvTrending = root.findViewById(R.id.trending_rclv_home_screen);
@@ -126,11 +151,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener, OnIt
         layoutParams.height = height - ((AppCompatActivity) getContext()).getSupportActionBar().getHeight() - tbOtherGames.getHeight() - 300;
         vpOtherGames.setLayoutParams(layoutParams);
 
-        setupRecyclerView(rclvHotGame, new GameMinInfoRecyclerViewAdapter(R.layout.item_game_min_info, 0), setUpLayoutManager(2));
+        setupRecyclerView(rclvCategory, new CategoryRecyclerViewAdapter(this, 0.24, NORMAL_SIZE, true), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        setupRecyclerView(rclvHotGame, new GameMinInfoRecyclerViewAdapter(R.layout.item_game_min_info_expanded, 0.8), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         setupRecyclerView(rclvNewGame, new GameInfoRecyclerViewAdapter(), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        setupRecyclerView(rclvEditorChoice, new GameMinInfoRecyclerViewAdapter(R.layout.item_game_min_info, 0), setUpLayoutManager(2));
-        setupRecyclerView(rclvTrending, new GameMinInfoRecyclerViewAdapter(R.layout.item_game_min_info_expanded, 0.65), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-        setupRecyclerView(rclvCategoryDiscover, new CategoryRecyclerViewAdapter(this, 0, false), setUpLayoutManager(4));
+        setupRecyclerView(rclvEditorChoice, new GameMinInfoRecyclerViewAdapter(R.layout.item_game_min_info_expanded, 0.8), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        setupRecyclerView(rclvTrending, new GameMinInfoRecyclerViewAdapter(R.layout.item_game_min_info_expanded, 0.8), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        setupRecyclerView(rclvCategoryDiscover, new CategoryRecyclerViewAdapter(this, 0, MEDIUM_SIZE, false), setUpLayoutManager(5));
         setupRecyclerView(rclvDiscover, new GameMinInfoRecyclerViewAdapter(R.layout.item_game_min_info, 0), setUpLayoutManager(2));
 
         btnViewAllHotGame.setOnClickListener(this);
@@ -171,6 +197,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, OnIt
         homeViewModel.getCategoryList().observe(getViewLifecycleOwner(), tags -> {
             //imvErrTrending.setVisibility(games == null || games.size() == 0 ? View.VISIBLE : View.GONE);
             ((CategoryRecyclerViewAdapter) Objects.requireNonNull(rclvCategoryDiscover.getAdapter())).bindData(tags);
+            ((CategoryRecyclerViewAdapter) Objects.requireNonNull(rclvCategory.getAdapter())).bindData(tags);
         });
 
         homeViewModel.getGameByCategoryList().observe(getViewLifecycleOwner(), games -> {

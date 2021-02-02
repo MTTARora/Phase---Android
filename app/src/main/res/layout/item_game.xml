@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/game_item_height">
         <ImageView
-            android:id="@+id/game_banner_home"
+            android:id="@+id/banner_home"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="fitXY"/>

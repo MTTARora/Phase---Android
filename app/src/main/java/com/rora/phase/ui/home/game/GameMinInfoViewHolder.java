@@ -60,7 +60,7 @@ public class GameMinInfoViewHolder extends RecyclerView.ViewHolder {
                 tvPayType.setTextColor(context.getColor(R.color.green_dark));
                 break;
             default:
-                tvPayType.setBackgroundColor(context.getColor(R.color.grey));
+                tvPayType.setBackgroundColor(context.getColor(R.color.gray));
                 break;
         }
         ((PlatformRecyclerViewAdapter) Objects.requireNonNull(rclvPlatform.getAdapter())).bindData(game.getPlatforms());

@@ -48,10 +48,14 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
 
     @Override
     public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
-        if (destination.getId() == R.id.navigation_home || destination.getId() == R.id.navigation_dashboard || destination.getId() == R.id.navigation_notifications)
+        if (destination.getId() == R.id.navigation_home || destination.getId() == R.id.navigation_dashboard || destination.getId() == R.id.navigation_notifications) {
             setBottomNavigationVisibility(VISIBLE);
-        else
+            getSupportActionBar().hide();
+        }
+        else {
             setBottomNavigationVisibility(GONE);
+            getSupportActionBar().show();
+        }
     }
 
     public void setBottomNavigationVisibility(int visibility) {
