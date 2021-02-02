@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.rora.phase.R;
 import com.rora.phase.model.Banner;
-import com.rora.phase.ui.home.game.BannerViewHolder;
+import com.rora.phase.ui.home.viewholder.BannerViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;

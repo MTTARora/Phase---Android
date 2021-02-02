@@ -1,4 +1,4 @@
-package com.rora.phase.ui.home.game;
+package com.rora.phase.ui.game.viewholder;
 
 import android.content.Context;
 import android.view.View;
@@ -9,25 +9,25 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.rora.phase.R;
 import com.rora.phase.model.Game;
+import com.rora.phase.R;
 import com.rora.phase.ui.adapter.PlatformRecyclerViewAdapter;
 import com.rora.phase.utils.MediaHelper;
 
 import java.util.Objects;
 
-public class GameInfoViewHolder extends RecyclerView.ViewHolder {
+public class GameMinInfoViewHolder extends RecyclerView.ViewHolder {
 
     private ImageView imvBanner;
-    private TextView tvName, tvPayType;
+    private TextView tvGameName, tvPayType;
     private RecyclerView rclvPlatform;
 
     private Context context;
 
-    public GameInfoViewHolder(@NonNull View itemView) {
+    public GameMinInfoViewHolder(@NonNull View itemView) {
         super(itemView);
-        imvBanner = itemView.findViewById(R.id.banner_game_info_imv);
-        tvName = itemView.findViewById(R.id.game_name_info_tv);
+        imvBanner = itemView.findViewById(R.id.banner_game_min_info_imv);
+        tvGameName = itemView.findViewById(R.id.game_name_min_info_tv);
         tvPayType = itemView.findViewById(R.id.pay_type_tv);
         rclvPlatform = itemView.findViewById(R.id.platform_rclv);
 
@@ -40,7 +40,7 @@ public class GameInfoViewHolder extends RecyclerView.ViewHolder {
 
     public void bindData(Game game) {
         MediaHelper.loadImage(game.getBackground(), imvBanner);
-        tvName.setText(game.getName());
+        tvGameName.setText(game.getName());
         tvPayType.setText(game.getPayTypeName());
         switch (game.getPayTypeId()) {
             case 1:

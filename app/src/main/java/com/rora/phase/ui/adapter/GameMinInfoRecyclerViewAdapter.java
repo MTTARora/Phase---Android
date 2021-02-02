@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rora.phase.model.Game;
-import com.rora.phase.ui.home.game.GameMinInfoViewHolder;
+import com.rora.phase.ui.game.viewholder.GameMinInfoViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;

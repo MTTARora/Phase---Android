@@ -1,4 +1,4 @@
-package com.rora.phase.ui.home.game;
+package com.rora.phase.ui.home.viewholder;
 
 import android.view.View;
 import android.widget.ImageView;
