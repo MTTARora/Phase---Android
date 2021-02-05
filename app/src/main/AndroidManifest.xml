@@ -72,6 +72,7 @@
             </intent-filter>
 
         </activity>
+        <activity android:name=".ui.game.LoadingGameActivity"/>
         <activity
             android:name=".PcView"
             android:configChanges="mcc|mnc|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"

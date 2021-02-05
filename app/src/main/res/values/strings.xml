@@ -2,6 +2,7 @@
 <resources>
     <string name="app_label" translatable="false">Phase</string>
     <string name="app_label_root" translatable="false">Phase (Root)</string>
+    <string name="test_device_ip">171.247.39.92</string>
 
     <!-- Shortcut strings -->
     <string name="scut_deleted_pc">PC deleted</string>

@@ -43,7 +43,7 @@ import java.util.Objects;
 import static com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter.MEDIUM_SIZE;
 import static com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter.NORMAL_SIZE;
 
-public class HomeFragment extends Fragment implements View.OnClickListener, OnItemSelectedListener {
+public class HomeFragment extends Fragment implements View.OnClickListener {
 
     private RecyclerView rclvHotGame, rclvNewGame, rclvTrending, rclvEditorChoice, rclvDiscover, rclvCategoryDiscover, rclvCategory;
     private SwipeRefreshLayout refreshLayout;
@@ -151,14 +151,24 @@ public class HomeFragment extends Fragment implements View.OnClickListener, OnIt
         layoutParams.height = height - ((AppCompatActivity) getContext()).getSupportActionBar().getHeight() - tbOtherGames.getHeight() - 300;
         vpOtherGames.setLayoutParams(layoutParams);
 
-        setupRecyclerView(rclvCategory, new CategoryRecyclerViewAdapter(this, 0.24, NORMAL_SIZE, true), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         setupRecyclerView(rclvHotGame, new GameMinInfoRecyclerViewAdapter(R.layout.item_game_min_info_expanded, 0.8), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         setupRecyclerView(rclvNewGame, new GameInfoRecyclerViewAdapter(), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         setupRecyclerView(rclvEditorChoice, new GameMinInfoRecyclerViewAdapter(R.layout.item_game_min_info_expanded, 0.8), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         setupRecyclerView(rclvTrending, new GameMinInfoRecyclerViewAdapter(R.layout.item_game_min_info_expanded, 0.8), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-        setupRecyclerView(rclvCategoryDiscover, new CategoryRecyclerViewAdapter(this, 0, MEDIUM_SIZE, false), setUpLayoutManager(5));
         setupRecyclerView(rclvDiscover, new GameMinInfoRecyclerViewAdapter(R.layout.item_game_min_info, 0), setUpLayoutManager(2));
 
+        setupRecyclerView(rclvCategory, new CategoryRecyclerViewAdapter(new OnItemSelectedListener() {
+            @Override
+            public void onSelected(String selectedItemId) {
+
+            }
+        }, 0.24, NORMAL_SIZE, true), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        setupRecyclerView(rclvCategoryDiscover, new CategoryRecyclerViewAdapter(new OnItemSelectedListener() {
+            @Override
+            public void onSelected(String selectedItemId) {
+                homeViewModel.getGamesByCategoryListData(selectedItemId);
+            }
+        }, 0, MEDIUM_SIZE, false), setUpLayoutManager(5));
         btnViewAllHotGame.setOnClickListener(this);
         btnViewAllTrending.setOnClickListener(this);
         btnViewAllEditorChoice.setOnClickListener(this);
@@ -243,19 +253,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener, OnIt
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_view_all_editor_choice:
-                NavHostFragment.findNavController(this).navigate(R.id.action_navigation_home_to_gameListFragment);
-                break;
             case R.id.btn_view_all_hot_game:
+                NavHostFragment.findNavController(this).navigate(R.id.action_navigation_home_to_gameDetailFragment);
+                break;
+            case R.id.btn_view_all_editor_choice:
                 NavHostFragment.findNavController(this).navigate(R.id.action_navigation_home_to_gameListFragment);
                 break;
             default: break;
         }
-    }
-
-    @Override
-    public void onSelected(String selectedItemId) {
-        homeViewModel.getGamesByCategoryListData(selectedItemId);
     }
 
 }

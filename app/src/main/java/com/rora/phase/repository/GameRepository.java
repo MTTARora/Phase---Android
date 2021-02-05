@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.rora.phase.model.Game;
 import com.rora.phase.model.Tag;
+import com.rora.phase.nvstream.http.ComputerDetails;
 import com.rora.phase.utils.DataResultHelper;
 import com.rora.phase.utils.network.BaseResponse;
 import com.rora.phase.utils.network.PhaseService;
@@ -27,6 +28,7 @@ public class GameRepository {
     private UserPhaseService userServices;
     private MutableLiveData<List<Game>> newGameList, recentPlayList, editorsChoiceList, hotGameList, trendingList, gameByCategoryList, gamesByPayTypeList;
     private MutableLiveData<List<Tag>> categoryList;
+    private MutableLiveData<ComputerDetails> computer;
 
     private MutableLiveData<String> errMsg;
 
@@ -39,6 +41,7 @@ public class GameRepository {
         categoryList = new MutableLiveData<>();
         gameByCategoryList = new MutableLiveData<>();
         gamesByPayTypeList = new MutableLiveData<>();
+        computer = new MutableLiveData<>();
 
         errMsg = new MutableLiveData<>();
 
@@ -81,6 +84,10 @@ public class GameRepository {
 
     public MutableLiveData<List<Game>> getGamesByPayTypeList() {
         return gamesByPayTypeList;
+    }
+
+    public MutableLiveData<ComputerDetails> getComputer() {
+        return computer;
     }
 
     //----------------------------
@@ -191,7 +198,8 @@ public class GameRepository {
                 List<Tag> list = BaseResponse.getResult(response.body());
                 list = list == null ? new ArrayList<>() : list;
                 categoryList.postValue(list);
-                getGamesByCategoryData(list.get(0).getTag() != null ? list.get(0).getTag() : "");
+                if(list.size() != 0)
+                    getGamesByCategoryData(list.get(0).getTag() != null ? list.get(0).getTag() : "");
             }
 
             @Override
@@ -234,6 +242,32 @@ public class GameRepository {
                 gamesByPayTypeList.postValue(new ArrayList<>());
             }
         });
+    }
+
+    public void getComputerIPData() {
+        ComputerDetails computerDetails = new ComputerDetails();
+        computerDetails.manualAddress = "171.247.39.92";
+        computer.postValue(computerDetails);
+        //gameServices.getComputerIP().enqueue(new Callback<BaseResponse<String>>() {
+        //    @Override
+        //    public void onResponse(Call<BaseResponse<String>> call, Response<BaseResponse<String>> response) {
+        //        String ip = BaseResponse.getResult(response.body());
+        //        ip = ip == null ? "" : ip;
+        //        if (ip.equals("")) {
+        //            computer.postValue(null);
+        //        } else {
+        //            ComputerDetails computerDetails = new ComputerDetails();
+        //            computerDetails.manualAddress = ip;
+        //            computer.postValue(computerDetails);
+        //        }
+        //    }
+        //
+        //    @Override
+        //    public void onFailure(Call<BaseResponse<String>> call, Throwable t) {
+        //        Log.e(this.getClass().getSimpleName(), t.getMessage());
+        //        computer.postValue(null);
+        //    }
+        //});
     }
 
 }

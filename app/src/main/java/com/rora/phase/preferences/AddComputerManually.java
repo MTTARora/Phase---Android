@@ -101,6 +101,8 @@ public class AddComputerManually extends Activity {
         SpinnerDialog dialog = SpinnerDialog.displayDialog(this, getResources().getString(R.string.title_add_pc),
             getResources().getString(R.string.msg_add_pc), false);
 
+        // Try to connect with pc
+
         try {
             ComputerDetails details = new ComputerDetails();
             details.manualAddress = host;
@@ -111,6 +113,9 @@ public class AddComputerManually extends Activity {
             e.printStackTrace();
             success = false;
         }
+
+        // Handle errors
+
         if (!success){
             wrongSiteLocal = isWrongSubnetSiteLocalAddress(host);
         }

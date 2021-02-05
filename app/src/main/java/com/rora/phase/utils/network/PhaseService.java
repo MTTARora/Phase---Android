@@ -48,6 +48,9 @@ public interface PhaseService {
     @GET("./")
     Call<BaseResponse<List<Game>>> getGameByPayType();
 
+    @GET("./")
+    Call<BaseResponse<String>> getComputerIP();
+
     //--------------------------------------------------
 
 

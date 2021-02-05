@@ -1,9 +1,10 @@
 package com.rora.phase.nvstream.http;
 
+import java.io.Serializable;
 import java.security.cert.X509Certificate;
 
 
-public class ComputerDetails {
+public class ComputerDetails implements Serializable {
     public enum State {
         ONLINE, OFFLINE, UNKNOWN
     }
