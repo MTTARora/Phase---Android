@@ -168,7 +168,7 @@ public class UserRepository {
     }
 
 
-    public void getRecommendedGameListData() {
+    public void getRecommendedGameListData(int i, int pageSize) {
         userServices.getRecommended().enqueue(new Callback<BaseResponse<List<Game>>>() {
             @Override
             public void onResponse(Call<BaseResponse<List<Game>>> call, Response<BaseResponse<List<Game>>> response) {

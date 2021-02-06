@@ -12,6 +12,7 @@ import com.rora.phase.model.Tag;
 import com.rora.phase.repository.BannerRepository;
 import com.rora.phase.repository.GameRepository;
 import com.rora.phase.repository.UserRepository;
+import com.rora.phase.utils.PageManager;
 
 import java.util.List;
 
@@ -22,8 +23,9 @@ public class HomeViewModel extends AndroidViewModel {
     private BannerRepository bannerRepository;
 
     private LiveData<List<Banner>> bannerList;
-    private LiveData<List<Game>> newGameList, recentPlayList, editorsChoiceList, hotGameList, trendingList, gameByCategoryList, recommendedList, gameByPayTypeList;
+    private LiveData<List<Game>> newGameList, editorsChoiceList, hotGameList, trendingList, gameByCategoryList, recommendedList, gameByPayTypeList;
     private LiveData<List<Tag>> categoryList;
+    private PageManager pager, newGamePager, editorPager, hotGamePager, trendingPager, gameByCategoryPager;
 
     public HomeViewModel(Application application) {
         super(application);
@@ -33,7 +35,6 @@ public class HomeViewModel extends AndroidViewModel {
 
         bannerList = bannerRepository.getBannerList();
         newGameList = gameRepository.getNewGameList();
-        recentPlayList = gameRepository.getRecentPlayList();
         editorsChoiceList = gameRepository.getEditorsChoiceList();
         hotGameList = gameRepository.getHotGameList();
         trendingList = gameRepository.getTrendingList();
@@ -41,6 +42,12 @@ public class HomeViewModel extends AndroidViewModel {
         gameByCategoryList = gameRepository.getGameByCategoryList();
         recommendedList = userRepository.getRecommendedGameList();
         gameByPayTypeList = gameRepository.getGamesByPayTypeList();
+        pager = new PageManager();
+        newGamePager = new PageManager();
+        editorPager = new PageManager();
+        hotGamePager = new PageManager();
+        trendingPager = new PageManager();
+        gameByCategoryPager = new PageManager();
     }
 
 
@@ -74,10 +81,6 @@ public class HomeViewModel extends AndroidViewModel {
         return categoryList;
     }
 
-    public LiveData<List<Game>> getRecentPlayList() {
-        return recentPlayList;
-    }
-
     public LiveData<List<Game>> getRecommendedGameList() {
         return recommendedList;
     }
@@ -95,23 +98,28 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     public void getNewGameListData() {
-        gameRepository.getNewGameListData();
+        if (newGamePager.hasNext())
+            gameRepository.getNewGameListData(newGamePager.nextPage(), newGamePager.getPageSize());
     }
 
     public void getRecentPlayData() {
-        gameRepository.getRecentPlayListData();
+        if (pager.hasNext())
+            gameRepository.getRecentPlayListData(newGamePager.nextPage(), newGamePager.getPageSize());
     }
 
     public void getEditorsChoiceListData() {
-        gameRepository.getEditorsChoiceListData();
+        if (editorPager.hasNext())
+            gameRepository.getEditorsChoiceListData(newGamePager.nextPage(), newGamePager.getPageSize());
     }
 
     public void getHotGameListData() {
-        gameRepository.getHotGameListData();
+        if (hotGamePager.hasNext())
+            gameRepository.getHotGameListData(newGamePager.nextPage(), newGamePager.getPageSize());
     }
 
     public void getTrendingListData() {
-        gameRepository.getTrendingData();
+        if (trendingPager.hasNext())
+            gameRepository.getTrendingData(newGamePager.nextPage(), newGamePager.getPageSize());
     }
 
     public void getCategoryListData() {
@@ -119,15 +127,26 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     public void getGamesByCategoryListData(String tagName) {
-        gameRepository.getGamesByCategoryData(tagName);
+        if (pager.hasNext())
+            gameRepository.getGamesByCategoryData(tagName, newGamePager.nextPage(), newGamePager.getPageSize());
     }
 
     public void getRecommendedGameListData() {
-        userRepository.getRecommendedGameListData();
+        if (pager.hasNext())
+            userRepository.getRecommendedGameListData(newGamePager.nextPage(), newGamePager.getPageSize());
     }
 
     public void getGameByPayTypeListData(int payType) {
-        gameRepository.getGamesByPayTypeData(payType);
+        if (pager.hasNext())
+            gameRepository.getGamesByPayTypeData(payType, newGamePager.nextPage(), newGamePager.getPageSize());
     }
 
+    public void refresh() {
+        pager.reset();
+        trendingPager.reset();
+        hotGamePager.reset();
+        editorPager.reset();
+        newGamePager.reset();
+        gameByCategoryPager.reset();
+    }
 }

@@ -94,7 +94,7 @@ public class PhaseServiceHelper {
         if(response.code() == 200) {
             data.setData(response.body());
         } else {
-            data.setErrMsg("Unable to connect to server, please try again later!");
+            data.setErrMsg("No data to fetch, please try again later!");
         }
         return data;
     }

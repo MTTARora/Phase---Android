@@ -220,6 +220,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     }
 
     private void updateData() {
+        homeViewModel.refresh();
         homeViewModel.getBannerListData();
         homeViewModel.getNewGameListData();
         homeViewModel.getRecentPlayData();

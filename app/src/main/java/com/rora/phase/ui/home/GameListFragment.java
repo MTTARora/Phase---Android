@@ -73,6 +73,14 @@ public class GameListFragment extends Fragment {
             ((GameVerticalRecycerViewAdapter) Objects.requireNonNull(rclvGameList.getAdapter())).bindData(games);
         });
 
+        homeViewModel.getGamesByPayTypeList().observe(getViewLifecycleOwner(), games -> {
+            ((GameVerticalRecycerViewAdapter) Objects.requireNonNull(rclvGameList.getAdapter())).bindData(games);
+        });
+
+        homeViewModel.getGamesByPayTypeList().observe(getViewLifecycleOwner(), games -> {
+            ((GameVerticalRecycerViewAdapter) Objects.requireNonNull(rclvGameList.getAdapter())).bindData(games);
+        });
+
     }
 
 }

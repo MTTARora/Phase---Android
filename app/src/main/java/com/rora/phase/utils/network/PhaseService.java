@@ -21,32 +21,29 @@ public interface PhaseService {
 
     //------------------- GAME -----------------------
 
-    @GET("./")
-    Call<BaseResponse<List<Game>>> getNewGames();
+    @GET("./new")
+    Call<BaseResponse<List<Game>>> getNewGames(@Query("page") int page,@Query("page_size") int pageSize);
 
-    //@GET("/editor-choices")
-    @GET("./")
-    Call<BaseResponse<List<Game>>> getEditorsChoice();
+    @GET("./editor_choice")
+    Call<BaseResponse<List<Game>>> getEditorsChoice(@Query("page") int page,@Query("page_size") int pageSize);
 
-    //@GET("/hot-games")
-    @GET("./")
-    Call<BaseResponse<List<Game>>> getHotGames();
+    @GET("./hot")
+    Call<BaseResponse<List<Game>>> getHotGames(@Query("page") int page,@Query("page_size") int pageSize);
 
-    //@GET("/hot-games")
-    @GET("./")
-    Call<BaseResponse<List<Game>>> getTrending();
+    @GET("./trending")
+    Call<BaseResponse<List<Game>>> getTrending(@Query("page") int page,@Query("page_size") int pageSize);
 
-    @GET("/games/{id}")
+    @GET("./{gameId}")
     Call<BaseResponse> getGame(String gameId);
 
     @GET("tags")
     Call<BaseResponse<List<Tag>>> getCategoryList();
 
     @GET("./")
-    Call<BaseResponse<List<Game>>> getGameByCategoryList(@Query("tagName") String tagName);
+    Call<BaseResponse<List<Game>>> getGameByCategoryList(@Query("tags") String tagName, @Query("page") int page, @Query("page_size") int pageSize);
 
     @GET("./")
-    Call<BaseResponse<List<Game>>> getGameByPayType();
+    Call<BaseResponse<List<Game>>> getGameByPayType(@Query("pay_type") int payType, @Query("page") int page, @Query("page_size") int pageSize);
 
     @GET("./")
     Call<BaseResponse<String>> getComputerIP();
