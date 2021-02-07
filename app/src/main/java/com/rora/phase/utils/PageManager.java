@@ -61,23 +61,22 @@ public class PageManager {
     }
 
     public int nextPage() {
+        int currentPage = page;
         if(hasNext()) {
             page += 1;
-        } else {
-            page = -1;
         }
 
-        return page;
+        return currentPage;
     }
 
     public boolean hasNext() {
-        return totalItem > page * pageSize;
+        return totalItem == 0 || totalItem > page * pageSize;
     }
 
     public void reset() {
-        this.totalItem = 1;
-        this.page = 0;
-        this.pageSize = 20;
+        this.totalItem = 0;
+        this.page = 1;
+        this.pageSize = 10;
         this.next = "";
         this.previous = "";
     }

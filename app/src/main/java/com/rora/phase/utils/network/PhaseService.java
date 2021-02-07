@@ -24,7 +24,8 @@ public interface PhaseService {
     @GET("./new")
     Call<BaseResponse<List<Game>>> getNewGames(@Query("page") int page,@Query("page_size") int pageSize);
 
-    @GET("./editor_choice")
+    //@GET("./editor_choice")
+    @GET("./")
     Call<BaseResponse<List<Game>>> getEditorsChoice(@Query("page") int page,@Query("page_size") int pageSize);
 
     @GET("./hot")
@@ -33,8 +34,8 @@ public interface PhaseService {
     @GET("./trending")
     Call<BaseResponse<List<Game>>> getTrending(@Query("page") int page,@Query("page_size") int pageSize);
 
-    @GET("./{gameId}")
-    Call<BaseResponse> getGame(String gameId);
+    @GET("./{game}")
+    Call<BaseResponse<Game>> getGame(@Path("game") String gameId);
 
     @GET("tags")
     Call<BaseResponse<List<Tag>>> getCategoryList();
@@ -43,7 +44,7 @@ public interface PhaseService {
     Call<BaseResponse<List<Game>>> getGameByCategoryList(@Query("tags") String tagName, @Query("page") int page, @Query("page_size") int pageSize);
 
     @GET("./")
-    Call<BaseResponse<List<Game>>> getGameByPayType(@Query("pay_type") int payType, @Query("page") int page, @Query("page_size") int pageSize);
+    Call<BaseResponse<List<Game>>> getGameByPayType(@Query("pay_type") String payType, @Query("page") int page, @Query("page_size") int pageSize);
 
     @GET("./")
     Call<BaseResponse<String>> getComputerIP();

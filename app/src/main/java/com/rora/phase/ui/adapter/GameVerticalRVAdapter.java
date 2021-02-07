@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.rora.phase.R;
 import com.rora.phase.model.Game;
+import com.rora.phase.ui.game.viewholder.LoadingVH;
+import com.rora.phase.utils.callback.ILoadMore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,25 +22,74 @@ import java.util.Objects;
 import static com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter.MIN_SIZE;
 import static com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter.NORMAL_SIZE;
 
-public class GameVerticalRecycerViewAdapter extends RecyclerView.Adapter<VerticalGameItemVH> {
+public class GameVerticalRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<Game> gameList;
+    private ILoadMore loadMore;
+    private boolean isLoading;
+    //private int visibleThreshold = 5;
+    //private int lastVisibleItem,totalItemCount;
+    private final int VIEW_TYPE_ITEM = 0, VIEW_TYPE_LOADING = 1;
 
-    public GameVerticalRecycerViewAdapter() {
+    public GameVerticalRVAdapter(RecyclerView recyclerView) {
         this.gameList = new ArrayList<>();
+
+        final LinearLayoutManager linearLayoutManager = (LinearLayoutManager)recyclerView.getLayoutManager();
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (linearLayoutManager != null && gameList.size() != 0) {
+                    //totalItemCount = linearLayoutManager.getItemCount();
+                    //lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
+                    //if(!isLoading && totalItemCount <= (lastVisibleItem+visibleThreshold))
+                    Game lastVisibleGame = gameList.get(linearLayoutManager.findLastVisibleItemPosition());
+                    if(!isLoading && gameList.get(gameList.size()-1).getId().equals(lastVisibleGame.getId()))
+                    {
+                        if(loadMore != null) {
+                            gameList.add(null);
+                            isLoading = true;
+                            notifyDataSetChanged();
+                            loadMore.onLoadMore();
+                        }
+                    }
+                }
+            }
+        });
     }
 
     @NonNull
     @Override
-    public VerticalGameItemVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View root = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_vertial_game, parent, false);
-
-        return new VerticalGameItemVH(root);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        if(viewType == VIEW_TYPE_ITEM)
+        {
+            View root = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_vertial_game, parent, false);
+            return new VerticalGameItemVH(root);
+        }
+        else if(viewType == VIEW_TYPE_LOADING)
+        {
+            View root = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_loading, parent, false);
+            return new LoadingVH(root);
+        }
+        return null;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull VerticalGameItemVH holder, int position) {
-        holder.bindData(gameList.get(position));
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        if(holder instanceof  VerticalGameItemVH)
+        {
+            ((VerticalGameItemVH) holder).bindData(gameList.get(position));
+        }
+        else if(holder instanceof LoadingVH)
+        {
+            LoadingVH loadingViewHolder = (LoadingVH)holder;
+            loadingViewHolder.progressBar.setIndeterminate(true);
+        }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return gameList.get(position) == null ? VIEW_TYPE_LOADING:VIEW_TYPE_ITEM;
     }
 
     @Override
@@ -47,8 +98,20 @@ public class GameVerticalRecycerViewAdapter extends RecyclerView.Adapter<Vertica
     }
 
     public void bindData(List<Game> gameList) {
+        if (isLoading && this.gameList.size() != 0 && this.gameList.get(gameList.size()-1) == null) {
+            this.gameList.remove(gameList.size()-1);
+            setLoaded();
+        }
         this.gameList = gameList != null ? gameList : new ArrayList<>();
         notifyDataSetChanged();
+    }
+
+    public void setLoadMore(ILoadMore loadMore) {
+        this.loadMore = loadMore;
+    }
+
+    public void setLoaded() {
+        isLoading = false;
     }
 
 }

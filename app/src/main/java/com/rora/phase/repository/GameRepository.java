@@ -29,6 +29,7 @@ public class GameRepository {
     private MutableLiveData<List<Game>> newGameList, recentPlayList, editorsChoiceList, hotGameList, trendingList, gameByCategoryList, gamesByPayTypeList;
     private MutableLiveData<List<Tag>> categoryList;
     private MutableLiveData<ComputerDetails> computer;
+    private MutableLiveData<Game> selectedGame;
 
     private MutableLiveData<String> errMsg;
 
@@ -42,6 +43,7 @@ public class GameRepository {
         gameByCategoryList = new MutableLiveData<>();
         gamesByPayTypeList = new MutableLiveData<>();
         computer = new MutableLiveData<>();
+        selectedGame = new MutableLiveData<>();
 
         errMsg = new MutableLiveData<>();
 
@@ -90,8 +92,23 @@ public class GameRepository {
         return computer;
     }
 
+    public MutableLiveData<Game> getSelectedGame() {
+        return selectedGame;
+    }
+
     //----------------------------
 
+    public void reset() {
+        newGameList = new MutableLiveData<>();
+        recentPlayList = new MutableLiveData<>();
+        editorsChoiceList = new MutableLiveData<>();
+        hotGameList = new MutableLiveData<>();
+        trendingList = new MutableLiveData<>();
+        categoryList = new MutableLiveData<>();
+        gameByCategoryList = new MutableLiveData<>();
+        gamesByPayTypeList = new MutableLiveData<>();
+        selectedGame = new MutableLiveData<>();
+    }
 
     public void getNewGameListData(int page, int pageSize) {
         gameServices.getNewGames(page, pageSize).enqueue(new Callback<BaseResponse<List<Game>>>() {
@@ -262,7 +279,7 @@ public class GameRepository {
         });
     }
 
-    public void getGamesByPayTypeData(int payType, int page, int pageSize) {
+    public void getGamesByPayTypeData(String payType, int page, int pageSize) {
         gameServices.getGameByPayType(payType, page, pageSize).enqueue(new Callback<BaseResponse<List<Game>>>() {
             @Override
             public void onResponse(Call<BaseResponse<List<Game>>> call, Response<BaseResponse<List<Game>>> response) {
@@ -311,6 +328,32 @@ public class GameRepository {
         //        computer.postValue(null);
         //    }
         //});
+    }
+
+    public void getGameData(String gameId) {
+
+        gameServices.getGame(gameId).enqueue(new Callback<BaseResponse<Game>>() {
+            @Override
+            public void onResponse(Call<BaseResponse<Game>> call, Response<BaseResponse<Game>> response) {
+                DataResultHelper<BaseResponse<Game>> dataResponse = PhaseServiceHelper.handleResponse(response);
+
+                if (dataResponse.getErrMsg() != null) {
+                    selectedGame.postValue(new Game());
+                    errMsg.postValue(dataResponse.getErrMsg());
+                    Log.e("Request API failed", "Get games by pay type - " + dataResponse.getErrMsg());
+                } else {
+                    Game game = BaseResponse.getResult(dataResponse.getData());
+                    game = game == null ? new Game() : game;
+                    selectedGame.postValue(game);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BaseResponse<Game>> call, Throwable t) {
+                Log.e("Request API failed", "Get games by pay type - " + t.getMessage());
+                gamesByPayTypeList.postValue(new ArrayList<>());
+            }
+        });
     }
 
 }

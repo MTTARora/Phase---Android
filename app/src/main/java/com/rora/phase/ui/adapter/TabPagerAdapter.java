@@ -11,20 +11,24 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import com.rora.phase.model.Game;
 import com.rora.phase.ui.home.GameListFragment;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TabPagerAdapter extends FragmentStateAdapter {
 
-    public TabPagerAdapter(Fragment fragment) {
+    private HashMap<String, String>[] params;
+
+    public TabPagerAdapter(Fragment fragment, HashMap<String, String>... params) {
         super(fragment);
+        this.params = params;
     }
 
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        Fragment fragment = new GameListFragment();
-        //Bundle args = new Bundle();
-        //fragment.setArguments(args);
+        Fragment fragment = GameListFragment.newInstance(params[position].get(GameListFragment.LIST_TYPE_PARAM), params[position].get(GameListFragment.KEY_FILTER_PARAM));
 
         return fragment;
     }

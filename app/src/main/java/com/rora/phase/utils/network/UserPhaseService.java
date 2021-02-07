@@ -48,6 +48,6 @@ public interface UserPhaseService {
     Call<BaseResponse<List<Game>>> getRecentPlay(@Query("page") int page, @Query("page_size") int pageSize);
 
     @GET("/recommended")
-    Call<BaseResponse<List<Game>>> getRecommended();
+    Call<BaseResponse<List<Game>>> getRecommended(@Query("page") int page,@Query("page_size") int pageSize);
 
 }

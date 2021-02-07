@@ -38,6 +38,10 @@ import com.rora.phase.utils.callback.OnItemSelectedListener;
 import com.rora.phase.utils.ui.CustomViewPagerTransformer;
 import com.rora.phase.utils.ui.HorizontalMarginItemDecoration;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
 import java.util.Objects;
 
 import static com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter.MEDIUM_SIZE;
@@ -116,6 +120,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
         initView();
         bindData();
+
+        root.findViewById(R.id.btn_view_all_new_game).setOnClickListener(this);
+        btnViewAllHotGame.setOnClickListener(this);
+        btnViewAllTrending.setOnClickListener(this);
+        btnViewAllEditorChoice.setOnClickListener(this);
+        btnViewAllDiscover.setOnClickListener(this);
         return root;
     }
 
@@ -142,7 +152,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         vpBanner.setPageTransformer(new CustomViewPagerTransformer());
         vpBanner.addItemDecoration(new HorizontalMarginItemDecoration());
 
-        otherGamesAdapter = new TabPagerAdapter(this);
+        ArrayList<HashMap> params = new ArrayList<>();
+        HashMap<String, String>[] otherGamesParams = new HashMap<String, String>[] {
+                new Map<"s", "s">()
+        }
+        otherGamesAdapter = new TabPagerAdapter(this, params);
         vpOtherGames.setAdapter(otherGamesAdapter);
         new TabLayoutMediator(tbOtherGames, vpOtherGames, ((tab, position) -> tab.setText(position == 1 ? "Recommended" : "Free to play"))).attach();
         ViewGroup.LayoutParams layoutParams = vpOtherGames.getLayoutParams();
@@ -160,19 +174,15 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         setupRecyclerView(rclvCategory, new CategoryRecyclerViewAdapter(new OnItemSelectedListener() {
             @Override
             public void onSelected(String selectedItemId) {
-
+                goToGameListScreen(selectedItemId, HomeViewModel.GameListType.BY_CATEGORY, selectedItemId);
             }
         }, 0.24, NORMAL_SIZE, true), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         setupRecyclerView(rclvCategoryDiscover, new CategoryRecyclerViewAdapter(new OnItemSelectedListener() {
             @Override
             public void onSelected(String selectedItemId) {
-                homeViewModel.getGamesByCategoryListData(selectedItemId);
+                homeViewModel.getGamesByType(HomeViewModel.GameListType.BY_CATEGORY, selectedItemId);
             }
         }, 0, MEDIUM_SIZE, false), setUpLayoutManager(5));
-        btnViewAllHotGame.setOnClickListener(this);
-        btnViewAllTrending.setOnClickListener(this);
-        btnViewAllEditorChoice.setOnClickListener(this);
-        btnViewAllDiscover.setOnClickListener(this);
 
     }
 
@@ -220,16 +230,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     }
 
     private void updateData() {
-        homeViewModel.refresh();
         homeViewModel.getBannerListData();
-        homeViewModel.getNewGameListData();
-        homeViewModel.getRecentPlayData();
-        homeViewModel.getEditorsChoiceListData();
-        homeViewModel.getHotGameListData();
-        homeViewModel.getTrendingListData();
         homeViewModel.getCategoryListData();
-        homeViewModel.getRecommendedGameListData();
-        homeViewModel.getGameByPayTypeListData(PayTypeEnum.FREE.id);
+        homeViewModel.getGamesByType(HomeViewModel.GameListType.NEW, null);
+        homeViewModel.getGamesByType(HomeViewModel.GameListType.EDITOR, null);
+        homeViewModel.getGamesByType(HomeViewModel.GameListType.HOT, null);
+        homeViewModel.getGamesByType(HomeViewModel.GameListType.TRENDING, null);
+        //homeViewModel.getGamesByType(HomeViewModel.GameListType.RECOMMENDED, null);
+        //homeViewModel.getGamesByType(HomeViewModel.GameListType.BY_PAY_TYPE, String.valueOf(PayTypeEnum.FREE.id));
     }
 
     private void setupRecyclerView(RecyclerView view, RecyclerView.Adapter adapter, RecyclerView.LayoutManager layoutManager) {
@@ -248,17 +256,48 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         };
     }
 
+    private void goToGameListScreen(String title, HomeViewModel.GameListType type, String filterParam) {
+        Bundle listGameBundle = new Bundle();
+        listGameBundle.putString(GameListFragment.SCREEN_TITLE_PARAM, title);
+        listGameBundle.putSerializable(GameListFragment.LIST_TYPE_PARAM, type);
+        listGameBundle.putString(GameListFragment.KEY_FILTER_PARAM, filterParam);
+        homeViewModel.refresh(null);
+        NavHostFragment.findNavController(this).navigate(R.id.action_navigation_home_to_gameListFragment, listGameBundle);
+    }
+
+    private void goToGameDetails(String game) {
+        NavHostFragment.findNavController(this).navigate(R.id.action_navigation_home_to_gameDetailFragment);
+    }
 
     //----------------- EVENT ---------------
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.btn_view_all_new_game:
+                if (rclvNewGame.getAdapter().getItemCount() == 0)
+                    break;
+                goToGameListScreen(getResources().getString(R.string.new_game_title), HomeViewModel.GameListType.NEW, "");
+                break;
             case R.id.btn_view_all_hot_game:
-                NavHostFragment.findNavController(this).navigate(R.id.action_navigation_home_to_gameDetailFragment);
+                if (rclvHotGame.getAdapter().getItemCount() == 0)
+                    break;
+                goToGameListScreen(getResources().getString(R.string.hot_title), HomeViewModel.GameListType.HOT, "");
+                break;
+            case R.id.btn_view_all_trending:
+                if (rclvTrending.getAdapter().getItemCount() == 0)
+                    break;
+                goToGameListScreen(getResources().getString(R.string.trending_title), HomeViewModel.GameListType.TRENDING, "");
                 break;
             case R.id.btn_view_all_editor_choice:
-                NavHostFragment.findNavController(this).navigate(R.id.action_navigation_home_to_gameListFragment);
+                if (rclvEditorChoice.getAdapter().getItemCount() == 0)
+                    break;
+                goToGameListScreen(getResources().getString(R.string.editor_choice_title), HomeViewModel.GameListType.EDITOR, "");
+                break;
+            case R.id.btn_view_all_discover:
+                if (rclvDiscover.getAdapter().getItemCount() == 0)
+                    break;
+                goToGameListScreen(homeViewModel.getCurrentSelectedItemId(), HomeViewModel.GameListType.BY_CATEGORY, homeViewModel.getCurrentSelectedItemId());
                 break;
             default: break;
         }
