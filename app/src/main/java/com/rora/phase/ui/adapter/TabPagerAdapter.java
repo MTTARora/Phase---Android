@@ -10,6 +10,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.rora.phase.model.Game;
 import com.rora.phase.ui.home.GameListFragment;
+import com.rora.phase.ui.viewmodel.HomeViewModel;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -18,9 +19,11 @@ import java.util.Map;
 
 public class TabPagerAdapter extends FragmentStateAdapter {
 
-    private HashMap<String, String>[] params;
+    private List<Bundle> params;
 
-    public TabPagerAdapter(Fragment fragment, HashMap<String, String>... params) {
+    public static final String TAB_TITLE = "title";
+
+    public TabPagerAdapter(Fragment fragment, List<Bundle> params) {
         super(fragment);
         this.params = params;
     }
@@ -28,14 +31,15 @@ public class TabPagerAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        Fragment fragment = GameListFragment.newInstance(params[position].get(GameListFragment.LIST_TYPE_PARAM), params[position].get(GameListFragment.KEY_FILTER_PARAM));
+        Fragment fragment = GameListFragment.newInstance((HomeViewModel.GameListType) params.get(position).getSerializable(GameListFragment.LIST_TYPE_PARAM), params.get(position).getString(GameListFragment.KEY_FILTER_PARAM));
 
         return fragment;
     }
 
+
     @Override
     public int getItemCount() {
-        return 2;
+        return params.size();
     }
 
 }

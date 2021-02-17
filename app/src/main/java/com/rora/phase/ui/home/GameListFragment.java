@@ -33,10 +33,10 @@ public class GameListFragment extends Fragment {
 
     public GameListFragment() {}
 
-    public static GameListFragment newInstance(String type, String filterParam) {
+    public static GameListFragment newInstance(HomeViewModel.GameListType type, String filterParam) {
         GameListFragment fragment = new GameListFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(LIST_TYPE_PARAM, type);
+        bundle.putSerializable(LIST_TYPE_PARAM, type);
         bundle.putString(KEY_FILTER_PARAM, filterParam);
         fragment.setArguments(bundle);
 

@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.rora.phase.R;
 import com.rora.phase.model.Game;
 import com.rora.phase.ui.game.viewholder.GameMinInfoViewHolder;
 
@@ -17,11 +18,13 @@ import java.util.List;
 public class GameMinInfoRecyclerViewAdapter extends RecyclerView.Adapter<GameMinInfoViewHolder> {
 
     private List<Game> gameList;
-    private int viewId;
+    private int viewType;
     private double widthPercentage;
 
-    public GameMinInfoRecyclerViewAdapter(int viewId, double widthPercentage) {
-        this.viewId = viewId;
+    public static final int VIEW_TYPE_NORMAL = 0, VIEW_TYPE_EXPANDED = 1;
+
+    public GameMinInfoRecyclerViewAdapter(int viewType, double widthPercentage) {
+        this.viewType = viewType;
         this.widthPercentage = widthPercentage;
         this.gameList = new ArrayList<>();
     }
@@ -29,7 +32,7 @@ public class GameMinInfoRecyclerViewAdapter extends RecyclerView.Adapter<GameMin
     @NonNull
     @Override
     public GameMinInfoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View root = LayoutInflater.from(parent.getContext()).inflate(viewId, parent, false);
+        View root = LayoutInflater.from(parent.getContext()).inflate(this.viewType == VIEW_TYPE_NORMAL ? R.layout.item_game_min_info : R.layout.item_game_min_info_expanded, parent, false);
         if(widthPercentage != 0) {
             int width = ((AppCompatActivity)parent.getContext()).getWindowManager().getDefaultDisplay().getWidth();
             ViewGroup.LayoutParams layoutParams = root.getLayoutParams();

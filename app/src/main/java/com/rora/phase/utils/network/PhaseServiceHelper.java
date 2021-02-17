@@ -3,13 +3,8 @@ package com.rora.phase.utils.network;
 import android.content.Context;
 
 import com.rora.phase.utils.DataResultHelper;
-import com.rora.phase.utils.SharedPreferenceHelper;
+import com.rora.phase.utils.SharedPreferencesHelper;
 
-import java.io.IOException;
-
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import retrofit2.Response;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -18,7 +13,7 @@ public class PhaseServiceHelper {
     private PhaseService phaseService;
     private UserPhaseService userPhaseService;
     private Context context;
-    private SharedPreferenceHelper sharedPreferenceHelper;
+    private SharedPreferencesHelper sharedPreferencesHelper;
 
     private final String basePhaseUrl = "http://roragame.ga/api/";
     private final String userBaseUrl = basePhaseUrl + "users/";
@@ -29,7 +24,7 @@ public class PhaseServiceHelper {
 
     public PhaseServiceHelper(Context context) {
         this.context = context;
-        sharedPreferenceHelper = new SharedPreferenceHelper(context);
+        sharedPreferencesHelper = new SharedPreferencesHelper(context);
     }
 
 

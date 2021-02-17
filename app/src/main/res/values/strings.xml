@@ -232,6 +232,8 @@
     <string name="view_all_txt">View all</string>
     <string name="undetected_error">Something went wrong, please try again later!</string>
     <string name="total_play_time_txt">Total</string>
+    <string name="recommended_title">Recommended</string>
+    <string name="free_to_play_title">Free to play</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

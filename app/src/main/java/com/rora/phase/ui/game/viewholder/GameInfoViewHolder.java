@@ -42,6 +42,7 @@ public class GameInfoViewHolder extends RecyclerView.ViewHolder {
         MediaHelper.loadImage(game.getBackground(), imvBanner);
         tvName.setText(game.getName());
         tvPayType.setText(game.getPayTypeName());
+
         switch (game.getPayTypeId()) {
             case 1:
                 tvPayType.setBackgroundColor(context.getColor(android.R.color.holo_blue_light));

@@ -48,6 +48,7 @@
     <dimen name="game_min_info_item_height">140dp</dimen>
     <dimen name="game_min_info_expanded_item_height">200dp</dimen>
     <dimen name="game_info_item_height">240dp</dimen>
+    <dimen name="game_info_image_layer_height">160dp</dimen>
     <dimen name="ic_min_size">20dp</dimen>
     <dimen name="category_height">35dp</dimen>
     <dimen name="vertical_game_item_height">100dp</dimen>

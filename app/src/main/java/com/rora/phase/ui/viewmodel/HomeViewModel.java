@@ -268,4 +268,8 @@ public class HomeViewModel extends AndroidViewModel {
         }
     }
 
+    public boolean isUserLogged() {
+        return userRepository.isUserLogged();
+    }
+
 }

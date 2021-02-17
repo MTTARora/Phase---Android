@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.User;
 import com.rora.phase.utils.DataResultHelper;
+import com.rora.phase.utils.SharedPreferencesHelper;
 import com.rora.phase.utils.network.BaseResponse;
 import com.rora.phase.utils.network.PhaseServiceHelper;
 import com.rora.phase.utils.network.UserPhaseService;
@@ -22,6 +23,7 @@ import retrofit2.Response;
 public class UserRepository {
 
     private UserPhaseService userServices;
+    private SharedPreferencesHelper dbSharedPref;
 
     private MutableLiveData<User> user;
     private MutableLiveData<List<Game>> favoriteList, recentPlayList, recommendedList;
@@ -30,6 +32,7 @@ public class UserRepository {
     public UserRepository(Context context) {
         PhaseServiceHelper phaseServiceHelper = new PhaseServiceHelper(context);
         userServices = phaseServiceHelper.getUserPhaseService();
+        dbSharedPref = new SharedPreferencesHelper(context);
 
         user = new MutableLiveData<>();
         favoriteList =  new MutableLiveData<>();
@@ -189,4 +192,7 @@ public class UserRepository {
 
     }
 
+    public boolean isUserLogged() {
+        return !dbSharedPref.getUserToken().isEmpty();
+    }
 }

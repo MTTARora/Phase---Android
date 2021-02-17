@@ -5,14 +5,14 @@ import android.content.SharedPreferences;
 
 import com.rora.phase.R;
 
-public class SharedPreferenceHelper {
+public class SharedPreferencesHelper {
 
     private SharedPreferences sharedPreferences;
 
     private final String PREFERENCE_FILE_KEY = "com.rora.phase.PREFERENCE_FILE_KEY";
     private final String USER_TOKEN_KEY = "user_token";
 
-    public SharedPreferenceHelper(Context context) {
+    public SharedPreferencesHelper(Context context) {
         this.sharedPreferences = context.getSharedPreferences(PREFERENCE_FILE_KEY, Context.MODE_PRIVATE);
     }
 
