@@ -32,8 +32,10 @@ import com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter;
 import com.rora.phase.ui.adapter.GameInfoRecyclerViewAdapter;
 import com.rora.phase.ui.adapter.GameMinInfoRecyclerViewAdapter;
 import com.rora.phase.ui.adapter.TabPagerAdapter;
+import com.rora.phase.ui.game.GameDetailFragment;
 import com.rora.phase.ui.viewmodel.HomeViewModel;
 import com.rora.phase.utils.callback.OnItemSelectedListener;
+import com.rora.phase.utils.ui.BaseRVAdapter;
 import com.rora.phase.utils.ui.CustomViewPagerTransformer;
 import com.rora.phase.utils.ui.HorizontalMarginItemDecoration;
 import com.rora.phase.utils.ui.ViewHelper;
@@ -59,7 +61,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private boolean isSlidingBanner = false;
 
     private Handler bannerRunnableHandler = new Handler();
-    private int autoScrollBannerTime = 5000;
+    private int autoScrollBannerTime = 3500;
     private Runnable bannerAutoSlideRunnable = new Runnable() {
         @Override
         public void run() {
@@ -137,7 +139,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
         bannerAdapter = new BannerVPAdapter();
         vpBanner.setAdapter(bannerAdapter);
-        vpBanner.setOffscreenPageLimit(1);
+        vpBanner.setOffscreenPageLimit(2);
         vpBanner.setPageTransformer(new CustomViewPagerTransformer());
         vpBanner.addItemDecoration(new HorizontalMarginItemDecoration());
 
@@ -164,25 +166,19 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         layoutParams.height = height - ((AppCompatActivity) getContext()).getSupportActionBar().getHeight() - tbOtherGames.getHeight() - 300;
         vpOtherGames.setLayoutParams(layoutParams);
 
-        setupRecyclerView(rclvHotGame, new GameMinInfoRecyclerViewAdapter(GameMinInfoRecyclerViewAdapter.VIEW_TYPE_EXPANDED, 0.8), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-        setupRecyclerView(rclvNewGame, new GameInfoRecyclerViewAdapter(GameInfoRecyclerViewAdapter.VIEW_TYPE_NORMAL, 0.75), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        setupRecyclerView(rclvEditorChoice, new GameInfoRecyclerViewAdapter(GameInfoRecyclerViewAdapter.VIEW_TYPE_LAYER, 0.9), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-        setupRecyclerView(rclvTrending, new GameMinInfoRecyclerViewAdapter(GameMinInfoRecyclerViewAdapter.VIEW_TYPE_EXPANDED, 0.8), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-        setupRecyclerView(rclvDiscover, new GameMinInfoRecyclerViewAdapter(GameMinInfoRecyclerViewAdapter.VIEW_TYPE_NORMAL, 0), ViewHelper.getLayoutManager(getActivity(), 2, 0));
+        setupGameRecyclerView(rclvHotGame, new GameMinInfoRecyclerViewAdapter(GameMinInfoRecyclerViewAdapter.VIEW_TYPE_EXPANDED, 0.8), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        setupGameRecyclerView(rclvNewGame, new GameInfoRecyclerViewAdapter(GameInfoRecyclerViewAdapter.VIEW_TYPE_NORMAL, 0.75), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        setupGameRecyclerView(rclvEditorChoice, new GameInfoRecyclerViewAdapter(GameInfoRecyclerViewAdapter.VIEW_TYPE_LAYER, 0.9), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        setupGameRecyclerView(rclvTrending, new GameMinInfoRecyclerViewAdapter(GameMinInfoRecyclerViewAdapter.VIEW_TYPE_EXPANDED, 0.8), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        setupGameRecyclerView(rclvDiscover, new GameMinInfoRecyclerViewAdapter(GameMinInfoRecyclerViewAdapter.VIEW_TYPE_NORMAL, 0), ViewHelper.getLayoutManager(getActivity(), 2, 0));
 
-        setupRecyclerView(rclvCategory, new CategoryRecyclerViewAdapter(new OnItemSelectedListener() {
-            @Override
-            public void onSelected(String selectedItemId) {
-                goToGameListScreen(selectedItemId, HomeViewModel.GameListType.BY_CATEGORY, selectedItemId);
-            }
-        }, 0.24, NORMAL_SIZE, true), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        CategoryRecyclerViewAdapter categoryAdapter =  new CategoryRecyclerViewAdapter(0.24, NORMAL_SIZE, true,
+                selectedItemId -> goToGameListScreen(selectedItemId, HomeViewModel.GameListType.BY_CATEGORY, selectedItemId));
+        setupRecyclerView(rclvCategory, categoryAdapter, new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
-        setupRecyclerView(rclvCategoryDiscover, new CategoryRecyclerViewAdapter(new OnItemSelectedListener() {
-            @Override
-            public void onSelected(String selectedItemId) {
-                homeViewModel.getGamesByType(HomeViewModel.GameListType.BY_CATEGORY, selectedItemId);
-            }
-        }, 0, MEDIUM_SIZE, false), ViewHelper.getLayoutManager(getActivity(), 5, 0));
+        CategoryRecyclerViewAdapter categoryDiscoveryAdapter =  new CategoryRecyclerViewAdapter(0, MEDIUM_SIZE, false,
+                selectedItemId -> homeViewModel.getGamesByType(HomeViewModel.GameListType.BY_CATEGORY, selectedItemId));
+        setupRecyclerView(rclvCategoryDiscover, categoryDiscoveryAdapter, ViewHelper.getLayoutManager(getActivity(), 5, 0));
 
     }
 
@@ -190,7 +186,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
         homeViewModel.getBannerList().observe(getViewLifecycleOwner(), banners -> {
             bannerAdapter.bindData(banners);
-            if (banners.size() != 0 && !isSlidingBanner)
+
+            bannerRunnableHandler.removeCallbacks(bannerAutoSlideRunnable);
+            isSlidingBanner = false;
+            if (banners.size() != 0)
                 bannerRunnableHandler.postDelayed(bannerAutoSlideRunnable, autoScrollBannerTime);
         });
 
@@ -238,6 +237,18 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         homeViewModel.getGamesByType(HomeViewModel.GameListType.TRENDING, null);
     }
 
+    private void setupGameRecyclerView(RecyclerView view, BaseRVAdapter adapter, RecyclerView.LayoutManager layoutManager) {
+
+        view.setAdapter(adapter);
+        view.setLayoutManager(layoutManager);
+        view.setHasFixedSize(true);
+
+        adapter.setOnItemSelectedListener(selectedItemId -> {
+            goToGameDetails(selectedItemId);
+        });
+
+    }
+
     private void setupRecyclerView(RecyclerView view, RecyclerView.Adapter adapter, RecyclerView.LayoutManager layoutManager) {
         view.setAdapter(adapter);
         view.setLayoutManager(layoutManager);
@@ -249,12 +260,17 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         listGameBundle.putString(GameListFragment.SCREEN_TITLE_PARAM, title);
         listGameBundle.putSerializable(GameListFragment.LIST_TYPE_PARAM, type);
         listGameBundle.putString(GameListFragment.KEY_FILTER_PARAM, filterParam);
+
         homeViewModel.refresh(null);
+
         NavHostFragment.findNavController(this).navigate(R.id.action_navigation_home_to_gameListFragment, listGameBundle);
     }
 
     private void goToGameDetails(String game) {
-        NavHostFragment.findNavController(this).navigate(R.id.action_navigation_home_to_gameDetailFragment);
+        Bundle gameIdBundle = new Bundle();
+        gameIdBundle.putString(GameDetailFragment.KEY_GAME_ID, game);
+
+        NavHostFragment.findNavController(this).navigate(R.id.action_navigation_home_to_gameDetailFragment, gameIdBundle);
     }
 
     //----------------- EVENT ---------------

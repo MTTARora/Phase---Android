@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 public class Banner {
     @SerializedName("bannerId")
     @Expose
-    private String bannerId;
+    private String id;
     @SerializedName("link")
     @Expose
     private String link;
@@ -14,12 +14,19 @@ public class Banner {
     @Expose
     private String desc;
 
-    public String getBannerId() {
-        return bannerId;
+    public Banner() {
     }
 
-    public void setBannerId(String bannerId) {
-        this.bannerId = bannerId;
+    public Banner(String link) {
+        this.link = link;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getLink() {

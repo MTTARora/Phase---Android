@@ -340,7 +340,7 @@ public class GameRepository {
                 if (dataResponse.getErrMsg() != null) {
                     selectedGame.postValue(new Game());
                     errMsg.postValue(dataResponse.getErrMsg());
-                    Log.e("Request API failed", "Get games by pay type - " + dataResponse.getErrMsg());
+                    Log.e("Request API failed", "Get game " + gameId + " - " + dataResponse.getErrMsg());
                 } else {
                     Game game = BaseResponse.getResult(dataResponse.getData());
                     game = game == null ? new Game() : game;
@@ -350,8 +350,8 @@ public class GameRepository {
 
             @Override
             public void onFailure(Call<BaseResponse<Game>> call, Throwable t) {
-                Log.e("Request API failed", "Get games by pay type - " + t.getMessage());
-                gamesByPayTypeList.postValue(new ArrayList<>());
+                Log.e("Request API failed", "Get game " + gameId + " - " +  t.getMessage());
+                selectedGame.postValue(new Game());
             }
         });
     }

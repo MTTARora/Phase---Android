@@ -234,8 +234,12 @@
     <string name="total_play_time_txt">Total</string>
     <string name="recommended_title">Recommended</string>
     <string name="free_to_play_title">Free to play</string>
+    <string name="age_rating_title">Age rating: </string>
+    <string name="release_title">Release: </string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="screenshot_title">Screenshot</string>
+    <string name="series_title">Games in the Series</string>
 
 </resources>

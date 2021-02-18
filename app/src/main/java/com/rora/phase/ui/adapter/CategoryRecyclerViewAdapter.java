@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.rora.phase.R;
 import com.rora.phase.model.Tag;
 import com.rora.phase.utils.callback.OnItemSelectedListener;
+import com.rora.phase.utils.ui.ViewHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,7 @@ public class CategoryRecyclerViewAdapter extends RecyclerView.Adapter<CategoryVi
     public static final int MEDIUM_SIZE = 1;
     public static final int NORMAL_SIZE = 2;
 
-    public CategoryRecyclerViewAdapter(OnItemSelectedListener onItemSelectedListener, double widthPercentage, int size, boolean hasBackground) {
+    public CategoryRecyclerViewAdapter(double widthPercentage, int size, boolean hasBackground, OnItemSelectedListener onItemSelectedListener) {
         this.categoryList = new ArrayList<>();
         categorySelectedState = new ArrayList<>();
         this.onItemSelectedListener = onItemSelectedListener;
@@ -45,20 +46,16 @@ public class CategoryRecyclerViewAdapter extends RecyclerView.Adapter<CategoryVi
     }
 
 
-
     @NonNull
     @Override
     public CategoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View root = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_category, parent, false);
 
         if (widthPercentage != 0) {
-            int width = ((AppCompatActivity)parent.getContext()).getWindowManager().getDefaultDisplay().getWidth();
-            ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) root.getLayoutParams();
-            layoutParams.width = (int) (width * widthPercentage);
-            layoutParams.height = layoutParams.width / 2;
+            ViewHelper.setSizePercentageWithScreenAndItSelf(root, widthPercentage, 0, 2);
+
             if(size == MIN_SIZE)
-                layoutParams.setMarginEnd((int) parent.getContext().getResources().getDimension(R.dimen.min_space));
-            root.setLayoutParams(layoutParams);
+                ((ViewGroup.MarginLayoutParams) root.getLayoutParams()).setMarginEnd((int) parent.getContext().getResources().getDimension(R.dimen.min_space));
         }
 
         return new CategoryViewHolder(root);
@@ -131,10 +128,8 @@ class CategoryViewHolder extends RecyclerView.ViewHolder {
                 break;
             case MEDIUM_SIZE:
                 cvFrame.setRadius(context.getResources().getDimension(R.dimen.maxx_radius));
-                //btnCategory.setTextSize(context.getResources().getDimension(R.dimen.normal_text_size));
                 break;
             case NORMAL_SIZE:
-                //cvFrame.setRadius(context.getResources().getDimension(R.dimen.min_radius));
                 btnCategory.setTextSize(context.getResources().getDimension(R.dimen.minnn_text_size));
                 break;
             default: break;

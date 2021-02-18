@@ -131,7 +131,7 @@ class VerticalGameItemVH extends RecyclerView.ViewHolder {
         rclvTag = itemView.findViewById(R.id.category_item_game_rclv);
         rclvPlatform = itemView.findViewById(R.id.platform_rclv);
 
-        rclvTag.setAdapter(new CategoryRecyclerViewAdapter(null, 0.11, MIN_SIZE, false));
+        rclvTag.setAdapter(new CategoryRecyclerViewAdapter(0.11, MIN_SIZE, false, null));
         rclvTag.setLayoutManager(new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.HORIZONTAL , false));
         rclvTag.setHasFixedSize(true);
 

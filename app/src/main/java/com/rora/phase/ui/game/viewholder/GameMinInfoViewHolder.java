@@ -13,6 +13,7 @@ import com.rora.phase.model.Game;
 import com.rora.phase.R;
 import com.rora.phase.ui.adapter.PlatformRecyclerViewAdapter;
 import com.rora.phase.utils.MediaHelper;
+import com.rora.phase.utils.callback.OnItemSelectedListener;
 
 import java.util.Objects;
 
@@ -23,9 +24,11 @@ public class GameMinInfoViewHolder extends RecyclerView.ViewHolder {
     private RecyclerView rclvPlatform;
 
     private Context context;
+    private OnItemSelectedListener onItemSelectedListener;
 
     public GameMinInfoViewHolder(@NonNull View itemView) {
         super(itemView);
+
         imvBanner = itemView.findViewById(R.id.banner_game_min_info_imv);
         tvGameName = itemView.findViewById(R.id.game_name_min_info_tv);
         tvPayType = itemView.findViewById(R.id.pay_type_tv);
@@ -64,6 +67,15 @@ public class GameMinInfoViewHolder extends RecyclerView.ViewHolder {
                 break;
         }
         ((PlatformRecyclerViewAdapter) Objects.requireNonNull(rclvPlatform.getAdapter())).bindData(game.getPlatforms());
+
+        itemView.setOnClickListener(v -> {
+            if (onItemSelectedListener != null)
+                onItemSelectedListener.onSelected(game.getId().toString());
+        });
+    }
+
+    public void setOnItemSelectedListener(OnItemSelectedListener onItemSelectedListener) {
+        this.onItemSelectedListener = onItemSelectedListener;
     }
 
 }

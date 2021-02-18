@@ -10,12 +10,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.rora.phase.R;
 import com.rora.phase.model.Game;
 import com.rora.phase.ui.game.viewholder.GameInfoViewHolder;
+import com.rora.phase.utils.callback.OnItemSelectedListener;
+import com.rora.phase.utils.ui.BaseRVAdapter;
 import com.rora.phase.utils.ui.ViewHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameInfoRecyclerViewAdapter extends RecyclerView.Adapter<GameInfoViewHolder> {
+public class GameInfoRecyclerViewAdapter extends BaseRVAdapter {
 
     private int viewType;
     private double widthPercentage;
@@ -40,8 +42,15 @@ public class GameInfoRecyclerViewAdapter extends RecyclerView.Adapter<GameInfoVi
     }
 
     @Override
-    public void onBindViewHolder(@NonNull GameInfoViewHolder holder, int position) {
-        holder.bindData(gameList.get(position));
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+
+        ((GameInfoViewHolder) holder).bindData(gameList.get(position));
+
+        ((GameInfoViewHolder) holder).setOnItemSelectedListener(selectedItemId -> {
+            if(onItemSelectedListener != null)
+                onItemSelectedListener.onSelected(selectedItemId);
+        });
+
     }
 
     @Override

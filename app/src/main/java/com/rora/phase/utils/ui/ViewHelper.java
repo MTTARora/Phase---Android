@@ -48,7 +48,7 @@ public class ViewHelper {
 
         if (widthPercentage != 0) {
             layoutParams.width = (int) (width * widthPercentage);
-            layoutParams.height = (int) (layoutParams.width * scale);
+            layoutParams.height = (int) (layoutParams.width / scale);
         }
         if (heightPercentage != 0) {
             layoutParams.height = (int) (height * heightPercentage);

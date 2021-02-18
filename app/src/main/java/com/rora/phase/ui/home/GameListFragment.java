@@ -27,6 +27,7 @@ public class GameListFragment extends Fragment {
     private HomeViewModel.GameListType listType;
     private String screenTitle;
     private String filterParam = "";
+
     public static final String SCREEN_TITLE_PARAM = "screen_title";
     public static final String LIST_TYPE_PARAM = "type";
     public static final String KEY_FILTER_PARAM = "filter";

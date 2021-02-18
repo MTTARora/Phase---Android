@@ -34,7 +34,7 @@ public interface PhaseService {
     @GET("./trending")
     Call<BaseResponse<List<Game>>> getTrending(@Query("page") int page,@Query("page_size") int pageSize);
 
-    @GET("./{game}")
+    @GET("{game}")
     Call<BaseResponse<Game>> getGame(@Path("game") String gameId);
 
     @GET("tags")

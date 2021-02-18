@@ -3,19 +3,23 @@ package com.rora.phase.ui.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rora.phase.R;
 import com.rora.phase.model.Game;
 import com.rora.phase.ui.game.viewholder.GameMinInfoViewHolder;
+import com.rora.phase.utils.callback.OnItemSelectedListener;
+import com.rora.phase.utils.ui.BaseRVAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameMinInfoRecyclerViewAdapter extends RecyclerView.Adapter<GameMinInfoViewHolder> {
+public class GameMinInfoRecyclerViewAdapter extends BaseRVAdapter {
 
     private List<Game> gameList;
     private int viewType;
@@ -44,8 +48,15 @@ public class GameMinInfoRecyclerViewAdapter extends RecyclerView.Adapter<GameMin
     }
 
     @Override
-    public void onBindViewHolder(@NonNull GameMinInfoViewHolder holder, int position) {
-        holder.bindData(gameList.get(position));
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+
+        ((GameMinInfoViewHolder) holder).bindData(gameList.get(position));
+
+        ((GameMinInfoViewHolder) holder).setOnItemSelectedListener(selectedItemId -> {
+            if(onItemSelectedListener != null)
+                onItemSelectedListener.onSelected(selectedItemId);
+        });
+
     }
 
     @Override

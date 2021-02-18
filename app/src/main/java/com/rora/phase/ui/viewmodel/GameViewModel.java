@@ -1,45 +1,19 @@
 package com.rora.phase.ui.viewmodel;
 
 import android.app.Application;
-import android.content.ComponentName;
-import android.content.ServiceConnection;
-import android.os.IBinder;
-import android.util.Log;
-import android.widget.Toast;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
-import com.rora.phase.R;
-import com.rora.phase.binding.PlatformBinding;
-import com.rora.phase.computers.ComputerManagerService;
+import com.rora.phase.model.Game;
 import com.rora.phase.nvstream.http.ComputerDetails;
-import com.rora.phase.nvstream.http.NvHTTP;
-import com.rora.phase.nvstream.http.PairingManager;
-import com.rora.phase.nvstream.jni.MoonBridge;
 import com.rora.phase.repository.GameRepository;
-import com.rora.phase.ui.game.GameDetailFragment;
-import com.rora.phase.utils.Dialog;
-import com.rora.phase.utils.ServerHelper;
-
-import org.xmlpull.v1.XmlPullParserException;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.InterfaceAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.net.UnknownHostException;
-import java.util.Collections;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class GameViewModel extends AndroidViewModel {
 
     private GameRepository gameRepository;
+    private MutableLiveData<Game> game;
     private MutableLiveData<ComputerDetails> computerDetails;
 
 
@@ -49,7 +23,12 @@ public class GameViewModel extends AndroidViewModel {
         super(application);
         gameRepository = new GameRepository();
 
+        game = gameRepository.getSelectedGame();
         computerDetails = gameRepository.getComputer();
+    }
+
+    public LiveData<Game> getGameData() {
+        return game;
     }
 
     public LiveData<ComputerDetails> getComputerDetails() {
@@ -58,6 +37,9 @@ public class GameViewModel extends AndroidViewModel {
 
     //------------------------------------------------------------------
 
+    public void getGame(String gameId) {
+        gameRepository.getGameData(gameId);
+    }
 
     //====================== PLAYING GAME STEPS =========================
 
