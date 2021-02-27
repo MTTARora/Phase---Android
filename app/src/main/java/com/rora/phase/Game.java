@@ -16,6 +16,7 @@ import com.rora.phase.binding.video.CrashListener;
 import com.rora.phase.binding.video.MediaCodecDecoderRenderer;
 import com.rora.phase.binding.video.MediaCodecHelper;
 import com.rora.phase.binding.video.PerfOverlayListener;
+import com.rora.phase.model.UserPlayingData;
 import com.rora.phase.nvstream.NvConnection;
 import com.rora.phase.nvstream.NvConnectionListener;
 import com.rora.phase.nvstream.StreamConfiguration;
@@ -28,6 +29,7 @@ import com.rora.phase.preferences.GlPreferences;
 import com.rora.phase.preferences.PreferenceConfiguration;
 import com.rora.phase.ui.GameGestures;
 import com.rora.phase.ui.StreamView;
+import com.rora.phase.ui.viewmodel.GameViewModel;
 import com.rora.phase.utils.Dialog;
 import com.rora.phase.utils.NetHelper;
 import com.rora.phase.utils.ServerHelper;
@@ -77,6 +79,10 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
+
 import java.io.ByteArrayInputStream;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -84,12 +90,13 @@ import java.security.cert.X509Certificate;
 import java.util.Locale;
 
 
-public class Game extends Activity implements SurfaceHolder.Callback,
+public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
     OnGenericMotionListener, OnTouchListener, NvConnectionListener, EvdevListener,
     OnSystemUiVisibilityChangeListener, GameGestures, StreamView.InputCallbacks,
     PerfOverlayListener
 {
     private int lastButtonState = 0;
+    private GameViewModel gameViewModel;
 
     // Only 2 touches are supported
     private final TouchContext[] touchContextMap = new TouchContext[2];
@@ -170,7 +177,7 @@ public class Game extends Activity implements SurfaceHolder.Callback,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        gameViewModel = new ViewModelProvider(this).get(GameViewModel.class);
         UiHelper.setLocale(this);
 
         // We don't want a title bar
@@ -835,6 +842,7 @@ public class Game extends Activity implements SurfaceHolder.Callback,
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        gameViewModel.updatePlayState(UserPlayingData.PlayingState.STOP);
 
         if (controllerHandler != null) {
             InputManager inputManager = (InputManager) getSystemService(Context.INPUT_SERVICE);

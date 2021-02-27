@@ -6,6 +6,7 @@ import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
@@ -13,6 +14,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.rora.phase.ui.viewmodel.GameViewModel;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -21,13 +23,14 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
 
     private BottomNavigationView navView;
 
+    private GameViewModel gameViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        gameViewModel = new ViewModelProvider(this).get(GameViewModel.class);
         navView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
                 .build();
@@ -36,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
         NavigationUI.setupWithNavController(navView, navController);
 
         navController.addOnDestinationChangedListener(this);
+        gameViewModel.resetLocalPlayingData();
     }
 
     @Override
@@ -48,16 +52,31 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
 
     @Override
     public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
+        setBottomNavVisibility(destination);
+        setActionbarVisibility(destination);
+    }
+
+    private void setActionbarVisibility(NavDestination destination) {
         if (destination.getId() == R.id.navigation_home
                 || destination.getId() == R.id.navigation_dashboard
                 || destination.getId() == R.id.navigation_notifications
                 || destination.getId() == R.id.gameDetailFragment) {
-            setBottomNavigationVisibility(VISIBLE);
             getSupportActionBar().hide();
         }
         else {
-            setBottomNavigationVisibility(GONE);
             getSupportActionBar().show();
+        }
+
+    }
+
+    private void setBottomNavVisibility(NavDestination destination) {
+        if (destination.getId() == R.id.navigation_home
+                || destination.getId() == R.id.navigation_dashboard
+                || destination.getId() == R.id.navigation_notifications) {
+            setBottomNavigationVisibility(VISIBLE);
+        }
+        else {
+            setBottomNavigationVisibility(GONE);
         }
     }
 

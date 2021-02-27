@@ -4,18 +4,12 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.rora.phase.model.Game;
-import com.rora.phase.ui.home.GameListFragment;
+import com.rora.phase.ui.game.GameListFragment;
 import com.rora.phase.ui.viewmodel.HomeViewModel;
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class TabPagerAdapter extends FragmentStateAdapter {
 

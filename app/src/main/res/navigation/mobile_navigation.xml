@@ -31,7 +31,7 @@
         tools:layout="@layout/fragment_notifications" />
     <fragment
         android:id="@+id/gameListFragment"
-        android:name="com.rora.phase.ui.home.GameListFragment"
+        android:name="com.rora.phase.ui.game.GameListFragment"
         tools:layout="@layout/fragment_game_list" >
         <action
             android:id="@+id/action_gameListFragment_to_gameDetailFragment"

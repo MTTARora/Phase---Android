@@ -72,7 +72,7 @@
             </intent-filter>
 
         </activity>
-        <activity android:name=".ui.game.LoadingGameActivity"/>
+        <activity android:name=".ui.game.LoadingGameActivity" android:screenOrientation="userLandscape"/>
         <activity
             android:name=".PcView"
             android:configChanges="mcc|mnc|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
@@ -154,6 +154,10 @@
         <service
             android:name=".computers.ComputerManagerService"
             android:label="Computer Management Service" />
+        <service
+            android:name=".utils.services.ComputerService"
+            android:label="Computer Service"
+            android:exported="false"/>
         <service
             android:name=".binding.input.driver.UsbDriverService"
             android:label="Usb Driver Service" />

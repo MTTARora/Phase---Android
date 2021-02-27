@@ -5,8 +5,11 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.gson.Gson;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.User;
+import com.rora.phase.model.UserPlayingData;
+import com.rora.phase.nvstream.http.ComputerDetails;
 import com.rora.phase.utils.DataResultHelper;
 import com.rora.phase.utils.SharedPreferencesHelper;
 import com.rora.phase.utils.network.BaseResponse;
@@ -65,6 +68,8 @@ public class UserRepository {
 
     //---------------------------------------------------------------
 
+
+    //--------------------------------- NETWORK SERVICES -----------------------------------
 
     public void signUp(String email, String password) {
         userServices.signUp(email, password).enqueue(new Callback<BaseResponse>() {
@@ -170,7 +175,6 @@ public class UserRepository {
         });
     }
 
-
     public void getRecommendedGameListData(int page, int pageSize) {
         userServices.getRecommended(page, pageSize).enqueue(new Callback<BaseResponse<List<Game>>>() {
             @Override
@@ -192,7 +196,39 @@ public class UserRepository {
 
     }
 
+    //----------------------------------------------------------------------------------------
+
+
+    //------------------------------------ LOCAL SERVICES ------------------------------------
+
+    public void storeToken(String token) {
+        dbSharedPref.setUserToken(token);
+    }
+
     public boolean isUserLogged() {
         return !dbSharedPref.getUserToken().isEmpty();
     }
+
+    public void saveLocalUserComputer(ComputerDetails data) {
+        dbSharedPref.saveUserComputer((new Gson()).toJson(data));
+    }
+
+    public ComputerDetails getLocalUserComputer() {
+        String rawData = dbSharedPref.getUserComputer();
+        if (rawData.isEmpty())
+            return null;
+
+        return (new Gson()).fromJson(rawData, ComputerDetails.class);
+    }
+
+    public boolean isStopPlaying() {
+        return dbSharedPref.getUserPlayState().equals(UserPlayingData.PlayingState.STOP.id);
+    }
+
+    public void savePlayState(UserPlayingData.PlayingState state) {
+        dbSharedPref.saveUserPlayState(state.id);
+    }
+
+    //----------------------------------------------------------------------------------------
+
 }

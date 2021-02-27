@@ -1,4 +1,4 @@
-package com.rora.phase.ui.home;
+package com.rora.phase.ui.game;
 
 import android.os.Bundle;
 

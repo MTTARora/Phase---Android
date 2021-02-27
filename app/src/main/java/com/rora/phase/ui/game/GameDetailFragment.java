@@ -160,16 +160,18 @@ public class GameDetailFragment extends Fragment {
     }
 
     private void initData() {
-
         gameViewModel.getGameData().observe(getViewLifecycleOwner(), game -> bindData(game));
 
         //STEP 1: Get computer details from server
         gameViewModel.getComputerDetails().observe(getViewLifecycleOwner(), computerDetails -> {
-            //STEP 2: Pass computer data to loadingscreen
+            //STEP 2: Pass computer data to loading screen
             Bundle bundle = new Bundle();
-            bundle.putSerializable("COMPUTER_DATA", computerDetails);
-            NavHostFragment.findNavController(GameDetailFragment.this).navigate(R.id.action_gameDetailFragment_to_loadingGameFragment, bundle);
+            bundle.putSerializable(LoadingGameActivity.COMPUTER_PARAM, computerDetails);
+            Intent intent = new Intent(getContext(), LoadingGameActivity.class);
+            intent.putExtra("LoadingGameActivityBundle", bundle);
 
+            getActivity().startActivityForResult(intent, 1);
+            //NavHostFragment.findNavController(GameDetailFragment.this).navigate(R.id.action_gameDetailFragment_to_loadingGameFragment, bundle);
         });
 
         gameViewModel.getGame(gameId);

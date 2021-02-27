@@ -1,5 +1,6 @@
 package com.rora.phase.repository;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -9,6 +10,7 @@ import com.rora.phase.model.Game;
 import com.rora.phase.model.Tag;
 import com.rora.phase.nvstream.http.ComputerDetails;
 import com.rora.phase.utils.DataResultHelper;
+import com.rora.phase.utils.SharedPreferencesHelper;
 import com.rora.phase.utils.network.BaseResponse;
 import com.rora.phase.utils.network.PhaseService;
 import com.rora.phase.utils.network.PhaseServiceHelper;
@@ -26,6 +28,7 @@ public class GameRepository {
     private PhaseService gameServices;
     private PhaseService tagServices;
     private UserPhaseService userServices;
+
     private MutableLiveData<List<Game>> newGameList, recentPlayList, editorsChoiceList, hotGameList, trendingList, gameByCategoryList, gamesByPayTypeList;
     private MutableLiveData<List<Tag>> categoryList;
     private MutableLiveData<ComputerDetails> computer;
@@ -306,7 +309,7 @@ public class GameRepository {
 
     public void getComputerIPData() {
         ComputerDetails computerDetails = new ComputerDetails();
-        computerDetails.manualAddress = "171.247.39.92";
+        computerDetails.manualAddress = "171.247.14.213";
         computer.postValue(computerDetails);
         //gameServices.getComputerIP().enqueue(new Callback<BaseResponse<String>>() {
         //    @Override
@@ -356,4 +359,7 @@ public class GameRepository {
         });
     }
 
+    public void sendPinToHost(String pinStr) {
+
+    }
 }

@@ -202,7 +202,7 @@ public class ComputerManagerService extends Service {
             // Set the listener
             ComputerManagerService.this.listener = listener;
 
-            // Start mDNS autodiscovery too
+            // Start mDNS auto discovery too
             discoveryBinder.startDiscovery(MDNS_QUERY_PERIOD_MS);
 
             synchronized (pollingTuples) {

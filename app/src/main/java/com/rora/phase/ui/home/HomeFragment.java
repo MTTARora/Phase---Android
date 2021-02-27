@@ -33,8 +33,8 @@ import com.rora.phase.ui.adapter.GameInfoRecyclerViewAdapter;
 import com.rora.phase.ui.adapter.GameMinInfoRecyclerViewAdapter;
 import com.rora.phase.ui.adapter.TabPagerAdapter;
 import com.rora.phase.ui.game.GameDetailFragment;
+import com.rora.phase.ui.game.GameListFragment;
 import com.rora.phase.ui.viewmodel.HomeViewModel;
-import com.rora.phase.utils.callback.OnItemSelectedListener;
 import com.rora.phase.utils.ui.BaseRVAdapter;
 import com.rora.phase.utils.ui.CustomViewPagerTransformer;
 import com.rora.phase.utils.ui.HorizontalMarginItemDecoration;
@@ -83,7 +83,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         Toolbar toolbar = view.findViewById(R.id.toolbar);
 
         NavigationUI.setupWithNavController( toolbar, navController, appBarConfiguration);
-        toolbar.setTitle("Phase");
+        toolbar.setTitle(getResources().getString(R.string.app_label));
         toolbar.setTitleTextColor(getActivity().getColor(R.color.colorPrimary));
     }
 
@@ -137,34 +137,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
             refreshLayout.setRefreshing(false);
         });
 
-        bannerAdapter = new BannerVPAdapter();
-        vpBanner.setAdapter(bannerAdapter);
-        vpBanner.setOffscreenPageLimit(2);
-        vpBanner.setPageTransformer(new CustomViewPagerTransformer());
-        vpBanner.addItemDecoration(new HorizontalMarginItemDecoration());
-
-        List<Bundle> params = new ArrayList<>();
-        if (homeViewModel.isUserLogged()) {
-            Bundle bundleTab1 = new Bundle();
-            bundleTab1.putString(TabPagerAdapter.TAB_TITLE, getResources().getString(R.string.recommended_title));
-            bundleTab1.putSerializable(GameListFragment.LIST_TYPE_PARAM, HomeViewModel.GameListType.RECOMMENDED);
-            params.add(bundleTab1);
-        }
-
-        Bundle bundleTab2 = new Bundle();
-        bundleTab2.putString(TabPagerAdapter.TAB_TITLE, getResources().getString(R.string.free_to_play_title));
-        bundleTab2.putSerializable(GameListFragment.LIST_TYPE_PARAM, HomeViewModel.GameListType.BY_PAY_TYPE);
-        bundleTab2.putString(GameListFragment.KEY_FILTER_PARAM, PayTypeEnum.FREE.toString());
-        params.add(bundleTab2);
-
-        otherGamesAdapter = new TabPagerAdapter(this, params);
-        vpOtherGames.setAdapter(otherGamesAdapter);
-        new TabLayoutMediator(tbOtherGames, vpOtherGames, ((tab, position) -> tab.setText(params.get(position).getString(TabPagerAdapter.TAB_TITLE)))).attach();
-        ViewGroup.LayoutParams layoutParams = vpOtherGames.getLayoutParams();
-
-        int height = ((AppCompatActivity)getContext()).getWindowManager().getDefaultDisplay().getHeight();
-        layoutParams.height = height - ((AppCompatActivity) getContext()).getSupportActionBar().getHeight() - tbOtherGames.getHeight() - 300;
-        vpOtherGames.setLayoutParams(layoutParams);
+        setupBannerView();
 
         setupGameRecyclerView(rclvHotGame, new GameMinInfoRecyclerViewAdapter(GameMinInfoRecyclerViewAdapter.VIEW_TYPE_EXPANDED, 0.8), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         setupGameRecyclerView(rclvNewGame, new GameInfoRecyclerViewAdapter(GameInfoRecyclerViewAdapter.VIEW_TYPE_NORMAL, 0.75), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
@@ -237,8 +210,39 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         homeViewModel.getGamesByType(HomeViewModel.GameListType.TRENDING, null);
     }
 
-    private void setupGameRecyclerView(RecyclerView view, BaseRVAdapter adapter, RecyclerView.LayoutManager layoutManager) {
+    private void setupBannerView() {
+        bannerAdapter = new BannerVPAdapter();
+        vpBanner.setAdapter(bannerAdapter);
+        vpBanner.setOffscreenPageLimit(2);
+        vpBanner.setPageTransformer(new CustomViewPagerTransformer());
+        vpBanner.addItemDecoration(new HorizontalMarginItemDecoration());
 
+        List<Bundle> params = new ArrayList<>();
+        if (homeViewModel.isUserLogged()) {
+            Bundle bundleTab1 = new Bundle();
+            bundleTab1.putString(TabPagerAdapter.TAB_TITLE, getResources().getString(R.string.recommended_title));
+            bundleTab1.putSerializable(GameListFragment.LIST_TYPE_PARAM, HomeViewModel.GameListType.RECOMMENDED);
+            params.add(bundleTab1);
+        }
+
+        Bundle bundleTab2 = new Bundle();
+        bundleTab2.putString(TabPagerAdapter.TAB_TITLE, getResources().getString(R.string.free_to_play_title));
+        bundleTab2.putSerializable(GameListFragment.LIST_TYPE_PARAM, HomeViewModel.GameListType.BY_PAY_TYPE);
+        bundleTab2.putString(GameListFragment.KEY_FILTER_PARAM, PayTypeEnum.FREE.toString());
+        params.add(bundleTab2);
+        otherGamesAdapter = new TabPagerAdapter(this, params);
+        vpOtherGames.setAdapter(otherGamesAdapter);
+
+        new TabLayoutMediator(tbOtherGames, vpOtherGames, ((tab, position) -> tab.setText(params.get(position).getString(TabPagerAdapter.TAB_TITLE)))).attach();
+        ViewGroup.LayoutParams layoutParams = vpOtherGames.getLayoutParams();
+
+        //Calculate size
+        int height = ((AppCompatActivity)getContext()).getWindowManager().getDefaultDisplay().getHeight();
+        layoutParams.height = height - ((AppCompatActivity) getContext()).getSupportActionBar().getHeight() - tbOtherGames.getHeight() - 300;
+        vpOtherGames.setLayoutParams(layoutParams);
+    }
+
+    private void setupGameRecyclerView(RecyclerView view, BaseRVAdapter adapter, RecyclerView.LayoutManager layoutManager) {
         view.setAdapter(adapter);
         view.setLayoutManager(layoutManager);
         view.setHasFixedSize(true);
@@ -246,7 +250,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         adapter.setOnItemSelectedListener(selectedItemId -> {
             goToGameDetails(selectedItemId);
         });
-
     }
 
     private void setupRecyclerView(RecyclerView view, RecyclerView.Adapter adapter, RecyclerView.LayoutManager layoutManager) {

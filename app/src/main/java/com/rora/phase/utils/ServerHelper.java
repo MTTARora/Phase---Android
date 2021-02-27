@@ -15,6 +15,7 @@ import com.rora.phase.nvstream.http.GfeHttpResponseException;
 import com.rora.phase.nvstream.http.NvApp;
 import com.rora.phase.nvstream.http.NvHTTP;
 import com.rora.phase.nvstream.jni.MoonBridge;
+import com.rora.phase.utils.services.ComputerService;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -69,8 +70,38 @@ public class ServerHelper {
         return intent;
     }
 
+    public static Intent createStartIntent(Activity parent, NvApp app, ComputerDetails computer,
+                                           ComputerService.ComputerManagerBinder managerBinder) {
+        Intent intent = new Intent(parent, Game.class);
+        intent.putExtra(Game.EXTRA_HOST, getCurrentAddressFromComputer(computer));
+        intent.putExtra(Game.EXTRA_APP_NAME, app.getAppName());
+        intent.putExtra(Game.EXTRA_APP_ID, app.getAppId());
+        intent.putExtra(Game.EXTRA_APP_HDR, app.isHdrSupported());
+        intent.putExtra(Game.EXTRA_UNIQUEID, managerBinder.getUniqueId());
+        intent.putExtra(Game.EXTRA_PC_UUID, computer.uuid);
+        intent.putExtra(Game.EXTRA_PC_NAME, computer.name);
+        try {
+            if (computer.serverCert != null) {
+                intent.putExtra(Game.EXTRA_SERVER_CERT, computer.serverCert.getEncoded());
+            }
+        } catch (CertificateEncodingException e) {
+            e.printStackTrace();
+        }
+        return intent;
+    }
+
     public static void doStart(Activity parent, NvApp app, ComputerDetails computer,
                                ComputerManagerService.ComputerManagerBinder managerBinder) {
+        if (computer.state == ComputerDetails.State.OFFLINE ||
+                ServerHelper.getCurrentAddressFromComputer(computer) == null) {
+            Toast.makeText(parent, parent.getResources().getString(R.string.pair_pc_offline), Toast.LENGTH_SHORT).show();
+            return;
+        }
+        parent.startActivity(createStartIntent(parent, app, computer, managerBinder));
+    }
+
+    public static void doStart(Activity parent, NvApp app, ComputerDetails computer,
+                               ComputerService.ComputerManagerBinder managerBinder) {
         if (computer.state == ComputerDetails.State.OFFLINE ||
                 ServerHelper.getCurrentAddressFromComputer(computer) == null) {
             Toast.makeText(parent, parent.getResources().getString(R.string.pair_pc_offline), Toast.LENGTH_SHORT).show();

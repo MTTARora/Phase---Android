@@ -241,5 +241,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="screenshot_title">Screenshot</string>
     <string name="series_title">Games in the Series</string>
+    <string name="require_login_msg">Sign in now to play</string>
 
 </resources>

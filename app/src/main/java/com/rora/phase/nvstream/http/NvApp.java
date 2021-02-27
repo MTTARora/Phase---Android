@@ -59,6 +59,10 @@ public class NvApp {
         return this.initialized;
     }
 
+    public static NvApp initRemoteApp() {
+        return new NvApp("mstsc.exe", 13906176, false);
+    }
+
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder();

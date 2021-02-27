@@ -1,5 +1,7 @@
 package com.rora.phase.nvstream.http;
 
+import com.google.gson.annotations.Expose;
+
 import java.io.Serializable;
 import java.security.cert.X509Certificate;
 
