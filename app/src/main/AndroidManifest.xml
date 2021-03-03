@@ -155,7 +155,7 @@
             android:name=".computers.ComputerManagerService"
             android:label="Computer Management Service" />
         <service
-            android:name=".utils.services.ComputerService"
+            android:name=".utils.services.PlayServices"
             android:label="Computer Service"
             android:exported="false"/>
         <service

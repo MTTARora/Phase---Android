@@ -15,7 +15,7 @@ import com.rora.phase.nvstream.http.GfeHttpResponseException;
 import com.rora.phase.nvstream.http.NvApp;
 import com.rora.phase.nvstream.http.NvHTTP;
 import com.rora.phase.nvstream.jni.MoonBridge;
-import com.rora.phase.utils.services.ComputerService;
+import com.rora.phase.utils.services.PlayServices;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -71,7 +71,7 @@ public class ServerHelper {
     }
 
     public static Intent createStartIntent(Activity parent, NvApp app, ComputerDetails computer,
-                                           ComputerService.ComputerManagerBinder managerBinder) {
+                                           PlayServices.ComputerManagerBinder managerBinder) {
         Intent intent = new Intent(parent, Game.class);
         intent.putExtra(Game.EXTRA_HOST, getCurrentAddressFromComputer(computer));
         intent.putExtra(Game.EXTRA_APP_NAME, app.getAppName());
@@ -101,7 +101,7 @@ public class ServerHelper {
     }
 
     public static void doStart(Activity parent, NvApp app, ComputerDetails computer,
-                               ComputerService.ComputerManagerBinder managerBinder) {
+                               PlayServices.ComputerManagerBinder managerBinder) {
         if (computer.state == ComputerDetails.State.OFFLINE ||
                 ServerHelper.getCurrentAddressFromComputer(computer) == null) {
             Toast.makeText(parent, parent.getResources().getString(R.string.pair_pc_offline), Toast.LENGTH_SHORT).show();

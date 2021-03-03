@@ -309,7 +309,7 @@ public class GameRepository {
 
     public void getComputerIPData() {
         ComputerDetails computerDetails = new ComputerDetails();
-        computerDetails.manualAddress = "171.247.14.213";
+        computerDetails.manualAddress = "115.75.241.50";
         computer.postValue(computerDetails);
         //gameServices.getComputerIP().enqueue(new Callback<BaseResponse<String>>() {
         //    @Override

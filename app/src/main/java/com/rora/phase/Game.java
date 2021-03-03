@@ -2,6 +2,7 @@ package com.rora.phase;
 
 
 import com.rora.phase.binding.PlatformBinding;
+import com.rora.phase.binding.crypto.AndroidCryptoProvider;
 import com.rora.phase.binding.input.ControllerHandler;
 import com.rora.phase.binding.input.KeyboardTranslator;
 import com.rora.phase.binding.input.capture.InputCaptureManager;
@@ -29,6 +30,7 @@ import com.rora.phase.preferences.GlPreferences;
 import com.rora.phase.preferences.PreferenceConfiguration;
 import com.rora.phase.ui.GameGestures;
 import com.rora.phase.ui.StreamView;
+import com.rora.phase.ui.game.LoadingGameActivity;
 import com.rora.phase.ui.viewmodel.GameViewModel;
 import com.rora.phase.utils.Dialog;
 import com.rora.phase.utils.NetHelper;
@@ -36,6 +38,7 @@ import com.rora.phase.utils.ServerHelper;
 import com.rora.phase.utils.ShortcutHelper;
 import com.rora.phase.utils.SpinnerDialog;
 import com.rora.phase.utils.UiHelper;
+import com.rora.phase.utils.services.PlayServices;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -162,6 +165,27 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
             connectedToUsbDriverService = false;
+        }
+    };
+
+    private PlayServices.ComputerManagerBinder managerBinder;
+    private final ServiceConnection serviceConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder binder) {
+            final PlayServices.ComputerManagerBinder localBinder = ((PlayServices.ComputerManagerBinder)binder);
+
+            // Wait in a separate thread to avoid stalling the UI
+            new Thread() {
+                @Override
+                public void run() {
+                    // Wait for the binder to be ready
+                    //localBinder.waitForReady();
+                    managerBinder = localBinder;
+                }
+            }.start();
+        }
+
+        public void onServiceDisconnected(ComponentName className) {
+            managerBinder = null;
         }
     };
 
@@ -533,6 +557,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
             return;
         }
 
+        bindService(new Intent(this, PlayServices.class), serviceConnection, Service.BIND_AUTO_CREATE);
         // The connection will be started when the surface gets created
         streamView.getHolder().addCallback(this);
     }
@@ -842,7 +867,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        gameViewModel.updatePlayState(UserPlayingData.PlayingState.STOP);
+        managerBinder.updatePlayState(UserPlayingData.PlayingState.STOP);
 
         if (controllerHandler != null) {
             InputManager inputManager = (InputManager) getSystemService(Context.INPUT_SERVICE);

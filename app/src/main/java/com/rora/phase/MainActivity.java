@@ -1,5 +1,6 @@
 package com.rora.phase;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -15,6 +16,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.rora.phase.ui.viewmodel.GameViewModel;
+import com.rora.phase.utils.services.PlayServices;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -39,7 +41,9 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
         NavigationUI.setupWithNavController(navView, navController);
 
         navController.addOnDestinationChangedListener(this);
-        gameViewModel.resetLocalPlayingData();
+        //gameViewModel.resetLocalPlayingData();
+
+        startService(new Intent(this, PlayServices.class));
     }
 
     @Override

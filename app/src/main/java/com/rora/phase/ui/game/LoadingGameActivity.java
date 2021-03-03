@@ -26,8 +26,7 @@ import com.rora.phase.ui.viewmodel.GameViewModel;
 import com.rora.phase.utils.Dialog;
 import com.rora.phase.utils.UiHelper;
 import com.rora.phase.utils.callback.PlayGameProgressCallBack;
-import com.rora.phase.utils.services.ComputerService;
-import com.rora.phase.utils.ui.ViewHelper;
+import com.rora.phase.utils.services.PlayServices;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -37,12 +36,12 @@ public class LoadingGameActivity extends FragmentActivity {
     private ProgressBar pbLoadingProgress;
 
     private GameViewModel gameViewModel;
-    private ComputerService.ComputerManagerBinder managerBinder;
     private boolean inForeground, completeOnCreateCalled;
+    private PlayServices.ComputerManagerBinder managerBinder;
 
     private final ServiceConnection serviceConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder binder) {
-            final ComputerService.ComputerManagerBinder localBinder = ((ComputerService.ComputerManagerBinder)binder);
+            final PlayServices.ComputerManagerBinder localBinder = ((PlayServices.ComputerManagerBinder)binder);
 
             // Wait in a separate thread to avoid stalling the UI
             new Thread() {
@@ -57,11 +56,10 @@ public class LoadingGameActivity extends FragmentActivity {
                     // Force a keypair to be generated early to avoid discovery delays
                     new AndroidCryptoProvider(LoadingGameActivity.this).getClientCertificate();
 
-
-                    if (gameViewModel.isStopPlaying())
+                    if (managerBinder.isStopPlaying())
                         stopConnect();
                     else
-                        startAddThread();
+                        startConnect();
                 }
             }.start();
         }
@@ -72,7 +70,6 @@ public class LoadingGameActivity extends FragmentActivity {
     };
 
     public static final String COMPUTER_PARAM = "COMPUTER_PARAM";
-    public static final String GAME_ID_PARAM = "GAME_ID_PARAM";
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -178,7 +175,7 @@ public class LoadingGameActivity extends FragmentActivity {
         UiHelper.setLocale(this);
 
         // Bind to the computer manager service
-        bindService(new Intent(this, ComputerService.class), serviceConnection, Service.BIND_AUTO_CREATE);
+        bindService(new Intent(this, PlayServices.class), serviceConnection, Service.BIND_AUTO_CREATE);
 
         initializeViews();
     }
@@ -190,16 +187,12 @@ public class LoadingGameActivity extends FragmentActivity {
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
     }
 
-    private void startAddThread() {
+    private void startConnect() {
         Bundle bundle = getIntent().getBundleExtra("LoadingGameActivityBundle");
         ComputerDetails computer = (ComputerDetails) bundle.getSerializable(COMPUTER_PARAM);
 
-        startConnect(computer);
-    }
-
-    private void startConnect(ComputerDetails computer) {
         Thread connectThread = new Thread(() -> {
-            gameViewModel.startConnectProgress(LoadingGameActivity.this, managerBinder, computer, playProgressCallBack);
+            managerBinder.startConnectProgress(this, computer, playProgressCallBack);
         });
         connectThread.setName("UI - LoadingGameActivity");
         connectThread.start();
@@ -207,7 +200,7 @@ public class LoadingGameActivity extends FragmentActivity {
 
     private void stopConnect() {
         new Thread(() -> {
-            gameViewModel.stopConnect(managerBinder, playProgressCallBack);
+            managerBinder.stopConnect(playProgressCallBack);
         }).start();
         unbindService(serviceConnection);
     }
