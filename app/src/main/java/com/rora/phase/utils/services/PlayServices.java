@@ -59,10 +59,10 @@ public class PlayServices extends Service {
 
     private UserPlayingData.PlayingState state = UserPlayingData.PlayingState.IDLE;
     private PollingTuple pollingTuple;
-    private boolean pollingActive = false;
     private IdentityManager idManager;
-    private ComputerManagerListener listener = null;
+    private PlayGameProgressCallBack listener = null;
     private final Lock defaultNetworkLock = new ReentrantLock();
+    GameRepository gameRepository;
 
     private static final int FAST_POLL_TIMEOUT = 1000;
     private static final int OFFLINE_POLL_TRIES = 5;
@@ -106,6 +106,7 @@ public class PlayServices extends Service {
 
         // Lookup or generate this device's UID
         idManager = new IdentityManager(this);
+        gameRepository = new GameRepository();
     }
 
     @Override
@@ -172,7 +173,7 @@ public class PlayServices extends Service {
 
     //====================== PLAYING GAME STEPS =========================
 
-    /** Start the progress after getting ip from STEP 1 */
+    /** Start the progress after getting ip and ports from STEP 1 */
     public void startConnectProgress(Activity activity, ComputerDetails computer, PlayGameProgressCallBack callBack) {
         try {
             //STEP 2: Add pc
@@ -256,7 +257,6 @@ public class PlayServices extends Service {
 
             //STEP 3.2: SEND PIN TO HOST
             LimeLog.info("Pairing - Waiting for pin confirmation: " + pinStr);
-            GameRepository gameRepository = new GameRepository();
             gameRepository.sendPinToHost(pinStr);
 
             PairingManager pm = httpConn.getPairingManager();
@@ -315,48 +315,21 @@ public class PlayServices extends Service {
      * @return An error msg if failed
      * */
     public void stopConnect(PlayGameProgressCallBack playProgressCallBack) {
-        NvHTTP httpConn;
-        String err = null;
+        playProgressCallBack.onStopConnect(false);
         if (pollingTuple == null || pollingTuple.computer == null) {
-            err = "UnPair - Error: Couldn't find local data";
-            LimeLog.info(err);
+            LimeLog.info("Stop connect - Error: Couldn't find local data");
             return;
         }
 
-        if (pollingTuple.computer.state == ComputerDetails.State.OFFLINE || ServerHelper.getCurrentAddressFromComputer(pollingTuple.computer) == null)
-            err = getApplication().getResources().getString(R.string.error_pc_offline);
+        state = UserPlayingData.PlayingState.IDLE;
+        pollingTuple = null;
+        listener = null;
+        unbindService(discoveryServiceConnection);
+        bindService(new Intent(this, DiscoveryService.class), discoveryServiceConnection, Service.BIND_AUTO_CREATE);
+        gameRepository.stopPlaying();
 
-        if (err == null) {
-            try {
-                httpConn = new NvHTTP(ServerHelper.getCurrentAddressFromComputer(pollingTuple.computer),
-                        binder.getUniqueId(),
-                        pollingTuple.computer.serverCert,
-                        PlatformBinding.getCryptoProvider(getApplication().getApplicationContext()));
-                if (httpConn.getPairState() == PairingManager.PairState.PAIRED) {
-                    httpConn.unpair();
-                    err = httpConn.getPairState() == PairingManager.PairState.NOT_PAIRED ? null : getApplication().getResources().getString(R.string.unpair_fail);
-                    if (err == null) {
-                        LimeLog.info("Stop connect - Success");
-                        if (playProgressCallBack != null)
-                            playProgressCallBack.onStopConnect(true);
-                        return;
-                    }
-                }
-                else
-                    err = getApplication().getResources().getString(R.string.unpair_error);
-            } catch (UnknownHostException e) {
-                err = getApplication().getResources().getString(R.string.error_unknown_host);
-            } catch (FileNotFoundException e) {
-                err = getApplication().getResources().getString(R.string.error_404);
-            } catch (XmlPullParserException | IOException e) {
-                err = e.getMessage();
-                e.printStackTrace();
-            }
-        }
-
-        LimeLog.info("UnPair - " + (err == null ? "Success" : ("Error: " + err)));
-        if (err != null && playProgressCallBack != null)
-            playProgressCallBack.onError(err);
+        LimeLog.info("Stop connect - Success");
+        playProgressCallBack.onStopConnect(true);
     }
 
     //===================================================================
@@ -454,6 +427,15 @@ public class PlayServices extends Service {
         }
     }
 
+    private boolean isStopPlaying() {
+        return state == UserPlayingData.PlayingState.STOP;
+    }
+
+    private void updatePlayState(UserPlayingData.PlayingState state) {
+        this.state = state;
+    }
+
+
     //--------------------------------- Classes -------------------------------
 
     public class ComputerManagerBinder extends Binder {
@@ -466,14 +448,11 @@ public class PlayServices extends Service {
             PlayServices.this.stopConnect(playProgressCallBack);
         }
 
-        public void startPolling(ComputerManagerListener listener) {
+        public void startPolling(PlayGameProgressCallBack listener) {
             if (pollingTuple == null)
                 return;
 
-            // Polling is active
-            pollingActive = true;
-
-            // Set the listener
+            LimeLog.info("Start updating computer");
             PlayServices.this.listener = listener;
 
             // Start mDNS auto discovery too
@@ -486,13 +465,14 @@ public class PlayServices extends Service {
             }
 
             // Report this computer initially
-            listener.notifyComputerUpdated(pollingTuple.computer);
+            listener.onComputerUpdated(pollingTuple.computer);
+        }
 
-            // This polling thread might already be there
-            if (pollingTuple.thread == null) {
-                pollingTuple.thread = computerServices.createPollingThread(pollingTuple);
-                pollingTuple.thread.start();
-            }
+        public void stopPolling() {
+            LimeLog.info("Stop polling/updating computer");
+
+            // Just call the unbind handler to cleanup
+            PlayServices.this.onUnbind(null);
         }
 
         public void waitForReady() {
@@ -507,11 +487,6 @@ public class PlayServices extends Service {
             }
         }
 
-        public void stopPolling() {
-            // Just call the unbind handler to cleanup
-            PlayServices.this.onUnbind(null);
-        }
-
         public String getUniqueId() {
             return idManager.getUniqueId();
         }
@@ -524,20 +499,13 @@ public class PlayServices extends Service {
             PlayServices.this.updatePlayState(state);
         }
 
-        //public ComputerDetails getComputer() {
-        //    if (pollingTuple == null)
-        //        return null;
-        //
-        //    return pollingTuple.computer;
-        //}
-    }
+        public int getHttpsPort() {
+            return PlayServices.this.pollingTuple.computer.httpsPort;
+        }
 
-    private boolean isStopPlaying() {
-        return state == UserPlayingData.PlayingState.STOP;
-    }
-
-    private void updatePlayState(UserPlayingData.PlayingState state) {
-        this.state = state;
+        public int getHttpPort() {
+            return PlayServices.this.pollingTuple.computer.httpPort;
+        }
     }
 
     private class ComputerServices {
@@ -550,16 +518,17 @@ public class PlayServices extends Service {
             try {
                 // We cannot use runPoll() here because it will attempt to persist the state of the machine
                 // in the database, which would be bad because we don't have our pinned cert loaded yet.
-                if (pollComputer(fakeDetails)) {
+                pollingTuple = new PollingTuple(fakeDetails, null);
+                if (pollComputer(pollingTuple.computer)) {
                     // Poll again, possibly with the pinned cert, to get accurate pairing information.
-                    runPoll(fakeDetails, true, 0);
+                    runPoll(pollingTuple.computer, true, 0);
 
                     // If the machine is reachable, it was successful
-                    if (fakeDetails.state == ComputerDetails.State.ONLINE) {
-                        LimeLog.info("Adding PC - New PC ("+fakeDetails.name+") is UUID "+fakeDetails.uuid);
+                    if (pollingTuple.computer.state == ComputerDetails.State.ONLINE) {
+                        LimeLog.info("Adding PC - New PC ("+pollingTuple.computer.name+") is UUID "+pollingTuple.computer.uuid);
 
                         // Start a polling thread for this machine
-                        addTuple(fakeDetails);
+                        startTupleThread();
                         return true;
                     }
                     else return false;
@@ -656,7 +625,7 @@ public class PlayServices extends Service {
 
             // Don't call the listener if this is a failed lookup of a new PC
             if ((!newPc || details.state == ComputerDetails.State.ONLINE) && listener != null)
-                listener.notifyComputerUpdated(details);
+                listener.onComputerUpdated(details);
 
             return true;
         }
@@ -800,15 +769,9 @@ public class PlayServices extends Service {
 
         //------------------------------------------------------------
 
-        private void addTuple(ComputerDetails details) {
-            PollingTuple tuple = new PollingTuple(details, null);
-            if (pollingActive) {
-                tuple.thread = createPollingThread(tuple);
-            }
-            pollingTuple = tuple;
-            if (tuple.thread != null) {
-                tuple.thread.start();
-            }
+        private void startTupleThread() {
+            pollingTuple.thread = createPollingThread(pollingTuple);
+            pollingTuple.thread.start();
         }
 
         private Thread createPollingThread(final PollingTuple tuple) {
@@ -817,7 +780,7 @@ public class PlayServices extends Service {
                 public void run() {
 
                     int offlineCount = 0;
-                    while (!isInterrupted() && pollingActive && tuple.thread == this) {
+                    while (!isInterrupted() && (state == UserPlayingData.PlayingState.IN_PROGRESS || state == UserPlayingData.PlayingState.PLAYING)) {
                         try {
                             // Only allow one request to the machine at a time
                             synchronized (tuple.networkLock) {
@@ -834,6 +797,7 @@ public class PlayServices extends Service {
                             // Wait until the next polling interval
                             Thread.sleep(SERVERINFO_POLLING_PERIOD_MS);
                         } catch (InterruptedException e) {
+                            LimeLog.info("Polling - Err: " + e.getMessage());
                             break;
                         }
                     }

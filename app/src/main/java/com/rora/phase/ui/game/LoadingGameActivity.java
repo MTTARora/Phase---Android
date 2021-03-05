@@ -35,8 +35,7 @@ public class LoadingGameActivity extends FragmentActivity {
 
     private ProgressBar pbLoadingProgress;
 
-    private GameViewModel gameViewModel;
-    private boolean inForeground, completeOnCreateCalled;
+    private boolean completeOnCreateCalled;
     private PlayServices.ComputerManagerBinder managerBinder;
 
     private final ServiceConnection serviceConnection = new ServiceConnection() {
@@ -56,9 +55,7 @@ public class LoadingGameActivity extends FragmentActivity {
                     // Force a keypair to be generated early to avoid discovery delays
                     new AndroidCryptoProvider(LoadingGameActivity.this).getClientCertificate();
 
-                    if (managerBinder.isStopPlaying())
-                        stopConnect();
-                    else
+                    if (!managerBinder.isStopPlaying())
                         startConnect();
                 }
             }.start();
@@ -93,16 +90,12 @@ public class LoadingGameActivity extends FragmentActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading_game);
-        gameViewModel = new ViewModelProvider(this).get(GameViewModel.class);
-
-        // Assume we're in the foreground when created to avoid a race between binding to CMS and onResume()
-        inForeground = true;
 
         pbLoadingProgress = findViewById(R.id.loading_game_pb);
 
         // Create a GLSurfaceView to fetch GLRenderer unless we have a cached result already.
         final GlPreferences glPrefs = GlPreferences.readPreferences(this);
-        if (!gameViewModel.isStopPlaying() && !glPrefs.savedFingerprint.equals(Build.FINGERPRINT) || glPrefs.glRenderer.isEmpty()) {
+        if (!glPrefs.savedFingerprint.equals(Build.FINGERPRINT) || glPrefs.glRenderer.isEmpty()) {
             GLSurfaceView surfaceView = new GLSurfaceView(this);
             surfaceView.setRenderer(new GLSurfaceView.Renderer() {
                 @Override
@@ -134,28 +127,12 @@ public class LoadingGameActivity extends FragmentActivity {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-
-        // Display a decoder crash notification if we've returned after a crash
-        UiHelper.showDecoderCrashDialog(this);
-
-        inForeground = true;
-        startComputerUpdates();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        inForeground = false;
-        stopComputerUpdates();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Dialog.closeDialogs();
+    protected void onRestart() {
+        super.onRestart();
+        if (managerBinder != null) {
+            pbLoadingProgress.setMax(1);
+            managerBinder.stopConnect(playProgressCallBack);
+        }
     }
 
     @Override
@@ -199,46 +176,8 @@ public class LoadingGameActivity extends FragmentActivity {
     }
 
     private void stopConnect() {
-        new Thread(() -> {
-            managerBinder.stopConnect(playProgressCallBack);
-        }).start();
+        new Thread(() -> managerBinder.stopConnect(playProgressCallBack)).start();
         unbindService(serviceConnection);
-    }
-
-    private void startComputerUpdates() {
-        LimeLog.info("Start updating computer");
-        if (managerBinder == null || !inForeground)
-            return;
-
-        managerBinder.startPolling(details -> {
-            // The PC is unreachable now, quit the activity
-            if (details.state == ComputerDetails.State.OFFLINE) {
-                LoadingGameActivity.this.runOnUiThread(() -> {
-                    LimeLog.info(getResources().getString(R.string.lost_connection) + " with " + details.toString());
-                    finish();
-                });
-
-                return;
-            }
-
-            // Close immediately if the PC is no longer paired
-            if (details.state == ComputerDetails.State.ONLINE && details.pairState != PairingManager.PairState.PAIRED) {
-                LoadingGameActivity.this.runOnUiThread(() -> {
-                    LimeLog.info(getResources().getString(R.string.scut_not_paired) + " with " + details.toString());
-                    finish();
-                });
-
-                return;
-            }
-        });
-    }
-
-    private void stopComputerUpdates() {
-        if (managerBinder == null)
-            return;
-
-        LimeLog.info("Stop updating computer");
-        managerBinder.stopPolling();
     }
 
     // HANDLE PLAY PROGRESS
@@ -259,9 +198,16 @@ public class LoadingGameActivity extends FragmentActivity {
         }
 
         @Override
+        public void onComputerUpdated(ComputerDetails computer) {
+
+        }
+
+        @Override
         public void onStopConnect(boolean isDone) {
-            stopComputerUpdates();
-            LoadingGameActivity.this.finish();
+            if (isDone) {
+                pbLoadingProgress.setProgress(1);
+                LoadingGameActivity.this.finish();
+            }
         }
 
         @Override
