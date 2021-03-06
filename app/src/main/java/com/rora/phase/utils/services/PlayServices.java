@@ -346,7 +346,7 @@ public class PlayServices extends Service {
 
         if (!wrongSiteLocal)
             // Run the test before dismissing the spinner because it can take a few seconds.
-            portTestResult = MoonBridge.testClientConnectivity(ServerHelper.CONNECTION_TEST_SERVER, 443,MoonBridge.ML_PORT_FLAG_TCP_57984 | MoonBridge.ML_PORT_FLAG_TCP_57989);
+            portTestResult = MoonBridge.testClientConnectivity(ServerHelper.CONNECTION_TEST_SERVER, 443,MoonBridge.ML_PORT_FLAG_TCP_47984 | MoonBridge.ML_PORT_FLAG_TCP_47989);
         else
             // Don't bother with the test if we succeeded or the IP address was bogus
             portTestResult = MoonBridge.ML_TEST_RESULT_INCONCLUSIVE;
@@ -495,17 +495,6 @@ public class PlayServices extends Service {
             return  PlayServices.this.isStopPlaying();
         }
 
-        public void updatePlayState(UserPlayingData.PlayingState state) {
-            PlayServices.this.updatePlayState(state);
-        }
-
-        public int getHttpsPort() {
-            return PlayServices.this.pollingTuple.computer.httpsPort;
-        }
-
-        public int getHttpPort() {
-            return PlayServices.this.pollingTuple.computer.httpPort;
-        }
     }
 
     private class ComputerServices {
