@@ -164,6 +164,10 @@ public class GameDetailFragment extends Fragment {
 
         //STEP 1: Get computer details from server
         gameViewModel.getComputerDetails().observe(getViewLifecycleOwner(), computerDetails -> {
+            if (computerDetails == null) {
+                Dialog.displayDialog(getActivity(), getResources().getString(R.string.err), getResources().getString(R.string.undetected_error), true);
+                return;
+            }
             //STEP 2: Pass computer data to loading screen
             Bundle bundle = new Bundle();
             bundle.putSerializable(LoadingGameActivity.COMPUTER_PARAM, computerDetails);

@@ -1,6 +1,7 @@
 package com.rora.phase.nvstream.http;
 
 import com.google.gson.annotations.Expose;
+import com.rora.phase.model.Host;
 
 import java.io.Serializable;
 import java.security.cert.X509Certificate;
@@ -39,6 +40,12 @@ public class ComputerDetails implements Serializable {
     public ComputerDetails(ComputerDetails details) {
         // Copy details from the other computer
         update(details);
+    }
+
+    public ComputerDetails(Host host) {
+        this.manualAddress = host.getPublicIP();
+        this.httpsPort1 = host.getPort();
+        state = State.UNKNOWN;
     }
 
     public void update(ComputerDetails details) {

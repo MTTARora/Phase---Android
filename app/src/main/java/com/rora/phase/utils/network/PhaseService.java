@@ -2,6 +2,7 @@ package com.rora.phase.utils.network;
 
 import com.rora.phase.model.Banner;
 import com.rora.phase.model.Game;
+import com.rora.phase.model.Host;
 import com.rora.phase.model.Tag;
 import com.rora.phase.model.User;
 
@@ -46,8 +47,8 @@ public interface PhaseService {
     @GET("./")
     Call<BaseResponse<List<Game>>> getGameByPayType(@Query("pay_type") String payType, @Query("page") int page, @Query("page_size") int pageSize);
 
-    @GET("./")
-    Call<BaseResponse<String>> getComputerIP();
+    @GET("./server/avaliable-host")
+    Call<BaseResponse<Host>> getComputerIP();
 
     //--------------------------------------------------
 

@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.rora.phase.model.Game;
+import com.rora.phase.model.Host;
 import com.rora.phase.model.Tag;
 import com.rora.phase.nvstream.http.ComputerDetails;
 import com.rora.phase.utils.DataResultHelper;
@@ -13,6 +14,7 @@ import com.rora.phase.utils.network.BaseResponse;
 import com.rora.phase.utils.network.PhaseService;
 import com.rora.phase.utils.network.PhaseServiceHelper;
 import com.rora.phase.utils.network.UserPhaseService;
+import com.rora.phase.utils.services.PlayServices;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +26,7 @@ import retrofit2.Response;
 public class GameRepository {
 
     private PhaseService gameServices;
-    private PhaseService tagServices;
+    private PhaseService tagServices, playServices;
     private UserPhaseService userServices;
 
     private MutableLiveData<List<Game>> newGameList, recentPlayList, editorsChoiceList, hotGameList, trendingList, gameByCategoryList, gamesByPayTypeList;
@@ -52,6 +54,7 @@ public class GameRepository {
         gameServices = phaseServiceHelper.getGamePhaseService();
         tagServices = phaseServiceHelper.getPhaseService();
         userServices = phaseServiceHelper.getUserPhaseService();
+        playServices = phaseServiceHelper.getPhaseService();
     }
 
 
@@ -306,30 +309,23 @@ public class GameRepository {
     }
 
     public void getComputerIPData() {
-        ComputerDetails computerDetails = new ComputerDetails();
-        computerDetails.manualAddress = "115.75.241.50";
-        computerDetails.httpsPort1 = 49152;
-        computer.postValue(computerDetails);
-        //gameServices.getComputerIP().enqueue(new Callback<BaseResponse<String>>() {
-        //    @Override
-        //    public void onResponse(Call<BaseResponse<String>> call, Response<BaseResponse<String>> response) {
-        //        String ip = BaseResponse.getResult(response.body());
-        //        ip = ip == null ? "" : ip;
-        //        if (ip.equals("")) {
-        //            computer.postValue(null);
-        //        } else {
-        //            ComputerDetails computerDetails = new ComputerDetails();
-        //            computerDetails.manualAddress = ip;
-        //            computer.postValue(computerDetails);
-        //        }
-        //    }
-        //
-        //    @Override
-        //    public void onFailure(Call<BaseResponse<String>> call, Throwable t) {
-        //        Log.e(this.getClass().getSimpleName(), t.getMessage());
-        //        computer.postValue(null);
-        //    }
-        //});
+        playServices.getComputerIP().enqueue(new Callback<BaseResponse<Host>>() {
+            @Override
+            public void onResponse(Call<BaseResponse<Host>> call, Response<BaseResponse<Host>> response) {
+                Host host = BaseResponse.getResult(response.body());
+                if (host == null) {
+                    computer.postValue(null);
+                } else {
+                    computer.postValue(new ComputerDetails(host));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BaseResponse<Host>> call, Throwable t) {
+                Log.e(this.getClass().getSimpleName(), t.getMessage());
+                computer.postValue(null);
+            }
+        });
     }
 
     public void getGameData(String gameId) {
