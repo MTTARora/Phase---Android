@@ -3,6 +3,7 @@ package com.rora.phase.nvstream.jni;
 import com.rora.phase.nvstream.NvConnectionListener;
 import com.rora.phase.nvstream.av.audio.AudioRenderer;
 import com.rora.phase.nvstream.av.video.VideoDecoderRenderer;
+import com.rora.phase.nvstream.http.NvHTTP;
 
 public class MoonBridge {
     /* See documentation in Limelight.h for information about these functions and constants */
@@ -248,14 +249,14 @@ public class MoonBridge {
     }
 
     public static native int startConnection(String address, String appVersion, String gfeVersion,
-                                              int width, int height, int fps,
-                                              int bitrate, int packetSize, int streamingRemotely,
-                                              int audioConfiguration, boolean supportsHevc,
-                                              boolean enableHdr,
-                                              int hevcBitratePercentageMultiplier,
-                                              int clientRefreshRateX100,
-                                              byte[] riAesKey, byte[] riAesIv,
-                                              int videoCapabilities);
+                                             int width, int height, int fps,
+                                             int bitrate, int packetSize, int streamingRemotely,
+                                             int audioConfiguration, boolean supportsHevc,
+                                             boolean enableHdr,
+                                             int hevcBitratePercentageMultiplier,
+                                             int clientRefreshRateX100,
+                                             byte[] riAesKey, byte[] riAesIv,
+                                             int videoCapabilities, int port1);
 
     public static native void stopConnection();
 
@@ -292,13 +293,13 @@ public class MoonBridge {
 
     public static native int getPendingVideoFrames();
 
-    public static native int testClientConnectivity(String testServerHostName, int referencePort, int testFlags);
+    public static native int testClientConnectivity(String testServerHostName, int referencePort, int testFlags, int port1);
 
     public static native int getPortFlagsFromStage(int stage);
 
     public static native int getPortFlagsFromTerminationErrorCode(int errorCode);
 
-    public static native String stringifyPortFlags(int portFlags, String separator);
+    public static native String stringifyPortFlags(int portFlags, String separator, int port1);
 
     public static native void init();
 }

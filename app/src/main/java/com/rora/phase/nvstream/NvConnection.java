@@ -285,7 +285,7 @@ public class NvConnection {
                             context.streamConfig.getHevcBitratePercentageMultiplier(),
                             context.streamConfig.getClientRefreshRateX100(),
                             context.riKey.getEncoded(), ib.array(),
-                            context.videoCapabilities);
+                            context.videoCapabilities, NvHTTP.HTTPS_PORT1);
                     if (ret != 0) {
                         // LiStartConnection() failed, so the caller is not expected
                         // to stop the connection themselves. We need to release their

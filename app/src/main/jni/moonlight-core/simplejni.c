@@ -104,11 +104,11 @@ Java_com_rora_phase_nvstream_jni_MoonBridge_getPendingVideoFrames(JNIEnv *env, j
 }
 
 JNIEXPORT jint JNICALL
-Java_com_rora_phase_nvstream_jni_MoonBridge_testClientConnectivity(JNIEnv *env, jclass clazz, jstring testServerHostName, jint referencePort, jint testFlags) {
+Java_com_rora_phase_nvstream_jni_MoonBridge_testClientConnectivity(JNIEnv *env, jclass clazz, jstring testServerHostName, jint referencePort, jint testFlags, int port1) {
     int ret;
     const char* testServerHostNameStr = (*env)->GetStringUTFChars(env, testServerHostName, NULL);
 
-    ret = LiTestClientConnectivity(testServerHostNameStr, (unsigned short)referencePort, testFlags);
+    ret = LiTestClientConnectivity(testServerHostNameStr, (unsigned short)referencePort, testFlags, port1);
 
     (*env)->ReleaseStringUTFChars(env, testServerHostName, testServerHostNameStr);
 
@@ -126,11 +126,11 @@ Java_com_rora_phase_nvstream_jni_MoonBridge_getPortFlagsFromTerminationErrorCode
 }
 
 JNIEXPORT jstring JNICALL
-Java_com_rora_phase_nvstream_jni_MoonBridge_stringifyPortFlags(JNIEnv *env, jclass clazz, jint portFlags, jstring separator) {
+Java_com_rora_phase_nvstream_jni_MoonBridge_stringifyPortFlags(JNIEnv *env, jclass clazz, jint portFlags, jstring separator, jint port1) {
     const char* separatorStr = (*env)->GetStringUTFChars(env, separator, NULL);
     char outputBuffer[512];
 
-    LiStringifyPortFlags(portFlags, separatorStr, outputBuffer, sizeof(outputBuffer));
+    LiStringifyPortFlags(portFlags, separatorStr, outputBuffer, sizeof(outputBuffer), port1);
 
     (*env)->ReleaseStringUTFChars(env, separator, separatorStr);
     return (*env)->NewStringUTF(env, outputBuffer);

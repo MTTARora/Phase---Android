@@ -2,7 +2,6 @@ package com.rora.phase;
 
 
 import com.rora.phase.binding.PlatformBinding;
-import com.rora.phase.binding.crypto.AndroidCryptoProvider;
 import com.rora.phase.binding.input.ControllerHandler;
 import com.rora.phase.binding.input.KeyboardTranslator;
 import com.rora.phase.binding.input.capture.InputCaptureManager;
@@ -17,12 +16,12 @@ import com.rora.phase.binding.video.CrashListener;
 import com.rora.phase.binding.video.MediaCodecDecoderRenderer;
 import com.rora.phase.binding.video.MediaCodecHelper;
 import com.rora.phase.binding.video.PerfOverlayListener;
-import com.rora.phase.model.UserPlayingData;
 import com.rora.phase.nvstream.NvConnection;
 import com.rora.phase.nvstream.NvConnectionListener;
 import com.rora.phase.nvstream.StreamConfiguration;
 import com.rora.phase.nvstream.http.ComputerDetails;
 import com.rora.phase.nvstream.http.NvApp;
+import com.rora.phase.nvstream.http.NvHTTP;
 import com.rora.phase.nvstream.input.KeyboardPacket;
 import com.rora.phase.nvstream.input.MouseButtonPacket;
 import com.rora.phase.nvstream.jni.MoonBridge;
@@ -30,7 +29,6 @@ import com.rora.phase.preferences.GlPreferences;
 import com.rora.phase.preferences.PreferenceConfiguration;
 import com.rora.phase.ui.GameGestures;
 import com.rora.phase.ui.StreamView;
-import com.rora.phase.ui.game.LoadingGameActivity;
 import com.rora.phase.ui.viewmodel.GameViewModel;
 import com.rora.phase.utils.Dialog;
 import com.rora.phase.utils.NetHelper;
@@ -42,7 +40,6 @@ import com.rora.phase.utils.services.PlayServices;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.PictureInPictureParams;
 import android.app.Service;
 import android.content.ComponentName;
@@ -84,7 +81,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStoreOwner;
 
 import java.io.ByteArrayInputStream;
 import java.security.cert.CertificateException;
@@ -1560,7 +1556,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
     public void stageFailed(final String stage, final int portFlags, final int errorCode) {
         // Perform a connection test if the failure could be due to a blocked port
         // This does network I/O, so don't do it on the main thread.
-        final int portTestResult = MoonBridge.testClientConnectivity(ServerHelper.CONNECTION_TEST_SERVER, 443, portFlags);
+        final int portTestResult = MoonBridge.testClientConnectivity(ServerHelper.CONNECTION_TEST_SERVER, 443, portFlags, NvHTTP.HTTPS_PORT1);
 
         runOnUiThread(new Runnable() {
             @Override
@@ -1583,7 +1579,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
 
                     if (portFlags != 0) {
                         dialogText += "\n\n" + getResources().getString(R.string.check_ports_msg) + "\n" +
-                                MoonBridge.stringifyPortFlags(portFlags, "\n");
+                                MoonBridge.stringifyPortFlags(portFlags, "\n", NvHTTP.HTTPS_PORT1);
                     }
 
                     if (portTestResult != MoonBridge.ML_TEST_RESULT_INCONCLUSIVE && portTestResult != 0)  {
@@ -1601,7 +1597,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
         // Perform a connection test if the failure could be due to a blocked port
         // This does network I/O, so don't do it on the main thread.
         final int portFlags = MoonBridge.getPortFlagsFromTerminationErrorCode(errorCode);
-        final int portTestResult = MoonBridge.testClientConnectivity(ServerHelper.CONNECTION_TEST_SERVER,443, portFlags);
+        final int portTestResult = MoonBridge.testClientConnectivity(ServerHelper.CONNECTION_TEST_SERVER,443, portFlags, NvHTTP.HTTPS_PORT1);
 
         runOnUiThread(new Runnable() {
             @Override
@@ -1648,7 +1644,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
 
                         if (portFlags != 0) {
                             message += "\n\n" + getResources().getString(R.string.check_ports_msg) + "\n" +
-                                    MoonBridge.stringifyPortFlags(portFlags, "\n");
+                                    MoonBridge.stringifyPortFlags(portFlags, "\n", NvHTTP.HTTPS_PORT1);
                         }
 
                         Dialog.displayDialog(Game.this, getResources().getString(R.string.conn_terminated_title),

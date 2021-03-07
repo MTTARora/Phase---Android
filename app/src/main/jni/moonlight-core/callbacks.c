@@ -370,7 +370,7 @@ Java_com_rora_phase_nvstream_jni_MoonBridge_startConnection(JNIEnv *env, jclass 
                                                            jint hevcBitratePercentageMultiplier,
                                                            jint clientRefreshRateX100,
                                                            jbyteArray riAesKey, jbyteArray riAesIv,
-                                                           jint videoCapabilities) {
+                                                           jint videoCapabilities, jint port1) {
     SERVER_INFORMATION serverInfo = {
             .address = (*env)->GetStringUTFChars(env, address, 0),
             .serverInfoAppVersion = (*env)->GetStringUTFChars(env, appVersion, 0),
@@ -406,7 +406,7 @@ Java_com_rora_phase_nvstream_jni_MoonBridge_startConnection(JNIEnv *env, jclass 
                                 &BridgeVideoRendererCallbacks,
                                 &BridgeAudioRendererCallbacks,
                                 NULL, 0,
-                                NULL, 0);
+                                NULL, 0, port1);
 
     (*env)->ReleaseStringUTFChars(env, address, serverInfo.address);
     (*env)->ReleaseStringUTFChars(env, appVersion, serverInfo.serverInfoAppVersion);

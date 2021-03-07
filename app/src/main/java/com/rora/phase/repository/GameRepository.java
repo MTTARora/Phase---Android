@@ -1,6 +1,5 @@
 package com.rora.phase.repository;
 
-import android.content.Context;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -10,7 +9,6 @@ import com.rora.phase.model.Game;
 import com.rora.phase.model.Tag;
 import com.rora.phase.nvstream.http.ComputerDetails;
 import com.rora.phase.utils.DataResultHelper;
-import com.rora.phase.utils.SharedPreferencesHelper;
 import com.rora.phase.utils.network.BaseResponse;
 import com.rora.phase.utils.network.PhaseService;
 import com.rora.phase.utils.network.PhaseServiceHelper;
@@ -310,6 +308,7 @@ public class GameRepository {
     public void getComputerIPData() {
         ComputerDetails computerDetails = new ComputerDetails();
         computerDetails.manualAddress = "115.75.241.50";
+        computerDetails.httpsPort1 = 49152;
         computer.postValue(computerDetails);
         //gameServices.getComputerIP().enqueue(new Callback<BaseResponse<String>>() {
         //    @Override

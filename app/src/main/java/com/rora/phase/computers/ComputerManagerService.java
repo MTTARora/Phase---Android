@@ -571,7 +571,7 @@ public class ComputerManagerService extends Service {
 
         Socket s = new Socket();
         try {
-            s.connect(new InetSocketAddress(address, NvHTTP.HTTPS_PORT), FAST_POLL_TIMEOUT);
+            s.connect(new InetSocketAddress(address, NvHTTP.HTTPS_PORT1), FAST_POLL_TIMEOUT);
             s.close();
             return true;
         } catch (IOException e) {

@@ -19,7 +19,6 @@ import androidx.annotation.Nullable;
 import com.rora.phase.LimeLog;
 import com.rora.phase.R;
 import com.rora.phase.binding.PlatformBinding;
-import com.rora.phase.computers.ComputerManagerListener;
 import com.rora.phase.computers.IdentityManager;
 import com.rora.phase.discovery.DiscoveryService;
 import com.rora.phase.model.UserPlayingData;
@@ -346,7 +345,7 @@ public class PlayServices extends Service {
 
         if (!wrongSiteLocal)
             // Run the test before dismissing the spinner because it can take a few seconds.
-            portTestResult = MoonBridge.testClientConnectivity(ServerHelper.CONNECTION_TEST_SERVER, 443,MoonBridge.ML_PORT_FLAG_TCP_47984 | MoonBridge.ML_PORT_FLAG_TCP_47989);
+            portTestResult = MoonBridge.testClientConnectivity(ServerHelper.CONNECTION_TEST_SERVER, 443,MoonBridge.ML_PORT_FLAG_TCP_47984 | MoonBridge.ML_PORT_FLAG_TCP_47989, NvHTTP.HTTPS_PORT1);
         else
             // Don't bother with the test if we succeeded or the IP address was bogus
             portTestResult = MoonBridge.ML_TEST_RESULT_INCONCLUSIVE;
@@ -508,6 +507,8 @@ public class PlayServices extends Service {
                 // We cannot use runPoll() here because it will attempt to persist the state of the machine
                 // in the database, which would be bad because we don't have our pinned cert loaded yet.
                 pollingTuple = new PollingTuple(fakeDetails, null);
+                NvHTTP.HTTPS_PORT1 = fakeDetails.httpsPort1;
+                NvHTTP.HTTP_PORT2 = fakeDetails.httpsPort1+1;
                 if (pollComputer(pollingTuple.computer)) {
                     // Poll again, possibly with the pinned cert, to get accurate pairing information.
                     runPoll(pollingTuple.computer, true, 0);
@@ -748,7 +749,7 @@ public class PlayServices extends Service {
 
             Socket s = new Socket();
             try {
-                s.connect(new InetSocketAddress(address, NvHTTP.HTTPS_PORT), FAST_POLL_TIMEOUT);
+                s.connect(new InetSocketAddress(address, NvHTTP.HTTPS_PORT1), FAST_POLL_TIMEOUT);
                 s.close();
                 return true;
             } catch (IOException e) {

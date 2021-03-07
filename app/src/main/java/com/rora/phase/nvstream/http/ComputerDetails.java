@@ -7,8 +7,8 @@ import java.security.cert.X509Certificate;
 
 
 public class ComputerDetails implements Serializable {
-    public int httpsPort;
-    public int httpPort;
+    public int httpsPort1;
+    private int httpPort;
 
     public enum State {
         ONLINE, OFFLINE, UNKNOWN

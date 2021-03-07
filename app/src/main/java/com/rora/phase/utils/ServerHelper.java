@@ -119,7 +119,7 @@ public class ServerHelper {
                         parent.getResources().getString(R.string.nettest_text_waiting),
                         false);
 
-                int ret = MoonBridge.testClientConnectivity(CONNECTION_TEST_SERVER, 443, MoonBridge.ML_PORT_FLAG_ALL);
+                int ret = MoonBridge.testClientConnectivity(CONNECTION_TEST_SERVER, 443, MoonBridge.ML_PORT_FLAG_ALL, NvHTTP.HTTPS_PORT1);
                 spinnerDialog.dismiss();
 
                 String dialogSummary;
@@ -131,7 +131,7 @@ public class ServerHelper {
                 }
                 else {
                     dialogSummary = parent.getResources().getString(R.string.nettest_text_failure);
-                    dialogSummary += MoonBridge.stringifyPortFlags(ret, "\n");
+                    dialogSummary += MoonBridge.stringifyPortFlags(ret, "\n", NvHTTP.HTTPS_PORT1);
                 }
 
                 Dialog.displayDialog(parent,

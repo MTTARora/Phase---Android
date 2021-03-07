@@ -12,6 +12,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import com.rora.phase.computers.ComputerManagerService;
 import com.rora.phase.R;
 import com.rora.phase.nvstream.http.ComputerDetails;
+import com.rora.phase.nvstream.http.NvHTTP;
 import com.rora.phase.nvstream.jni.MoonBridge;
 import com.rora.phase.utils.Dialog;
 import com.rora.phase.utils.ServerHelper;
@@ -122,7 +123,7 @@ public class AddComputerManually extends Activity {
         if (!success && !wrongSiteLocal) {
             // Run the test before dismissing the spinner because it can take a few seconds.
             portTestResult = MoonBridge.testClientConnectivity(ServerHelper.CONNECTION_TEST_SERVER, 443,
-                    MoonBridge.ML_PORT_FLAG_TCP_47984 | MoonBridge.ML_PORT_FLAG_TCP_47989);
+                    MoonBridge.ML_PORT_FLAG_TCP_47984 | MoonBridge.ML_PORT_FLAG_TCP_47989, NvHTTP.HTTPS_PORT1);
         } else {
             // Don't bother with the test if we succeeded or the IP address was bogus
             portTestResult = MoonBridge.ML_TEST_RESULT_INCONCLUSIVE;

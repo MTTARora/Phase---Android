@@ -63,8 +63,8 @@ public class NvHTTP {
     private String uniqueId;
     private PairingManager pm;
 
-    public static final int HTTPS_PORT = 47984;
-    public static final int HTTP_PORT = 47989;
+    public static int HTTPS_PORT1;
+    public static int HTTP_PORT2;
     public static final int CONNECTION_TIMEOUT = 3000;
     public static final int READ_TIMEOUT = 5000;
 
@@ -191,8 +191,8 @@ public class NvHTTP {
 
         try {
             // The URI constructor takes care of escaping IPv6 literals
-            this.baseUrlHttps = new URI("https", null, address, HTTPS_PORT, null, null, null).toString();
-            this.baseUrlHttp = new URI("http", null, address, HTTP_PORT, null, null, null).toString();
+            this.baseUrlHttps = new URI("https", null, address, HTTPS_PORT1, null, null, null).toString();
+            this.baseUrlHttp = new URI("http", null, address, HTTP_PORT2, null, null, null).toString();
         } catch (URISyntaxException e) {
             // Encapsulate URISyntaxException into IOException for callers to handle more easily
             throw new IOException(e);
