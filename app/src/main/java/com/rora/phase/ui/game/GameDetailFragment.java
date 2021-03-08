@@ -78,6 +78,7 @@ import com.rora.phase.utils.MediaHelper;
 import com.rora.phase.utils.ServerHelper;
 import com.rora.phase.utils.ShortcutHelper;
 import com.rora.phase.utils.UiHelper;
+import com.rora.phase.utils.ui.BaseFragment;
 import com.rora.phase.utils.ui.ViewHelper;
 
 import org.xmlpull.v1.XmlPullParserException;
@@ -93,7 +94,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import static com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter.MIN_SIZE;
 
-public class GameDetailFragment extends Fragment {
+public class GameDetailFragment extends BaseFragment {
 
     private ImageView imvBanner;
     private RecyclerView rclvPlatform, rclvCategory, rclvScreenshot, rclvSeries, rclvSimilar;
@@ -104,6 +105,15 @@ public class GameDetailFragment extends Fragment {
     private String gameId;
 
     public static final String KEY_GAME_ID = "gameId";
+
+    public static GameDetailFragment newInstance(String gameId) {
+        Bundle args = new Bundle();
+        args.putString(KEY_GAME_ID, gameId);
+        GameDetailFragment fragment = new GameDetailFragment();
+        fragment.setArguments(args);
+
+        return fragment;
+    }
 
 
     //----------------------------------- LIFECYCLE ------------------------------------------
@@ -145,10 +155,13 @@ public class GameDetailFragment extends Fragment {
         initData();
         return root;
     }
+
     //---------------------------------------------------------------------------------------
 
 
     private void initView() {
+        ViewHelper.setSizePercentageWithScreen(imvBanner, 0, 0.35);
+
         setupRecyclerView(rclvPlatform, new PlatformRecyclerViewAdapter(), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL , false));
         setupRecyclerView(rclvCategory,new CategoryRecyclerViewAdapter( 0.11, MIN_SIZE, false, null), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL , false));
         setupRecyclerView(rclvScreenshot, new BannerVPAdapter(), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
@@ -160,7 +173,7 @@ public class GameDetailFragment extends Fragment {
     }
 
     private void initData() {
-        gameViewModel.getGameData().observe(getViewLifecycleOwner(), game -> bindData(game));
+        gameViewModel.getGameData().observe(getViewLifecycleOwner(), this::bindData);
 
         //STEP 1: Get computer details from server
         gameViewModel.getComputerDetails().observe(getViewLifecycleOwner(), computerDetails -> {
@@ -175,7 +188,6 @@ public class GameDetailFragment extends Fragment {
             intent.putExtra("LoadingGameActivityBundle", bundle);
 
             getActivity().startActivityForResult(intent, 1);
-            //NavHostFragment.findNavController(GameDetailFragment.this).navigate(R.id.action_gameDetailFragment_to_loadingGameFragment, bundle);
         });
 
         gameViewModel.getGame(gameId);
@@ -201,6 +213,8 @@ public class GameDetailFragment extends Fragment {
         ((BannerVPAdapter)rclvScreenshot.getAdapter()).bindData(banners);
         //((GameMinInfoRecyclerViewAdapter)rclvSeries.getAdapter()).bindData(game.getG);
         //((GameVerticalRVAdapter)rclvSimilar.getAdapter()).bindData(game.getPlatforms());
+
+        hideLoadingScreen();
     }
 
     private void setupRecyclerView(RecyclerView view, RecyclerView.Adapter adapter, RecyclerView.LayoutManager layoutManager) {

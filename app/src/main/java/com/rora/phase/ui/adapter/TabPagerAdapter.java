@@ -25,7 +25,7 @@ public class TabPagerAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        Fragment fragment = GameListFragment.newInstance((HomeViewModel.GameListType) params.get(position).getSerializable(GameListFragment.LIST_TYPE_PARAM), params.get(position).getString(GameListFragment.KEY_FILTER_PARAM));
+        Fragment fragment = GameListFragment.newInstance(null, (HomeViewModel.GameListType) params.get(position).getSerializable(GameListFragment.LIST_TYPE_PARAM), params.get(position).getString(GameListFragment.KEY_FILTER_PARAM));
 
         return fragment;
     }

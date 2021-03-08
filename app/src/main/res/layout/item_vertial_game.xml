@@ -16,9 +16,9 @@
             android:layout_height="match_parent"
             app:cardCornerRadius="@dimen/max_radius">
             <ImageView
+                android:id="@+id/banner_game_info_imv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/banner_test"
                 android:scaleType="fitXY"/>
         </androidx.cardview.widget.CardView>
 
@@ -37,8 +37,7 @@
                 android:textStyle="bold"
                 android:lines="1"
                 android:ellipsize="end"
-                android:paddingHorizontal="@dimen/min_space"
-                android:background="#FFEB3B"/>
+                android:paddingHorizontal="@dimen/min_space"/>
         </androidx.cardview.widget.CardView>
     </FrameLayout>
 

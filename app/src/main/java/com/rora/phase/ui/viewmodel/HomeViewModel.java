@@ -105,6 +105,29 @@ public class HomeViewModel extends AndroidViewModel {
         return gameByPayTypeList;
     }
 
+    public LiveData<List<Game>> getGamesByListType(GameListType type) {
+        if (type != null)
+            switch (type) {
+                case NEW:
+                    return getNewGameList();
+                case HOT:
+                    return getHotGameList();
+                case EDITOR:
+                    return getEditorChoiceList();
+                case TRENDING:
+                    return getTrendingList();
+                case BY_CATEGORY:
+                    return getGameByCategoryList();
+                case BY_PAY_TYPE:
+                    return getGamesByPayTypeList();
+                case RECOMMENDED:
+                    return getRecommendedGameList();
+                default: return null;
+            }
+
+        return null;
+    }
+
     public String getCurrentSelectedItemId() {
         return currentSelectedItemId;
     }
@@ -160,7 +183,7 @@ public class HomeViewModel extends AndroidViewModel {
     /** This method will always get the first page with default page size
      * @param param category id, pay type,...
      * */
-    public void getGamesByType(GameListType type, @Nullable String param) {
+    public void getGamesDataByType(GameListType type, @Nullable String param) {
         refresh(type);
         if (type != null)
             switch (type) {

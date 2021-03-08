@@ -23,7 +23,7 @@ import static android.view.View.VISIBLE;
 
 public class MainActivity extends AppCompatActivity implements NavController.OnDestinationChangedListener {
 
-    private BottomNavigationView navView;
+    public static BottomNavigationView navView;
 
     private GameViewModel gameViewModel;
 
@@ -70,7 +70,6 @@ public class MainActivity extends AppCompatActivity implements NavController.OnD
         else {
             getSupportActionBar().show();
         }
-
     }
 
     private void setBottomNavVisibility(NavDestination destination) {

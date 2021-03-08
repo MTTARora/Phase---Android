@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -12,8 +13,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.rora.phase.R;
 import com.rora.phase.model.Game;
+import com.rora.phase.ui.game.viewholder.GameInfoViewHolder;
 import com.rora.phase.ui.game.viewholder.LoadingVH;
+import com.rora.phase.utils.MediaHelper;
 import com.rora.phase.utils.callback.ILoadMore;
+import com.rora.phase.utils.callback.OnItemSelectedListener;
+import com.rora.phase.utils.ui.BaseRVAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +27,7 @@ import java.util.Objects;
 import static com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter.MIN_SIZE;
 import static com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter.NORMAL_SIZE;
 
-public class GameVerticalRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class GameVerticalRVAdapter extends BaseRVAdapter {
 
     private List<Game> gameList;
     private ILoadMore loadMore;
@@ -79,6 +84,10 @@ public class GameVerticalRVAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         if(holder instanceof  VerticalGameItemVH)
         {
             ((VerticalGameItemVH) holder).bindData(gameList.get(position));
+            ((VerticalGameItemVH) holder).setOnItemSelectedListener(selectedItemId -> {
+                if(onItemSelectedListener != null)
+                    onItemSelectedListener.onSelected(selectedItemId);
+            });
         }
         else if(holder instanceof LoadingVH)
         {
@@ -119,13 +128,17 @@ public class GameVerticalRVAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 class VerticalGameItemVH extends RecyclerView.ViewHolder {
 
     private TextView tvGameName, tvPayType;
+    private ImageView imvBanner;
     private RecyclerView rclvTag;
     private RecyclerView rclvPlatform;
 
     private Context context;
+    private OnItemSelectedListener onItemSelectedListener;
 
     public VerticalGameItemVH(@NonNull View itemView) {
         super(itemView);
+
+        imvBanner = itemView.findViewById(R.id.banner_game_info_imv);
         tvGameName = itemView.findViewById(R.id.game_name_vertical_item_txv);
         tvPayType = itemView.findViewById(R.id.pay_type_tv);
         rclvTag = itemView.findViewById(R.id.category_item_game_rclv);
@@ -143,6 +156,7 @@ class VerticalGameItemVH extends RecyclerView.ViewHolder {
     }
 
     public void bindData(Game game) {
+        MediaHelper.loadImage(game.getBackground(), imvBanner);
         tvGameName.setText(game.getName());
         tvPayType.setText(game.getPayTypeName());
         switch (game.getPayTypeId()) {
@@ -169,6 +183,15 @@ class VerticalGameItemVH extends RecyclerView.ViewHolder {
 
         ((CategoryRecyclerViewAdapter) Objects.requireNonNull(rclvTag.getAdapter())).bindData(game.getTags());
         ((PlatformRecyclerViewAdapter) Objects.requireNonNull(rclvPlatform.getAdapter())).bindData(game.getPlatforms());
+
+        itemView.setOnClickListener(v -> {
+            if (onItemSelectedListener != null)
+                onItemSelectedListener.onSelected(game.getId().toString());
+        });
+    }
+
+    public void setOnItemSelectedListener(OnItemSelectedListener onItemSelectedListener) {
+        this.onItemSelectedListener = onItemSelectedListener;
     }
 
 }

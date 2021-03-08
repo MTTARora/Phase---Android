@@ -11,11 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -35,6 +33,7 @@ import com.rora.phase.ui.adapter.TabPagerAdapter;
 import com.rora.phase.ui.game.GameDetailFragment;
 import com.rora.phase.ui.game.GameListFragment;
 import com.rora.phase.ui.viewmodel.HomeViewModel;
+import com.rora.phase.utils.ui.BaseFragment;
 import com.rora.phase.utils.ui.BaseRVAdapter;
 import com.rora.phase.utils.ui.CustomViewPagerTransformer;
 import com.rora.phase.utils.ui.HorizontalMarginItemDecoration;
@@ -47,7 +46,7 @@ import java.util.Objects;
 import static com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter.MEDIUM_SIZE;
 import static com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter.NORMAL_SIZE;
 
-public class HomeFragment extends Fragment implements View.OnClickListener {
+public class HomeFragment extends BaseFragment implements View.OnClickListener {
 
     private RecyclerView rclvHotGame, rclvNewGame, rclvTrending, rclvEditorChoice, rclvDiscover, rclvCategoryDiscover, rclvCategory;
     private SwipeRefreshLayout refreshLayout;
@@ -150,13 +149,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         setupRecyclerView(rclvCategory, categoryAdapter, new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
         CategoryRecyclerViewAdapter categoryDiscoveryAdapter =  new CategoryRecyclerViewAdapter(0, MEDIUM_SIZE, false,
-                selectedItemId -> homeViewModel.getGamesByType(HomeViewModel.GameListType.BY_CATEGORY, selectedItemId));
+                selectedItemId -> homeViewModel.getGamesDataByType(HomeViewModel.GameListType.BY_CATEGORY, selectedItemId));
         setupRecyclerView(rclvCategoryDiscover, categoryDiscoveryAdapter, ViewHelper.getLayoutManager(getActivity(), 5, 0));
-
     }
 
     private void bindData() {
-
         homeViewModel.getBannerList().observe(getViewLifecycleOwner(), banners -> {
             bannerAdapter.bindData(banners);
 
@@ -167,47 +164,58 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         });
 
         homeViewModel.getHotGameList().observe(getViewLifecycleOwner(), games -> {
-            imvErrHotGame.setVisibility(games == null || games.size() == 0 ? View.VISIBLE : View.GONE);
-            ((GameMinInfoRecyclerViewAdapter) Objects.requireNonNull(rclvHotGame.getAdapter())).bindData(games);
+            if (!stopUpDateHomeScreen) {
+                imvErrHotGame.setVisibility(games == null || games.size() == 0 ? View.VISIBLE : View.GONE);
+                ((GameMinInfoRecyclerViewAdapter) Objects.requireNonNull(rclvHotGame.getAdapter())).bindData(games);
+            }
         });
 
         homeViewModel.getNewGameList().observe(getViewLifecycleOwner(), games -> {
-            //imvErrNew.setVisibility(games == null || games.size() == 0 ? View.VISIBLE : View.GONE);
-            ((GameInfoRecyclerViewAdapter) Objects.requireNonNull(rclvNewGame.getAdapter())).bindData(games);
+            if (!stopUpDateHomeScreen) {
+                //imvErrNew.setVisibility(games == null || games.size() == 0 ? View.VISIBLE : View.GONE);
+                ((GameInfoRecyclerViewAdapter) Objects.requireNonNull(rclvNewGame.getAdapter())).bindData(games);
+            }
         });
 
         homeViewModel.getEditorChoiceList().observe(getViewLifecycleOwner(), games -> {
-            imvErrEditorChoice.setVisibility(games == null || games.size() == 0 ? View.VISIBLE : View.GONE);
-            ((GameInfoRecyclerViewAdapter) Objects.requireNonNull(rclvEditorChoice.getAdapter())).bindData(games);
+            if (!stopUpDateHomeScreen) {
+                imvErrEditorChoice.setVisibility(games == null || games.size() == 0 ? View.VISIBLE : View.GONE);
+                ((GameInfoRecyclerViewAdapter) Objects.requireNonNull(rclvEditorChoice.getAdapter())).bindData(games);
+            }
         });
 
         homeViewModel.getTrendingList().observe(getViewLifecycleOwner(), games -> {
-            imvErrTrending.setVisibility(games == null || games.size() == 0 ? View.VISIBLE : View.GONE);
-            ((GameMinInfoRecyclerViewAdapter) Objects.requireNonNull(rclvTrending.getAdapter())).bindData(games);
+            if (!stopUpDateHomeScreen) {
+                imvErrTrending.setVisibility(games == null || games.size() == 0 ? View.VISIBLE : View.GONE);
+                ((GameMinInfoRecyclerViewAdapter) Objects.requireNonNull(rclvTrending.getAdapter())).bindData(games);
+            }
         });
 
         homeViewModel.getCategoryList().observe(getViewLifecycleOwner(), tags -> {
-            //imvErrTrending.setVisibility(games == null || games.size() == 0 ? View.VISIBLE : View.GONE);
-            ((CategoryRecyclerViewAdapter) Objects.requireNonNull(rclvCategoryDiscover.getAdapter())).bindData(tags);
-            ((CategoryRecyclerViewAdapter) Objects.requireNonNull(rclvCategory.getAdapter())).bindData(tags);
+            if (!stopUpDateHomeScreen) {
+                //imvErrTrending.setVisibility(games == null || games.size() == 0 ? View.VISIBLE : View.GONE);
+                ((CategoryRecyclerViewAdapter) Objects.requireNonNull(rclvCategoryDiscover.getAdapter())).bindData(tags);
+                ((CategoryRecyclerViewAdapter) Objects.requireNonNull(rclvCategory.getAdapter())).bindData(tags);
+            }
         });
 
         homeViewModel.getGameByCategoryList().observe(getViewLifecycleOwner(), games -> {
-            //imvErrTrending.setVisibility(games == null || games.size() == 0 ? View.VISIBLE : View.GONE);
-            ((GameMinInfoRecyclerViewAdapter) Objects.requireNonNull(rclvDiscover.getAdapter())).bindData(games);
+            if (!stopUpDateHomeScreen) {
+                //imvErrTrending.setVisibility(games == null || games.size() == 0 ? View.VISIBLE : View.GONE);
+                ((GameMinInfoRecyclerViewAdapter) Objects.requireNonNull(rclvDiscover.getAdapter())).bindData(games);
+            }
         });
 
         updateData();
-
     }
 
     private void updateData() {
         homeViewModel.getBannerListData();
         homeViewModel.getCategoryListData();
-        homeViewModel.getGamesByType(HomeViewModel.GameListType.NEW, null);
-        homeViewModel.getGamesByType(HomeViewModel.GameListType.EDITOR, null);
-        homeViewModel.getGamesByType(HomeViewModel.GameListType.HOT, null);
-        homeViewModel.getGamesByType(HomeViewModel.GameListType.TRENDING, null);
+        homeViewModel.getGamesDataByType(HomeViewModel.GameListType.NEW, null);
+        homeViewModel.getGamesDataByType(HomeViewModel.GameListType.EDITOR, null);
+        homeViewModel.getGamesDataByType(HomeViewModel.GameListType.HOT, null);
+        homeViewModel.getGamesDataByType(HomeViewModel.GameListType.TRENDING, null);
     }
 
     private void setupBannerView() {
@@ -247,9 +255,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         view.setLayoutManager(layoutManager);
         view.setHasFixedSize(true);
 
-        adapter.setOnItemSelectedListener(selectedItemId -> {
-            goToGameDetails(selectedItemId);
-        });
+        adapter.setOnItemSelectedListener(selectedItemId -> moveTo(GameDetailFragment.newInstance(selectedItemId), GameDetailFragment.class.getSimpleName()));
     }
 
     private void setupRecyclerView(RecyclerView view, RecyclerView.Adapter adapter, RecyclerView.LayoutManager layoutManager) {
@@ -259,21 +265,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     }
 
     private void goToGameListScreen(String title, HomeViewModel.GameListType type, String filterParam) {
-        Bundle listGameBundle = new Bundle();
-        listGameBundle.putString(GameListFragment.SCREEN_TITLE_PARAM, title);
-        listGameBundle.putSerializable(GameListFragment.LIST_TYPE_PARAM, type);
-        listGameBundle.putString(GameListFragment.KEY_FILTER_PARAM, filterParam);
-
         homeViewModel.refresh(null);
 
-        NavHostFragment.findNavController(this).navigate(R.id.action_navigation_home_to_gameListFragment, listGameBundle);
-    }
-
-    private void goToGameDetails(String game) {
-        Bundle gameIdBundle = new Bundle();
-        gameIdBundle.putString(GameDetailFragment.KEY_GAME_ID, game);
-
-        NavHostFragment.findNavController(this).navigate(R.id.action_navigation_home_to_gameDetailFragment, gameIdBundle);
+        stopUpDateHomeScreen = true;
+        moveTo(GameListFragment.newInstance(title, type, filterParam), GameListFragment.class.getSimpleName());
     }
 
     //----------------- EVENT ---------------
