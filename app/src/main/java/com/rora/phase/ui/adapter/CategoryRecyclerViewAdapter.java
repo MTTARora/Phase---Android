@@ -19,6 +19,8 @@ import com.rora.phase.utils.ui.ViewHelper;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter.MEDIUM_SIZE;
 import static com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter.MIN_SIZE;
 import static com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter.NORMAL_SIZE;
@@ -52,10 +54,13 @@ public class CategoryRecyclerViewAdapter extends RecyclerView.Adapter<CategoryVi
         View root = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_category, parent, false);
 
         if (widthPercentage != 0) {
-            ViewHelper.setSizePercentageWithScreenAndItSelf(root, widthPercentage, 0, 2);
 
-            if(size == MIN_SIZE)
+            if(size == MIN_SIZE) {
+                ViewHelper.setSize(root, WRAP_CONTENT, WRAP_CONTENT);
                 ((ViewGroup.MarginLayoutParams) root.getLayoutParams()).setMarginEnd((int) parent.getContext().getResources().getDimension(R.dimen.min_space));
+            } else {
+                ViewHelper.setSizePercentageWithScreenAndItSelf(root, widthPercentage, 0, 2);
+            }
         }
 
         return new CategoryViewHolder(root);

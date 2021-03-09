@@ -62,6 +62,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/ic_min_size"
             android:layout_marginStart="@dimen/min_space"
+            android:layout_marginBottom="@dimen/min_space"
             app:layout_constraintBottom_toTopOf="@id/category_item_game_rclv"
             app:layout_constraintStart_toStartOf="parent"/>
 

@@ -76,7 +76,7 @@ public class PageManager {
     public void reset() {
         this.totalItem = 0;
         this.page = 1;
-        this.pageSize = 10;
+        this.pageSize = 20;
         this.next = "";
         this.previous = "";
     }

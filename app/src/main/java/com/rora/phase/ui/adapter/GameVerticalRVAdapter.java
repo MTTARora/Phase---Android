@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.rora.phase.R;
 import com.rora.phase.model.Game;
-import com.rora.phase.ui.game.viewholder.GameInfoViewHolder;
 import com.rora.phase.ui.game.viewholder.LoadingVH;
 import com.rora.phase.utils.MediaHelper;
 import com.rora.phase.utils.callback.ILoadMore;
@@ -25,7 +24,6 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter.MIN_SIZE;
-import static com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter.NORMAL_SIZE;
 
 public class GameVerticalRVAdapter extends BaseRVAdapter {
 
@@ -68,7 +66,7 @@ public class GameVerticalRVAdapter extends BaseRVAdapter {
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if(viewType == VIEW_TYPE_ITEM)
         {
-            View root = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_vertial_game, parent, false);
+            View root = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_game_vertical, parent, false);
             return new VerticalGameItemVH(root);
         }
         else if(viewType == VIEW_TYPE_LOADING)
@@ -107,7 +105,7 @@ public class GameVerticalRVAdapter extends BaseRVAdapter {
     }
 
     public void bindData(List<Game> gameList) {
-        if (isLoading && this.gameList.size() != 0 && this.gameList.get(gameList.size()-1) == null) {
+        if (isLoading && this.gameList.size() != 0 && gameList != null && gameList.size() != 0 && this.gameList.get(gameList.size()-1) == null) {
             this.gameList.remove(gameList.size()-1);
             setLoaded();
         }
@@ -116,7 +114,7 @@ public class GameVerticalRVAdapter extends BaseRVAdapter {
     }
 
     public void setLoadMore(ILoadMore loadMore) {
-        this.loadMore = loadMore;
+        //this.loadMore = loadMore;
     }
 
     public void setLoaded() {

@@ -73,7 +73,7 @@ class PlatformViewHolder extends RecyclerView.ViewHolder {
                 srcId = R.drawable.ic_battle_net;
                 break;
             case "Epic":
-                srcId = R.drawable.ic_epic;
+                srcId = R.drawable.ic_epic_games;
                 break;
             case "Origin":
                 srcId = R.drawable.ic_origin;
@@ -87,9 +87,12 @@ class PlatformViewHolder extends RecyclerView.ViewHolder {
             case "Riot":
                 srcId = R.drawable.ic_riot;
                 break;
+            case "GOG":
+                srcId = R.drawable.ic_gog_com;
+                break;
         }
 
-        MediaHelper.loadImage(srcId, imvPlatform);
+        MediaHelper.loadSvg(srcId, imvPlatform);
     }
 
 }

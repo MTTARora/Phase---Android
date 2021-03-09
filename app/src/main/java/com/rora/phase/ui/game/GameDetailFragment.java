@@ -149,6 +149,7 @@ public class GameDetailFragment extends BaseFragment {
 
         btnFavorite.setOnClickListener(v -> {
             //gameViewModel.updateFavorite();
+            btnFavorite.setImageResource(R.drawable.ic_favorite);
         });
 
         initView();

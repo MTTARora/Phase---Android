@@ -36,11 +36,11 @@
         android:banner="@drawable/atv_banner"
         android:fullBackupContent="@xml/backup_rules"
         android:gwpAsanMode="always"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_launcher_rora"
         android:installLocation="auto"
         android:isGame="true"
         android:networkSecurityConfig="@xml/network_security_config"
-        android:roundIcon="@mipmap/ic_launcher"
+        android:roundIcon="@drawable/ic_launcher_rora"
         android:theme="@style/AppTheme">
 
         <provider

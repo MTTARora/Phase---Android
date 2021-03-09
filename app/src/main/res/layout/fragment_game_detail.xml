@@ -21,12 +21,22 @@
 
         <ImageButton
             android:id="@+id/back_btn"
-            android:layout_width="@dimen/ic_touchable_size"
+            android:layout_width="0dp"
             android:layout_height="@dimen/ic_touchable_size"
             android:src="@drawable/abc_vector_test"
+            app:layout_constraintWidth_percent=".15"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:background="@android:color/transparent"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            app:layout_constraintWidth_percent="1"
+            android:background="@color/colorPrimary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/game_banner_imv"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/frame_game_details"
@@ -53,7 +63,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 android:background="@android:color/transparent"
-                android:src="@android:drawable/btn_star"/>
+                android:src="@drawable/ic_unfavorite"/>
 
             <TextView
                 android:id="@+id/game_name_tv"
@@ -286,7 +296,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:text="@string/series_title"
+                    android:text="@string/similar_game_title"
                     android:textSize="@dimen/title_text_size"
                     android:textStyle="bold"
                     android:gravity="center_vertical"/>

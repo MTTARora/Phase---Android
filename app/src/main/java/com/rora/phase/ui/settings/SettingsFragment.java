@@ -18,6 +18,15 @@ public class SettingsFragment extends Fragment {
 
     private SettingsViewModel settingsViewModel;
 
+    public static SettingsFragment newInstance() {
+        
+        Bundle args = new Bundle();
+        
+        SettingsFragment fragment = new SettingsFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+    
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         settingsViewModel =

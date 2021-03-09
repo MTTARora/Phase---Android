@@ -2,7 +2,6 @@ package com.rora.phase.ui.game;
 
 import android.os.Bundle;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -74,7 +73,7 @@ public class GameListFragment extends BaseFragment {
         rclvGameList.setLayoutManager(linearLayoutManager);
         GameVerticalRVAdapter adapter = new GameVerticalRVAdapter(rclvGameList);
         rclvGameList.setAdapter(adapter);
-        adapter.setOnItemSelectedListener(this::goToGameDetails);
+        adapter.setOnItemSelectedListener(gameId -> moveTo(GameDetailFragment.newInstance(gameId), GameDetailFragment.class.getSimpleName()));
 
         adapter.setLoadMore(new ILoadMore() {
             @Override
@@ -86,45 +85,18 @@ public class GameListFragment extends BaseFragment {
 
     private void bindData(View root) {
         if (screenTitle == null) {
-            //homeViewModel.getRecommendedGameList().observe(getViewLifecycleOwner(), games -> {
-            //    ((GameVerticalRVAdapter) Objects.requireNonNull(rclvGameList.getAdapter())).bindData(games);
-            //});
-
             homeViewModel.getGamesByPayTypeList().observe(getViewLifecycleOwner(), games -> {
                 ((GameVerticalRVAdapter) Objects.requireNonNull(rclvGameList.getAdapter())).bindData(games);
-
             });
+            hideActionbar(root);
         } else {
+            showActionbar(root, screenTitle, true);
             setScreenTitle(root, screenTitle);
 
             homeViewModel.getGamesByListType(listType).observe(getViewLifecycleOwner(), games -> {
                 ((GameVerticalRVAdapter) Objects.requireNonNull(rclvGameList.getAdapter())).bindData(games);
                 hideLoadingScreen();
             });
-            //homeViewModel.getNewGameList().observe(getViewLifecycleOwner(), games -> {
-            //    if (listType == HomeViewModel.GameListType.NEW)
-            //        ((GameVerticalRVAdapter) Objects.requireNonNull(rclvGameList.getAdapter())).bindData(games);
-            //});
-            //
-            //homeViewModel.getHotGameList().observe(getViewLifecycleOwner(), games -> {
-            //    if (listType == HomeViewModel.GameListType.HOT)
-            //        ((GameVerticalRVAdapter) Objects.requireNonNull(rclvGameList.getAdapter())).bindData(games);
-            //});
-            //
-            //homeViewModel.getEditorChoiceList().observe(getViewLifecycleOwner(), games -> {
-            //    if (listType == HomeViewModel.GameListType.EDITOR)
-            //        ((GameVerticalRVAdapter) Objects.requireNonNull(rclvGameList.getAdapter())).bindData(games);
-            //});
-            //
-            //homeViewModel.getTrendingList().observe(getViewLifecycleOwner(), games -> {
-            //    if (listType == HomeViewModel.GameListType.TRENDING)
-            //        ((GameVerticalRVAdapter) Objects.requireNonNull(rclvGameList.getAdapter())).bindData(games);
-            //});
-            //
-            //homeViewModel.getGameByCategoryList().observe(getViewLifecycleOwner(), games -> {
-            //    if (listType == HomeViewModel.GameListType.BY_CATEGORY)
-            //        ((GameVerticalRVAdapter) Objects.requireNonNull(rclvGameList.getAdapter())).bindData(games);
-            //});
 
         }
 
@@ -135,11 +107,4 @@ public class GameListFragment extends BaseFragment {
         homeViewModel.getGamesDataByType(listType, filterParam);
     }
 
-    private void goToGameDetails(String gameId) {
-        //Bundle gameIdBundle = new Bundle();
-        //gameIdBundle.putString(GameDetailFragment.KEY_GAME_ID, gameId);
-        //
-        //NavHostFragment.findNavController(this).navigate(R.id.action_gameListFragment_to_gameDetailFragment, gameIdBundle);
-        moveTo(GameDetailFragment.newInstance(gameId), GameDetailFragment.class.getSimpleName());
-    }
 }

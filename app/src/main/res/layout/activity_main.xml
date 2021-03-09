@@ -11,15 +11,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:defaultNavHost="true"
-        android:layout_above="@id/nav_view"
+        android:layout_above="@id/bottom_nav_view"
         app:navGraph="@navigation/mobile_navigation" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/nav_view"
+        android:id="@+id/bottom_nav_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?android:attr/windowBackground"
+        android:background="@color/colorPrimaryDark"
         app:layout_constraintBottom_toBottomOf="@id/main_container"
+        app:itemTextColor="@drawable/bottom_tab_selector"
+        app:itemIconTint="@drawable/bottom_tab_selector"
         android:translationZ="0dp"
         app:elevation="0dp"
         app:menu="@menu/bottom_nav_menu" />
@@ -29,6 +31,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
+
     <FrameLayout
         android:id="@+id/main_loading_view"
         android:layout_width="match_parent"

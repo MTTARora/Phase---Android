@@ -20,7 +20,6 @@ public class MediaHelper {
         Picasso.get().load(url).placeholder(placeHolder).into(intoView);
     }
 
-
     /**
      * Load image from resource id
      * */
@@ -32,5 +31,10 @@ public class MediaHelper {
     public static void loadImage(int resourceId, ImageView intoView, int placeHolder) {
         Picasso.get().load(resourceId).placeholder(placeHolder).into(intoView);
     }
+
+    public static void loadSvg(int url, ImageView intoView) {
+        intoView.setImageResource(url);
+    }
+
 
 }

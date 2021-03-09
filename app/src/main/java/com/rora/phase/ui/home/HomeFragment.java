@@ -1,5 +1,6 @@
 package com.rora.phase.ui.home;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -10,12 +11,8 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -43,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static androidx.appcompat.widget.TintTypedArray.obtainStyledAttributes;
 import static com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter.MEDIUM_SIZE;
 import static com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter.NORMAL_SIZE;
 
@@ -71,22 +69,30 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         }
     };
 
+    public static HomeFragment newInstance() {
+
+        Bundle args = new Bundle();
+
+        HomeFragment fragment = new HomeFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     //------------------------ LIFECYCLE --------------------------
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        NavController navController = Navigation.findNavController(view);
-        AppBarConfiguration appBarConfiguration =
-                new AppBarConfiguration.Builder(navController.getGraph()).build();
-        Toolbar toolbar = view.findViewById(R.id.toolbar);
-
-        NavigationUI.setupWithNavController( toolbar, navController, appBarConfiguration);
-        toolbar.setTitle(getResources().getString(R.string.app_label));
-        toolbar.setTitleTextColor(getActivity().getColor(R.color.colorPrimary));
+        //NavController navController = Navigation.findNavController(view);
+        //AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
+        //Toolbar toolbar = view.findViewById(R.id.toolbar);
+        //
+        ////NavigationUI.setupWithNavController( toolbar, navController, appBarConfiguration);
+        //toolbar.setTitle(getResources().getString(R.string.app_label));
+        //toolbar.setTitleTextColor(getActivity().getColor(R.color.colorPrimary));
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        showLoadingScreen();
         homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
 
         View root = inflater.inflate(R.layout.fragment_home, container, false);
@@ -108,7 +114,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         imvErrTrending = root.findViewById(R.id.error_data_trending_imv);
         imvErrHotGame = root.findViewById(R.id.error_data_hot_game_imv);
 
-        initView();
+        initView(root);
         bindData();
 
         root.findViewById(R.id.btn_view_all_new_game).setOnClickListener(this);
@@ -129,7 +135,9 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     // ---------------------------------------------------
 
 
-    private void initView() {
+    private void initView(View root) {
+        showActionbar(root, getResources().getString(R.string.app_label), false);
+        setActionbarStyle(root, getResources().getDimension(R.dimen.logo_text_size), ContextCompat.getColor(getContext(), R.color.colorPrimary));
 
         refreshLayout.setOnRefreshListener(() -> {
             updateData();
@@ -163,13 +171,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
                 bannerRunnableHandler.postDelayed(bannerAutoSlideRunnable, autoScrollBannerTime);
         });
 
-        homeViewModel.getHotGameList().observe(getViewLifecycleOwner(), games -> {
-            if (!stopUpDateHomeScreen) {
-                imvErrHotGame.setVisibility(games == null || games.size() == 0 ? View.VISIBLE : View.GONE);
-                ((GameMinInfoRecyclerViewAdapter) Objects.requireNonNull(rclvHotGame.getAdapter())).bindData(games);
-            }
-        });
-
         homeViewModel.getNewGameList().observe(getViewLifecycleOwner(), games -> {
             if (!stopUpDateHomeScreen) {
                 //imvErrNew.setVisibility(games == null || games.size() == 0 ? View.VISIBLE : View.GONE);
@@ -177,17 +178,24 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
             }
         });
 
-        homeViewModel.getEditorChoiceList().observe(getViewLifecycleOwner(), games -> {
-            if (!stopUpDateHomeScreen) {
-                imvErrEditorChoice.setVisibility(games == null || games.size() == 0 ? View.VISIBLE : View.GONE);
-                ((GameInfoRecyclerViewAdapter) Objects.requireNonNull(rclvEditorChoice.getAdapter())).bindData(games);
-            }
-        });
-
         homeViewModel.getTrendingList().observe(getViewLifecycleOwner(), games -> {
             if (!stopUpDateHomeScreen) {
                 imvErrTrending.setVisibility(games == null || games.size() == 0 ? View.VISIBLE : View.GONE);
                 ((GameMinInfoRecyclerViewAdapter) Objects.requireNonNull(rclvTrending.getAdapter())).bindData(games);
+            }
+        });
+
+        homeViewModel.getHotGameList().observe(getViewLifecycleOwner(), games -> {
+            if (!stopUpDateHomeScreen) {
+                imvErrHotGame.setVisibility(games == null || games.size() == 0 ? View.VISIBLE : View.GONE);
+                ((GameMinInfoRecyclerViewAdapter) Objects.requireNonNull(rclvHotGame.getAdapter())).bindData(games);
+            }
+        });
+
+        homeViewModel.getEditorChoiceList().observe(getViewLifecycleOwner(), games -> {
+            if (!stopUpDateHomeScreen) {
+                imvErrEditorChoice.setVisibility(games == null || games.size() == 0 ? View.VISIBLE : View.GONE);
+                ((GameInfoRecyclerViewAdapter) Objects.requireNonNull(rclvEditorChoice.getAdapter())).bindData(games);
             }
         });
 
@@ -204,18 +212,20 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
                 //imvErrTrending.setVisibility(games == null || games.size() == 0 ? View.VISIBLE : View.GONE);
                 ((GameMinInfoRecyclerViewAdapter) Objects.requireNonNull(rclvDiscover.getAdapter())).bindData(games);
             }
+            hideLoadingScreen();
         });
 
         updateData();
     }
 
     private void updateData() {
+        stopUpDateHomeScreen = false;
         homeViewModel.getBannerListData();
         homeViewModel.getCategoryListData();
-        homeViewModel.getGamesDataByType(HomeViewModel.GameListType.NEW, null);
-        homeViewModel.getGamesDataByType(HomeViewModel.GameListType.EDITOR, null);
-        homeViewModel.getGamesDataByType(HomeViewModel.GameListType.HOT, null);
         homeViewModel.getGamesDataByType(HomeViewModel.GameListType.TRENDING, null);
+        homeViewModel.getGamesDataByType(HomeViewModel.GameListType.HOT, null);
+        homeViewModel.getGamesDataByType(HomeViewModel.GameListType.EDITOR, null);
+        homeViewModel.getGamesDataByType(HomeViewModel.GameListType.NEW, null);
     }
 
     private void setupBannerView() {
