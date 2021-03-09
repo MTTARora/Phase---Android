@@ -27,7 +27,7 @@ public class UserViewModel extends AndroidViewModel {
 
         recentPlayList = userRepository.getRecentPlayList();
         favoriteList = userRepository.getFavoriteList();
-        updatingDataResult = userRepository.getUpdatingDataResult();
+        updatingDataResult = userRepository.getUpdateDataResult();
     }
 
     //-------------------GET/SET--------------------
@@ -44,12 +44,15 @@ public class UserViewModel extends AndroidViewModel {
         return favoriteList;
     }
 
-    public LiveData<DataResultHelper> getUpdatingDataResult() {
+    public LiveData<DataResultHelper> getUpdateDataResult() {
         return updatingDataResult;
     }
 
     //----------------------------------------------
 
+    public void signIn(String username, String password) {
+        userRepository.signIn(username, password);
+    }
 
     public void getUserData() {
         userRepository.getUserInfo();
@@ -69,6 +72,10 @@ public class UserViewModel extends AndroidViewModel {
 
     public void removeFavorite(String gameId) {
         userRepository.removeFavorite(gameId);
+    }
+
+    public boolean isUserLogged() {
+        return userRepository.isUserLogged();
     }
 
 }

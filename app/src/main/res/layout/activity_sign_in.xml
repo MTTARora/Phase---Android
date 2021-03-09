@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sign_in_frame"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.settings.auth.SignInActivity">
+
+    <!--LOGO-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="bottom"
+        android:orientation="vertical"
+        app:layout_constraintHeight_percent=".35"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_launcher_rora" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Welcome back!"
+            android:textSize="25dp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Login to your account"
+            android:textSize="@dimen/normal_text_size"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/err_sign_in_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/min_space"
+        android:gravity="center"
+        android:lines="2"
+        android:textStyle="italic"
+        android:ellipsize="end"
+        android:textColor="@android:color/holo_red_light"
+        app:layout_constraintBottom_toTopOf="@id/fields_ui_sign_in"/>
+
+    <!--FIELDS-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/fields_ui_sign_in"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHeight_percent=".15"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <carbon.widget.EditText
+            android:id="@+id/user_name_tv"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@android:color/white"
+            android:gravity="center_vertical"
+            android:hint="Username"
+            android:padding="@dimen/medium_space"
+            android:textColor="@color/colorPrimaryDark"
+            android:textColorHint="@color/gray"
+            app:carbon_cornerRadius="@dimen/maxx_radius"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent=".4"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent=".65" />
+
+        <carbon.widget.EditText
+            android:id="@+id/pw_tv"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@android:color/white"
+            android:gravity="center_vertical"
+            android:hint="Password"
+            android:textColor="@color/colorPrimaryDark"
+            android:inputType="textPassword"
+            android:padding="@dimen/medium_space"
+            android:textColorHint="@color/gray"
+            app:carbon_cornerRadius="@dimen/maxx_radius"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent=".4"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_percent=".65" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <carbon.widget.Button
+        android:id="@+id/sign_in_btn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimaryDark"
+        android:text="@string/sign_in"
+        android:textAllCaps="false"
+        android:textColor="@color/colorPrimary"
+        app:layout_constraintBottom_toTopOf="@id/sign_up_ui_sign_in"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fields_ui_sign_in"
+        app:layout_constraintWidth_percent=".65"
+        app:carbon_cornerRadius="@dimen/max_radius"/>
+
+    <LinearLayout
+        android:id="@+id/sign_up_ui_sign_in"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:gravity="center"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dont_have_account"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sign_up_here"
+            android:textAllCaps="false"
+            android:textSize="@dimen/sub_title_text_size"
+            android:textStyle="italic"
+            android:textColor="@color/colorPrimary"
+            android:background="@android:color/transparent"/>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

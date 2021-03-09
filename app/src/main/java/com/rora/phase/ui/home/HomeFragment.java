@@ -70,7 +70,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     };
 
     public static HomeFragment newInstance() {
-
         Bundle args = new Bundle();
 
         HomeFragment fragment = new HomeFragment();
@@ -256,7 +255,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 
         //Calculate size
         int height = ((AppCompatActivity)getContext()).getWindowManager().getDefaultDisplay().getHeight();
-        layoutParams.height = height - ((AppCompatActivity) getContext()).getSupportActionBar().getHeight() - tbOtherGames.getHeight() - 300;
+        layoutParams.height = height - getActionBar().getHeight() - tbOtherGames.getHeight() - 300;
         vpOtherGames.setLayoutParams(layoutParams);
     }
 

@@ -3,6 +3,7 @@ package com.rora.phase.utils.ui;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.activity.OnBackPressedCallback;
@@ -29,6 +30,8 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 public abstract class BaseFragment extends Fragment {
+
+    private LinearLayout customActionBar;
 
     public boolean stopUpDateHomeScreen = false;
     private Fragment currentFragment;
@@ -88,14 +91,20 @@ public abstract class BaseFragment extends Fragment {
     }
 
     public void showActionbar(View root, String title, boolean enableBackBtn) {
-        root.findViewById(R.id.custom_toolbar).setVisibility(VISIBLE);
+        customActionBar = root.findViewById(R.id.custom_toolbar);
+        customActionBar.setVisibility(VISIBLE);
         enableBackButton(root, enableBackBtn);
         setScreenTitle(root, title);
     }
 
     public void hideActionbar(View root) {
-        root.findViewById(R.id.custom_toolbar).setVisibility(GONE);
+        customActionBar = root.findViewById(R.id.custom_toolbar);
+        customActionBar.setVisibility(GONE);
         enableBackButton(root, false);
+    }
+
+    public LinearLayout getActionBar() {
+        return customActionBar;
     }
 
     public void setScreenTitle(View root, String title) {

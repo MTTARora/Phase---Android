@@ -4,6 +4,8 @@ import com.rora.phase.model.Banner;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.Tag;
 import com.rora.phase.model.User;
+import com.rora.phase.model.api.LoginCredentials;
+import com.rora.phase.model.api.LoginResponse;
 
 import java.util.List;
 
@@ -18,11 +20,11 @@ import retrofit2.http.Query;
 
 public interface UserPhaseService {
 
-    @POST("/sign_up")
+    @POST("./auth/sign_up")
     Call<BaseResponse> signUp(@Body String email, @Body String password);
 
-    @POST("/sign_in")
-    Call<BaseResponse<User>> signIn(@Body String email, @Body String password);
+    @POST("./login")
+    Call<BaseResponse<LoginResponse>> signIn(@Body LoginCredentials credentials);
 
     @POST("/forgot_password")
     Call<BaseResponse> forgotPassword(@Body String email);

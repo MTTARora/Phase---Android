@@ -9,6 +9,9 @@ import com.google.gson.Gson;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.User;
 import com.rora.phase.model.UserPlayingData;
+import com.rora.phase.model.api.LoginCredentials;
+import com.rora.phase.model.api.LoginResponse;
+import com.rora.phase.model.enums.PayTypeEnum;
 import com.rora.phase.nvstream.http.ComputerDetails;
 import com.rora.phase.utils.DataResultHelper;
 import com.rora.phase.utils.SharedPreferencesHelper;
@@ -26,22 +29,24 @@ import retrofit2.Response;
 public class UserRepository {
 
     private UserPhaseService userServices;
+    private UserPhaseService userAuthServices;
     private SharedPreferencesHelper dbSharedPref;
 
     private MutableLiveData<User> user;
     private MutableLiveData<List<Game>> favoriteList, recentPlayList, recommendedList;
-    private MutableLiveData<DataResultHelper> updatingDataResult;
+    private MutableLiveData<DataResultHelper> updateDataResult;
 
     public UserRepository(Context context) {
         PhaseServiceHelper phaseServiceHelper = new PhaseServiceHelper(context);
         userServices = phaseServiceHelper.getUserPhaseService();
+        userAuthServices = phaseServiceHelper.getUserAuthPhaseService();
         dbSharedPref = new SharedPreferencesHelper(context);
 
         user = new MutableLiveData<>();
         favoriteList =  new MutableLiveData<>();
         recentPlayList =  new MutableLiveData<>();
         recommendedList = new MutableLiveData<>();
-        updatingDataResult =  new MutableLiveData<>();
+        updateDataResult =  new MutableLiveData<>();
     }
 
     //--------------------------------GET/SET------------------------
@@ -50,8 +55,8 @@ public class UserRepository {
         return user;
     }
 
-    public MutableLiveData<DataResultHelper> getUpdatingDataResult() {
-        return updatingDataResult;
+    public MutableLiveData<DataResultHelper> getUpdateDataResult() {
+        return updateDataResult;
     }
 
     public MutableLiveData<List<Game>> getFavoriteList() {
@@ -75,27 +80,45 @@ public class UserRepository {
         userServices.signUp(email, password).enqueue(new Callback<BaseResponse>() {
             @Override
             public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
-                updatingDataResult.postValue(new DataResultHelper());
+                updateDataResult.postValue(new DataResultHelper());
             }
 
             @Override
             public void onFailure(Call<BaseResponse> call, Throwable t) {
-                updatingDataResult.postValue(new DataResultHelper("Please try again later!", null));
+                updateDataResult.postValue(new DataResultHelper("Please try again later!", null));
             }
         });
     }
 
     public void signIn(String email, String password) {
-        userServices.signIn(email, password).enqueue(new Callback<BaseResponse<User>>() {
+        LoginCredentials loginCredentials = new LoginCredentials(email, password);
+        User userTest = new User(email);
+        String mail = loginCredentials.getUsername();
+        String pw = loginCredentials.getPassword();
+        userAuthServices.signIn(loginCredentials).enqueue(new Callback<BaseResponse<LoginResponse>>() {
             @Override
-            public void onResponse(Call<BaseResponse<User>> call, Response<BaseResponse<User>> response) {
-                user.postValue(BaseResponse.getResult(response.body()));
+            public void onResponse(Call<BaseResponse<LoginResponse>> call, Response<BaseResponse<LoginResponse>> response) {
+                DataResultHelper<BaseResponse<LoginResponse>> dataResponse = PhaseServiceHelper.handleResponse(response);
+
+                if (dataResponse.getErrMsg() != null) {
+                    user.postValue(null);
+                    updateDataResult.postValue(new DataResultHelper(dataResponse.getErrMsg(), null));
+                } else {
+                    LoginResponse resp = BaseResponse.getResult(dataResponse.getData());
+                    User user = resp.getInfo();
+                    String token = resp.getToken();
+
+                    if (token != null && user != null) {
+                        storeToken(token);
+                    }
+                    UserRepository.this.user.postValue(user);
+                }
             }
 
             @Override
-            public void onFailure(Call<BaseResponse<User>> call, Throwable t) {
+            public void onFailure(Call<BaseResponse<LoginResponse>> call, Throwable t) {
                 user.postValue(null);
-                updatingDataResult.postValue(new DataResultHelper("Please try again later!", null));
+                updateDataResult.postValue(new DataResultHelper("Please try again later!", null));
             }
         });
     }
@@ -104,12 +127,12 @@ public class UserRepository {
         userServices.forgotPassword(email).enqueue(new Callback<BaseResponse>() {
             @Override
             public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
-                updatingDataResult.postValue(new DataResultHelper());
+                updateDataResult.postValue(new DataResultHelper());
             }
 
             @Override
             public void onFailure(Call<BaseResponse> call, Throwable t) {
-                updatingDataResult.postValue(new DataResultHelper("Please try again later!", null));
+                updateDataResult.postValue(new DataResultHelper("Please try again later!", null));
             }
         });
     }
@@ -124,7 +147,7 @@ public class UserRepository {
             @Override
             public void onFailure(Call<BaseResponse<User>> call, Throwable t) {
                 user.postValue(null);
-                updatingDataResult.postValue(new DataResultHelper("Please try again later!", null));
+                updateDataResult.postValue(new DataResultHelper("Please try again later!", null));
             }
         });
     }
@@ -133,12 +156,12 @@ public class UserRepository {
         userServices.updateInfo(user).enqueue(new Callback<BaseResponse>() {
             @Override
             public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
-                updatingDataResult.postValue(new DataResultHelper());
+                updateDataResult.postValue(new DataResultHelper());
             }
 
             @Override
             public void onFailure(Call<BaseResponse> call, Throwable t) {
-                updatingDataResult.postValue(new DataResultHelper("Please try again later!", null));
+                updateDataResult.postValue(new DataResultHelper("Please try again later!", null));
             }
         });
     }
@@ -151,12 +174,12 @@ public class UserRepository {
         userServices.addFavorite(gameId).enqueue(new Callback<BaseResponse>() {
             @Override
             public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
-                updatingDataResult.postValue(new DataResultHelper());
+                updateDataResult.postValue(new DataResultHelper());
             }
 
             @Override
             public void onFailure(Call<BaseResponse> call, Throwable t) {
-                updatingDataResult.postValue(new DataResultHelper("Please try again later!", null));
+                updateDataResult.postValue(new DataResultHelper("Please try again later!", null));
             }
         });
     }
@@ -165,12 +188,12 @@ public class UserRepository {
         userServices.removeFavorite(gameId).enqueue(new Callback<BaseResponse>() {
             @Override
             public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
-                updatingDataResult.postValue(new DataResultHelper());
+                updateDataResult.postValue(new DataResultHelper());
             }
 
             @Override
             public void onFailure(Call<BaseResponse> call, Throwable t) {
-                updatingDataResult.postValue(new DataResultHelper("Please try again later!", null));
+                updateDataResult.postValue(new DataResultHelper("Please try again later!", null));
             }
         });
     }

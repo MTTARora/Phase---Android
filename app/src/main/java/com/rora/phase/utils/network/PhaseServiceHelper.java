@@ -15,9 +15,11 @@ public class PhaseServiceHelper {
     private Context context;
     private SharedPreferencesHelper sharedPreferencesHelper;
 
-    private final String basePhaseUrl = "http://roragame.ga/api/";
-    private final String userBaseUrl = basePhaseUrl + "users/";
-    private final String gameBaseUrl = basePhaseUrl + "games/";
+    private final String basePhaseHttpsUrl = "https://roragame.ga/api/";
+    private final String basePhaseHttpUrl = "http://roragame.ga/api/";
+    private final String userBaseUrl = basePhaseHttpUrl + "users/";
+    private final String userAuthBaseUrl = basePhaseHttpsUrl + "auth/";
+    private final String gameBaseUrl = basePhaseHttpUrl + "games/";
 
     public PhaseServiceHelper() {
     }
@@ -33,7 +35,7 @@ public class PhaseServiceHelper {
     public PhaseService getPhaseService() {
 
         phaseService = new retrofit2.Retrofit.Builder()
-                .baseUrl(basePhaseUrl)
+                .baseUrl(basePhaseHttpsUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(PhaseService.class);
@@ -82,6 +84,17 @@ public class PhaseServiceHelper {
 
         return userPhaseService;
 
+    }
+
+    public UserPhaseService getUserAuthPhaseService() {
+        userPhaseService = new retrofit2.Retrofit.Builder()
+                //.client(client)
+                .baseUrl(userAuthBaseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(UserPhaseService.class);
+
+        return userPhaseService;
     }
 
     public static <T> DataResultHelper<T> handleResponse(Response<T> response) {

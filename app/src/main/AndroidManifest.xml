@@ -47,7 +47,7 @@
             android:name=".PosterContentProvider"
             android:authorities="poster.${applicationId}"
             android:enabled="true"
-            android:exported="true"></provider> <!-- Samsung multi-window support -->
+            android:exported="true" /> <!-- Samsung multi-window support -->
         <uses-library
             android:name="com.sec.android.app.multiwindow"
             android:required="false" />
@@ -55,36 +55,51 @@
         <meta-data
             android:name="com.sec.android.support.multiwindow"
             android:value="true" />
-
-        <!-- Samsung DeX support requires explicit placement of android:resizeableActivity="true"
-             in each activity even though it is implied by targeting API 24+ -->
+        <!--
+ Samsung DeX support requires explicit placement of android:resizeableActivity="true"
+             in each activity even though it is implied by targeting API 24+
+        -->
         <activity
-            android:name=".MainActivity"
-            android:configChanges="mcc|mnc|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
-            android:resizeableActivity="true">
-
+            android:name=".ui.SplashActivity"
+            android:label="@string/app_label"
+            android:theme="@style/splashScreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
                 <category android:name="tv.ouya.intent.category.APP" />
             </intent-filter>
-
         </activity>
-        <activity android:name=".ui.game.LoadingGameActivity" android:screenOrientation="userLandscape"/>
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="mcc|mnc|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
+            android:resizeableActivity="true">
+        </activity>
+        <activity
+            android:name=".ui.settings.auth.SignInActivity"
+            android:label="Sign in"
+            android:windowSoftInputMode="adjustPan"
+            android:theme="@style/AppTheme">
+        </activity>
+        <activity
+            android:name=".ui.game.LoadingGameActivity"
+            android:screenOrientation="userLandscape" />
         <activity
             android:name=".PcView"
             android:configChanges="mcc|mnc|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
             android:resizeableActivity="true">
-            <!--<intent-filter>-->
-            <!--    <action android:name="android.intent.action.MAIN" />-->
 
-            <!--    <category android:name="android.intent.category.LAUNCHER" />-->
-            <!--    <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />-->
-            <!--    <category android:name="android.intent.category.LEANBACK_LAUNCHER" />-->
-            <!--    <category android:name="tv.ouya.intent.category.APP" />-->
-            <!--</intent-filter>-->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" /> -->
+            <!-- <category android:name="android.intent.category.LEANBACK_LAUNCHER" /> -->
+            <!-- <category android:name="tv.ouya.intent.category.APP" /> -->
+            <!-- </intent-filter> -->
         </activity> <!-- Small hack to support launcher shortcuts without relaunching over and over again when the back button is pressed -->
         <activity
             android:name=".ShortcutTrampoline"
@@ -156,8 +171,8 @@
             android:label="Computer Management Service" />
         <service
             android:name=".utils.services.PlayServices"
-            android:label="Computer Service"
-            android:exported="false"/>
+            android:exported="false"
+            android:label="Computer Service" />
         <service
             android:name=".binding.input.driver.UsbDriverService"
             android:label="Usb Driver Service" />

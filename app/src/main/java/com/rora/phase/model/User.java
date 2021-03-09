@@ -24,6 +24,13 @@ public class User {
     @Expose
     private String avatar;
 
+    public User() {
+    }
+
+    public User(String userName) {
+        this.userName = userName;
+    }
+
     public String getuId() {
         return uId;
     }
