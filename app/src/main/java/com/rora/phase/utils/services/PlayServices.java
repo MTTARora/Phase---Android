@@ -58,17 +58,9 @@ public class PlayServices extends Service {
 
     private UserPlayingData.PlayingState state = UserPlayingData.PlayingState.IDLE;
     private PollingTuple pollingTuple;
-    private IdentityManager idManager;
     private PlayGameProgressCallBack listener = null;
-    private final Lock defaultNetworkLock = new ReentrantLock();
+    private IdentityManager idManager;
     GameRepository gameRepository;
-
-    private static final int FAST_POLL_TIMEOUT = 1000;
-    private static final int OFFLINE_POLL_TRIES = 5;
-    private static final int INITIAL_POLL_TRIES = 2;
-    private static final int SERVERINFO_POLLING_PERIOD_MS = 1500;
-    private static final int POLL_DATA_TTL_MS = 30000;
-    private static final int MDNS_QUERY_PERIOD_MS = 1000;
 
     private DiscoveryService.DiscoveryBinder discoveryBinder;
     private final ServiceConnection discoveryServiceConnection = new ServiceConnection() {
@@ -438,6 +430,8 @@ public class PlayServices extends Service {
     //--------------------------------- Classes -------------------------------
 
     public class ComputerManagerBinder extends Binder {
+        private static final int POLL_DATA_TTL_MS = 30000;
+        private static final int MDNS_QUERY_PERIOD_MS = 1000;
 
         public void startConnectProgress(Activity activity, ComputerDetails computer, PlayGameProgressCallBack playProgressCallBack) {
             PlayServices.this.startConnectProgress(activity, computer, playProgressCallBack);
@@ -497,6 +491,12 @@ public class PlayServices extends Service {
     }
 
     private class ComputerServices {
+        private final Lock defaultNetworkLock = new ReentrantLock();
+
+        private static final int FAST_POLL_TIMEOUT = 1000;
+        private static final int OFFLINE_POLL_TRIES = 5;
+        private static final int INITIAL_POLL_TRIES = 2;
+        private static final int SERVERINFO_POLLING_PERIOD_MS = 1500;
 
         /** Fill the necessary computer details
          *
