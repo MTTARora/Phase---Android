@@ -35,7 +35,7 @@ public class PhaseServiceHelper {
     public PhaseService getPhaseService() {
 
         phaseService = new retrofit2.Retrofit.Builder()
-                .baseUrl(basePhaseHttpsUrl)
+                .baseUrl(basePhaseHttpUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(PhaseService.class);

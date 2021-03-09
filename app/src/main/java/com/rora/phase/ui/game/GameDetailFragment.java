@@ -179,7 +179,7 @@ public class GameDetailFragment extends BaseFragment {
         //STEP 1: Get computer details from server
         gameViewModel.getComputerDetails().observe(getViewLifecycleOwner(), computerDetails -> {
             if (computerDetails == null) {
-                Dialog.displayDialog(getActivity(), getResources().getString(R.string.err), getResources().getString(R.string.undetected_error), true);
+                Dialog.displayDialog(getActivity(), getResources().getString(R.string.err), getResources().getString(R.string.undetected_error), false);
                 return;
             }
             //STEP 2: Pass computer data to loading screen
