@@ -47,7 +47,7 @@ public interface PhaseService {
     @GET("./")
     Call<BaseResponse<List<Game>>> getGameByPayType(@Query("pay_type") String payType, @Query("page") int page, @Query("page_size") int pageSize);
 
-    @GET("./server/avaliable-host")
+    @GET("./server/available-host")
     Call<BaseResponse<Host>> getComputerIP();
 
     //--------------------------------------------------

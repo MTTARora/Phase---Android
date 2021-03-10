@@ -90,11 +90,7 @@ public class UserRepository {
         });
     }
 
-    public void signIn(String email, String password) {
-        LoginCredentials loginCredentials = new LoginCredentials(email, password);
-        User userTest = new User(email);
-        String mail = loginCredentials.getUsername();
-        String pw = loginCredentials.getPassword();
+    public void signIn(LoginCredentials loginCredentials) {
         userAuthServices.signIn(loginCredentials).enqueue(new Callback<BaseResponse<LoginResponse>>() {
             @Override
             public void onResponse(Call<BaseResponse<LoginResponse>> call, Response<BaseResponse<LoginResponse>> response) {
@@ -108,9 +104,9 @@ public class UserRepository {
                     User user = resp.getInfo();
                     String token = resp.getToken();
 
-                    if (token != null && user != null) {
-                        storeToken(token);
-                    }
+                    //if (token != null && user != null) {
+                    //    storeToken(token);
+                    //}
                     UserRepository.this.user.postValue(user);
                 }
             }

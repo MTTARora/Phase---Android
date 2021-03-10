@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData;
 
 import com.rora.phase.model.Game;
 import com.rora.phase.model.User;
+import com.rora.phase.model.api.LoginCredentials;
 import com.rora.phase.repository.UserRepository;
 import com.rora.phase.utils.DataResultHelper;
 
@@ -51,7 +52,8 @@ public class UserViewModel extends AndroidViewModel {
     //----------------------------------------------
 
     public void signIn(String username, String password) {
-        userRepository.signIn(username, password);
+        LoginCredentials loginCredentials = new LoginCredentials(username, password);
+        userRepository.signIn(loginCredentials);
     }
 
     public void getUserData() {

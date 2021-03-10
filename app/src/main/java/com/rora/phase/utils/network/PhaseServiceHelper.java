@@ -17,6 +17,8 @@ public class PhaseServiceHelper {
 
     private final String basePhaseHttpsUrl = "https://roragame.ga/api/";
     private final String basePhaseHttpUrl = "http://roragame.ga/api/";
+    //private final String basePhaseHttpsUrl = "http://localhost:53315/api/";
+    //private final String basePhaseHttpUrl = "http://localhost:53315/api/";
     private final String userBaseUrl = basePhaseHttpUrl + "users/";
     private final String userAuthBaseUrl = basePhaseHttpsUrl + "auth/";
     private final String gameBaseUrl = basePhaseHttpUrl + "games/";
