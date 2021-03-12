@@ -36,8 +36,8 @@ public class LoadingGameActivity extends FragmentActivity {
     private ProgressBar pbLoadingProgress;
 
     private boolean completeOnCreateCalled;
-    private PlayServices.ComputerManagerBinder managerBinder;
 
+    private PlayServices.ComputerManagerBinder managerBinder;
     private final ServiceConnection serviceConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder binder) {
             final PlayServices.ComputerManagerBinder localBinder = ((PlayServices.ComputerManagerBinder)binder);
@@ -66,7 +66,7 @@ public class LoadingGameActivity extends FragmentActivity {
         }
     };
 
-    public static final String COMPUTER_PARAM = "COMPUTER_PARAM";
+    //public static final String COMPUTER_PARAM = "COMPUTER_PARAM";
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -165,11 +165,11 @@ public class LoadingGameActivity extends FragmentActivity {
     }
 
     private void startConnect() {
-        Bundle bundle = getIntent().getBundleExtra("LoadingGameActivityBundle");
-        ComputerDetails computer = (ComputerDetails) bundle.getSerializable(COMPUTER_PARAM);
+        //Bundle bundle = getIntent().getBundleExtra("LoadingGameActivityBundle");
+        //ComputerDetails computer = (ComputerDetails) bundle.getSerializable(COMPUTER_PARAM);
 
         Thread connectThread = new Thread(() -> {
-            managerBinder.startConnectProgress(this, computer, playProgressCallBack);
+            managerBinder.startConnectProgress(this, playProgressCallBack);
         });
         connectThread.setName("UI - LoadingGameActivity");
         connectThread.start();
@@ -183,18 +183,28 @@ public class LoadingGameActivity extends FragmentActivity {
     // HANDLE PLAY PROGRESS
     private final PlayGameProgressCallBack playProgressCallBack =  new PlayGameProgressCallBack() {
         @Override
-        public void onAddPc(boolean isDone) {
+        public void onStart(boolean isDone) {
             pbLoadingProgress.setProgress(isDone ? 1 : 2);
         }
 
         @Override
-        public void onPairPc(boolean isDone) {
+        public void onFindAHost(boolean isDone) {
             pbLoadingProgress.setProgress(isDone ? 3 : 4);
         }
 
         @Override
-        public void onStartConnect(boolean isDone) {
+        public void onAddPc(boolean isDone) {
             pbLoadingProgress.setProgress(isDone ? 5 : 6);
+        }
+
+        @Override
+        public void onPairPc(boolean isDone) {
+            pbLoadingProgress.setProgress(isDone ? 7 : 8);
+        }
+
+        @Override
+        public void onStartConnect(boolean isDone) {
+            pbLoadingProgress.setProgress(isDone ? 9 : 10);
         }
 
         @Override

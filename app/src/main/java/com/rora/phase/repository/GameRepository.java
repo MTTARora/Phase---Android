@@ -8,8 +8,10 @@ import androidx.lifecycle.MutableLiveData;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.Host;
 import com.rora.phase.model.Tag;
+import com.rora.phase.model.api.LoginResponse;
 import com.rora.phase.nvstream.http.ComputerDetails;
 import com.rora.phase.utils.DataResultHelper;
+import com.rora.phase.utils.callback.OnResultCallBack;
 import com.rora.phase.utils.network.BaseResponse;
 import com.rora.phase.utils.network.PhaseService;
 import com.rora.phase.utils.network.PhaseServiceHelper;
@@ -31,7 +33,7 @@ public class GameRepository {
 
     private MutableLiveData<List<Game>> newGameList, recentPlayList, editorsChoiceList, hotGameList, trendingList, gameByCategoryList, gamesByPayTypeList;
     private MutableLiveData<List<Tag>> categoryList;
-    private MutableLiveData<ComputerDetails> computer;
+    //private MutableLiveData<ComputerDetails> computer;
     private MutableLiveData<Game> selectedGame;
 
     private MutableLiveData<String> errMsg;
@@ -45,7 +47,7 @@ public class GameRepository {
         categoryList = new MutableLiveData<>();
         gameByCategoryList = new MutableLiveData<>();
         gamesByPayTypeList = new MutableLiveData<>();
-        computer = new MutableLiveData<>();
+        //computer = new MutableLiveData<>();
         selectedGame = new MutableLiveData<>();
 
         errMsg = new MutableLiveData<>();
@@ -92,9 +94,9 @@ public class GameRepository {
         return gamesByPayTypeList;
     }
 
-    public MutableLiveData<ComputerDetails> getComputer() {
-        return computer;
-    }
+    //public MutableLiveData<ComputerDetails> getComputer() {
+    //    return computer;
+    //}
 
     public MutableLiveData<Game> getSelectedGame() {
         return selectedGame;
@@ -308,22 +310,29 @@ public class GameRepository {
         });
     }
 
-    public void getComputerIPData() {
+    public void getComputerIPData(OnResultCallBack<ComputerDetails> callBack) {
         playServices.getComputerIP().enqueue(new Callback<BaseResponse<Host>>() {
             @Override
             public void onResponse(Call<BaseResponse<Host>> call, Response<BaseResponse<Host>> response) {
-                Host host = BaseResponse.getResult(response.body());
-                if (host == null) {
-                    computer.postValue(null);
+                DataResultHelper<BaseResponse<Host>> dataResponse = PhaseServiceHelper.handleResponse(response);
+                String err = dataResponse.getErrMsg();
+                if (err != null) {
+                    callBack.onResult(err, null);
                 } else {
-                    computer.postValue(new ComputerDetails(host));
+                    Host host = BaseResponse.getResult(dataResponse.getData());
+                    if (host == null)
+                        callBack.onResult("So many players are playing right now, please try again later!", null);
+                    else
+                        callBack.onResult(null, new ComputerDetails(host));
+                        //computer.postValue(new ComputerDetails(host));
                 }
             }
 
             @Override
             public void onFailure(Call<BaseResponse<Host>> call, Throwable t) {
                 Log.e(this.getClass().getSimpleName(), t.getMessage());
-                computer.postValue(null);
+                callBack.onResult("Can't connect to server, please try again later!", null);
+                //computer.postValue(null);
             }
         });
     }

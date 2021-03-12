@@ -12,6 +12,7 @@ public class BaseResponse<T> {
     private T data;
 
     public static <T> T getResult(BaseResponse<T> response) {
+        //Optimize here
         if(response != null && response.statusCode == 200) {
             return response.data;
         }

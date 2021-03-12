@@ -34,6 +34,8 @@ import com.rora.phase.repository.GameRepository;
 import com.rora.phase.utils.NetHelper;
 import com.rora.phase.utils.ServerHelper;
 import com.rora.phase.utils.callback.PlayGameProgressCallBack;
+import com.rora.phase.utils.network.realtime.playhub.PlayHub;
+import com.rora.phase.utils.network.realtime.playhub.PlayHubListener;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -61,6 +63,7 @@ public class PlayServices extends Service {
     private PlayGameProgressCallBack listener = null;
     private IdentityManager idManager;
     GameRepository gameRepository;
+    private PlayHub playHub;
 
     private DiscoveryService.DiscoveryBinder discoveryBinder;
     private final ServiceConnection discoveryServiceConnection = new ServiceConnection() {
@@ -92,7 +95,6 @@ public class PlayServices extends Service {
 
     @Override
     public void onCreate() {
-        // Bind to the discovery service
         bindService(new Intent(this, DiscoveryService.class), discoveryServiceConnection, Service.BIND_AUTO_CREATE);
 
         // Lookup or generate this device's UID
@@ -114,7 +116,6 @@ public class PlayServices extends Service {
         if (discoveryBinder != null) {
             unbindService(discoveryServiceConnection);
         }
-
         // FIXME: Should await termination here but we have timeout issues in HttpURLConnection
     }
 
@@ -165,41 +166,66 @@ public class PlayServices extends Service {
     //====================== PLAYING GAME STEPS =========================
 
     /** Start the progress after getting ip and ports from STEP 1 */
-    public void startConnectProgress(Activity activity, ComputerDetails computer, PlayGameProgressCallBack callBack) {
-        try {
-            //STEP 2: Add pc
-            callBack.onAddPc(false);
-            String err = addPc(computer);
-            if (err != null) {
-                callBack.onError(err);
-                return;
+    public void startConnectProgress(Activity activity, PlayGameProgressCallBack callBack) {
+        callBack.onStart(false);
+        playHub = new PlayHub();
+        //STEP 1: Connect to hub
+        playHub.startConnect(getApplicationContext(), new PlayHubListener() {
+            @Override
+            public void onConnected() {
+                callBack.onStart(true);
+                callBack.onFindAHost(false);
+                //STEP 2: Get host data
+                //gameRepository.getComputerIPData((errMsg, computer) -> {
+                //    callBack.onFindAHost(true);
+                //    if (errMsg != null) {
+                //        playHub.stopConnect();
+                //        callBack.onError(errMsg);
+                //        return;
+                //    }
+                //
+                //    try {
+                //        //STEP 3: Add pc
+                //        callBack.onAddPc(false);
+                //        String err = addPc(computer);
+                //        if (err != null) {
+                //            callBack.onError(err);
+                //            return;
+                //        }
+                //        callBack.onAddPc(true);
+                //        Thread.sleep(1000);
+                //
+                //        //STEP 4: Pair
+                //        callBack.onPairPc(false);
+                //        err = startPairing();
+                //        if (err != null) {
+                //            if (err.equals(getApplication().getResources().getString(R.string.pair_pc_ingame)))
+                //                stopConnect(callBack);
+                //            callBack.onError(err);
+                //            return;
+                //        }
+                //        callBack.onPairPc(true);
+                //        Thread.sleep(1000);
+                //
+                //        //STEP 5: Play
+                //        callBack.onStartConnect(false);
+                //        start(activity, binder);
+                //        callBack.onStartConnect(true);
+                //    } catch (InterruptedException e) {
+                //        LimeLog.info("Playing Game - Connecting error -- " + e.getMessage());
+                //        callBack.onError(getApplication().getResources().getString(R.string.undetected_error));
+                //    }
+                //});
             }
-            callBack.onAddPc(true);
-            Thread.sleep(1000);
 
-            //STEP 3: Pair
-            callBack.onPairPc(false);
-            err = startPairing();
-            if (err != null) {
-                if (err.equals(getApplication().getResources().getString(R.string.pair_pc_ingame)))
-                    stopConnect(callBack);
-                callBack.onError(err);
-                return;
+            @Override
+            public void onDisconnected() {
+
             }
-            callBack.onPairPc(true);
-            Thread.sleep(1000);
-
-            //STEP 4: Play
-            callBack.onStartConnect(false);
-            start(activity, binder);
-            callBack.onStartConnect(true);
-        } catch (InterruptedException e) {
-            LimeLog.info("Playing Game - Connecting error -- " + e.getMessage());
-            callBack.onError(getApplication().getResources().getString(R.string.undetected_error));
-        }
+        });
     }
 
-    /** STEP 2: Connect to pc
+    /** STEP 3: Connect to pc
      *
      * - Try connect to pc and get its state
      *
@@ -220,7 +246,7 @@ public class PlayServices extends Service {
         return err;
     }
 
-    /** STEP 3: Pair computer
+    /** STEP 4: Pair computer
      *
      * - Send paring pin to server and try to pair with computer
      * Use this method in a thread
@@ -289,14 +315,14 @@ public class PlayServices extends Service {
         return err;
     }
 
-    /** STEP 4: Start remote connect
+    /** STEP 5: Start remote connect
      * */
     private void start(Activity activity, PlayServices.ComputerManagerBinder managerBinder) {
         LimeLog.info("Playing game - STEP 4: Start remote connect");
         ServerHelper.doStart(activity, NvApp.initRemoteApp(), pollingTuple.computer, managerBinder);
     }
 
-    /** STEP 5 - FINAL: Counting playtime
+    /** STEP 6 - FINAL: Counting playtime
      * */
     public void startCountingPlaytime() {
 
@@ -433,8 +459,8 @@ public class PlayServices extends Service {
         private static final int POLL_DATA_TTL_MS = 30000;
         private static final int MDNS_QUERY_PERIOD_MS = 1000;
 
-        public void startConnectProgress(Activity activity, ComputerDetails computer, PlayGameProgressCallBack playProgressCallBack) {
-            PlayServices.this.startConnectProgress(activity, computer, playProgressCallBack);
+        public void startConnectProgress(Activity activity, PlayGameProgressCallBack playProgressCallBack) {
+            PlayServices.this.startConnectProgress(activity, playProgressCallBack);
         }
 
         public void stopConnect(PlayGameProgressCallBack playProgressCallBack) {

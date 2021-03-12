@@ -1,6 +1,7 @@
 package com.rora.phase.repository;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
@@ -35,6 +36,10 @@ public class UserRepository {
     private MutableLiveData<User> user;
     private MutableLiveData<List<Game>> favoriteList, recentPlayList, recommendedList;
     private MutableLiveData<DataResultHelper> updateDataResult;
+
+    public static UserRepository newInstance(Context context) {
+        return new UserRepository(context);
+    }
 
     public UserRepository(Context context) {
         PhaseServiceHelper phaseServiceHelper = new PhaseServiceHelper(context);
@@ -219,6 +224,10 @@ public class UserRepository {
 
 
     //------------------------------------ LOCAL SERVICES ------------------------------------
+
+    public String getUserToken() {
+        return dbSharedPref.getUserToken();
+    }
 
     public void storeToken(String token) {
         dbSharedPref.setUserToken(token);

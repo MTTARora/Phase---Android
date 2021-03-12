@@ -17,6 +17,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:max="6"/>
+        android:max="10"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

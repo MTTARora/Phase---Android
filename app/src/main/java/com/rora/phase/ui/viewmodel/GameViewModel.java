@@ -16,7 +16,7 @@ public class GameViewModel extends AndroidViewModel {
     private GameRepository gameRepository;
     private UserRepository userRepository;
     private MutableLiveData<Game> game;
-    private MutableLiveData<ComputerDetails> computerDetails;
+    //private MutableLiveData<ComputerDetails> computerDetails;
 
     public GameViewModel(Application application) {
         super(application);
@@ -24,27 +24,27 @@ public class GameViewModel extends AndroidViewModel {
         userRepository = new UserRepository(application.getBaseContext());
 
         game = gameRepository.getSelectedGame();
-        computerDetails = gameRepository.getComputer();
+        //computerDetails = gameRepository.getComputer();
     }
 
     public LiveData<Game> getGameData() {
         return game;
     }
 
-    public LiveData<ComputerDetails> getComputerDetails() {
-        return computerDetails;
-    }
+    //public LiveData<ComputerDetails> getComputerDetails() {
+    //    return computerDetails;
+    //}
 
     public void getGame(String gameId) {
         gameRepository.getGameData(gameId);
     }
 
-    public void getComputerDetailsData() {
-        //if (userRepository.isUserLogged())
-        gameRepository.getComputerIPData();
-        //else
-        //    getApplication().getResources().getString(R.string.require_login_msg);
-    }
+    //public void getComputerDetailsData() {
+    //    //if (userRepository.isUserLogged())
+    //    gameRepository.getComputerIPData();
+    //    //else
+    //    //    getApplication().getResources().getString(R.string.require_login_msg);
+    //}
 
     public boolean isStopPlaying() {
         return userRepository.isStopPlaying();

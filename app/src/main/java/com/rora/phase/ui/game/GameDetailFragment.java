@@ -1,96 +1,38 @@
 package com.rora.phase.ui.game;
 
-import android.app.ActivityManager;
-import android.app.Service;
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.content.res.Configuration;
-import android.opengl.GLSurfaceView;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.IBinder;
-import android.os.PersistableBundle;
-import android.preference.PreferenceManager;
-import android.util.Log;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.rora.phase.AppView;
-import com.rora.phase.LimeLog;
-import com.rora.phase.PcView;
 import com.rora.phase.R;
-import com.rora.phase.binding.PlatformBinding;
-import com.rora.phase.binding.crypto.AndroidCryptoProvider;
-import com.rora.phase.computers.ComputerManagerListener;
-import com.rora.phase.computers.ComputerManagerService;
-import com.rora.phase.grid.PcGridAdapter;
-import com.rora.phase.grid.assets.DiskAssetLoader;
 import com.rora.phase.model.Banner;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.Screenshot;
-import com.rora.phase.nvstream.http.ComputerDetails;
-import com.rora.phase.nvstream.http.NvApp;
-import com.rora.phase.nvstream.http.NvHTTP;
-import com.rora.phase.nvstream.http.PairingManager;
-import com.rora.phase.nvstream.wol.WakeOnLanSender;
-import com.rora.phase.preferences.AddComputerManually;
-import com.rora.phase.preferences.GlPreferences;
-import com.rora.phase.preferences.PreferenceConfiguration;
-import com.rora.phase.preferences.StreamSettings;
-import com.rora.phase.ui.AdapterFragment;
 import com.rora.phase.ui.adapter.BannerVPAdapter;
 import com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter;
-import com.rora.phase.ui.adapter.GameInfoRecyclerViewAdapter;
 import com.rora.phase.ui.adapter.GameMinInfoRecyclerViewAdapter;
 import com.rora.phase.ui.adapter.GameVerticalRVAdapter;
 import com.rora.phase.ui.adapter.PlatformRecyclerViewAdapter;
 import com.rora.phase.ui.viewmodel.GameViewModel;
-import com.rora.phase.ui.viewmodel.HomeViewModel;
 import com.rora.phase.utils.DateTimeHelper;
-import com.rora.phase.utils.Dialog;
-import com.rora.phase.utils.HelpLauncher;
 import com.rora.phase.utils.MediaHelper;
-import com.rora.phase.utils.ServerHelper;
-import com.rora.phase.utils.ShortcutHelper;
-import com.rora.phase.utils.UiHelper;
 import com.rora.phase.utils.ui.BaseFragment;
 import com.rora.phase.utils.ui.ViewHelper;
 
-import org.xmlpull.v1.XmlPullParserException;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
 
 import static com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter.MIN_SIZE;
 
@@ -142,17 +84,7 @@ public class GameDetailFragment extends BaseFragment {
 
         btnFavorite = root.findViewById(R.id.favorite_btn);
 
-        root.findViewById(R.id.back_btn).setOnClickListener(v -> getActivity().onBackPressed());
-        root.findViewById(R.id.play_btn).setOnClickListener(v -> {
-            gameViewModel.getComputerDetailsData();
-        });
-
-        btnFavorite.setOnClickListener(v -> {
-            //gameViewModel.updateFavorite();
-            btnFavorite.setImageResource(R.drawable.ic_favorite);
-        });
-
-        initView();
+        initView(root);
         initData();
         return root;
     }
@@ -160,7 +92,7 @@ public class GameDetailFragment extends BaseFragment {
     //---------------------------------------------------------------------------------------
 
 
-    private void initView() {
+    private void initView(View root) {
         ViewHelper.setSizePercentageWithScreen(imvBanner, 0, 0.35);
 
         setupRecyclerView(rclvPlatform, new PlatformRecyclerViewAdapter(), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL , false));
@@ -171,25 +103,33 @@ public class GameDetailFragment extends BaseFragment {
         rclvSimilar.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL , false));
         GameVerticalRVAdapter adapter = new GameVerticalRVAdapter(rclvSimilar);
         rclvSimilar.setAdapter(adapter);
+
+        root.findViewById(R.id.back_btn).setOnClickListener(v -> getActivity().onBackPressed());
+        root.findViewById(R.id.play_btn).setOnClickListener(v -> {
+            getActivity().startActivity(new Intent(getContext(), LoadingGameActivity.class));
+        });
+
+        btnFavorite.setOnClickListener(v -> {
+            //gameViewModel.updateFavorite();
+            btnFavorite.setImageResource(R.drawable.ic_favorite);
+        });
     }
 
     private void initData() {
         gameViewModel.getGameData().observe(getViewLifecycleOwner(), this::bindData);
 
         //STEP 1: Get computer details from server
-        gameViewModel.getComputerDetails().observe(getViewLifecycleOwner(), computerDetails -> {
-            if (computerDetails == null) {
-                Dialog.displayDialog(getActivity(), getResources().getString(R.string.err), getResources().getString(R.string.undetected_error), false);
-                return;
-            }
-            //STEP 2: Pass computer data to loading screen
-            Bundle bundle = new Bundle();
-            bundle.putSerializable(LoadingGameActivity.COMPUTER_PARAM, computerDetails);
-            Intent intent = new Intent(getContext(), LoadingGameActivity.class);
-            intent.putExtra("LoadingGameActivityBundle", bundle);
-
-            getActivity().startActivityForResult(intent, 1);
-        });
+        //gameViewModel.getComputerDetails().observe(getViewLifecycleOwner(), computerDetails -> {
+        //    if (computerDetails == null) {
+        //        Dialog.displayDialog(getActivity(), getResources().getString(R.string.err), getResources().getString(R.string.undetected_error), false);
+        //        return;
+        //    }
+        //    //STEP 2: Pass computer data to loading screen
+        //    Bundle bundle = new Bundle();
+        //    bundle.putSerializable(LoadingGameActivity.COMPUTER_PARAM, computerDetails);
+        //    Intent intent = new Intent(getContext(), LoadingGameActivity.class);
+        //    intent.putExtra("LoadingGameActivityBundle", bundle);
+        //});
 
         gameViewModel.getGame(gameId);
     }

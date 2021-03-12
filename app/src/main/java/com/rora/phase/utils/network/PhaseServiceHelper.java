@@ -15,13 +15,15 @@ public class PhaseServiceHelper {
     private Context context;
     private SharedPreferencesHelper sharedPreferencesHelper;
 
-    private final String basePhaseHttpsUrl = "https://roragame.ga/api/";
-    private final String basePhaseHttpUrl = "http://roragame.ga/api/";
-    //private final String basePhaseHttpsUrl = "http://localhost:53315/api/";
-    //private final String basePhaseHttpUrl = "http://localhost:53315/api/";
+    //private static final String basePhaseHttpsUrl = "https://roragame.ga/api/";
+    //private static final String basePhaseHttpUrl = "http://roragame.ga/api/";
+    private static final String basePhaseHttpsUrl = "http://10.0.2.2:53315/api/";
+    private static final String basePhaseHttpUrl = "http://10.0.2.2:53315/api/";
     private final String userBaseUrl = basePhaseHttpUrl + "users/";
     private final String userAuthBaseUrl = basePhaseHttpsUrl + "auth/";
     private final String gameBaseUrl = basePhaseHttpUrl + "games/";
+
+    public static final String playHubUrl = basePhaseHttpUrl + "playing-game-hub";
 
     public PhaseServiceHelper() {
     }

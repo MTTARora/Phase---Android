@@ -172,7 +172,7 @@
         <service
             android:name=".utils.services.PlayServices"
             android:exported="false"
-            android:label="Computer Service" />
+            android:label="Play Service" />
         <service
             android:name=".binding.input.driver.UsbDriverService"
             android:label="Usb Driver Service" />
