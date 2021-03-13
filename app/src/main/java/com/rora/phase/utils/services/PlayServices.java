@@ -31,6 +31,8 @@ import com.rora.phase.nvstream.jni.MoonBridge;
 import com.rora.phase.nvstream.mdns.MdnsComputer;
 import com.rora.phase.nvstream.mdns.MdnsDiscoveryListener;
 import com.rora.phase.repository.GameRepository;
+import com.rora.phase.repository.UserRepository;
+import com.rora.phase.ui.settings.auth.SignInActivity;
 import com.rora.phase.utils.NetHelper;
 import com.rora.phase.utils.ServerHelper;
 import com.rora.phase.utils.callback.PlayGameProgressCallBack;
@@ -62,7 +64,7 @@ public class PlayServices extends Service {
     private PollingTuple pollingTuple;
     private PlayGameProgressCallBack listener = null;
     private IdentityManager idManager;
-    GameRepository gameRepository;
+    UserRepository userRepository;
     private PlayHub playHub;
 
     private DiscoveryService.DiscoveryBinder discoveryBinder;
@@ -99,7 +101,7 @@ public class PlayServices extends Service {
 
         // Lookup or generate this device's UID
         idManager = new IdentityManager(this);
-        gameRepository = new GameRepository();
+        userRepository = new UserRepository(getApplicationContext());
     }
 
     @Override
@@ -274,7 +276,7 @@ public class PlayServices extends Service {
 
             //STEP 3.2: SEND PIN TO HOST
             LimeLog.info("Pairing - Waiting for pin confirmation: " + pinStr);
-            gameRepository.sendPinToHost(pinStr);
+            userRepository.sendPinToHost(pinStr);
 
             PairingManager pm = httpConn.getPairingManager();
             PairingManager.PairState pairState = pm.pair(httpConn.getServerInfo(), pinStr);
@@ -343,7 +345,7 @@ public class PlayServices extends Service {
         listener = null;
         unbindService(discoveryServiceConnection);
         bindService(new Intent(this, DiscoveryService.class), discoveryServiceConnection, Service.BIND_AUTO_CREATE);
-        gameRepository.stopPlaying();
+        userRepository.stopPlaying();
 
         LimeLog.info("Stop connect - Success");
         playProgressCallBack.onStopConnect(true);

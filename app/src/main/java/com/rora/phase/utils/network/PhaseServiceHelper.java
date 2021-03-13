@@ -5,6 +5,10 @@ import android.content.Context;
 import com.rora.phase.utils.DataResultHelper;
 import com.rora.phase.utils.SharedPreferencesHelper;
 
+import org.json.JSONObject;
+
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Response;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -91,8 +95,18 @@ public class PhaseServiceHelper {
     }
 
     public UserPhaseService getUserAuthPhaseService() {
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        // set your desired log level
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        // add your other interceptors …
+
+        // add logging as last interceptor
+        httpClient.addInterceptor(logging);  // <-- this is the important line!
+
         userPhaseService = new retrofit2.Retrofit.Builder()
-                //.client(client)
+                .client(httpClient.build())
                 .baseUrl(userAuthBaseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
@@ -106,7 +120,14 @@ public class PhaseServiceHelper {
         if(response.code() == 200) {
             data.setData(response.body());
         } else {
-            data.setErrMsg("No data to fetch, please try again later!");
+            String err = "No data to fetch, please try again later!";
+            try {
+                JSONObject jObjError = new JSONObject(response.errorBody().string());
+                err = jObjError.getString("message");
+            } catch (Exception e) {
+                err = e.getMessage();
+            }
+            data.setErrMsg(err);
         }
         return data;
     }

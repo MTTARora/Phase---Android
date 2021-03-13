@@ -8,7 +8,7 @@ import androidx.lifecycle.LiveData;
 
 import com.rora.phase.model.Game;
 import com.rora.phase.model.User;
-import com.rora.phase.model.api.LoginCredentials;
+import com.rora.phase.model.api.LoginCredential;
 import com.rora.phase.repository.UserRepository;
 import com.rora.phase.utils.DataResultHelper;
 
@@ -26,6 +26,7 @@ public class UserViewModel extends AndroidViewModel {
         super(application);
         userRepository = new UserRepository(application.getApplicationContext());
 
+        user = userRepository.getUser();
         recentPlayList = userRepository.getRecentPlayList();
         favoriteList = userRepository.getFavoriteList();
         updatingDataResult = userRepository.getUpdateDataResult();
@@ -52,8 +53,8 @@ public class UserViewModel extends AndroidViewModel {
     //----------------------------------------------
 
     public void signIn(String username, String password) {
-        LoginCredentials loginCredentials = new LoginCredentials(username, password);
-        userRepository.signIn(loginCredentials);
+        LoginCredential loginIdentify = new LoginCredential(username, password);
+        userRepository.signIn(loginIdentify);
     }
 
     public void getUserData() {
@@ -78,6 +79,10 @@ public class UserViewModel extends AndroidViewModel {
 
     public boolean isUserLogged() {
         return userRepository.isUserLogged();
+    }
+
+    public User getLocalUser() {
+        return new User(userRepository.getUserToken());
     }
 
 }

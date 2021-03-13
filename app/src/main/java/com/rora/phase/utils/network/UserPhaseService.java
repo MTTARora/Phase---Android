@@ -1,10 +1,8 @@
 package com.rora.phase.utils.network;
 
-import com.rora.phase.model.Banner;
 import com.rora.phase.model.Game;
-import com.rora.phase.model.Tag;
 import com.rora.phase.model.User;
-import com.rora.phase.model.api.LoginCredentials;
+import com.rora.phase.model.api.LoginCredential;
 import com.rora.phase.model.api.LoginResponse;
 
 import java.util.List;
@@ -24,7 +22,7 @@ public interface UserPhaseService {
     Call<BaseResponse> signUp(@Body String email, @Body String password);
 
     @POST("./login")
-    Call<BaseResponse<LoginResponse>> signIn(@Body LoginCredentials credentials);
+    Call<BaseResponse<LoginResponse>> signIn(@Body LoginCredential credentials);
 
     @POST("/forgot_password")
     Call<BaseResponse> forgotPassword(@Body String email);

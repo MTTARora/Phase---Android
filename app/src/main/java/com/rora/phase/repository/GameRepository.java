@@ -362,12 +362,4 @@ public class GameRepository {
             }
         });
     }
-
-    public void sendPinToHost(String pinStr) {
-
-    }
-
-    public void stopPlaying() {
-        
-    }
 }

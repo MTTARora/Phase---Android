@@ -1,7 +1,6 @@
 package com.rora.phase.repository;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
@@ -10,9 +9,8 @@ import com.google.gson.Gson;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.User;
 import com.rora.phase.model.UserPlayingData;
-import com.rora.phase.model.api.LoginCredentials;
+import com.rora.phase.model.api.LoginCredential;
 import com.rora.phase.model.api.LoginResponse;
-import com.rora.phase.model.enums.PayTypeEnum;
 import com.rora.phase.nvstream.http.ComputerDetails;
 import com.rora.phase.utils.DataResultHelper;
 import com.rora.phase.utils.SharedPreferencesHelper;
@@ -95,33 +93,35 @@ public class UserRepository {
         });
     }
 
-    public void signIn(LoginCredentials loginCredentials) {
-        userAuthServices.signIn(loginCredentials).enqueue(new Callback<BaseResponse<LoginResponse>>() {
+    public void signIn(LoginCredential loginCredential) {
+        userAuthServices.signIn(loginCredential).enqueue(new Callback<BaseResponse<LoginResponse>>() {
             @Override
             public void onResponse(Call<BaseResponse<LoginResponse>> call, Response<BaseResponse<LoginResponse>> response) {
                 DataResultHelper<BaseResponse<LoginResponse>> dataResponse = PhaseServiceHelper.handleResponse(response);
 
                 if (dataResponse.getErrMsg() != null) {
-                    user.postValue(null);
                     updateDataResult.postValue(new DataResultHelper(dataResponse.getErrMsg(), null));
                 } else {
                     LoginResponse resp = BaseResponse.getResult(dataResponse.getData());
                     User user = resp.getInfo();
                     String token = resp.getToken();
 
-                    //if (token != null && user != null) {
-                    //    storeToken(token);
-                    //}
-                    UserRepository.this.user.postValue(user);
+                    if (token != null && user != null) {
+                        storeLocalUser(user.getUserName(), token);
+                    }
+                    updateDataResult.postValue(new DataResultHelper(null, null));
                 }
             }
 
             @Override
             public void onFailure(Call<BaseResponse<LoginResponse>> call, Throwable t) {
-                user.postValue(null);
                 updateDataResult.postValue(new DataResultHelper("Please try again later!", null));
             }
         });
+    }
+
+    public void signOut() {
+        storeLocalUser(null, null);
     }
 
     public void forgotPassword(String email) {
@@ -220,6 +220,14 @@ public class UserRepository {
 
     }
 
+    public void sendPinToHost(String pinStr) {
+
+    }
+
+    public void stopPlaying() {
+
+    }
+
     //----------------------------------------------------------------------------------------
 
 
@@ -229,7 +237,12 @@ public class UserRepository {
         return dbSharedPref.getUserToken();
     }
 
-    public void storeToken(String token) {
+    public String getUserName() {
+        return dbSharedPref.getUserName();
+    }
+
+    public void storeLocalUser(String userName, String token) {
+        dbSharedPref.setUserName(userName);
         dbSharedPref.setUserToken(token);
     }
 

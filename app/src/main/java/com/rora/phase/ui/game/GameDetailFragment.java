@@ -25,6 +25,7 @@ import com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter;
 import com.rora.phase.ui.adapter.GameMinInfoRecyclerViewAdapter;
 import com.rora.phase.ui.adapter.GameVerticalRVAdapter;
 import com.rora.phase.ui.adapter.PlatformRecyclerViewAdapter;
+import com.rora.phase.ui.settings.auth.SignInActivity;
 import com.rora.phase.ui.viewmodel.GameViewModel;
 import com.rora.phase.utils.DateTimeHelper;
 import com.rora.phase.utils.MediaHelper;
@@ -106,6 +107,13 @@ public class GameDetailFragment extends BaseFragment {
 
         root.findViewById(R.id.back_btn).setOnClickListener(v -> getActivity().onBackPressed());
         root.findViewById(R.id.play_btn).setOnClickListener(v -> {
+            if (!gameViewModel.isUserLogged()) {
+                Intent intent = new Intent(getActivity(), SignInActivity.class);
+                intent.putExtra(SignInActivity.START_IN_APP_PARAM, true);
+                startActivity(intent);
+                return;
+            }
+
             getActivity().startActivity(new Intent(getContext(), LoadingGameActivity.class));
         });
 

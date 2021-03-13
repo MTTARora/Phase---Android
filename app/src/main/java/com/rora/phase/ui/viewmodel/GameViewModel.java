@@ -50,4 +50,7 @@ public class GameViewModel extends AndroidViewModel {
         return userRepository.isStopPlaying();
     }
 
+    public boolean isUserLogged() {
+        return userRepository.isUserLogged();
+    }
 }

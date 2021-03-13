@@ -14,6 +14,7 @@ public class SharedPreferencesHelper {
 
     private final String PREFERENCE_FILE_KEY = "com.rora.phase.PREFERENCE_FILE_KEY";
 
+    private final String USER_NAME_KEY = "user_name";
     private final String USER_TOKEN_KEY = "user_token";
     private final String USER_COMPUTER_KEY = "user_computer";
     private final String USER_PLAY_STATE_KEY = "user_play_state";
@@ -26,6 +27,14 @@ public class SharedPreferencesHelper {
         editor = sharedPreferences.edit();
         editor.putString(key, value);
         editor.apply();
+    }
+
+    public void setUserName(String userName) {
+        saveString(USER_NAME_KEY, userName);
+    }
+
+    public String getUserName() {
+        return sharedPreferences.getString(USER_NAME_KEY, "");
     }
 
     public void setUserToken(String token) {
@@ -51,4 +60,5 @@ public class SharedPreferencesHelper {
     public String getUserComputer() {
         return sharedPreferences.getString(USER_COMPUTER_KEY, "");
     }
+
 }
