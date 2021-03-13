@@ -82,9 +82,15 @@ public class PhaseServiceHelper {
         //            .build();
         //    return chain.proceed(newRequest);
         //}).build();
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        // set your desired log level
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        httpClient.addInterceptor(logging);
 
         userPhaseService = new retrofit2.Retrofit.Builder()
-                //.client(client)
+                .client(httpClient.build())
                 .baseUrl(userBaseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
@@ -100,10 +106,7 @@ public class PhaseServiceHelper {
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        // add your other interceptors …
-
-        // add logging as last interceptor
-        httpClient.addInterceptor(logging);  // <-- this is the important line!
+        httpClient.addInterceptor(logging);
 
         userPhaseService = new retrofit2.Retrofit.Builder()
                 .client(httpClient.build())

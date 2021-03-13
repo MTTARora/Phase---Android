@@ -8,6 +8,7 @@ import java.security.cert.X509Certificate;
 
 
 public class ComputerDetails implements Serializable {
+    public String hostId;
     public int httpsPort1;
     private int httpPort;
 
@@ -43,6 +44,7 @@ public class ComputerDetails implements Serializable {
     }
 
     public ComputerDetails(Host host) {
+        this.hostId = host.getIdHost();
         this.manualAddress = host.getPublicIP();
         this.httpsPort1 = host.getPort();
         state = State.UNKNOWN;

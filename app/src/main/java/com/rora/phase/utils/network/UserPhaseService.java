@@ -1,9 +1,11 @@
 package com.rora.phase.utils.network;
 
 import com.rora.phase.model.Game;
+import com.rora.phase.model.Host;
 import com.rora.phase.model.User;
 import com.rora.phase.model.api.LoginCredential;
 import com.rora.phase.model.api.LoginResponse;
+import com.rora.phase.model.api.PinConfirmBody;
 
 import java.util.List;
 
@@ -49,5 +51,11 @@ public interface UserPhaseService {
 
     @GET("/recommended")
     Call<BaseResponse<List<Game>>> getRecommended(@Query("page") int page,@Query("page_size") int pageSize);
+
+    @GET("./play/available-host")
+    Call<BaseResponse<Host>> getComputerIP();
+
+    @POST("./play/confirm-pin")
+    Call<BaseResponse> sendPinToHost(@Body PinConfirmBody confirmData);
 
 }

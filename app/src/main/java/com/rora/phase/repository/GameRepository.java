@@ -28,7 +28,7 @@ import retrofit2.Response;
 public class GameRepository {
 
     private PhaseService gameServices;
-    private PhaseService tagServices, playServices;
+    private PhaseService tagServices;
     private UserPhaseService userServices;
 
     private MutableLiveData<List<Game>> newGameList, recentPlayList, editorsChoiceList, hotGameList, trendingList, gameByCategoryList, gamesByPayTypeList;
@@ -56,7 +56,6 @@ public class GameRepository {
         gameServices = phaseServiceHelper.getGamePhaseService();
         tagServices = phaseServiceHelper.getPhaseService();
         userServices = phaseServiceHelper.getUserPhaseService();
-        playServices = phaseServiceHelper.getPhaseService();
     }
 
 
@@ -306,33 +305,6 @@ public class GameRepository {
             public void onFailure(Call<BaseResponse<List<Game>>> call, Throwable t) {
                 Log.e("Request API failed", "Get games by pay type - " + t.getMessage());
                 gamesByPayTypeList.postValue(new ArrayList<>());
-            }
-        });
-    }
-
-    public void getComputerIPData(OnResultCallBack<ComputerDetails> callBack) {
-        playServices.getComputerIP().enqueue(new Callback<BaseResponse<Host>>() {
-            @Override
-            public void onResponse(Call<BaseResponse<Host>> call, Response<BaseResponse<Host>> response) {
-                DataResultHelper<BaseResponse<Host>> dataResponse = PhaseServiceHelper.handleResponse(response);
-                String err = dataResponse.getErrMsg();
-                if (err != null) {
-                    callBack.onResult(err, null);
-                } else {
-                    Host host = BaseResponse.getResult(dataResponse.getData());
-                    if (host == null)
-                        callBack.onResult("So many players are playing right now, please try again later!", null);
-                    else
-                        callBack.onResult(null, new ComputerDetails(host));
-                        //computer.postValue(new ComputerDetails(host));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<BaseResponse<Host>> call, Throwable t) {
-                Log.e(this.getClass().getSimpleName(), t.getMessage());
-                callBack.onResult("Can't connect to server, please try again later!", null);
-                //computer.postValue(null);
             }
         });
     }

@@ -35,6 +35,7 @@ import com.rora.phase.repository.UserRepository;
 import com.rora.phase.ui.settings.auth.SignInActivity;
 import com.rora.phase.utils.NetHelper;
 import com.rora.phase.utils.ServerHelper;
+import com.rora.phase.utils.callback.OnResultCallBack;
 import com.rora.phase.utils.callback.PlayGameProgressCallBack;
 import com.rora.phase.utils.network.realtime.playhub.PlayHub;
 import com.rora.phase.utils.network.realtime.playhub.PlayHubListener;
@@ -169,62 +170,69 @@ public class PlayServices extends Service {
 
     /** Start the progress after getting ip and ports from STEP 1 */
     public void startConnectProgress(Activity activity, PlayGameProgressCallBack callBack) {
-        callBack.onStart(false);
-        playHub = new PlayHub();
-        //STEP 1: Connect to hub
-        playHub.startConnect(getApplicationContext(), new PlayHubListener() {
-            @Override
-            public void onConnected() {
-                callBack.onStart(true);
-                callBack.onFindAHost(false);
-                //STEP 2: Get host data
-                //gameRepository.getComputerIPData((errMsg, computer) -> {
-                //    callBack.onFindAHost(true);
-                //    if (errMsg != null) {
-                //        playHub.stopConnect();
-                //        callBack.onError(errMsg);
-                //        return;
-                //    }
-                //
-                //    try {
-                //        //STEP 3: Add pc
-                //        callBack.onAddPc(false);
-                //        String err = addPc(computer);
-                //        if (err != null) {
-                //            callBack.onError(err);
-                //            return;
-                //        }
-                //        callBack.onAddPc(true);
-                //        Thread.sleep(1000);
-                //
-                //        //STEP 4: Pair
-                //        callBack.onPairPc(false);
-                //        err = startPairing();
-                //        if (err != null) {
-                //            if (err.equals(getApplication().getResources().getString(R.string.pair_pc_ingame)))
-                //                stopConnect(callBack);
-                //            callBack.onError(err);
-                //            return;
-                //        }
-                //        callBack.onPairPc(true);
-                //        Thread.sleep(1000);
-                //
-                //        //STEP 5: Play
-                //        callBack.onStartConnect(false);
-                //        start(activity, binder);
-                //        callBack.onStartConnect(true);
-                //    } catch (InterruptedException e) {
-                //        LimeLog.info("Playing Game - Connecting error -- " + e.getMessage());
-                //        callBack.onError(getApplication().getResources().getString(R.string.undetected_error));
-                //    }
-                //});
-            }
+        Thread connectThread = new Thread(() -> {
+            callBack.onStart(false);
+            playHub = new PlayHub();
+            //STEP 1: Connect to hub
+            playHub.startConnect(getApplicationContext(), new PlayHubListener() {
+                @Override
+                public void onConnected() {
+                    callBack.onStart(true);
+                    callBack.onFindAHost(false);
+                    //STEP 2: Get host data
+                    userRepository.getComputerIPData((errMsg, computer) -> {
+                        callBack.onFindAHost(true);
+                        if (errMsg != null) {
+                            playHub.stopConnect();
+                            callBack.onError(errMsg);
+                            return;
+                        }
 
-            @Override
-            public void onDisconnected() {
+                        Thread thread = new Thread(() -> {
+                            try {
+                                //STEP 3: Add pc
+                                callBack.onAddPc(false);
+                                String err = addPc(computer);
+                                if (err != null) {
+                                    callBack.onError(err);
+                                    return;
+                                }
+                                callBack.onAddPc(true);
+                                Thread.sleep(1000);
 
-            }
+                                //STEP 4: Pair
+                                callBack.onPairPc(false);
+                                err = startPairing(callBack);
+                                if (err != null) {
+                                    if (err.equals(getApplication().getResources().getString(R.string.pair_pc_ingame)))
+                                        stopConnect(callBack);
+                                    callBack.onError(err);
+                                    return;
+                                }
+                                callBack.onPairPc(true);
+                                Thread.sleep(1000);
+
+                                //STEP 5: Play
+                                callBack.onStartConnect(false);
+                                start(activity, binder);
+                                callBack.onStartConnect(true);
+                            } catch (InterruptedException e) {
+                                LimeLog.info("Playing Game - Connecting error -- " + e.getMessage());
+                                callBack.onError(getApplication().getResources().getString(R.string.undetected_error));
+                            }
+                        });
+                        thread.start();
+                    });
+                }
+
+                @Override
+                public void onDisconnected() {
+                    stopConnect(callBack);
+                }
+            });
         });
+        connectThread.setName("Play Service - playing progress");
+        connectThread.start();
     }
 
     /** STEP 3: Connect to pc
@@ -244,7 +252,8 @@ public class PlayServices extends Service {
             err = e.getMessage();
         }
 
-        LimeLog.info("Add pc - " + (err == null ? "Success" : ("Error: " + handleAddPcErr(computerDetails.manualAddress))));
+        //Optimize here
+        LimeLog.info("Add pc - " + (err == null ? "Success" : ("Error: " + computerServices.handleAddPcErr(computerDetails.manualAddress))));
         return err;
     }
 
@@ -255,9 +264,9 @@ public class PlayServices extends Service {
      *
      * @return An error msg if failed
      * */
-    private String startPairing() {
+    private String startPairing(PlayGameProgressCallBack callBack) {
         LimeLog.info("Playing game - STEP 3: Start pairing");
-        String err = checkPairCondition(pollingTuple.computer, binder);
+        String err = computerServices.checkPairCondition(pollingTuple.computer, binder);
 
         try {
             if(err != null)
@@ -276,7 +285,12 @@ public class PlayServices extends Service {
 
             //STEP 3.2: SEND PIN TO HOST
             LimeLog.info("Pairing - Waiting for pin confirmation: " + pinStr);
-            userRepository.sendPinToHost(pinStr);
+            userRepository.sendPinToHost(pinStr, pollingTuple.computer.hostId, (errMsg, data) -> {
+                if (errMsg != null) {
+                    stopConnect(callBack);
+                    callBack.onError(errMsg);
+                }
+            });
 
             PairingManager pm = httpConn.getPairingManager();
             PairingManager.PairState pairState = pm.pair(httpConn.getServerInfo(), pinStr);
@@ -297,7 +311,7 @@ public class PlayServices extends Service {
                     pollingTuple.computer.serverCert = pm.getPairedCert();
 
                     // Invalidate reachability information after pairing to force a refresh before reading pair state again
-                    invalidateStateForComputer();
+                    computerServices.invalidateStateForComputer();
                     break;
                 case NOT_PAIRED:
                 default:
@@ -335,8 +349,10 @@ public class PlayServices extends Service {
      * */
     public void stopConnect(PlayGameProgressCallBack playProgressCallBack) {
         playProgressCallBack.onStopConnect(false);
+        playHub.stopConnect();
         if (pollingTuple == null || pollingTuple.computer == null) {
             LimeLog.info("Stop connect - Error: Couldn't find local data");
+            playProgressCallBack.onStopConnect(true);
             return;
         }
 
@@ -352,99 +368,6 @@ public class PlayServices extends Service {
     }
 
     //===================================================================
-
-
-    //--------SUPPORT FUNCTIONS FOR PLAYING--------
-
-    private String handleAddPcErr(String manualAddress) {
-        String err;
-        boolean wrongSiteLocal;
-        int portTestResult;
-
-        wrongSiteLocal = isWrongSubnetSiteLocalAddress(manualAddress);
-
-        if (!wrongSiteLocal)
-            // Run the test before dismissing the spinner because it can take a few seconds.
-            portTestResult = MoonBridge.testClientConnectivity(ServerHelper.CONNECTION_TEST_SERVER, 443,MoonBridge.ML_PORT_FLAG_TCP_47984 | MoonBridge.ML_PORT_FLAG_TCP_47989, NvHTTP.HTTPS_PORT1);
-        else
-            // Don't bother with the test if we succeeded or the IP address was bogus
-            portTestResult = MoonBridge.ML_TEST_RESULT_INCONCLUSIVE;
-
-        if (wrongSiteLocal)
-            err = getApplication().getResources().getString(R.string.addpc_wrong_sitelocal);
-        else {
-            if (portTestResult != MoonBridge.ML_TEST_RESULT_INCONCLUSIVE && portTestResult != 0)
-                err = getApplication().getResources().getString(R.string.nettest_text_blocked);
-            else
-                err = getApplication().getResources().getString(R.string.addpc_fail);
-        }
-
-        return getApplication().getResources().getString(R.string.conn_error_title) + " -- " + err;
-    }
-
-    private boolean isWrongSubnetSiteLocalAddress(String address) {
-        try {
-            InetAddress targetAddress = InetAddress.getByName(address);
-            if (!(targetAddress instanceof Inet4Address) || !targetAddress.isSiteLocalAddress()) {
-                return false;
-            }
-
-            // We have a site-local address. Look for a matching local interface.
-            for (NetworkInterface iface : Collections.list(NetworkInterface.getNetworkInterfaces())) {
-                for (InterfaceAddress addr : iface.getInterfaceAddresses()) {
-                    if (!(addr.getAddress() instanceof Inet4Address) || !addr.getAddress().isSiteLocalAddress()) {
-                        // Skip non-site-local or non-IPv4 addresses
-                        continue;
-                    }
-
-                    byte[] targetAddrBytes = targetAddress.getAddress();
-                    byte[] ifaceAddrBytes = addr.getAddress().getAddress();
-
-                    // Compare prefix to ensure it's the same
-                    boolean addressMatches = true;
-                    for (int i = 0; i < addr.getNetworkPrefixLength(); i++) {
-                        if ((ifaceAddrBytes[i / 8] & (1 << (i % 8))) != (targetAddrBytes[i / 8] & (1 << (i % 8)))) {
-                            addressMatches = false;
-                            break;
-                        }
-                    }
-
-                    if (addressMatches) {
-                        return false;
-                    }
-                }
-            }
-
-            // Couldn't find a matching interface
-            return true;
-        } catch (SocketException | UnknownHostException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    private String checkPairCondition(ComputerDetails computer, PlayServices.ComputerManagerBinder managerBinder) {
-        String err = null;
-
-        if (computer.state == ComputerDetails.State.OFFLINE || ServerHelper.getCurrentAddressFromComputer(computer) == null)
-            err = getApplication().getResources().getString(R.string.pair_pc_offline);
-        else if (computer.runningGameId != 0)
-            err = getApplication().getResources().getString(R.string.pair_pc_ingame);
-        else if (managerBinder == null)
-            err = getApplication().getResources().getString(R.string.error_manager_not_running);
-
-        if (err != null)
-            LimeLog.info("Pairing - " + "Err: " + err);
-
-        return err;
-    }
-
-    private void invalidateStateForComputer() {
-        // We need the network lock to prevent a concurrent poll from wiping this change out
-        synchronized (pollingTuple.networkLock) {
-            pollingTuple.computer.state = ComputerDetails.State.UNKNOWN;
-        }
-    }
 
     private boolean isStopPlaying() {
         return state == UserPlayingData.PlayingState.STOP;
@@ -657,7 +580,99 @@ public class PlayServices extends Service {
             pollingTuple = null;
         }
 
-        //-------------------------- SUPPORT METHODS ----------------------------
+
+        //--------SUPPORT FUNCTIONS FOR PLAYING--------
+
+        private String handleAddPcErr(String manualAddress) {
+            String err;
+            boolean wrongSiteLocal;
+            int portTestResult;
+
+            wrongSiteLocal = isWrongSubnetSiteLocalAddress(manualAddress);
+
+            if (!wrongSiteLocal)
+                // Run the test before dismissing the spinner because it can take a few seconds.
+                portTestResult = MoonBridge.testClientConnectivity(ServerHelper.CONNECTION_TEST_SERVER, 443,MoonBridge.ML_PORT_FLAG_TCP_47984 | MoonBridge.ML_PORT_FLAG_TCP_47989, NvHTTP.HTTPS_PORT1);
+            else
+                // Don't bother with the test if we succeeded or the IP address was bogus
+                portTestResult = MoonBridge.ML_TEST_RESULT_INCONCLUSIVE;
+
+            if (wrongSiteLocal)
+                err = getApplication().getResources().getString(R.string.addpc_wrong_sitelocal);
+            else {
+                if (portTestResult != MoonBridge.ML_TEST_RESULT_INCONCLUSIVE && portTestResult != 0)
+                    err = getApplication().getResources().getString(R.string.nettest_text_blocked);
+                else
+                    err = getApplication().getResources().getString(R.string.addpc_fail);
+            }
+
+            return getApplication().getResources().getString(R.string.conn_error_title) + " -- " + err;
+        }
+
+        private boolean isWrongSubnetSiteLocalAddress(String address) {
+            try {
+                InetAddress targetAddress = InetAddress.getByName(address);
+                if (!(targetAddress instanceof Inet4Address) || !targetAddress.isSiteLocalAddress()) {
+                    return false;
+                }
+
+                // We have a site-local address. Look for a matching local interface.
+                for (NetworkInterface iface : Collections.list(NetworkInterface.getNetworkInterfaces())) {
+                    for (InterfaceAddress addr : iface.getInterfaceAddresses()) {
+                        if (!(addr.getAddress() instanceof Inet4Address) || !addr.getAddress().isSiteLocalAddress()) {
+                            // Skip non-site-local or non-IPv4 addresses
+                            continue;
+                        }
+
+                        byte[] targetAddrBytes = targetAddress.getAddress();
+                        byte[] ifaceAddrBytes = addr.getAddress().getAddress();
+
+                        // Compare prefix to ensure it's the same
+                        boolean addressMatches = true;
+                        for (int i = 0; i < addr.getNetworkPrefixLength(); i++) {
+                            if ((ifaceAddrBytes[i / 8] & (1 << (i % 8))) != (targetAddrBytes[i / 8] & (1 << (i % 8)))) {
+                                addressMatches = false;
+                                break;
+                            }
+                        }
+
+                        if (addressMatches) {
+                            return false;
+                        }
+                    }
+                }
+
+                // Couldn't find a matching interface
+                return true;
+            } catch (SocketException | UnknownHostException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        private String checkPairCondition(ComputerDetails computer, PlayServices.ComputerManagerBinder managerBinder) {
+            String err = null;
+
+            if (computer.state == ComputerDetails.State.OFFLINE || ServerHelper.getCurrentAddressFromComputer(computer) == null)
+                err = getApplication().getResources().getString(R.string.pair_pc_offline);
+            else if (computer.runningGameId != 0)
+                err = getApplication().getResources().getString(R.string.pair_pc_ingame);
+            else if (managerBinder == null)
+                err = getApplication().getResources().getString(R.string.error_manager_not_running);
+
+            if (err != null)
+                LimeLog.info("Pairing - " + "Err: " + err);
+
+            return err;
+        }
+
+        private void invalidateStateForComputer() {
+            // We need the network lock to prevent a concurrent poll from wiping this change out
+            synchronized (pollingTuple.networkLock) {
+                pollingTuple.computer.state = ComputerDetails.State.UNKNOWN;
+            }
+        }
+
 
         //--------------------- POLLING METHODS ----------------------
 
@@ -787,6 +802,7 @@ public class PlayServices extends Service {
 
         //------------------------------------------------------------
 
+
         private void startTupleThread() {
             pollingTuple.thread = createPollingThread(pollingTuple);
             pollingTuple.thread.start();
@@ -886,6 +902,7 @@ public class PlayServices extends Service {
         }
 
     }
+
 }
 
 class PollingTuple {

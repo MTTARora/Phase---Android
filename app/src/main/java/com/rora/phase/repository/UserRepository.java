@@ -7,14 +7,18 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
 import com.rora.phase.model.Game;
+import com.rora.phase.model.Host;
 import com.rora.phase.model.User;
 import com.rora.phase.model.UserPlayingData;
 import com.rora.phase.model.api.LoginCredential;
 import com.rora.phase.model.api.LoginResponse;
+import com.rora.phase.model.api.PinConfirmBody;
 import com.rora.phase.nvstream.http.ComputerDetails;
 import com.rora.phase.utils.DataResultHelper;
 import com.rora.phase.utils.SharedPreferencesHelper;
+import com.rora.phase.utils.callback.OnResultCallBack;
 import com.rora.phase.utils.network.BaseResponse;
+import com.rora.phase.utils.network.PhaseService;
 import com.rora.phase.utils.network.PhaseServiceHelper;
 import com.rora.phase.utils.network.UserPhaseService;
 
@@ -220,8 +224,51 @@ public class UserRepository {
 
     }
 
-    public void sendPinToHost(String pinStr) {
+    public void getComputerIPData(OnResultCallBack<ComputerDetails> callBack) {
+        userServices.getComputerIP().enqueue(new Callback<BaseResponse<Host>>() {
+            @Override
+            public void onResponse(Call<BaseResponse<Host>> call, Response<BaseResponse<Host>> response) {
+                DataResultHelper<BaseResponse<Host>> dataResponse = PhaseServiceHelper.handleResponse(response);
+                String err = dataResponse.getErrMsg();
+                if (err != null) {
+                    callBack.onResult(err, null);
+                } else {
+                    Host host = BaseResponse.getResult(dataResponse.getData());
+                    if (host == null)
+                        callBack.onResult("So many players are playing right now, please try again later!", null);
+                    else
+                        callBack.onResult(null, new ComputerDetails(host));
+                    //computer.postValue(new ComputerDetails(host));
+                }
+            }
 
+            @Override
+            public void onFailure(Call<BaseResponse<Host>> call, Throwable t) {
+                Log.e(this.getClass().getSimpleName(), t.getMessage());
+                callBack.onResult("Can't connect to server, please try again later!", null);
+                //computer.postValue(null);
+            }
+        });
+    }
+
+    public void sendPinToHost(String pinStr, String hostId, OnResultCallBack<ComputerDetails> callBack) {
+        PinConfirmBody body = new PinConfirmBody(pinStr, hostId);
+        userServices.sendPinToHost(body).enqueue(new Callback<BaseResponse>() {
+            @Override
+            public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
+                DataResultHelper<BaseResponse> dataResponse = PhaseServiceHelper.handleResponse(response);
+                String err = dataResponse.getErrMsg();
+                if (err != null)
+                    callBack.onResult(err, null);
+                else
+                    callBack.onResult(null, null);
+            }
+
+            @Override
+            public void onFailure(Call<BaseResponse> call, Throwable t) {
+                callBack.onResult("Can't connect to server, please try again later!", null);
+            }
+        });
     }
 
     public void stopPlaying() {

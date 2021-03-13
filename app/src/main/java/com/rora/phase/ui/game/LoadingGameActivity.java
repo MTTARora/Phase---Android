@@ -165,14 +165,7 @@ public class LoadingGameActivity extends FragmentActivity {
     }
 
     private void startConnect() {
-        //Bundle bundle = getIntent().getBundleExtra("LoadingGameActivityBundle");
-        //ComputerDetails computer = (ComputerDetails) bundle.getSerializable(COMPUTER_PARAM);
-
-        Thread connectThread = new Thread(() -> {
-            managerBinder.startConnectProgress(this, playProgressCallBack);
-        });
-        connectThread.setName("UI - LoadingGameActivity");
-        connectThread.start();
+        managerBinder.startConnectProgress(this, playProgressCallBack);
     }
 
     private void stopConnect() {
