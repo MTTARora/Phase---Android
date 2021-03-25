@@ -72,9 +72,9 @@ JNIEnv* GetThreadEnv(void) {
 }
 
 JNIEXPORT void JNICALL
-Java_com_limelight_nvstream_jni_MoonBridge_init(JNIEnv *env, jclass clazz) {
+Java_com_rora_phase_nvstream_jni_MoonBridge_init(JNIEnv *env, jclass clazz) {
     (*env)->GetJavaVM(env, &JVM);
-    GlobalBridgeClass = (*env)->NewGlobalRef(env, (*env)->FindClass(env, "com/limelight/nvstream/jni/MoonBridge"));
+    GlobalBridgeClass = (*env)->NewGlobalRef(env, (*env)->FindClass(env, "com/rora/phase/nvstream/jni/MoonBridge"));
     BridgeDrSetupMethod = (*env)->GetStaticMethodID(env, clazz, "bridgeDrSetup", "(IIII)I");
     BridgeDrStartMethod = (*env)->GetStaticMethodID(env, clazz, "bridgeDrStart", "()V");
     BridgeDrStopMethod = (*env)->GetStaticMethodID(env, clazz, "bridgeDrStop", "()V");
@@ -361,7 +361,7 @@ static CONNECTION_LISTENER_CALLBACKS BridgeConnListenerCallbacks = {
 };
 
 JNIEXPORT jint JNICALL
-Java_com_limelight_nvstream_jni_MoonBridge_startConnection(JNIEnv *env, jclass clazz,
+Java_com_rora_phase_nvstream_jni_MoonBridge_startConnection(JNIEnv *env, jclass clazz,
                                                            jstring address, jstring appVersion, jstring gfeVersion,
                                                            jint width, jint height, jint fps,
                                                            jint bitrate, jint packetSize, jint streamingRemotely,
@@ -370,7 +370,7 @@ Java_com_limelight_nvstream_jni_MoonBridge_startConnection(JNIEnv *env, jclass c
                                                            jint hevcBitratePercentageMultiplier,
                                                            jint clientRefreshRateX100,
                                                            jbyteArray riAesKey, jbyteArray riAesIv,
-                                                           jint videoCapabilities) {
+                                                           jint videoCapabilities, jint port1) {
     SERVER_INFORMATION serverInfo = {
             .address = (*env)->GetStringUTFChars(env, address, 0),
             .serverInfoAppVersion = (*env)->GetStringUTFChars(env, appVersion, 0),
@@ -406,7 +406,7 @@ Java_com_limelight_nvstream_jni_MoonBridge_startConnection(JNIEnv *env, jclass c
                                 &BridgeVideoRendererCallbacks,
                                 &BridgeAudioRendererCallbacks,
                                 NULL, 0,
-                                NULL, 0);
+                                NULL, 0, port1);
 
     (*env)->ReleaseStringUTFChars(env, address, serverInfo.address);
     (*env)->ReleaseStringUTFChars(env, appVersion, serverInfo.serverInfoAppVersion);

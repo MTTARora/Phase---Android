@@ -3,7 +3,58 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+    <!-- Margins -->
+    <dimen name="minnn_space">1dp</dimen>
+    <dimen name="minn_space">3dp</dimen>
+    <dimen name="min_space">5dp</dimen>
+    <dimen name="medium_space">10dp</dimen>
+    <dimen name="normal_space">16dp</dimen>
+    <dimen name="max_space">20dp</dimen>
+    <dimen name="maxx_space">28dp</dimen>
+
+    <!-- Radius -->
+    <dimen name="min_radius">2dp</dimen>
+    <dimen name="normal_radius">6dp</dimen>
+    <dimen name="medium_radius">8dp</dimen>
+    <dimen name="max_radius">10dp</dimen>
+    <dimen name="maxx_radius">16dp</dimen>
+    <dimen name="maxxx_radius">20dp</dimen>
+
+    <!--Elevation-->
+    <dimen name="min_elevation">2dp</dimen>
+    <dimen name="medium_elevation">5dp</dimen>
+    <dimen name="max_elevation">10dp</dimen>
+    <dimen name="maxx_elevation">16dp</dimen>
+    <dimen name="maxxx_elevation">50dp</dimen>
+
+    <!--Icons-->
+    <dimen name="ic_touchable_size">48dp</dimen>
+    <dimen name="ic_medium_size">38dp</dimen>
+    <dimen name="ic_min_size">20dp</dimen>
+
+    <!-- Text sizes -->
+    <dimen name="logo_text_size">20sp</dimen>
+    <dimen name="header_text_size">20sp</dimen>
+    <dimen name="title_text_size">18sp</dimen>
+    <dimen name="sub_title_text_size">14sp</dimen>
+    <dimen name="normal_text_size">12sp</dimen>
+    <dimen name="min_text_size">11sp</dimen>
+    <dimen name="minn_text_size">8sp</dimen>
+    <dimen name="minnn_text_size">5sp</dimen>
+    <dimen name="minnnn_text_size">3sp</dimen>
+
     <dimen name="tv_channel_logo_width">80dp</dimen>
     <dimen name="tv_channel_logo_height">80dp</dimen>
+    <dimen name="viewpager_next_item_visible">26dp</dimen>
+    <dimen name="viewpager_current_item_horizontal_margin">42dp</dimen>
+
+    <dimen name="banner_height">200dp</dimen>
+    <dimen name="game_item_height">150dp</dimen>
+    <dimen name="game_min_info_item_height">140dp</dimen>
+    <dimen name="game_min_info_expanded_item_height">200dp</dimen>
+    <dimen name="game_info_item_height">240dp</dimen>
+    <dimen name="game_info_image_layer_height">160dp</dimen>
+    <dimen name="category_height">35dp</dimen>
+    <dimen name="vertical_game_item_height">100dp</dimen>
 
 </resources>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/game_info_item_height"
+    android:padding="@dimen/medium_space">
+
+    <carbon.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="start|bottom"
+        android:layout_marginTop="@dimen/maxx_space"
+        android:layout_marginEnd="@dimen/maxx_space"
+        android:background="@color/colorPrimaryDark"
+        android:orientation="vertical"
+        android:padding="@dimen/medium_space"
+        app:carbon_cornerRadius="@dimen/max_radius">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/rank_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1"
+                    android:textSize="@dimen/header_text_size"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/platform_rclv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/ic_min_size"
+                    android:layout_marginTop="@dimen/medium_space"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/rank_tv" />
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/medium_space"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/platform_rclv">
+
+                    <TextView
+                        android:id="@+id/pay_type_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="#FFEB3B"
+                        android:paddingHorizontal="@dimen/min_space"
+                        android:textColor="@color/dim"
+                        android:textSize="@dimen/min_text_size"
+                        android:textStyle="bold" />
+                </androidx.cardview.widget.CardView>
+
+            </LinearLayout>
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="@dimen/game_info_image_layer_height"
+                android:layout_weight="3" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/game_name_info_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="2"
+            android:textSize="@dimen/sub_title_text_size"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </carbon.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <carbon.widget.ImageView
+            android:id="@+id/banner_game_info_imv"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/game_info_image_layer_height"
+            android:layout_weight="3"
+            android:scaleType="fitXY"
+            android:layout_marginStart="@dimen/min_space"
+            android:src="@drawable/banner_test"
+            app:carbon_cornerRadius="@dimen/max_radius" />
+
+    </LinearLayout>
+
+</FrameLayout>
