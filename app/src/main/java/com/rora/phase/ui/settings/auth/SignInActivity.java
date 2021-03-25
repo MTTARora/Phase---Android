@@ -49,7 +49,8 @@ public class SignInActivity extends AppCompatActivity {
 
         findViewById(R.id.sign_in_frame).setOnTouchListener((v, event) -> {
             InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+            if (getCurrentFocus() != null)
+                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
             return true;
         });
 
