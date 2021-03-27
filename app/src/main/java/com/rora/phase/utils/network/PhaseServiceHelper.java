@@ -8,6 +8,7 @@ import com.rora.phase.utils.SharedPreferencesHelper;
 import org.json.JSONObject;
 
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Response;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -18,16 +19,17 @@ public class PhaseServiceHelper {
     private UserPhaseService userPhaseService;
     private Context context;
     private SharedPreferencesHelper sharedPreferencesHelper;
+    private OkHttpClient.Builder httpClient;
 
-    //private static final String basePhaseHttpsUrl = "https://roragame.ga/api/";
-    //private static final String basePhaseHttpUrl = "http://roragame.ga/api/";
-    private static final String basePhaseHttpsUrl = "http://10.0.2.2:53315/api/";
-    private static final String basePhaseHttpUrl = "http://10.0.2.2:53315/api/";
+    private static final String basePhaseHttpsUrl = "https://roragame.ga/api/";
+    private static final String basePhaseHttpUrl = "http://roragame.ga/api/";
+    //private static final String basePhaseHttpsUrl = "http://10.0.2.2:53315/api/";
+    //private static final String basePhaseHttpUrl = "http://10.0.2.2:53315/api/";
     private final String userBaseUrl = basePhaseHttpUrl + "users/";
     private final String userAuthBaseUrl = basePhaseHttpsUrl + "auth/";
     private final String gameBaseUrl = basePhaseHttpUrl + "games/";
 
-    public static final String playHubUrl = basePhaseHttpUrl + "playing-game-hub";
+    public static final String playHubUrl = basePhaseHttpsUrl + "playing-game-hub";
 
     public PhaseServiceHelper() {
     }
@@ -35,6 +37,7 @@ public class PhaseServiceHelper {
     public PhaseServiceHelper(Context context) {
         this.context = context;
         sharedPreferencesHelper = new SharedPreferencesHelper(context);
+        httpClient = new OkHttpClient.Builder();
     }
 
 
@@ -70,24 +73,18 @@ public class PhaseServiceHelper {
 
     /** Return service with game api url */
 
-    public UserPhaseService getUserPhaseService() {
+    public UserPhaseService getUserAuthenticatedPhaseService() {
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
-        //Add this for debugging
-        //HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        //interceptor.level(HttpLoggingInterceptor.Level.BODY);
-        //OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
-        //OkHttpClient client = new OkHttpClient.Builder().addInterceptor(chain -> {
-        //    Request newRequest  = chain.request().newBuilder()
-        //            .addHeader("Authorization", "Bearer " + sharedPreferenceHelper.getUserToken())
-        //            .build();
-        //    return chain.proceed(newRequest);
-        //}).build();
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        // set your desired log level
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        httpClient.addInterceptor(logging);
+        httpClient.addInterceptor(chain -> {
+            Request newRequest  = chain.request().newBuilder()
+                    .addHeader("Authorization", "Bearer " + sharedPreferencesHelper.getUserToken())
+                    .build();
+            return chain.proceed(newRequest);
+        }).addInterceptor(logging);
 
         userPhaseService = new retrofit2.Retrofit.Builder()
                 .client(httpClient.build())
@@ -97,15 +94,14 @@ public class PhaseServiceHelper {
                 .create(UserPhaseService.class);
 
         return userPhaseService;
-
     }
 
-    public UserPhaseService getUserAuthPhaseService() {
+    public UserPhaseService getUserPhaseService() {
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        // set your desired log level
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient.addInterceptor(logging);
 
         userPhaseService = new retrofit2.Retrofit.Builder()

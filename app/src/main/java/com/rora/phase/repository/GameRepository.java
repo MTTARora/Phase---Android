@@ -6,17 +6,12 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.rora.phase.model.Game;
-import com.rora.phase.model.Host;
 import com.rora.phase.model.Tag;
-import com.rora.phase.model.api.LoginResponse;
-import com.rora.phase.nvstream.http.ComputerDetails;
 import com.rora.phase.utils.DataResultHelper;
-import com.rora.phase.utils.callback.OnResultCallBack;
 import com.rora.phase.utils.network.BaseResponse;
 import com.rora.phase.utils.network.PhaseService;
 import com.rora.phase.utils.network.PhaseServiceHelper;
 import com.rora.phase.utils.network.UserPhaseService;
-import com.rora.phase.utils.services.PlayServices;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +50,7 @@ public class GameRepository {
         PhaseServiceHelper phaseServiceHelper = new PhaseServiceHelper();
         gameServices = phaseServiceHelper.getGamePhaseService();
         tagServices = phaseServiceHelper.getPhaseService();
-        userServices = phaseServiceHelper.getUserPhaseService();
+        userServices = phaseServiceHelper.getUserAuthenticatedPhaseService();
     }
 
 
