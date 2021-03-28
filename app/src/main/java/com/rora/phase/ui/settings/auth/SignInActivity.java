@@ -6,7 +6,9 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,23 +37,37 @@ public class SignInActivity extends AppCompatActivity {
         userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
 
         setContentView(R.layout.activity_sign_in);
-        usernameTv = findViewById(R.id.user_name_tv);
-        passwordTv = findViewById(R.id.pw_tv);
+        usernameTv = findViewById(R.id.user_name_edt);
+        passwordTv = findViewById(R.id.password_edt);
         errTv = findViewById(R.id.err_sign_in_tv);
         progressBar = findViewById(R.id.sign_in_pb);
         signInBtn = findViewById(R.id.sign_in_btn);
         guestBtn = findViewById(R.id.guest_btn);
 
         signInBtn.setOnClickListener(v -> signIn());
-        guestBtn.setOnClickListener(v -> {
-            goNextScreen();
-        });
+        guestBtn.setOnClickListener(v -> goNextScreen());
 
         findViewById(R.id.sign_in_frame).setOnTouchListener((v, event) -> {
-            InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-            if (getCurrentFocus() != null)
-                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+            hideSoftKeyboard();
             return true;
+        });
+
+        usernameTv.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_FLAG_NO_ENTER_ACTION || actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT) {
+                passwordTv.requestFocus();
+            }
+            return true;
+        });
+
+        passwordTv.setOnKeyListener((v, keyCode, event) -> {
+            if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+                hideSoftKeyboard();
+
+                passwordTv.clearFocus();
+                signIn();
+                return true;
+            }
+            return false;
         });
 
         initData();
@@ -108,6 +124,12 @@ public class SignInActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
+    }
+
+    private void hideSoftKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        if (getCurrentFocus() != null)
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
     }
 
 }
