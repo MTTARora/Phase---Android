@@ -10,6 +10,7 @@ import com.rora.phase.model.Game;
 import com.rora.phase.model.Host;
 import com.rora.phase.model.User;
 import com.rora.phase.model.UserPlayingData;
+import com.rora.phase.model.api.FindingHostResponse;
 import com.rora.phase.model.api.LoginCredential;
 import com.rora.phase.model.api.LoginResponse;
 import com.rora.phase.model.api.PinConfirmBody;
@@ -18,7 +19,6 @@ import com.rora.phase.utils.DataResultHelper;
 import com.rora.phase.utils.SharedPreferencesHelper;
 import com.rora.phase.utils.callback.OnResultCallBack;
 import com.rora.phase.utils.network.BaseResponse;
-import com.rora.phase.utils.network.PhaseService;
 import com.rora.phase.utils.network.PhaseServiceHelper;
 import com.rora.phase.utils.network.UserPhaseService;
 
@@ -31,8 +31,8 @@ import retrofit2.Response;
 
 public class UserRepository {
 
+    private UserPhaseService userAuthenticatedServices;
     private UserPhaseService userServices;
-    private UserPhaseService userAuthServices;
     private SharedPreferencesHelper dbSharedPref;
 
     private MutableLiveData<User> user;
@@ -45,8 +45,8 @@ public class UserRepository {
 
     public UserRepository(Context context) {
         PhaseServiceHelper phaseServiceHelper = new PhaseServiceHelper(context);
-        userServices = phaseServiceHelper.getUserPhaseService();
-        userAuthServices = phaseServiceHelper.getUserAuthPhaseService();
+        userAuthenticatedServices = phaseServiceHelper.getUserPhaseService(true);
+        userServices = phaseServiceHelper.getUserPhaseService(false);
         dbSharedPref = new SharedPreferencesHelper(context);
 
         user = new MutableLiveData<>();
@@ -98,7 +98,7 @@ public class UserRepository {
     }
 
     public void signIn(LoginCredential loginCredential) {
-        userAuthServices.signIn(loginCredential).enqueue(new Callback<BaseResponse<LoginResponse>>() {
+        userServices.signIn(loginCredential).enqueue(new Callback<BaseResponse<LoginResponse>>() {
             @Override
             public void onResponse(Call<BaseResponse<LoginResponse>> call, Response<BaseResponse<LoginResponse>> response) {
                 DataResultHelper<BaseResponse<LoginResponse>> dataResponse = PhaseServiceHelper.handleResponse(response);
@@ -143,7 +143,7 @@ public class UserRepository {
     }
 
     public void getUserInfo() {
-        userServices.getUserInfo().enqueue(new Callback<BaseResponse<User>>() {
+        userAuthenticatedServices.getUserInfo().enqueue(new Callback<BaseResponse<User>>() {
             @Override
             public void onResponse(Call<BaseResponse<User>> call, Response<BaseResponse<User>> response) {
                 user.postValue(BaseResponse.getResult(response.body()));
@@ -158,7 +158,7 @@ public class UserRepository {
     }
 
     public void updateUser(User user) {
-        userServices.updateInfo(user).enqueue(new Callback<BaseResponse>() {
+        userAuthenticatedServices.updateInfo(user).enqueue(new Callback<BaseResponse>() {
             @Override
             public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
                 updateDataResult.postValue(new DataResultHelper());
@@ -176,7 +176,7 @@ public class UserRepository {
     }
 
     public void addFavorite(String gameId) {
-        userServices.addFavorite(gameId).enqueue(new Callback<BaseResponse>() {
+        userAuthenticatedServices.addFavorite(gameId).enqueue(new Callback<BaseResponse>() {
             @Override
             public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
                 updateDataResult.postValue(new DataResultHelper());
@@ -190,7 +190,7 @@ public class UserRepository {
     }
 
     public void removeFavorite(String gameId) {
-        userServices.removeFavorite(gameId).enqueue(new Callback<BaseResponse>() {
+        userAuthenticatedServices.removeFavorite(gameId).enqueue(new Callback<BaseResponse>() {
             @Override
             public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
                 updateDataResult.postValue(new DataResultHelper());
@@ -204,7 +204,7 @@ public class UserRepository {
     }
 
     public void getRecommendedGameListData(int page, int pageSize) {
-        userServices.getRecommended(page, pageSize).enqueue(new Callback<BaseResponse<List<Game>>>() {
+        userAuthenticatedServices.getRecommended(page, pageSize).enqueue(new Callback<BaseResponse<List<Game>>>() {
             @Override
             public void onResponse(Call<BaseResponse<List<Game>>> call, Response<BaseResponse<List<Game>>> response) {
                 List<Game> list = BaseResponse.getResult(response.body());
@@ -224,26 +224,27 @@ public class UserRepository {
 
     }
 
-    public void getComputerIPData(OnResultCallBack<ComputerDetails> callBack) {
-        userServices.getComputerIP().enqueue(new Callback<BaseResponse<Host>>() {
+    public void getComputerData(OnResultCallBack<ComputerDetails> callBack) {
+        userAuthenticatedServices.getComputerIP().enqueue(new Callback<BaseResponse<FindingHostResponse>>() {
             @Override
-            public void onResponse(Call<BaseResponse<Host>> call, Response<BaseResponse<Host>> response) {
-                DataResultHelper<BaseResponse<Host>> dataResponse = PhaseServiceHelper.handleResponse(response);
+            public void onResponse(Call<BaseResponse<FindingHostResponse>> call, Response<BaseResponse<FindingHostResponse>> response) {
+                DataResultHelper<BaseResponse<FindingHostResponse>> dataResponse = PhaseServiceHelper.handleResponse(response);
                 String err = dataResponse.getErrMsg();
                 if (err != null) {
                     callBack.onResult(err, null);
                 } else {
-                    Host host = BaseResponse.getResult(dataResponse.getData());
-                    if (host == null)
+                    FindingHostResponse resp = BaseResponse.getResult(dataResponse.getData());
+
+                    if (resp.queue != null || resp.host == null)
                         callBack.onResult("So many players are playing right now, please try again later!", null);
                     else
-                        callBack.onResult(null, new ComputerDetails(host));
+                        callBack.onResult(null, new ComputerDetails(resp.host));
                     //computer.postValue(new ComputerDetails(host));
                 }
             }
 
             @Override
-            public void onFailure(Call<BaseResponse<Host>> call, Throwable t) {
+            public void onFailure(Call<BaseResponse<FindingHostResponse>> call, Throwable t) {
                 Log.e(this.getClass().getSimpleName(), t.getMessage());
                 callBack.onResult("Can't connect to server, please try again later!", null);
                 //computer.postValue(null);
@@ -253,7 +254,7 @@ public class UserRepository {
 
     public void sendPinToHost(String pinStr, String hostId, OnResultCallBack<ComputerDetails> callBack) {
         PinConfirmBody body = new PinConfirmBody(pinStr, hostId);
-        userServices.sendPinToHost(body).enqueue(new Callback<BaseResponse>() {
+        userAuthenticatedServices.sendPinToHost(body).enqueue(new Callback<BaseResponse>() {
             @Override
             public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
                 DataResultHelper<BaseResponse> dataResponse = PhaseServiceHelper.handleResponse(response);

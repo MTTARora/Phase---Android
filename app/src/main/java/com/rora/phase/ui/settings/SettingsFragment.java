@@ -27,7 +27,7 @@ public class SettingsFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         settingsViewModel = new ViewModelProvider(requireActivity()).get(SettingsViewModel.class);
         View root = inflater.inflate(R.layout.fragment_settings, container, false);
-        userNameTv = root.findViewById(R.id.user_name_tv);
+        userNameTv = root.findViewById(R.id.user_name_edt);
         signBtn = root.findViewById(R.id.sign_out_btn);
 
         signBtn.setOnClickListener(v -> {

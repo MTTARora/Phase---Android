@@ -27,7 +27,7 @@
             android:gravity="center"
             android:text="Welcome!"
             android:textSize="35dp"
-            android:textStyle="bold|italic"/>
+            android:textStyle="bold|italic" />
 
         <TextView
             android:layout_width="match_parent"
@@ -43,12 +43,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/min_space"
+        android:ellipsize="end"
         android:gravity="center"
         android:lines="2"
-        android:textStyle="italic"
-        android:ellipsize="end"
         android:textColor="@android:color/holo_red_light"
-        app:layout_constraintBottom_toTopOf="@id/fields_ui_sign_in"/>
+        android:textStyle="italic"
+        app:layout_constraintBottom_toTopOf="@id/fields_ui_sign_in" />
 
     <!--FIELDS-->
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -61,12 +61,15 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <carbon.widget.EditText
-            android:id="@+id/user_name_tv"
+            android:id="@+id/user_name_edt"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@android:color/white"
             android:gravity="center_vertical"
             android:hint="Username"
+            android:maxLines="1"
+            android:lines="1"
+            android:inputType="text"
             android:padding="@dimen/medium_space"
             android:textColor="@color/colorPrimaryDark"
             android:textColorHint="@color/gray"
@@ -78,15 +81,16 @@
             app:layout_constraintWidth_percent=".65" />
 
         <carbon.widget.EditText
-            android:id="@+id/pw_tv"
+            android:id="@+id/password_edt"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@android:color/white"
             android:gravity="center_vertical"
             android:hint="Password"
-            android:textColor="@color/colorPrimaryDark"
             android:inputType="textPassword"
+            android:maxLines="1"
             android:padding="@dimen/medium_space"
+            android:textColor="@color/colorPrimaryDark"
             android:textColorHint="@color/gray"
             app:carbon_cornerRadius="@dimen/maxx_radius"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -100,16 +104,17 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="0dp"
+        android:layout_marginEnd="@dimen/min_space"
+        android:background="@android:color/transparent"
         android:text="@string/forgot_password_text"
         android:textAllCaps="false"
+        android:textColor="@color/colorPrimary"
         android:textSize="@dimen/normal_text_size"
         android:textStyle="italic"
-        android:textColor="@color/colorPrimary"
-        app:layout_constraintHeight_percent=".05"
-        android:background="@android:color/transparent"
-        app:layout_constraintTop_toBottomOf="@id/fields_ui_sign_in"
+        android:focusable="false"
         app:layout_constraintEnd_toEndOf="@id/buttons_sign_frame"
-        android:layout_marginEnd="@dimen/min_space"/>
+        app:layout_constraintHeight_percent=".05"
+        app:layout_constraintTop_toBottomOf="@id/fields_ui_sign_in" />
 
     <LinearLayout
         android:id="@+id/buttons_sign_frame"
@@ -128,21 +133,23 @@
             android:layout_weight="4"
             android:background="@color/colorPrimaryDark"
             android:text="@string/sign_in_text"
+            android:focusable="false"
             android:textAllCaps="false"
             android:textColor="@color/colorPrimary"
-            app:carbon_cornerRadius="@dimen/max_radius"/>
+            app:carbon_cornerRadius="@dimen/max_radius" />
 
         <carbon.widget.Button
             android:id="@+id/guest_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/min_space"
             android:layout_weight="1"
             android:background="@color/colorPrimaryDark"
             android:text="@string/guest_text"
             android:textAllCaps="false"
+            android:focusable="false"
             android:textColor="@color/colorPrimary"
-            android:layout_marginStart="@dimen/min_space"
-            app:carbon_cornerRadius="@dimen/max_radius"/>
+            app:carbon_cornerRadius="@dimen/max_radius" />
     </LinearLayout>
 
     <ProgressBar
@@ -150,34 +157,37 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:indeterminate="true"
+        android:indeterminateTint="@color/colorPrimary"
+        android:translationZ="10dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/sign_up_ui_sign_in"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/fields_ui_sign_in"
-        app:layout_constraintWidth_percent=".65"
-        android:indeterminateTint="@color/colorPrimary"
-        android:translationZ="10dp"
-        android:visibility="gone"/>
+        app:layout_constraintWidth_percent=".65" />
 
     <LinearLayout
         android:id="@+id/sign_up_ui_sign_in"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/dont_have_account"/>
+            android:text="@string/dont_have_account" />
+
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
             android:text="@string/sign_up_here"
             android:textAllCaps="false"
-            android:textSize="@dimen/sub_title_text_size"
-            android:textStyle="italic"
             android:textColor="@color/colorPrimary"
-            android:background="@android:color/transparent"/>
+            android:focusable="false"
+            android:textSize="@dimen/sub_title_text_size"
+            android:textStyle="italic" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

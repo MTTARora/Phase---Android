@@ -34,12 +34,6 @@ public class SplashActivity extends AppCompatActivity {
             intent.putExtra(SignInActivity.START_IN_APP_PARAM, false);
         }
 
-        //try {
-        //    Thread.sleep(2000);
-        //} catch (InterruptedException e) {
-        //    e.printStackTrace();
-        //}
-
         startActivity(intent);
         finish();
     }
