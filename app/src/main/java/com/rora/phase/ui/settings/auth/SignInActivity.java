@@ -53,23 +53,22 @@ public class SignInActivity extends AppCompatActivity {
         });
 
         usernameTv.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_FLAG_NO_ENTER_ACTION || actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT) {
+            if (actionId == EditorInfo.IME_FLAG_NO_ENTER_ACTION || actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT || (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
                 passwordTv.requestFocus();
             }
             return true;
         });
 
-        passwordTv.setOnKeyListener((v, keyCode, event) -> {
-            if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+        passwordTv.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_FLAG_NO_ENTER_ACTION || actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT || (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
                 hideSoftKeyboard();
 
                 passwordTv.clearFocus();
                 signIn();
-                return true;
             }
-            return false;
+            return true;
         });
-
+        
         initData();
     }
 
