@@ -12,6 +12,7 @@ import com.rora.phase.repository.BannerRepository;
 import com.rora.phase.repository.GameRepository;
 import com.rora.phase.repository.UserRepository;
 import com.rora.phase.utils.PageManager;
+import com.rora.phase.utils.SharedPreferencesHelper;
 
 import java.util.List;
 
@@ -19,12 +20,11 @@ import javax.annotation.Nullable;
 
 public class HomeViewModel extends AndroidViewModel {
 
-    private UserRepository userRepository;
     private GameRepository gameRepository;
     private BannerRepository bannerRepository;
 
     private LiveData<List<Banner>> bannerList;
-    private LiveData<List<Game>> newGameList, editorsChoiceList, hotGameList, trendingList, gameByCategoryList, recommendedList, gameByPayTypeList;
+    private LiveData<List<Game>> newGameList, editorsChoiceList, hotGameList, trendingList, gameByCategoryList, gameByPayTypeList;
     private LiveData<List<Tag>> categoryList;
     private LiveData<Game> selectedGame;
     private PageManager pager, newGamePager, editorPager, hotGamePager, trendingPager, gameByCategoryPager;
@@ -42,7 +42,6 @@ public class HomeViewModel extends AndroidViewModel {
 
     public HomeViewModel(Application application) {
         super(application);
-        userRepository = new UserRepository(application.getBaseContext());
         bannerRepository = new BannerRepository();
         gameRepository = new GameRepository();
 
@@ -53,7 +52,6 @@ public class HomeViewModel extends AndroidViewModel {
         trendingList = gameRepository.getTrendingList();
         categoryList = gameRepository.getCategoryList();
         gameByCategoryList = gameRepository.getGameByCategoryList();
-        recommendedList = userRepository.getRecommendedGameList();
         gameByPayTypeList = gameRepository.getGamesByPayTypeList();
         selectedGame = gameRepository.getSelectedGame();
 
@@ -97,10 +95,6 @@ public class HomeViewModel extends AndroidViewModel {
         return categoryList;
     }
 
-    public LiveData<List<Game>> getRecommendedGameList() {
-        return recommendedList;
-    }
-
     public LiveData<List<Game>> getGamesByPayTypeList() {
         return gameByPayTypeList;
     }
@@ -121,7 +115,7 @@ public class HomeViewModel extends AndroidViewModel {
                 case BY_PAY_TYPE:
                     return getGamesByPayTypeList();
                 case RECOMMENDED:
-                    return getRecommendedGameList();
+                    break;
                 default: return null;
             }
 
@@ -167,10 +161,6 @@ public class HomeViewModel extends AndroidViewModel {
         gameRepository.getGamesByCategoryData(tagName, page, pageSize);
     }
 
-    private void getRecommendedGameListData(int page, int pageSize) {
-        userRepository.getRecommendedGameListData(page, pageSize);
-    }
-
     private void getGameByPayTypeListData(String payType, int page, int pageSize) {
         currentSelectedItemId = payType;
         gameRepository.getGamesByPayTypeData(payType, page, pageSize);
@@ -197,7 +187,6 @@ public class HomeViewModel extends AndroidViewModel {
                     getEditorsChoiceListData(1, editorPager.getPageSize());
                     break;
                 case RECOMMENDED:
-                    getRecommendedGameListData(1, pager.getPageSize());
                     break;
                 case TRENDING:
                     getTrendingListData(1, trendingPager.getPageSize());
@@ -241,7 +230,6 @@ public class HomeViewModel extends AndroidViewModel {
                     break;
                 case RECOMMENDED:
                     if (pager.hasNext())
-                        getRecommendedGameListData(pager.nextPage(), pager.getPageSize());
                     break;
                 default: break;
             }
@@ -292,7 +280,7 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     public boolean isUserLogged() {
-        return userRepository.isUserLogged();
+        return !SharedPreferencesHelper.newInstance(getApplication().getBaseContext()).getUserToken().isEmpty();
     }
 
 }

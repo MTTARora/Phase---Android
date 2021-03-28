@@ -30,12 +30,9 @@ import com.rora.phase.nvstream.http.PairingManager;
 import com.rora.phase.nvstream.jni.MoonBridge;
 import com.rora.phase.nvstream.mdns.MdnsComputer;
 import com.rora.phase.nvstream.mdns.MdnsDiscoveryListener;
-import com.rora.phase.repository.GameRepository;
 import com.rora.phase.repository.UserRepository;
-import com.rora.phase.ui.settings.auth.SignInActivity;
 import com.rora.phase.utils.NetHelper;
 import com.rora.phase.utils.ServerHelper;
-import com.rora.phase.utils.callback.OnResultCallBack;
 import com.rora.phase.utils.callback.PlayGameProgressCallBack;
 import com.rora.phase.utils.network.realtime.playhub.PlayHub;
 import com.rora.phase.utils.network.realtime.playhub.PlayHubListener;
@@ -180,7 +177,7 @@ public class PlayServices extends Service {
                     callBack.onStart(true);
                     callBack.onFindAHost(false);
                     //STEP 2: Get host data
-                    userRepository.getComputerIPData((errMsg, computer) -> {
+                    userRepository.getComputerData((errMsg, computer) -> {
                         callBack.onFindAHost(true);
                         if (errMsg != null) {
                             playHub.stopConnect();
@@ -227,6 +224,7 @@ public class PlayServices extends Service {
 
                 @Override
                 public void onDisconnected() {
+                    callBack.onError(getApplication().getResources().getString(R.string.undetected_error));
                     stopConnect(callBack);
                 }
             });

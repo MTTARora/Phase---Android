@@ -24,7 +24,6 @@ public class GameRepository {
 
     private PhaseService gameServices;
     private PhaseService tagServices;
-    private UserPhaseService userServices;
 
     private MutableLiveData<List<Game>> newGameList, recentPlayList, editorsChoiceList, hotGameList, trendingList, gameByCategoryList, gamesByPayTypeList;
     private MutableLiveData<List<Tag>> categoryList;
@@ -50,7 +49,6 @@ public class GameRepository {
         PhaseServiceHelper phaseServiceHelper = new PhaseServiceHelper();
         gameServices = phaseServiceHelper.getGamePhaseService();
         tagServices = phaseServiceHelper.getPhaseService();
-        userServices = phaseServiceHelper.getUserAuthenticatedPhaseService();
     }
 
 
@@ -131,31 +129,6 @@ public class GameRepository {
             public void onFailure(Call<BaseResponse<List<Game>>> call, Throwable t) {
                 Log.e("Request API failed", "Get new game - " + t.getMessage());
                 newGameList.postValue(new ArrayList<>());
-            }
-        });
-    }
-
-    public void getRecentPlayListData(int page, int pageSize) {
-        userServices.getRecentPlay(page, pageSize).enqueue(new Callback<BaseResponse<List<Game>>>() {
-            @Override
-            public void onResponse(Call<BaseResponse<List<Game>>> call, Response<BaseResponse<List<Game>>> response) {
-                DataResultHelper<BaseResponse<List<Game>>> dataResponse = PhaseServiceHelper.handleResponse(response);
-
-                if (dataResponse.getErrMsg() != null) {
-                    recentPlayList.postValue(new ArrayList<>());
-                    errMsg.postValue(dataResponse.getErrMsg());
-                    Log.e("Request API failed", "Get recent play - " + dataResponse.getErrMsg());
-                } else {
-                    List<Game> listGame = BaseResponse.getResult(dataResponse.getData());
-                    listGame = listGame == null ? new ArrayList<>() : listGame;
-                    recentPlayList.postValue(listGame);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<BaseResponse<List<Game>>> call, Throwable t) {
-                Log.e("Request API failed", "Get new game - " + t.getMessage());
-                recentPlayList.postValue(new ArrayList<>());
             }
         });
     }

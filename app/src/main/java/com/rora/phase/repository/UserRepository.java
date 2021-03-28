@@ -10,6 +10,7 @@ import com.rora.phase.model.Game;
 import com.rora.phase.model.Host;
 import com.rora.phase.model.User;
 import com.rora.phase.model.UserPlayingData;
+import com.rora.phase.model.api.FindingHostResponse;
 import com.rora.phase.model.api.LoginCredential;
 import com.rora.phase.model.api.LoginResponse;
 import com.rora.phase.model.api.PinConfirmBody;
@@ -44,8 +45,8 @@ public class UserRepository {
 
     public UserRepository(Context context) {
         PhaseServiceHelper phaseServiceHelper = new PhaseServiceHelper(context);
-        userAuthenticatedServices = phaseServiceHelper.getUserAuthenticatedPhaseService();
-        userServices = phaseServiceHelper.getUserPhaseService();
+        userAuthenticatedServices = phaseServiceHelper.getUserPhaseService(true);
+        userServices = phaseServiceHelper.getUserPhaseService(false);
         dbSharedPref = new SharedPreferencesHelper(context);
 
         user = new MutableLiveData<>();
@@ -223,26 +224,27 @@ public class UserRepository {
 
     }
 
-    public void getComputerIPData(OnResultCallBack<ComputerDetails> callBack) {
-        userAuthenticatedServices.getComputerIP().enqueue(new Callback<BaseResponse<Host>>() {
+    public void getComputerData(OnResultCallBack<ComputerDetails> callBack) {
+        userAuthenticatedServices.getComputerIP().enqueue(new Callback<BaseResponse<FindingHostResponse>>() {
             @Override
-            public void onResponse(Call<BaseResponse<Host>> call, Response<BaseResponse<Host>> response) {
-                DataResultHelper<BaseResponse<Host>> dataResponse = PhaseServiceHelper.handleResponse(response);
+            public void onResponse(Call<BaseResponse<FindingHostResponse>> call, Response<BaseResponse<FindingHostResponse>> response) {
+                DataResultHelper<BaseResponse<FindingHostResponse>> dataResponse = PhaseServiceHelper.handleResponse(response);
                 String err = dataResponse.getErrMsg();
                 if (err != null) {
                     callBack.onResult(err, null);
                 } else {
-                    Host host = BaseResponse.getResult(dataResponse.getData());
-                    if (host == null)
+                    FindingHostResponse resp = BaseResponse.getResult(dataResponse.getData());
+
+                    if (resp.queue != null || resp.host == null)
                         callBack.onResult("So many players are playing right now, please try again later!", null);
                     else
-                        callBack.onResult(null, new ComputerDetails(host));
+                        callBack.onResult(null, new ComputerDetails(resp.host));
                     //computer.postValue(new ComputerDetails(host));
                 }
             }
 
             @Override
-            public void onFailure(Call<BaseResponse<Host>> call, Throwable t) {
+            public void onFailure(Call<BaseResponse<FindingHostResponse>> call, Throwable t) {
                 Log.e(this.getClass().getSimpleName(), t.getMessage());
                 callBack.onResult("Can't connect to server, please try again later!", null);
                 //computer.postValue(null);

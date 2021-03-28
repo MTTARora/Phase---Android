@@ -3,6 +3,7 @@ package com.rora.phase.utils.network;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.Host;
 import com.rora.phase.model.User;
+import com.rora.phase.model.api.FindingHostResponse;
 import com.rora.phase.model.api.LoginCredential;
 import com.rora.phase.model.api.LoginResponse;
 import com.rora.phase.model.api.PinConfirmBody;
@@ -15,6 +16,7 @@ import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 
@@ -53,7 +55,7 @@ public interface UserPhaseService {
     Call<BaseResponse<List<Game>>> getRecommended(@Query("page") int page,@Query("page_size") int pageSize);
 
     @GET("./play/available-host")
-    Call<BaseResponse<Host>> getComputerIP();
+    Call<BaseResponse<FindingHostResponse>> getComputerIP();
 
     @POST("./play/confirm-pin")
     Call<BaseResponse> sendPinToHost(@Body PinConfirmBody confirmData);
