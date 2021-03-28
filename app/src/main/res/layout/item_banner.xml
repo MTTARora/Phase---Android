@@ -23,6 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/banner_height"
             android:scaleType="fitXY"
+            android:src="@drawable/banner_test"
             app:carbon_cornerRadius="@dimen/maxx_radius" />
 
     <!--</carbon.widget.RelativeLayout>-->

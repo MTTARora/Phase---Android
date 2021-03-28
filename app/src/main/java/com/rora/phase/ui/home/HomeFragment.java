@@ -228,7 +228,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     }
 
     private void setupBannerView() {
-        bannerAdapter = new BannerVPAdapter();
+        bannerAdapter = new BannerVPAdapter(0);
         vpBanner.setAdapter(bannerAdapter);
         vpBanner.setOffscreenPageLimit(2);
         vpBanner.setPageTransformer(new CustomViewPagerTransformer());

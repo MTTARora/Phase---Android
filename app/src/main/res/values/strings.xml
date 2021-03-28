@@ -237,6 +237,7 @@
     <string name="age_rating_title">Age rating: </string>
     <string name="release_title">Release: </string>
     <string name="screenshot_title">Screenshot</string>
+    <string name="story_title">Story</string>
     <string name="series_title">Games in the Series</string>
     <string name="require_login_msg">Sign in now to play</string>
     <string name="err">Error</string>

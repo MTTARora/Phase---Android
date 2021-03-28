@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.rora.phase.R;
@@ -39,6 +41,7 @@ import static com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter.MIN_SIZE;
 
 public class GameDetailFragment extends BaseFragment {
 
+    private LinearLayout frameSeries;
     private ImageView imvBanner;
     private RecyclerView rclvPlatform, rclvCategory, rclvScreenshot, rclvSeries, rclvSimilar;
     private TextView tvGameName, tvPayType, tvAgeRating, tvRelease, tvDesc;
@@ -69,6 +72,9 @@ public class GameDetailFragment extends BaseFragment {
         }
 
         View root = inflater.inflate(R.layout.fragment_game_detail, container, false);
+
+        frameSeries = root.findViewById(R.id.frame_series);
+
         imvBanner = root.findViewById(R.id.game_banner_imv);
 
         rclvPlatform = root.findViewById(R.id.platform_rclv);
@@ -98,7 +104,7 @@ public class GameDetailFragment extends BaseFragment {
 
         setupRecyclerView(rclvPlatform, new PlatformRecyclerViewAdapter(), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL , false));
         setupRecyclerView(rclvCategory,new CategoryRecyclerViewAdapter( 0.11, MIN_SIZE, false, null), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL , false));
-        setupRecyclerView(rclvScreenshot, new BannerVPAdapter(), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        setupRecyclerView(rclvScreenshot, new BannerVPAdapter(.45), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         setupRecyclerView(rclvSeries, new GameMinInfoRecyclerViewAdapter(GameMinInfoRecyclerViewAdapter.VIEW_TYPE_EXPANDED, 0.8), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
         rclvSimilar.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL , false));
@@ -125,20 +131,6 @@ public class GameDetailFragment extends BaseFragment {
 
     private void initData() {
         gameViewModel.getGameData().observe(getViewLifecycleOwner(), this::bindData);
-
-        //STEP 1: Get computer details from server
-        //gameViewModel.getComputerDetails().observe(getViewLifecycleOwner(), computerDetails -> {
-        //    if (computerDetails == null) {
-        //        Dialog.displayDialog(getActivity(), getResources().getString(R.string.err), getResources().getString(R.string.undetected_error), false);
-        //        return;
-        //    }
-        //    //STEP 2: Pass computer data to loading screen
-        //    Bundle bundle = new Bundle();
-        //    bundle.putSerializable(LoadingGameActivity.COMPUTER_PARAM, computerDetails);
-        //    Intent intent = new Intent(getContext(), LoadingGameActivity.class);
-        //    intent.putExtra("LoadingGameActivityBundle", bundle);
-        //});
-
         gameViewModel.getGame(gameId);
     }
 
@@ -160,7 +152,12 @@ public class GameDetailFragment extends BaseFragment {
             banners.add(new Banner(screenshot.getLink()));
         }
         ((BannerVPAdapter)rclvScreenshot.getAdapter()).bindData(banners);
-        //((GameMinInfoRecyclerViewAdapter)rclvSeries.getAdapter()).bindData(game.getG);
+
+        if (game.getSeriesId() == 0) {
+            frameSeries.setVisibility(View.GONE);
+        } else {
+            //((GameMinInfoRecyclerViewAdapter)rclvSeries.getAdapter()).bindData(game.getSeriesId());
+        }
         //((GameVerticalRVAdapter)rclvSimilar.getAdapter()).bindData(game.getPlatforms());
 
         hideLoadingScreen();
