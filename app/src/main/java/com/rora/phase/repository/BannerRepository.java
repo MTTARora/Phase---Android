@@ -48,20 +48,6 @@ public class BannerRepository {
                 bannerList.postValue(listGame);
             }
         });
-//        phaseService.getBannerList().enqueue(new Callback<BaseResponse<List<Banner>>>() {
-//            @Override
-//            public void onResponse(Call<BaseResponse<List<Banner>>> call, Response<BaseResponse<List<Banner>>> response) {
-//                List<Banner> listGame = BaseResponse.getResult(response.body());
-//                listGame = listGame == null ? new ArrayList<>() : listGame;
-//                bannerList.postValue(listGame);
-//            }
-//
-//            @Override
-//            public void onFailure(Call<BaseResponse<List<Banner>>> call, Throwable t) {
-//                Log.e(this.getClass().getSimpleName(), t.getMessage());
-//                bannerList.postValue(new ArrayList<>());
-//            }
-//        });
     }
 
 }

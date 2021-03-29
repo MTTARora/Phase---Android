@@ -169,7 +169,7 @@ public class PlayServices extends Service {
     /** Start the progress after getting ip and ports from STEP 1 */
     public void startConnectProgress(Activity activity, PlayGameProgressCallBack callBack) {
         Thread connectThread = new Thread(() -> {
-            RoraLog.info("Play game: Start Connecting");
+            RoraLog.info("Play game - STEP 1: Start Connecting");
             callBack.onStart(false);
             playHub = new PlayHub();
             //STEP 1: Connect to hub
@@ -280,7 +280,7 @@ public class PlayServices extends Service {
             if (httpConn.getPairState() == PairingManager.PairState.PAIRED)
                 return null;
 
-            //STEP 4.1: GENERATE AND WAITING FOR SERVER HANDEL PIN
+            //STEP 4.1: GENERATE AND WAIT FOR SERVER HANDEL PIN
             final String pinStr = PairingManager.generatePinString();
 
             //STEP 4.2: SEND PIN TO HOST
@@ -361,7 +361,6 @@ public class PlayServices extends Service {
         listener = null;
         unbindService(discoveryServiceConnection);
         bindService(new Intent(this, DiscoveryService.class), discoveryServiceConnection, Service.BIND_AUTO_CREATE);
-        userRepository.stopPlaying();
 
         RoraLog.info("Stop connect - Success");
         playProgressCallBack.onStopConnect(true);

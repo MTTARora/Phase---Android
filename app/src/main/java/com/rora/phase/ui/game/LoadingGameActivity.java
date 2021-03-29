@@ -131,14 +131,6 @@ public class LoadingGameActivity extends FragmentActivity {
         }
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        if (managerBinder != null)
-            stopConnect();
-    }
-
     //-------------------------------------------------------------------------
 
 

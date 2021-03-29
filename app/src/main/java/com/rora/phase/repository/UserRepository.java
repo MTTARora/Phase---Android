@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
+import com.rora.phase.RoraLog;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.User;
 import com.rora.phase.model.UserPlayingData;
@@ -103,34 +104,16 @@ public class UserRepository {
         apiHelper.request(userServices.signIn(loginCredential), (err, data) -> {
             if (err != null) {
                 updateDataResult.postValue(new DataResponse(err, null));
-            } else
-                updateDataResult.postValue(new DataResponse(null, data));
-        });
+            } else {
+                User user = data.getInfo();
+                String token = data.getToken();
 
-//        userServices.signIn(loginCredential).enqueue(new Callback<BaseResponse<LoginResponse>>() {
-//            @Override
-//            public void onResponse(Call<BaseResponse<LoginResponse>> call, Response<BaseResponse<LoginResponse>> response) {
-//                DataResponse<BaseResponse<LoginResponse>> dataResponse = PhaseServiceHelper.handleResponse(response);
-//
-//                if (dataResponse.getMsg() != null) {
-//                    updateDataResult.postValue(new DataResponse(dataResponse.getMsg(), null));
-//                } else {
-//                    LoginResponse resp = BaseResponse.getResult(dataResponse.getData());
-//                    User user = resp.getInfo();
-//                    String token = resp.getToken();
-//
-//                    if (token != null && user != null) {
-//                        storeLocalUser(user.getUserName(), token);
-//                    }
-//                    updateDataResult.postValue(new DataResponse(null, null));
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<BaseResponse<LoginResponse>> call, Throwable t) {
-//                updateDataResult.postValue(new DataResponse("Please try again later!", null));
-//            }
-//        });
+                if (token != null && user != null) {
+                    storeLocalUser(user.getUserName(), token);
+                }
+                updateDataResult.postValue(new DataResponse(null, data));
+            }
+        });
     }
 
     public void signOut() {
@@ -207,59 +190,26 @@ public class UserRepository {
         apiHelper.request(userAuthenticatedServices.getComputerIP(), (err, data) -> {
             if (err != null) {
                 callBack.onResult(err, null);
-            } else
-                callBack.onResult(null, new ComputerDetails(data.host));
+            } else {
+                if (data.queue != null || data.host == null) {
+                    RoraLog.info("So many players are playing right now, please try again later!");
+                    callBack.onResult("So many players are playing right now, please try again later!", null);
+                }
+                else
+                    callBack.onResult(null, new ComputerDetails(data.host));
+            }
         });
-
-//        userAuthenticatedServices.getComputerIP().enqueue(new Callback<BaseResponse<FindingHostResponse>>() {
-//            @Override
-//            public void onResponse(Call<BaseResponse<FindingHostResponse>> call, Response<BaseResponse<FindingHostResponse>> response) {
-//                DataResponse<BaseResponse<FindingHostResponse>> dataResponse = PhaseServiceHelper.handleResponse(response);
-//                String err = dataResponse.getMsg();
-//                if (err != null) {
-//                    callBack.onResult(err, null);
-//                } else {
-//                    FindingHostResponse resp = BaseResponse.getResult(dataResponse.getData());
-//
-//                    if (resp.queue != null || resp.host == null)
-//                        callBack.onResult("So many players are playing right now, please try again later!", null);
-//                    else
-//                        callBack.onResult(null, new ComputerDetails(resp.host));
-//                    //computer.postValue(new ComputerDetails(host));
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<BaseResponse<FindingHostResponse>> call, Throwable t) {
-//                Log.e(this.getClass().getSimpleName(), t.getMessage());
-//                callBack.onResult("Can't connect to server, please try again later!", null);
-//                //computer.postValue(null);
-//            }
-//        });
     }
 
     public void sendPinToHost(String pinStr, String hostId, OnResultCallBack<ComputerDetails> callBack) {
-        PinConfirmBody body = new PinConfirmBody(pinStr, hostId);
-        userAuthenticatedServices.sendPinToHost(body).enqueue(new Callback<BaseResponse>() {
-            @Override
-            public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
-                DataResponse<BaseResponse> dataResponse = PhaseServiceHelper.handleResponse(response);
-                String err = dataResponse.getMsg();
-                if (err != null)
-                    callBack.onResult(err, null);
-                else
-                    callBack.onResult(null, null);
-            }
+        APIServicesHelper apiHelper = new APIServicesHelper<>();
 
-            @Override
-            public void onFailure(Call<BaseResponse> call, Throwable t) {
-                callBack.onResult("Can't connect to server, please try again later!", null);
-            }
+        apiHelper.request(userAuthenticatedServices.sendPinToHost(new PinConfirmBody(pinStr, hostId)), (err, data) -> {
+            if (err != null && !err.contains("success")) {
+                callBack.onResult(err, null);
+            } else
+                callBack.onResult(null, null);
         });
-    }
-
-    public void stopPlaying() {
-
     }
 
     //----------------------------------------------------------------------------------------
