@@ -190,7 +190,7 @@ public class PcView extends Activity implements AdapterFragmentCallbacks {
                     glPrefs.savedFingerprint = Build.FINGERPRINT;
                     glPrefs.writePreferences();
 
-                    LimeLog.info("Fetched GL Renderer: " + glPrefs.glRenderer);
+                    RoraLog.info("Fetched GL Renderer: " + glPrefs.glRenderer);
 
                     runOnUiThread(new Runnable() {
                         @Override
@@ -211,7 +211,7 @@ public class PcView extends Activity implements AdapterFragmentCallbacks {
             setContentView(surfaceView);
         }
         else {
-            LimeLog.info("Cached GL Renderer: " + glPrefs.glRenderer);
+            RoraLog.info("Cached GL Renderer: " + glPrefs.glRenderer);
             completeOnCreate();
         }
     }
@@ -592,7 +592,7 @@ public class PcView extends Activity implements AdapterFragmentCallbacks {
 
             case DELETE_ID:
                 if (ActivityManager.isUserAMonkey()) {
-                    LimeLog.info("Ignoring delete PC request from monkey");
+                    RoraLog.info("Ignoring delete PC request from monkey");
                     return true;
                 }
                 UiHelper.displayDeletePcConfirmationDialog(this, computer.details, new Runnable() {

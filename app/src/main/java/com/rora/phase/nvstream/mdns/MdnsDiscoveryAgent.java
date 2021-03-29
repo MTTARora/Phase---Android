@@ -18,7 +18,7 @@ import javax.jmdns.ServiceInfo;
 import javax.jmdns.ServiceListener;
 import javax.jmdns.impl.NetworkTopologyDiscoveryImpl;
 
-import com.rora.phase.LimeLog;
+import com.rora.phase.RoraLog;
 
 public class MdnsDiscoveryAgent implements ServiceListener {
     public static final String SERVICE_TYPE = "_nvstream._tcp.local.";
@@ -155,7 +155,7 @@ public class MdnsDiscoveryAgent implements ServiceListener {
             handleServiceInfo(info);
         } catch (UnsupportedEncodingException e) {
             // Invalid DNS response
-            LimeLog.info("mDNS: Invalid response for machine: "+info.getName());
+            RoraLog.info("mDNS: Invalid response for machine: "+info.getName());
             return;
         }
     }
@@ -177,7 +177,7 @@ public class MdnsDiscoveryAgent implements ServiceListener {
     private Inet6Address getLinkLocalAddress(Inet6Address[] addresses) {
         for (Inet6Address addr : addresses) {
             if (addr.isLinkLocalAddress()) {
-                LimeLog.info("Found link-local address: "+addr.getHostAddress());
+                RoraLog.info("Found link-local address: "+addr.getHostAddress());
                 return addr;
             }
         }
@@ -198,7 +198,7 @@ public class MdnsDiscoveryAgent implements ServiceListener {
             for (Inet6Address addr : addresses) {
                 if (addr.isLinkLocalAddress() || addr.isSiteLocalAddress() || addr.isLoopbackAddress()) {
                     // Link-local, site-local, and loopback aren't global
-                    LimeLog.info("Ignoring non-global address: "+addr.getHostAddress());
+                    RoraLog.info("Ignoring non-global address: "+addr.getHostAddress());
                     continue;
                 }
 
@@ -207,19 +207,19 @@ public class MdnsDiscoveryAgent implements ServiceListener {
                 // 2002::/16
                 if (addrBytes[0] == 0x20 && addrBytes[1] == 0x02) {
                     // 6to4 has horrible performance
-                    LimeLog.info("Ignoring 6to4 address: "+addr.getHostAddress());
+                    RoraLog.info("Ignoring 6to4 address: "+addr.getHostAddress());
                     continue;
                 }
                 // 2001::/32
                 else if (addrBytes[0] == 0x20 && addrBytes[1] == 0x01 && addrBytes[2] == 0x00 && addrBytes[3] == 0x00) {
                     // Teredo also has horrible performance
-                    LimeLog.info("Ignoring Teredo address: "+addr.getHostAddress());
+                    RoraLog.info("Ignoring Teredo address: "+addr.getHostAddress());
                     continue;
                 }
                 // fc00::/7
                 else if ((addrBytes[0] & 0xfe) == 0xfc) {
                     // ULAs aren't global
-                    LimeLog.info("Ignoring ULA: "+addr.getHostAddress());
+                    RoraLog.info("Ignoring ULA: "+addr.getHostAddress());
                     continue;
                 }
 
@@ -236,7 +236,7 @@ public class MdnsDiscoveryAgent implements ServiceListener {
                     }
 
                     if (!matched) {
-                        LimeLog.info("Ignoring non-matching global address: "+addr.getHostAddress());
+                        RoraLog.info("Ignoring non-matching global address: "+addr.getHostAddress());
                         continue;
                     }
                 }
@@ -252,8 +252,8 @@ public class MdnsDiscoveryAgent implements ServiceListener {
         Inet4Address v4Addrs[] = info.getInet4Addresses();
         Inet6Address v6Addrs[] = info.getInet6Addresses();
 
-        LimeLog.info("mDNS: "+info.getName()+" has "+v4Addrs.length+" IPv4 addresses");
-        LimeLog.info("mDNS: "+info.getName()+" has "+v6Addrs.length+" IPv6 addresses");
+        RoraLog.info("mDNS: "+info.getName()+" has "+v4Addrs.length+" IPv4 addresses");
+        RoraLog.info("mDNS: "+info.getName()+" has "+v6Addrs.length+" IPv6 addresses");
 
         Inet6Address v6GlobalAddr = getBestIpv6Address(v6Addrs);
 
@@ -310,10 +310,10 @@ public class MdnsDiscoveryAgent implements ServiceListener {
                             pendingNames = new ArrayList<String>(pendingResolution);
                         }
                         for (String name : pendingNames) {
-                            LimeLog.info("mDNS: Retrying service resolution for machine: "+name);
+                            RoraLog.info("mDNS: Retrying service resolution for machine: "+name);
                             ServiceInfo[] infos = resolver.getServiceInfos(SERVICE_TYPE, name, 500);
                             if (infos != null && infos.length != 0) {
-                                LimeLog.info("mDNS: Resolved (retry) with "+infos.length+" service entries");
+                                RoraLog.info("mDNS: Resolved (retry) with "+infos.length+" service entries");
                                 for (ServiceInfo svcinfo : infos) {
                                     handleResolvedServiceInfo(svcinfo);
                                 }
@@ -359,7 +359,7 @@ public class MdnsDiscoveryAgent implements ServiceListener {
 
     @Override
     public void serviceAdded(ServiceEvent event) {
-        LimeLog.info("mDNS: Machine appeared: "+event.getInfo().getName());
+        RoraLog.info("mDNS: Machine appeared: "+event.getInfo().getName());
 
         ServiceInfo info = event.getDNS().getServiceInfo(SERVICE_TYPE, event.getInfo().getName(), 500);
         if (info == null) {
@@ -370,13 +370,13 @@ public class MdnsDiscoveryAgent implements ServiceListener {
             return;
         }
         
-        LimeLog.info("mDNS: Resolved (blocking)");
+        RoraLog.info("mDNS: Resolved (blocking)");
         handleResolvedServiceInfo(info);
     }
 
     @Override
     public void serviceRemoved(ServiceEvent event) {
-        LimeLog.info("mDNS: Machine disappeared: "+event.getInfo().getName());
+        RoraLog.info("mDNS: Machine disappeared: "+event.getInfo().getName());
 
         Inet4Address v4Addrs[] = event.getInfo().getInet4Addresses();
         for (Inet4Address addr : v4Addrs) {

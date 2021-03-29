@@ -16,7 +16,7 @@ import android.os.SystemClock;
 
 import androidx.annotation.Nullable;
 
-import com.rora.phase.LimeLog;
+import com.rora.phase.RoraLog;
 import com.rora.phase.R;
 import com.rora.phase.binding.PlatformBinding;
 import com.rora.phase.computers.IdentityManager;
@@ -85,6 +85,7 @@ public class PlayServices extends Service {
         }
     };
 
+
     //------------------------------------ Lifecycle ----------------------------------
 
     @Nullable
@@ -145,7 +146,7 @@ public class PlayServices extends Service {
 
                 // Kick off a server info poll on this machine
                 if (!computerServices.addComputerBlocking(details)) {
-                    LimeLog.warning("Auto-discovered PC failed to respond: "+details);
+                    RoraLog.warning("Auto-discovered PC failed to respond: "+details);
                 }
             }
 
@@ -156,7 +157,7 @@ public class PlayServices extends Service {
 
             @Override
             public void notifyDiscoveryFailure(Exception e) {
-                LimeLog.severe("mDNS discovery failed");
+                RoraLog.severe("mDNS discovery failed");
                 e.printStackTrace();
             }
         };
@@ -168,6 +169,7 @@ public class PlayServices extends Service {
     /** Start the progress after getting ip and ports from STEP 1 */
     public void startConnectProgress(Activity activity, PlayGameProgressCallBack callBack) {
         Thread connectThread = new Thread(() -> {
+            RoraLog.info("Play game: Start Connecting");
             callBack.onStart(false);
             playHub = new PlayHub();
             //STEP 1: Connect to hub
@@ -214,7 +216,7 @@ public class PlayServices extends Service {
                                 start(activity, binder);
                                 callBack.onStartConnect(true);
                             } catch (InterruptedException e) {
-                                LimeLog.info("Playing Game - Connecting error -- " + e.getMessage());
+                                RoraLog.info("Playing Game - Connecting error -- " + e.getMessage());
                                 callBack.onError(getApplication().getResources().getString(R.string.undetected_error));
                             }
                         });
@@ -240,7 +242,7 @@ public class PlayServices extends Service {
      * @return An error msg if failed
      * */
     private String addPc(ComputerDetails computerDetails) {
-        LimeLog.info("Playing game - STEP 2: Add computer -- " + computerDetails.toString());
+        RoraLog.info("Playing game - STEP 2: Add computer -- " + computerDetails.toString());
         String err = null;
         try {
             boolean success = computerServices.addComputerBlocking(computerDetails);
@@ -251,7 +253,7 @@ public class PlayServices extends Service {
         }
 
         //Optimize here
-        LimeLog.info("Add pc - " + (err == null ? "Success" : ("Error: " + computerServices.handleAddPcErr(computerDetails.manualAddress))));
+        RoraLog.info("Add pc - " + (err == null ? "Success" : ("Error: " + computerServices.handleAddPcErr(computerDetails.manualAddress))));
         return err;
     }
 
@@ -263,7 +265,7 @@ public class PlayServices extends Service {
      * @return An error msg if failed
      * */
     private String startPairing(PlayGameProgressCallBack callBack) {
-        LimeLog.info("Playing game - STEP 3: Start pairing");
+        RoraLog.info("Playing game - STEP 3: Start pairing");
         String err = computerServices.checkPairCondition(pollingTuple.computer, binder);
 
         try {
@@ -278,11 +280,11 @@ public class PlayServices extends Service {
             if (httpConn.getPairState() == PairingManager.PairState.PAIRED)
                 return null;
 
-            //STEP 3.1: GENERATE AND WAITING FOR SERVER HANDEL PIN
+            //STEP 4.1: GENERATE AND WAITING FOR SERVER HANDEL PIN
             final String pinStr = PairingManager.generatePinString();
 
-            //STEP 3.2: SEND PIN TO HOST
-            LimeLog.info("Pairing - Waiting for pin confirmation: " + pinStr);
+            //STEP 4.2: SEND PIN TO HOST
+            RoraLog.info("Pairing - Waiting for pin confirmation: " + pinStr);
             userRepository.sendPinToHost(pinStr, pollingTuple.computer.hostId, (errMsg, data) -> {
                 if (errMsg != null) {
                     stopConnect(callBack);
@@ -325,14 +327,14 @@ public class PlayServices extends Service {
             err = e.getMessage();
         }
 
-        LimeLog.info("Pairing - " + (err == null ?  "Success" : "Err: " + err));
+        RoraLog.info("Pairing - " + (err == null ?  "Success" : "Err: " + err));
         return err;
     }
 
     /** STEP 5: Start remote connect
      * */
     private void start(Activity activity, PlayServices.ComputerManagerBinder managerBinder) {
-        LimeLog.info("Playing game - STEP 4: Start remote connect");
+        RoraLog.info("Playing game - STEP 4: Start remote connect");
         ServerHelper.doStart(activity, NvApp.initRemoteApp(), pollingTuple.computer, managerBinder);
     }
 
@@ -349,7 +351,7 @@ public class PlayServices extends Service {
         playProgressCallBack.onStopConnect(false);
         playHub.stopConnect();
         if (pollingTuple == null || pollingTuple.computer == null) {
-            LimeLog.info("Stop connect - Error: Couldn't find local data");
+            RoraLog.info("Stop connect - Error: Couldn't find local data");
             playProgressCallBack.onStopConnect(true);
             return;
         }
@@ -361,7 +363,7 @@ public class PlayServices extends Service {
         bindService(new Intent(this, DiscoveryService.class), discoveryServiceConnection, Service.BIND_AUTO_CREATE);
         userRepository.stopPlaying();
 
-        LimeLog.info("Stop connect - Success");
+        RoraLog.info("Stop connect - Success");
         playProgressCallBack.onStopConnect(true);
     }
 
@@ -371,12 +373,8 @@ public class PlayServices extends Service {
         return state == UserPlayingData.PlayingState.STOP;
     }
 
-    private void updatePlayState(UserPlayingData.PlayingState state) {
-        this.state = state;
-    }
 
-
-    //--------------------------------- Classes -------------------------------
+    //--------------------------------- Support Classes -------------------------------
 
     public class ComputerManagerBinder extends Binder {
         private static final int POLL_DATA_TTL_MS = 30000;
@@ -394,7 +392,7 @@ public class PlayServices extends Service {
             if (pollingTuple == null)
                 return;
 
-            LimeLog.info("Start updating computer");
+            RoraLog.info("Start updating computer");
             PlayServices.this.listener = listener;
 
             // Start mDNS auto discovery too
@@ -402,7 +400,7 @@ public class PlayServices extends Service {
 
             // Enforce the poll data TTL
             if (SystemClock.elapsedRealtime() - pollingTuple.lastSuccessfulPollMs > POLL_DATA_TTL_MS) {
-                LimeLog.info("Timing out polled state for "+pollingTuple.computer.name);
+                RoraLog.info("Timing out polled state for "+pollingTuple.computer.name);
                 pollingTuple.computer.state = ComputerDetails.State.UNKNOWN;
             }
 
@@ -411,7 +409,7 @@ public class PlayServices extends Service {
         }
 
         public void stopPolling() {
-            LimeLog.info("Stop polling/updating computer");
+            RoraLog.info("Stop polling/updating computer");
 
             // Just call the unbind handler to cleanup
             PlayServices.this.onUnbind(null);
@@ -464,7 +462,7 @@ public class PlayServices extends Service {
 
                     // If the machine is reachable, it was successful
                     if (pollingTuple.computer.state == ComputerDetails.State.ONLINE) {
-                        LimeLog.info("Adding PC - New PC ("+pollingTuple.computer.name+") is UUID "+pollingTuple.computer.uuid);
+                        RoraLog.info("Adding PC - New PC ("+pollingTuple.computer.name+") is UUID "+pollingTuple.computer.uuid);
 
                         // Start a polling thread for this machine
                         startTupleThread();
@@ -495,7 +493,7 @@ public class PlayServices extends Service {
 
             // If no connection could be established to either IP address, there's nothing we can do
             if (candidateAddress == null) {
-                LimeLog.info("Adding PC - Couldn't connect to this IP address " + details.manualAddress);
+                RoraLog.info("Adding PC - Couldn't connect to this IP address " + details.manualAddress);
                 return false;
             }
 
@@ -659,7 +657,7 @@ public class PlayServices extends Service {
                 err = getApplication().getResources().getString(R.string.error_manager_not_running);
 
             if (err != null)
-                LimeLog.info("Pairing - " + "Err: " + err);
+                RoraLog.info("Pairing - " + "Err: " + err);
 
             return err;
         }
@@ -763,13 +761,13 @@ public class PlayServices extends Service {
 
                 // Check if this is the PC we expected
                 if (newDetails.uuid == null) {
-                    LimeLog.severe("Adding PC - Polling returned no UUID!");
+                    RoraLog.severe("Adding PC - Polling returned no UUID!");
                     return null;
                 }
                 // details.uuid can be null on initial PC add
                 else if (details.uuid != null && !details.uuid.equals(newDetails.uuid)) {
                     // We got the wrong PC!
-                    LimeLog.info("Adding PC - Polling returned the wrong PC!");
+                    RoraLog.info("Adding PC - Polling returned the wrong PC!");
                     return null;
                 }
 
@@ -818,7 +816,7 @@ public class PlayServices extends Service {
                             synchronized (tuple.networkLock) {
                                 // Check if this poll has modified the details
                                 if (!runPoll(tuple.computer, false, offlineCount)) {
-                                    LimeLog.warning(tuple.computer.name + " is offline (try " + offlineCount + ")");
+                                    RoraLog.warning(tuple.computer.name + " is offline (try " + offlineCount + ")");
                                     offlineCount++;
                                 } else {
                                     tuple.lastSuccessfulPollMs = SystemClock.elapsedRealtime();
@@ -829,7 +827,7 @@ public class PlayServices extends Service {
                             // Wait until the next polling interval
                             Thread.sleep(SERVERINFO_POLLING_PERIOD_MS);
                         } catch (InterruptedException e) {
-                            LimeLog.info("Polling - Err: " + e.getMessage());
+                            RoraLog.info("Polling - Err: " + e.getMessage());
                             break;
                         }
                     }

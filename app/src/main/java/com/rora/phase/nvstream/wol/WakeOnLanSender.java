@@ -6,7 +6,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.Scanner;
 
-import com.rora.phase.LimeLog;
+import com.rora.phase.RoraLog;
 import com.rora.phase.nvstream.http.ComputerDetails;
 
 public class WakeOnLanSender {
@@ -71,7 +71,7 @@ public class WakeOnLanSender {
             try {
                 macBytes[i] = (byte) Integer.parseInt(scan.next(), 16);
             } catch (NumberFormatException e) {
-                LimeLog.warning("Malformed MAC address: "+macAddress+" (index: "+i+")");
+                RoraLog.warning("Malformed MAC address: "+macAddress+" (index: "+i+")");
                 break;
             }
         }

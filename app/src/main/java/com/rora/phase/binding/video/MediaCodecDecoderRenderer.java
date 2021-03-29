@@ -7,7 +7,7 @@ import org.jcodec.codecs.h264.H264Utils;
 import org.jcodec.codecs.h264.io.model.SeqParameterSet;
 import org.jcodec.codecs.h264.io.model.VUIParameters;
 
-import com.rora.phase.LimeLog;
+import com.rora.phase.RoraLog;
 import com.rora.phase.R;
 import com.rora.phase.nvstream.av.video.VideoDecoderRenderer;
 import com.rora.phase.nvstream.jni.MoonBridge;
@@ -108,13 +108,13 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer {
         MediaCodecInfo decoderInfo = MediaCodecHelper.findProbableSafeDecoder("video/hevc", -1);
         if (decoderInfo != null) {
             if (!MediaCodecHelper.decoderIsWhitelistedForHevc(decoderInfo.getName(), meteredNetwork)) {
-                LimeLog.info("Found HEVC decoder, but it's not whitelisted - "+decoderInfo.getName());
+                RoraLog.info("Found HEVC decoder, but it's not whitelisted - "+decoderInfo.getName());
 
                 // HDR implies HEVC forced on, since HEVCMain10HDR10 is required for HDR.
                 // > 4K streaming also requires HEVC, so force it on there too.
                 if (prefs.videoFormat == PreferenceConfiguration.FORCE_H265_ON || requestedHdr ||
                         prefs.width > 4096 || prefs.height > 4096) {
-                    LimeLog.info("Forcing H265 enabled despite non-whitelisted decoder");
+                    RoraLog.info("Forcing H265 enabled despite non-whitelisted decoder");
                 }
                 else {
                     return null;
@@ -148,18 +148,18 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer {
 
         avcDecoder = findAvcDecoder();
         if (avcDecoder != null) {
-            LimeLog.info("Selected AVC decoder: "+avcDecoder.getName());
+            RoraLog.info("Selected AVC decoder: "+avcDecoder.getName());
         }
         else {
-            LimeLog.warning("No AVC decoder found");
+            RoraLog.warning("No AVC decoder found");
         }
 
         hevcDecoder = findHevcDecoder(prefs, meteredData, requestedHdr);
         if (hevcDecoder != null) {
-            LimeLog.info("Selected HEVC decoder: "+hevcDecoder.getName());
+            RoraLog.info("Selected HEVC decoder: "+hevcDecoder.getName());
         }
         else {
-            LimeLog.info("No HEVC decoder found");
+            RoraLog.info("No HEVC decoder found");
         }
 
         // Set attributes that are queried in getCapabilities(). This must be done here
@@ -174,17 +174,17 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer {
 
             if (consecutiveCrashCount % 2 == 1) {
                 refFrameInvalidationAvc = refFrameInvalidationHevc = false;
-                LimeLog.warning("Disabling RFI due to previous crash");
+                RoraLog.warning("Disabling RFI due to previous crash");
             }
 
             if (directSubmit) {
-                LimeLog.info("Decoder "+avcDecoder.getName()+" will use direct submit");
+                RoraLog.info("Decoder "+avcDecoder.getName()+" will use direct submit");
             }
             if (refFrameInvalidationAvc) {
-                LimeLog.info("Decoder "+avcDecoder.getName()+" will use reference frame invalidation for AVC");
+                RoraLog.info("Decoder "+avcDecoder.getName()+" will use reference frame invalidation for AVC");
             }
             if (refFrameInvalidationHevc) {
-                LimeLog.info("Decoder "+avcDecoder.getName()+" will use reference frame invalidation for HEVC");
+                RoraLog.info("Decoder "+avcDecoder.getName()+" will use reference frame invalidation for HEVC");
             }
         }
     }
@@ -202,7 +202,7 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer {
     }
 
     public void enableLegacyFrameDropRendering() {
-        LimeLog.info("Legacy frame drop rendering enabled");
+        RoraLog.info("Legacy frame drop rendering enabled");
         legacyFrameDropRendering = true;
     }
 
@@ -213,7 +213,7 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer {
 
         for (MediaCodecInfo.CodecProfileLevel profileLevel : hevcDecoder.getCapabilitiesForType("video/hevc").profileLevels) {
             if (profileLevel.profile == MediaCodecInfo.CodecProfileLevel.HEVCProfileMain10HDR10) {
-                LimeLog.info("HEVC decoder "+hevcDecoder.getName()+" supports HEVC Main10 HDR10");
+                RoraLog.info("HEVC decoder "+hevcDecoder.getName()+" supports HEVC Main10 HDR10");
                 return true;
             }
         }
@@ -248,12 +248,12 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer {
             selectedDecoderName = avcDecoder.getName();
 
             if (avcDecoder == null) {
-                LimeLog.severe("No available AVC decoder!");
+                RoraLog.severe("No available AVC decoder!");
                 return -1;
             }
 
             if (width > 4096 || height > 4096) {
-                LimeLog.severe("> 4K streaming only supported on HEVC");
+                RoraLog.severe("> 4K streaming only supported on HEVC");
                 return -1;
             }
 
@@ -263,16 +263,16 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer {
             constrainedHighProfile = MediaCodecHelper.decoderNeedsConstrainedHighProfile(selectedDecoderName);
             isExynos4 = MediaCodecHelper.isExynos4Device();
             if (needsSpsBitstreamFixup) {
-                LimeLog.info("Decoder "+selectedDecoderName+" needs SPS bitstream restrictions fixup");
+                RoraLog.info("Decoder "+selectedDecoderName+" needs SPS bitstream restrictions fixup");
             }
             if (needsBaselineSpsHack) {
-                LimeLog.info("Decoder "+selectedDecoderName+" needs baseline SPS hack");
+                RoraLog.info("Decoder "+selectedDecoderName+" needs baseline SPS hack");
             }
             if (constrainedHighProfile) {
-                LimeLog.info("Decoder "+selectedDecoderName+" needs constrained high profile");
+                RoraLog.info("Decoder "+selectedDecoderName+" needs constrained high profile");
             }
             if (isExynos4) {
-                LimeLog.info("Decoder "+selectedDecoderName+" is on Exynos 4");
+                RoraLog.info("Decoder "+selectedDecoderName+" is on Exynos 4");
             }
 
             refFrameInvalidationActive = refFrameInvalidationAvc;
@@ -285,7 +285,7 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer {
             selectedDecoderName = hevcDecoder.getName();
 
             if (hevcDecoder == null) {
-                LimeLog.severe("No available HEVC decoder!");
+                RoraLog.severe("No available HEVC decoder!");
                 return -2;
             }
 
@@ -296,7 +296,7 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer {
         }
         else {
             // Unknown format
-            LimeLog.severe("Unknown format");
+            RoraLog.severe("Unknown format");
             return -3;
         }
 
@@ -348,7 +348,7 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer {
         }
 
         configuredFormat = videoFormat;
-        LimeLog.info("Configuring with format: "+configuredFormat);
+        RoraLog.info("Configuring with format: "+configuredFormat);
 
         try {
             videoDecoder.configure(videoFormat, renderTarget.getSurface(), null, 0);
@@ -356,7 +356,7 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 // This will contain the actual accepted input format attributes
                 inputFormat = videoDecoder.getInputFormat();
-                LimeLog.info("Input format: "+inputFormat);
+                RoraLog.info("Input format: "+inputFormat);
             }
 
             videoDecoder.setVideoScalingMode(MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT);
@@ -375,7 +375,7 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer {
                 }, null);
             }
 
-            LimeLog.info("Using codec "+selectedDecoderName+" for hardware decoding "+mimeType);
+            RoraLog.info("Using codec "+selectedDecoderName+" for hardware decoding "+mimeType);
 
             // Start the decoder
             videoDecoder.start();
@@ -399,11 +399,11 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer {
 
                 if (codecExc.isTransient() && !throwOnTransient) {
                     // We'll let transient exceptions go
-                    LimeLog.warning(codecExc.getDiagnosticInfo());
+                    RoraLog.warning(codecExc.getDiagnosticInfo());
                     return;
                 }
 
-                LimeLog.severe(codecExc.getDiagnosticInfo());
+                RoraLog.severe(codecExc.getDiagnosticInfo());
             }
         }
 
@@ -494,9 +494,9 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer {
                                 case MediaCodec.INFO_TRY_AGAIN_LATER:
                                     break;
                                 case MediaCodec.INFO_OUTPUT_FORMAT_CHANGED:
-                                    LimeLog.info("Output format changed");
+                                    RoraLog.info("Output format changed");
                                     outputFormat = videoDecoder.getOutputFormat();
-                                    LimeLog.info("New output format: " + outputFormat);
+                                    RoraLog.info("New output format: " + outputFormat);
                                     break;
                                 default:
                                     break;
@@ -531,7 +531,7 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer {
         int deltaMs = (int)(MediaCodecHelper.getMonotonicMillis() - startTime);
 
         if (deltaMs >= 20) {
-            LimeLog.warning("Dequeue input buffer ran long: " + deltaMs + " ms");
+            RoraLog.warning("Dequeue input buffer ran long: " + deltaMs + " ms");
         }
 
         if (index < 0) {
@@ -624,7 +624,7 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer {
         // reduce delay and buffering accordingly. Some devices (Marvell, Exynos 4) don't
         // like it so we only set them on devices that are confirmed to benefit from it.
         if (sps.profileIdc == 100 && constrainedHighProfile) {
-            LimeLog.info("Setting constraint set flags for constrained high profile");
+            RoraLog.info("Setting constraint set flags for constrained high profile");
             sps.constraintSet4Flag = true;
             sps.constraintSet5Flag = true;
         }
@@ -736,17 +736,17 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer {
             if (!refFrameInvalidationActive) {
                 if (initialWidth <= 720 && initialHeight <= 480 && refreshRate <= 60) {
                     // Max 5 buffered frames at 720x480x60
-                    LimeLog.info("Patching level_idc to 31");
+                    RoraLog.info("Patching level_idc to 31");
                     sps.levelIdc = 31;
                 }
                 else if (initialWidth <= 1280 && initialHeight <= 720 && refreshRate <= 60) {
                     // Max 5 buffered frames at 1280x720x60
-                    LimeLog.info("Patching level_idc to 32");
+                    RoraLog.info("Patching level_idc to 32");
                     sps.levelIdc = 32;
                 }
                 else if (initialWidth <= 1920 && initialHeight <= 1080 && refreshRate <= 60) {
                     // Max 4 buffered frames at 1920x1080x64
-                    LimeLog.info("Patching level_idc to 42");
+                    RoraLog.info("Patching level_idc to 42");
                     sps.levelIdc = 42;
                 }
                 else {
@@ -764,7 +764,7 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer {
             // It does break reference frame invalidation, so we will not do that for decoders
             // where we've enabled reference frame invalidation.
             if (!refFrameInvalidationActive) {
-                LimeLog.info("Patching num_ref_frames in SPS");
+                RoraLog.info("Patching num_ref_frames in SPS");
                 sps.numRefFrames = 1;
             }
 
@@ -784,7 +784,7 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer {
 
                 // GFE 2.5.11 started sending bitstream restrictions
                 if (sps.vuiParams.bitstreamRestriction == null) {
-                    LimeLog.info("Adding bitstream restrictions");
+                    RoraLog.info("Adding bitstream restrictions");
                     sps.vuiParams.bitstreamRestriction = new VUIParameters.BitstreamRestriction();
                     sps.vuiParams.bitstreamRestriction.motionVectorsOverPicBoundariesFlag = true;
                     sps.vuiParams.bitstreamRestriction.log2MaxMvLengthHorizontal = 16;
@@ -792,7 +792,7 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer {
                     sps.vuiParams.bitstreamRestriction.numReorderFrames = 0;
                 }
                 else {
-                    LimeLog.info("Patching bitstream restrictions");
+                    RoraLog.info("Patching bitstream restrictions");
                 }
 
                 // Some devices throw errors if maxDecFrameBuffering < numRefFrames
@@ -814,7 +814,7 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer {
 
             // If we need to hack this SPS to say we're baseline, do so now
             if (needsBaselineSpsHack) {
-                LimeLog.info("Hacking SPS to baseline");
+                RoraLog.info("Hacking SPS to baseline");
                 sps.profileIdc = 66;
                 savedSps = sps;
             }
@@ -948,7 +948,7 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer {
                     return MoonBridge.DR_NEED_IDR;
                 }
 
-                LimeLog.info("SPS replay complete");
+                RoraLog.info("SPS replay complete");
             }
         }
 

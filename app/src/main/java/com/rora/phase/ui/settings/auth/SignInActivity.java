@@ -76,7 +76,7 @@ public class SignInActivity extends AppCompatActivity {
         userViewModel.getUpdateDataResult().observe(this, dataResultHelper -> {
             loading(false);
 
-            String err = dataResultHelper.getErrMsg();
+            String err = dataResultHelper.getMsg();
             if (err != null) {
                 errTv.setText(err);
                 return;

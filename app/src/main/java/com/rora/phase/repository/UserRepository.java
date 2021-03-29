@@ -7,7 +7,6 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
 import com.rora.phase.model.Game;
-import com.rora.phase.model.Host;
 import com.rora.phase.model.User;
 import com.rora.phase.model.UserPlayingData;
 import com.rora.phase.model.api.FindingHostResponse;
@@ -15,7 +14,7 @@ import com.rora.phase.model.api.LoginCredential;
 import com.rora.phase.model.api.LoginResponse;
 import com.rora.phase.model.api.PinConfirmBody;
 import com.rora.phase.nvstream.http.ComputerDetails;
-import com.rora.phase.utils.DataResultHelper;
+import com.rora.phase.utils.DataResponse;
 import com.rora.phase.utils.SharedPreferencesHelper;
 import com.rora.phase.utils.callback.OnResultCallBack;
 import com.rora.phase.utils.network.BaseResponse;
@@ -37,7 +36,7 @@ public class UserRepository {
 
     private MutableLiveData<User> user;
     private MutableLiveData<List<Game>> favoriteList, recentPlayList, recommendedList;
-    private MutableLiveData<DataResultHelper> updateDataResult;
+    private MutableLiveData<DataResponse> updateDataResult;
 
     public static UserRepository newInstance(Context context) {
         return new UserRepository(context);
@@ -62,7 +61,7 @@ public class UserRepository {
         return user;
     }
 
-    public MutableLiveData<DataResultHelper> getUpdateDataResult() {
+    public MutableLiveData<DataResponse> getUpdateDataResult() {
         return updateDataResult;
     }
 
@@ -87,12 +86,12 @@ public class UserRepository {
         userServices.signUp(email, password).enqueue(new Callback<BaseResponse>() {
             @Override
             public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
-                updateDataResult.postValue(new DataResultHelper());
+                updateDataResult.postValue(new DataResponse());
             }
 
             @Override
             public void onFailure(Call<BaseResponse> call, Throwable t) {
-                updateDataResult.postValue(new DataResultHelper("Please try again later!", null));
+                updateDataResult.postValue(new DataResponse("Please try again later!", null));
             }
         });
     }
@@ -101,10 +100,10 @@ public class UserRepository {
         userServices.signIn(loginCredential).enqueue(new Callback<BaseResponse<LoginResponse>>() {
             @Override
             public void onResponse(Call<BaseResponse<LoginResponse>> call, Response<BaseResponse<LoginResponse>> response) {
-                DataResultHelper<BaseResponse<LoginResponse>> dataResponse = PhaseServiceHelper.handleResponse(response);
+                DataResponse<BaseResponse<LoginResponse>> dataResponse = PhaseServiceHelper.handleResponse(response);
 
-                if (dataResponse.getErrMsg() != null) {
-                    updateDataResult.postValue(new DataResultHelper(dataResponse.getErrMsg(), null));
+                if (dataResponse.getMsg() != null) {
+                    updateDataResult.postValue(new DataResponse(dataResponse.getMsg(), null));
                 } else {
                     LoginResponse resp = BaseResponse.getResult(dataResponse.getData());
                     User user = resp.getInfo();
@@ -113,13 +112,13 @@ public class UserRepository {
                     if (token != null && user != null) {
                         storeLocalUser(user.getUserName(), token);
                     }
-                    updateDataResult.postValue(new DataResultHelper(null, null));
+                    updateDataResult.postValue(new DataResponse(null, null));
                 }
             }
 
             @Override
             public void onFailure(Call<BaseResponse<LoginResponse>> call, Throwable t) {
-                updateDataResult.postValue(new DataResultHelper("Please try again later!", null));
+                updateDataResult.postValue(new DataResponse("Please try again later!", null));
             }
         });
     }
@@ -132,12 +131,12 @@ public class UserRepository {
         userServices.forgotPassword(email).enqueue(new Callback<BaseResponse>() {
             @Override
             public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
-                updateDataResult.postValue(new DataResultHelper());
+                updateDataResult.postValue(new DataResponse());
             }
 
             @Override
             public void onFailure(Call<BaseResponse> call, Throwable t) {
-                updateDataResult.postValue(new DataResultHelper("Please try again later!", null));
+                updateDataResult.postValue(new DataResponse("Please try again later!", null));
             }
         });
     }
@@ -152,7 +151,7 @@ public class UserRepository {
             @Override
             public void onFailure(Call<BaseResponse<User>> call, Throwable t) {
                 user.postValue(null);
-                updateDataResult.postValue(new DataResultHelper("Please try again later!", null));
+                updateDataResult.postValue(new DataResponse("Please try again later!", null));
             }
         });
     }
@@ -161,12 +160,12 @@ public class UserRepository {
         userAuthenticatedServices.updateInfo(user).enqueue(new Callback<BaseResponse>() {
             @Override
             public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
-                updateDataResult.postValue(new DataResultHelper());
+                updateDataResult.postValue(new DataResponse());
             }
 
             @Override
             public void onFailure(Call<BaseResponse> call, Throwable t) {
-                updateDataResult.postValue(new DataResultHelper("Please try again later!", null));
+                updateDataResult.postValue(new DataResponse("Please try again later!", null));
             }
         });
     }
@@ -179,12 +178,12 @@ public class UserRepository {
         userAuthenticatedServices.addFavorite(gameId).enqueue(new Callback<BaseResponse>() {
             @Override
             public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
-                updateDataResult.postValue(new DataResultHelper());
+                updateDataResult.postValue(new DataResponse());
             }
 
             @Override
             public void onFailure(Call<BaseResponse> call, Throwable t) {
-                updateDataResult.postValue(new DataResultHelper("Please try again later!", null));
+                updateDataResult.postValue(new DataResponse("Please try again later!", null));
             }
         });
     }
@@ -193,12 +192,12 @@ public class UserRepository {
         userAuthenticatedServices.removeFavorite(gameId).enqueue(new Callback<BaseResponse>() {
             @Override
             public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
-                updateDataResult.postValue(new DataResultHelper());
+                updateDataResult.postValue(new DataResponse());
             }
 
             @Override
             public void onFailure(Call<BaseResponse> call, Throwable t) {
-                updateDataResult.postValue(new DataResultHelper("Please try again later!", null));
+                updateDataResult.postValue(new DataResponse("Please try again later!", null));
             }
         });
     }
@@ -228,8 +227,8 @@ public class UserRepository {
         userAuthenticatedServices.getComputerIP().enqueue(new Callback<BaseResponse<FindingHostResponse>>() {
             @Override
             public void onResponse(Call<BaseResponse<FindingHostResponse>> call, Response<BaseResponse<FindingHostResponse>> response) {
-                DataResultHelper<BaseResponse<FindingHostResponse>> dataResponse = PhaseServiceHelper.handleResponse(response);
-                String err = dataResponse.getErrMsg();
+                DataResponse<BaseResponse<FindingHostResponse>> dataResponse = PhaseServiceHelper.handleResponse(response);
+                String err = dataResponse.getMsg();
                 if (err != null) {
                     callBack.onResult(err, null);
                 } else {
@@ -257,8 +256,8 @@ public class UserRepository {
         userAuthenticatedServices.sendPinToHost(body).enqueue(new Callback<BaseResponse>() {
             @Override
             public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
-                DataResultHelper<BaseResponse> dataResponse = PhaseServiceHelper.handleResponse(response);
-                String err = dataResponse.getErrMsg();
+                DataResponse<BaseResponse> dataResponse = PhaseServiceHelper.handleResponse(response);
+                String err = dataResponse.getMsg();
                 if (err != null)
                     callBack.onResult(err, null);
                 else

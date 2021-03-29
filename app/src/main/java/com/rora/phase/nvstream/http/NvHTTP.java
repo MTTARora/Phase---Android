@@ -48,7 +48,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import com.rora.phase.BuildConfig;
-import com.rora.phase.LimeLog;
+import com.rora.phase.RoraLog;
 import com.rora.phase.nvstream.ConnectionContext;
 import com.rora.phase.nvstream.http.PairingManager.PairState;
 
@@ -394,7 +394,7 @@ public class NvHTTP {
     String openHttpConnectionToString(String url, boolean enableReadTimeout) throws IOException {
         try {
             if (verbose) {
-                LimeLog.info("Requesting URL: "+url);
+                RoraLog.info("Requesting URL: "+url);
             }
 
             ResponseBody resp = openHttpConnection(url, enableReadTimeout);
@@ -402,7 +402,7 @@ public class NvHTTP {
             resp.close();
 
             if (verbose) {
-                LimeLog.info(url+" -> "+respString);
+                RoraLog.info(url+" -> "+respString);
             }
 
             return respString;
@@ -580,7 +580,7 @@ public class NvHTTP {
             
             // Remove uninitialized apps
             if (!app.isInitialized()) {
-                LimeLog.warning("GFE returned incomplete app: "+app.getAppId()+" "+app.getAppName());
+                RoraLog.warning("GFE returned incomplete app: "+app.getAppId()+" "+app.getAppName());
                 i.remove();
             }
         }
@@ -662,7 +662,7 @@ public class NvHTTP {
         if (context.negotiatedWidth * context.negotiatedHeight > 1280 * 720 &&
                 context.negotiatedWidth * context.negotiatedHeight != 1920 * 1080 &&
                 context.negotiatedWidth * context.negotiatedHeight != 3840 * 2160) {
-            LimeLog.info("Disabling SOPS due to non-standard resolution: "+context.negotiatedWidth+"x"+context.negotiatedHeight);
+            RoraLog.info("Disabling SOPS due to non-standard resolution: "+context.negotiatedWidth+"x"+context.negotiatedHeight);
             enableSops = false;
         }
 

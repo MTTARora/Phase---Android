@@ -14,16 +14,12 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.ViewModelProvider;
 
-import com.rora.phase.LimeLog;
+import com.rora.phase.RoraLog;
 import com.rora.phase.R;
 import com.rora.phase.binding.crypto.AndroidCryptoProvider;
 import com.rora.phase.nvstream.http.ComputerDetails;
-import com.rora.phase.nvstream.http.PairingManager;
 import com.rora.phase.preferences.GlPreferences;
-import com.rora.phase.ui.viewmodel.GameViewModel;
-import com.rora.phase.utils.Dialog;
 import com.rora.phase.utils.UiHelper;
 import com.rora.phase.utils.callback.PlayGameProgressCallBack;
 import com.rora.phase.utils.services.PlayServices;
@@ -105,7 +101,7 @@ public class LoadingGameActivity extends FragmentActivity {
                     glPrefs.savedFingerprint = Build.FINGERPRINT;
                     glPrefs.writePreferences();
 
-                    LimeLog.info("Fetched GL Renderer: " + glPrefs.glRenderer);
+                    RoraLog.info("Fetched GL Renderer: " + glPrefs.glRenderer);
 
                     runOnUiThread(() -> completeOnCreate());
                 }
@@ -121,7 +117,7 @@ public class LoadingGameActivity extends FragmentActivity {
             setContentView(surfaceView);
         }
         else {
-            LimeLog.info("Cached GL Renderer: " + glPrefs.glRenderer);
+            RoraLog.info("Cached GL Renderer: " + glPrefs.glRenderer);
             completeOnCreate();
         }
     }

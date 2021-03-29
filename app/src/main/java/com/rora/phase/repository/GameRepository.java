@@ -7,11 +7,10 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.rora.phase.model.Game;
 import com.rora.phase.model.Tag;
-import com.rora.phase.utils.DataResultHelper;
+import com.rora.phase.utils.DataResponse;
 import com.rora.phase.utils.network.BaseResponse;
 import com.rora.phase.utils.network.PhaseService;
 import com.rora.phase.utils.network.PhaseServiceHelper;
-import com.rora.phase.utils.network.UserPhaseService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,12 +111,12 @@ public class GameRepository {
         gameServices.getNewGames(page, pageSize).enqueue(new Callback<BaseResponse<List<Game>>>() {
             @Override
             public void onResponse(Call<BaseResponse<List<Game>>> call, Response<BaseResponse<List<Game>>> response) {
-                DataResultHelper<BaseResponse<List<Game>>> dataResponse = PhaseServiceHelper.handleResponse(response);
+                DataResponse<BaseResponse<List<Game>>> dataResponse = PhaseServiceHelper.handleResponse(response);
 
-                if (dataResponse.getErrMsg() != null) {
+                if (dataResponse.getMsg() != null) {
                     newGameList.postValue(new ArrayList<>());
-                    errMsg.postValue(dataResponse.getErrMsg());
-                    Log.e("Request API failed", "Get new game - " + dataResponse.getErrMsg());
+                    errMsg.postValue(dataResponse.getMsg());
+                    Log.e("Request API failed", "Get new game - " + dataResponse.getMsg());
                 } else {
                     List<Game> listGame = BaseResponse.getResult(dataResponse.getData());
                     listGame = listGame == null ? new ArrayList<>() : listGame;
@@ -137,12 +136,12 @@ public class GameRepository {
         gameServices.getEditorsChoice(page, pageSize).enqueue(new Callback<BaseResponse<List<Game>>>() {
             @Override
             public void onResponse(Call<BaseResponse<List<Game>>> call, Response<BaseResponse<List<Game>>> response) {
-                DataResultHelper<BaseResponse<List<Game>>> dataResponse = PhaseServiceHelper.handleResponse(response);
+                DataResponse<BaseResponse<List<Game>>> dataResponse = PhaseServiceHelper.handleResponse(response);
 
-                if (dataResponse.getErrMsg() != null) {
+                if (dataResponse.getMsg() != null) {
                     editorsChoiceList.postValue(new ArrayList<>());
-                    errMsg.postValue(dataResponse.getErrMsg());
-                    Log.e("Request API failed", "Get editor choice - " + dataResponse.getErrMsg());
+                    errMsg.postValue(dataResponse.getMsg());
+                    Log.e("Request API failed", "Get editor choice - " + dataResponse.getMsg());
                 } else {
                     List<Game> listGame = BaseResponse.getResult(dataResponse.getData());
                     listGame = listGame == null ? new ArrayList<>() : listGame;
@@ -162,12 +161,12 @@ public class GameRepository {
         gameServices.getHotGames(page, pageSize).enqueue(new Callback<BaseResponse<List<Game>>>() {
             @Override
             public void onResponse(Call<BaseResponse<List<Game>>> call, Response<BaseResponse<List<Game>>> response) {
-                DataResultHelper<BaseResponse<List<Game>>> dataResponse = PhaseServiceHelper.handleResponse(response);
+                DataResponse<BaseResponse<List<Game>>> dataResponse = PhaseServiceHelper.handleResponse(response);
 
-                if (dataResponse.getErrMsg() != null) {
+                if (dataResponse.getMsg() != null) {
                     hotGameList.postValue(new ArrayList<>());
-                    errMsg.postValue(dataResponse.getErrMsg());
-                    Log.e("Request API failed", "Get hot game - " + dataResponse.getErrMsg());
+                    errMsg.postValue(dataResponse.getMsg());
+                    Log.e("Request API failed", "Get hot game - " + dataResponse.getMsg());
                 } else {
                     List<Game> listGame = BaseResponse.getResult(dataResponse.getData());
                     listGame = listGame == null ? new ArrayList<>() : listGame;
@@ -187,12 +186,12 @@ public class GameRepository {
         gameServices.getTrending(page, pageSize).enqueue(new Callback<BaseResponse<List<Game>>>() {
             @Override
             public void onResponse(Call<BaseResponse<List<Game>>> call, Response<BaseResponse<List<Game>>> response) {
-                DataResultHelper<BaseResponse<List<Game>>> dataResponse = PhaseServiceHelper.handleResponse(response);
+                DataResponse<BaseResponse<List<Game>>> dataResponse = PhaseServiceHelper.handleResponse(response);
 
-                if (dataResponse.getErrMsg() != null) {
+                if (dataResponse.getMsg() != null) {
                     trendingList.postValue(new ArrayList<>());
-                    errMsg.postValue(dataResponse.getErrMsg());
-                    Log.e("Request API failed", "Get trending game - " + dataResponse.getErrMsg());
+                    errMsg.postValue(dataResponse.getMsg());
+                    Log.e("Request API failed", "Get trending game - " + dataResponse.getMsg());
                 } else {
                     List<Game> listGame = BaseResponse.getResult(dataResponse.getData());
                     listGame = listGame == null ? new ArrayList<>() : listGame;
@@ -231,12 +230,12 @@ public class GameRepository {
         gameServices.getGameByCategoryList(tagName, page, pageSize).enqueue(new Callback<BaseResponse<List<Game>>>() {
             @Override
             public void onResponse(Call<BaseResponse<List<Game>>> call, Response<BaseResponse<List<Game>>> response) {
-                DataResultHelper<BaseResponse<List<Game>>> dataResponse = PhaseServiceHelper.handleResponse(response);
+                DataResponse<BaseResponse<List<Game>>> dataResponse = PhaseServiceHelper.handleResponse(response);
 
-                if (dataResponse.getErrMsg() != null) {
+                if (dataResponse.getMsg() != null) {
                     gameByCategoryList.postValue(new ArrayList<>());
-                    errMsg.postValue(dataResponse.getErrMsg());
-                    Log.e("Request API failed", "Get games by category - " + dataResponse.getErrMsg());
+                    errMsg.postValue(dataResponse.getMsg());
+                    Log.e("Request API failed", "Get games by category - " + dataResponse.getMsg());
                 } else {
                     List<Game> listGame = BaseResponse.getResult(dataResponse.getData());
                     listGame = listGame == null ? new ArrayList<>() : listGame;
@@ -256,12 +255,12 @@ public class GameRepository {
         gameServices.getGameByPayType(payType, page, pageSize).enqueue(new Callback<BaseResponse<List<Game>>>() {
             @Override
             public void onResponse(Call<BaseResponse<List<Game>>> call, Response<BaseResponse<List<Game>>> response) {
-                DataResultHelper<BaseResponse<List<Game>>> dataResponse = PhaseServiceHelper.handleResponse(response);
+                DataResponse<BaseResponse<List<Game>>> dataResponse = PhaseServiceHelper.handleResponse(response);
 
-                if (dataResponse.getErrMsg() != null) {
+                if (dataResponse.getMsg() != null) {
                     gamesByPayTypeList.postValue(new ArrayList<>());
-                    errMsg.postValue(dataResponse.getErrMsg());
-                    Log.e("Request API failed", "Get games by pay type - " + dataResponse.getErrMsg());
+                    errMsg.postValue(dataResponse.getMsg());
+                    Log.e("Request API failed", "Get games by pay type - " + dataResponse.getMsg());
                 } else {
                     List<Game> listGame = BaseResponse.getResult(dataResponse.getData());
                     listGame = listGame == null ? new ArrayList<>() : listGame;
@@ -282,12 +281,12 @@ public class GameRepository {
         gameServices.getGame(gameId).enqueue(new Callback<BaseResponse<Game>>() {
             @Override
             public void onResponse(Call<BaseResponse<Game>> call, Response<BaseResponse<Game>> response) {
-                DataResultHelper<BaseResponse<Game>> dataResponse = PhaseServiceHelper.handleResponse(response);
+                DataResponse<BaseResponse<Game>> dataResponse = PhaseServiceHelper.handleResponse(response);
 
-                if (dataResponse.getErrMsg() != null) {
+                if (dataResponse.getMsg() != null) {
                     selectedGame.postValue(new Game());
-                    errMsg.postValue(dataResponse.getErrMsg());
-                    Log.e("Request API failed", "Get game " + gameId + " - " + dataResponse.getErrMsg());
+                    errMsg.postValue(dataResponse.getMsg());
+                    Log.e("Request API failed", "Get game " + gameId + " - " + dataResponse.getMsg());
                 } else {
                     Game game = BaseResponse.getResult(dataResponse.getData());
                     game = game == null ? new Game() : game;

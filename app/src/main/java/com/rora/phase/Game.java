@@ -422,7 +422,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
 
         // Set to the optimal mode for streaming
         float displayRefreshRate = prepareDisplayForRendering();
-        LimeLog.info("Display refresh rate: "+displayRefreshRate);
+        RoraLog.info("Display refresh rate: "+displayRefreshRate);
 
         // HACK: Despite many efforts to ensure low latency consistent frame
         // delivery, the best non-lossy mechanism is to buffer 1 extra frame
@@ -451,7 +451,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
                 // causing frame pacing issues. See https://issuetracker.google.com/issues/143401475
                 // To work around this, use frame drop mode if we want to stream at >= 60 FPS.
                 if (prefConfig.fps >= 60) {
-                    LimeLog.info("Using Pixel 4 rendering hack");
+                    RoraLog.info("Using Pixel 4 rendering hack");
                     decoderRenderer.enableLegacyFrameDropRendering();
                 }
             }
@@ -459,11 +459,11 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
                 if (prefConfig.unlockFps) {
                     // Use frame drops when rendering above the screen frame rate
                     decoderRenderer.enableLegacyFrameDropRendering();
-                    LimeLog.info("Using drop mode for FPS > Hz");
+                    RoraLog.info("Using drop mode for FPS > Hz");
                 } else if (roundedRefreshRate <= 49) {
                     // Let's avoid clearly bogus refresh rates and fall back to legacy rendering
                     decoderRenderer.enableLegacyFrameDropRendering();
-                    LimeLog.info("Bogus refresh rate: " + roundedRefreshRate);
+                    RoraLog.info("Bogus refresh rate: " + roundedRefreshRate);
                 }
                 // HACK: Avoid crashing on some MTK devices
                 else if (decoderRenderer.isBlacklistedForFrameRate(roundedRefreshRate - 1)) {
@@ -471,14 +471,14 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
                     decoderRenderer.enableLegacyFrameDropRendering();
                 } else {
                     chosenFrameRate = roundedRefreshRate - 1;
-                    LimeLog.info("Adjusting FPS target for screen to " + chosenFrameRate);
+                    RoraLog.info("Adjusting FPS target for screen to " + chosenFrameRate);
                 }
             }
         }
 
         boolean vpnActive = NetHelper.isActiveNetworkVpn(this);
         if (vpnActive) {
-            LimeLog.info("Detected active network is a VPN");
+            RoraLog.info("Detected active network is a VPN");
         }
 
         StreamConfiguration config = new StreamConfiguration.Builder()
@@ -665,7 +665,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
                 boolean resolutionFitsStream = candidate.getPhysicalWidth() >= prefConfig.width &&
                         candidate.getPhysicalHeight() >= prefConfig.height;
 
-                LimeLog.info("Examining display mode: "+candidate.getPhysicalWidth()+"x"+
+                RoraLog.info("Examining display mode: "+candidate.getPhysicalWidth()+"x"+
                         candidate.getPhysicalHeight()+"x"+candidate.getRefreshRate());
 
                 if (candidate.getPhysicalWidth() > 4096) {
@@ -711,7 +711,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
                 bestMode = candidate;
                 refreshRateIsGood = isRefreshRateGoodMatch(candidate.getRefreshRate());
             }
-            LimeLog.info("Selected display mode: "+bestMode.getPhysicalWidth()+"x"+
+            RoraLog.info("Selected display mode: "+bestMode.getPhysicalWidth()+"x"+
                     bestMode.getPhysicalHeight()+"x"+bestMode.getRefreshRate());
             windowLayoutParams.preferredDisplayModeId = bestMode.getModeId();
             displayRefreshRate = bestMode.getRefreshRate();
@@ -720,7 +720,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
         else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             float bestRefreshRate = display.getRefreshRate();
             for (float candidate : display.getSupportedRefreshRates()) {
-                LimeLog.info("Examining refresh rate: "+candidate);
+                RoraLog.info("Examining refresh rate: "+candidate);
 
                 if (candidate > bestRefreshRate) {
                     // Ensure the frame rate stays around 60 Hz for <= 60 FPS streams
@@ -733,7 +733,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
                     bestRefreshRate = candidate;
                 }
             }
-            LimeLog.info("Selected refresh rate: "+bestRefreshRate);
+            RoraLog.info("Selected refresh rate: "+bestRefreshRate);
             windowLayoutParams.preferredRefreshRate = bestRefreshRate;
             displayRefreshRate = bestRefreshRate;
         }
@@ -768,7 +768,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
             double screenAspectRatio = ((double)screenSize.y) / screenSize.x;
             double streamAspectRatio = ((double)prefConfig.height) / prefConfig.width;
             if (Math.abs(screenAspectRatio - streamAspectRatio) < 0.001) {
-                LimeLog.info("Stream has compatible aspect ratio with output display");
+                RoraLog.info("Stream has compatible aspect ratio with output display");
                 aspectRatioMatch = true;
             }
         }
@@ -1189,7 +1189,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
 
     @Override
     public void showKeyboard() {
-        LimeLog.info("Showing keyboard overlay");
+        RoraLog.info("Showing keyboard overlay");
         InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
     }
@@ -1568,7 +1568,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
 
                 if (!displayedFailureDialog) {
                     displayedFailureDialog = true;
-                    LimeLog.severe(stage + " failed: " + errorCode);
+                    RoraLog.severe(stage + " failed: " + errorCode);
 
                     // If video initialization failed and the surface is still valid, display extra information for the user
                     if (stage.contains("video") && streamView.getHolder().getSurface().isValid()) {
@@ -1610,7 +1610,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
 
                 if (!displayedFailureDialog) {
                     displayedFailureDialog = true;
-                    LimeLog.severe("Connection terminated: " + errorCode);
+                    RoraLog.severe("Connection terminated: " + errorCode);
                     stopConnection();
 
                     // Display the error dialog if it was an unexpected termination.
@@ -1746,7 +1746,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
 
     @Override
     public void rumble(short controllerNumber, short lowFreqMotor, short highFreqMotor) {
-        LimeLog.info(String.format((Locale)null, "Rumble on gamepad %d: %04x %04x", controllerNumber, lowFreqMotor, highFreqMotor));
+        RoraLog.info(String.format((Locale)null, "Rumble on gamepad %d: %04x %04x", controllerNumber, lowFreqMotor, highFreqMotor));
 
         controllerHandler.handleRumble(controllerNumber, lowFreqMotor, highFreqMotor);
     }
@@ -1818,7 +1818,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
             buttonIndex = MouseButtonPacket.BUTTON_X2;
             break;
         default:
-            LimeLog.warning("Unhandled button: "+buttonId);
+            RoraLog.warning("Unhandled button: "+buttonId);
             return;
         }
 

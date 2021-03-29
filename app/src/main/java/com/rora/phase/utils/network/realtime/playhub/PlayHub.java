@@ -6,7 +6,7 @@ import com.microsoft.signalr.HubConnection;
 import com.microsoft.signalr.HubConnectionBuilder;
 import com.microsoft.signalr.HubConnectionState;
 import com.microsoft.signalr.TransportEnum;
-import com.rora.phase.LimeLog;
+import com.rora.phase.RoraLog;
 import com.rora.phase.repository.UserRepository;
 import com.rora.phase.utils.network.PhaseServiceHelper;
 
@@ -29,10 +29,10 @@ public class PlayHub {
         });
 
         hubConnection.start().subscribe(() -> {
-            LimeLog.info("Connect success");
+            RoraLog.info("Connect hub success");
             listener.onConnected();
         }, throwable -> {
-            LimeLog.info("Connect hub err: - " + throwable.getMessage());
+            RoraLog.info("Connect hub err: - " + throwable.getMessage());
              listener.onDisconnected();
         });
     }

@@ -6,7 +6,7 @@ import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbEndpoint;
 import android.hardware.usb.UsbInterface;
 
-import com.rora.phase.LimeLog;
+import com.rora.phase.RoraLog;
 import com.rora.phase.binding.video.MediaCodecHelper;
 
 import java.nio.ByteBuffer;
@@ -65,7 +65,7 @@ public abstract class AbstractXboxController extends AbstractController {
                         }
 
                         if (res == -1 && MediaCodecHelper.getMonotonicMillis() - lastMillis < 1000) {
-                            LimeLog.warning("Detected device I/O error");
+                            RoraLog.warning("Detected device I/O error");
                             AbstractXboxController.this.stop();
                             break;
                         }
@@ -90,7 +90,7 @@ public abstract class AbstractXboxController extends AbstractController {
             UsbInterface iface = device.getInterface(i);
 
             if (!connection.claimInterface(iface, true)) {
-                LimeLog.warning("Failed to claim interfaces");
+                RoraLog.warning("Failed to claim interfaces");
                 return false;
             }
         }
@@ -101,14 +101,14 @@ public abstract class AbstractXboxController extends AbstractController {
             UsbEndpoint endpt = iface.getEndpoint(i);
             if (endpt.getDirection() == UsbConstants.USB_DIR_IN) {
                 if (inEndpt != null) {
-                    LimeLog.warning("Found duplicate IN endpoint");
+                    RoraLog.warning("Found duplicate IN endpoint");
                     return false;
                 }
                 inEndpt = endpt;
             }
             else if (endpt.getDirection() == UsbConstants.USB_DIR_OUT) {
                 if (outEndpt != null) {
-                    LimeLog.warning("Found duplicate OUT endpoint");
+                    RoraLog.warning("Found duplicate OUT endpoint");
                     return false;
                 }
                 outEndpt = endpt;
@@ -117,7 +117,7 @@ public abstract class AbstractXboxController extends AbstractController {
 
         // Make sure the required endpoints were present
         if (inEndpt == null || outEndpt == null) {
-            LimeLog.warning("Missing required endpoint");
+            RoraLog.warning("Missing required endpoint");
             return false;
         }
 

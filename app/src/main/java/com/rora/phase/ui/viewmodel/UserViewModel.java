@@ -10,7 +10,7 @@ import com.rora.phase.model.Game;
 import com.rora.phase.model.User;
 import com.rora.phase.model.api.LoginCredential;
 import com.rora.phase.repository.UserRepository;
-import com.rora.phase.utils.DataResultHelper;
+import com.rora.phase.utils.DataResponse;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ public class UserViewModel extends AndroidViewModel {
 
     private LiveData<User> user;
     private LiveData<List<Game>> recentPlayList, favoriteList;
-    private LiveData<DataResultHelper> updatingDataResult;
+    private LiveData<DataResponse> updatingDataResult;
 
     public UserViewModel(@NonNull Application application) {
         super(application);
@@ -46,7 +46,7 @@ public class UserViewModel extends AndroidViewModel {
         return favoriteList;
     }
 
-    public LiveData<DataResultHelper> getUpdateDataResult() {
+    public LiveData<DataResponse> getUpdateDataResult() {
         return updatingDataResult;
     }
 

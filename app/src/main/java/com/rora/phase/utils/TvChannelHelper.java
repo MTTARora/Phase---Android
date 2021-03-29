@@ -16,7 +16,7 @@ import android.media.tv.TvContract;
 import android.net.Uri;
 import android.os.Build;
 
-import com.rora.phase.LimeLog;
+import com.rora.phase.RoraLog;
 import com.rora.phase.PosterContentProvider;
 import com.rora.phase.R;
 import com.rora.phase.nvstream.http.ComputerDetails;
@@ -105,7 +105,7 @@ public class TvChannelHelper {
                 logo.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
                 outputStream.flush();
             } catch (SQLiteException | IOException e) {
-                LimeLog.warning("Failed to store the logo to the system content provider.");
+                RoraLog.warning("Failed to store the logo to the system content provider.");
                 e.printStackTrace();
             }
         } finally {
@@ -247,9 +247,9 @@ public class TvChannelHelper {
                     } else {
                         int countDeleted = context.getContentResolver().delete(TvContract.buildPreviewProgramUri(id), null, null);
                         if (countDeleted > 0) {
-                            LimeLog.info("Preview program has been deleted");
+                            RoraLog.info("Preview program has been deleted");
                         } else {
-                            LimeLog.warning("Preview program has not been deleted");
+                            RoraLog.warning("Preview program has not been deleted");
                         }
                     }
                 }

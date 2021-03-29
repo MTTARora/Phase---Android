@@ -6,7 +6,7 @@ import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.os.Build;
 
-import com.rora.phase.LimeLog;
+import com.rora.phase.RoraLog;
 import com.rora.phase.nvstream.av.audio.AudioRenderer;
 import com.rora.phase.nvstream.jni.MoonBridge;
 
@@ -96,11 +96,11 @@ public class AndroidAudioRenderer implements AudioRenderer {
                 }
                 break;
             default:
-                LimeLog.severe("Decoder returned unhandled channel count");
+                RoraLog.severe("Decoder returned unhandled channel count");
                 return -1;
         }
 
-        LimeLog.info("Audio channel config: "+String.format("0x%X", channelConfig));
+        RoraLog.info("Audio channel config: "+String.format("0x%X", channelConfig));
 
         bytesPerFrame = audioConfiguration.channelCount * samplesPerFrame * 2;
 
@@ -166,7 +166,7 @@ public class AndroidAudioRenderer implements AudioRenderer {
                 track.play();
 
                 // Successfully created working AudioTrack. We're done here.
-                LimeLog.info("Audio track configuration: "+bufferSize+" "+lowLatency);
+                RoraLog.info("Audio track configuration: "+bufferSize+" "+lowLatency);
                 break;
             } catch (Exception e) {
                 // Try to release the AudioTrack if we got far enough
@@ -198,7 +198,7 @@ public class AndroidAudioRenderer implements AudioRenderer {
             track.write(audioData, 0, audioData.length);
         }
         else {
-            LimeLog.info("Too much pending audio data: " + MoonBridge.getPendingAudioDuration() +" ms");
+            RoraLog.info("Too much pending audio data: " + MoonBridge.getPendingAudioDuration() +" ms");
         }
     }
 

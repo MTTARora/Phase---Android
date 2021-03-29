@@ -4,7 +4,7 @@ import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 
-import com.rora.phase.LimeLog;
+import com.rora.phase.RoraLog;
 import com.rora.phase.nvstream.input.ControllerPacket;
 
 import java.nio.ByteBuffer;
@@ -102,7 +102,7 @@ public class XboxOneController extends AbstractXboxController {
         {
             case 0x20:
                 if (buffer.remaining() < 17) {
-                    LimeLog.severe("XBone button/axis read too small: "+buffer.remaining());
+                    RoraLog.severe("XBone button/axis read too small: "+buffer.remaining());
                     return false;
                 }
 
@@ -112,7 +112,7 @@ public class XboxOneController extends AbstractXboxController {
 
             case 0x07:
                 if (buffer.remaining() < 4) {
-                    LimeLog.severe("XBone mode read too small: "+buffer.remaining());
+                    RoraLog.severe("XBone mode read too small: "+buffer.remaining());
                     return false;
                 }
 
@@ -166,7 +166,7 @@ public class XboxOneController extends AbstractXboxController {
             // Send the initialization packet
             int res = connection.bulkTransfer(outEndpt, data, data.length, 3000);
             if (res != data.length) {
-                LimeLog.warning("Initialization transfer failed: "+res);
+                RoraLog.warning("Initialization transfer failed: "+res);
                 return false;
             }
         }
@@ -184,7 +184,7 @@ public class XboxOneController extends AbstractXboxController {
         };
         int res = connection.bulkTransfer(outEndpt, data, data.length, 100);
         if (res != data.length) {
-            LimeLog.warning("Rumble transfer failed: "+res);
+            RoraLog.warning("Rumble transfer failed: "+res);
         }
     }
 

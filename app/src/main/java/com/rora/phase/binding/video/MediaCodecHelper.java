@@ -20,7 +20,7 @@ import android.media.MediaCodecInfo.CodecCapabilities;
 import android.media.MediaCodecInfo.CodecProfileLevel;
 import android.os.Build;
 
-import com.rora.phase.LimeLog;
+import com.rora.phase.RoraLog;
 
 public class MediaCodecHelper {
     
@@ -223,7 +223,7 @@ public class MediaCodecHelper {
         }
 
         String modelNumber = matcher.group(2);
-        LimeLog.info("Found Adreno GPU: "+modelNumber);
+        RoraLog.info("Found Adreno GPU: "+modelNumber);
         return modelNumber;
     }
 
@@ -266,24 +266,24 @@ public class MediaCodecHelper {
                 (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         ConfigurationInfo configInfo = activityManager.getDeviceConfigurationInfo();
         if (configInfo.reqGlEsVersion != ConfigurationInfo.GL_ES_VERSION_UNDEFINED) {
-            LimeLog.info("OpenGL ES version: "+configInfo.reqGlEsVersion);
+            RoraLog.info("OpenGL ES version: "+configInfo.reqGlEsVersion);
 
             isLowEndSnapdragon = isLowEndSnapdragonRenderer(glRenderer);
             isAdreno620 = getAdrenoRendererModelNumber(glRenderer) == 620;
 
             // Tegra K1 and later can do reference frame invalidation properly
             if (configInfo.reqGlEsVersion >= 0x30000) {
-                LimeLog.info("Added omx.nvidia to AVC reference frame invalidation support list");
+                RoraLog.info("Added omx.nvidia to AVC reference frame invalidation support list");
                 refFrameInvalidationAvcPrefixes.add("omx.nvidia");
 
-                LimeLog.info("Added omx.qcom/c2.qti to AVC reference frame invalidation support list");
+                RoraLog.info("Added omx.qcom/c2.qti to AVC reference frame invalidation support list");
                 refFrameInvalidationAvcPrefixes.add("omx.qcom");
                 refFrameInvalidationAvcPrefixes.add("c2.qti");
 
                 // Prior to M, we were tricking the decoder into using baseline profile, which
                 // won't support RFI properly.
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    LimeLog.info("Added omx.intel to AVC reference frame invalidation support list");
+                    RoraLog.info("Added omx.intel to AVC reference frame invalidation support list");
                     refFrameInvalidationAvcPrefixes.add("omx.intel");
                 }
             }
@@ -301,7 +301,7 @@ public class MediaCodecHelper {
                 // older Qualcomm chips) vs. enabling HEVC by default. The user can override using the settings
                 // to force HEVC on. If HDR or mobile data will be used, we'll override this and use
                 // HEVC anyway.
-                LimeLog.info("Added omx.qcom/c2.qti to deprioritized HEVC decoders based on GLES 3.1+ support");
+                RoraLog.info("Added omx.qcom/c2.qti to deprioritized HEVC decoders based on GLES 3.1+ support");
                 deprioritizedHevcDecoders.add("omx.qcom");
                 deprioritizedHevcDecoders.add("c2.qti");
             }
@@ -312,7 +312,7 @@ public class MediaCodecHelper {
             // Older MediaTek SoCs have issues with HEVC rendering but the newer chips with
             // PowerVR GPUs have good HEVC support.
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isPowerVR(glRenderer)) {
-                LimeLog.info("Added omx.mtk to HEVC decoders based on PowerVR GPU");
+                RoraLog.info("Added omx.mtk to HEVC decoders based on PowerVR GPU");
                 whitelistedHevcDecoders.add("omx.mtk");
 
                 // This SoC (MT8176 in GPD XD+) supports AVC RFI too, but the maxNumReferenceFrames setting
@@ -320,7 +320,7 @@ public class MediaCodecHelper {
                 // decoder hangs on the newer GE8100, GE8300, and GE8320 GPUs, so we limit it to the
                 // Series6XT GPUs where we know it works.
                 if (glRenderer.contains("GX6")) {
-                    LimeLog.info("Added omx.mtk to RFI list for HEVC");
+                    RoraLog.info("Added omx.mtk to RFI list for HEVC");
                     refFrameInvalidationHevcPrefixes.add("omx.mtk");
                 }
             }
@@ -354,7 +354,7 @@ public class MediaCodecHelper {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             try {
                 if (decoderInfo.getCapabilitiesForType(mimeType).isFeatureSupported(CodecCapabilities.FEATURE_LowLatency)) {
-                    LimeLog.info("Low latency decoding mode supported (FEATURE_LowLatency)");
+                    RoraLog.info("Low latency decoding mode supported (FEATURE_LowLatency)");
                     return true;
                 }
             } catch (Exception e) {
@@ -385,7 +385,7 @@ public class MediaCodecHelper {
         // Possibly enable adaptive playback on KitKat and above
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             if (isDecoderInList(blacklistedAdaptivePlaybackPrefixes, decoderInfo.getName())) {
-                LimeLog.info("Decoder blacklisted for adaptive playback");
+                RoraLog.info("Decoder blacklisted for adaptive playback");
                 return false;
             }
 
@@ -394,7 +394,7 @@ public class MediaCodecHelper {
                         isFeatureSupported(CodecCapabilities.FEATURE_AdaptivePlayback))
                 {
                     // This will make getCapabilities() return that adaptive playback is supported
-                    LimeLog.info("Adaptive playback supported (FEATURE_AdaptivePlayback)");
+                    RoraLog.info("Adaptive playback supported (FEATURE_AdaptivePlayback)");
                     return true;
                 }
             } catch (Exception e) {
@@ -498,7 +498,7 @@ public class MediaCodecHelper {
         // since it works fine otherwise.
         if (isDecoderInList(deprioritizedHevcDecoders, decoderName)) {
             if (meteredData) {
-                LimeLog.info("Selected deprioritized decoder");
+                RoraLog.info("Selected deprioritized decoder");
                 return true;
             }
             else {
@@ -574,7 +574,7 @@ public class MediaCodecHelper {
                 
                 // Check for preferred decoders
                 if (preferredDecoder.equalsIgnoreCase(codecInfo.getName())) {
-                    LimeLog.info("Preferred decoder choice is "+codecInfo.getName());
+                    RoraLog.info("Preferred decoder choice is "+codecInfo.getName());
                     return codecInfo;
                 }
             }
@@ -587,14 +587,14 @@ public class MediaCodecHelper {
         // Use the new isSoftwareOnly() function on Android Q
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             if (codecInfo.isSoftwareOnly()) {
-                LimeLog.info("Skipping software-only decoder: "+codecInfo.getName());
+                RoraLog.info("Skipping software-only decoder: "+codecInfo.getName());
                 return true;
             }
         }
 
         // Check for explicitly blacklisted decoders
         if (isDecoderInList(blacklistedDecoderPrefixes, codecInfo.getName())) {
-            LimeLog.info("Skipping blacklisted decoder: "+codecInfo.getName());
+            RoraLog.info("Skipping blacklisted decoder: "+codecInfo.getName());
             return true;
         }
 
@@ -623,7 +623,7 @@ public class MediaCodecHelper {
                         continue;
                     }
 
-                    LimeLog.info("First decoder choice is "+codecInfo.getName());
+                    RoraLog.info("First decoder choice is "+codecInfo.getName());
                     return codecInfo;
                 }
             }
@@ -672,7 +672,7 @@ public class MediaCodecHelper {
             // Find a decoder that supports the requested video format
             for (String mime : codecInfo.getSupportedTypes()) {
                 if (mime.equalsIgnoreCase(mimeType)) {
-                    LimeLog.info("Examining decoder capabilities of "+codecInfo.getName());
+                    RoraLog.info("Examining decoder capabilities of "+codecInfo.getName());
 
                     // Skip blacklisted codecs
                     if (isCodecBlacklisted(codecInfo)) {
@@ -684,12 +684,12 @@ public class MediaCodecHelper {
                     if (requiredProfile != -1) {
                         for (CodecProfileLevel profile : caps.profileLevels) {
                             if (profile.profile == requiredProfile) {
-                                LimeLog.info("Decoder " + codecInfo.getName() + " supports required profile");
+                                RoraLog.info("Decoder " + codecInfo.getName() + " supports required profile");
                                 return codecInfo;
                             }
                         }
 
-                        LimeLog.info("Decoder " + codecInfo.getName() + " does NOT support required profile");
+                        RoraLog.info("Decoder " + codecInfo.getName() + " does NOT support required profile");
                     }
                     else {
                         return codecInfo;
@@ -729,13 +729,13 @@ public class MediaCodecHelper {
             
             // SMDK4xxx is Exynos 4 
             if (stringContainsIgnoreCase(cpuInfo, "SMDK4")) {
-                LimeLog.info("Found SMDK4 in /proc/cpuinfo");
+                RoraLog.info("Found SMDK4 in /proc/cpuinfo");
                 return true;
             }
             
             // If we see "Exynos 4" also we'll count it
             if (stringContainsIgnoreCase(cpuInfo, "Exynos 4")) {
-                LimeLog.info("Found Exynos 4 in /proc/cpuinfo");
+                RoraLog.info("Found Exynos 4 in /proc/cpuinfo");
                 return true;
             }
         } catch (Exception e) {
@@ -748,7 +748,7 @@ public class MediaCodecHelper {
             if (files != null) {
                 for (File f : files) {
                     if (stringContainsIgnoreCase(f.getName(), "exynos4")) {
-                        LimeLog.info("Found exynos4 in /sys/devices/system");
+                        RoraLog.info("Found exynos4 in /sys/devices/system");
                         return true;
                     }
                 }

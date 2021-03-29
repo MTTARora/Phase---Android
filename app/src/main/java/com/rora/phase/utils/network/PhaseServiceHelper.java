@@ -2,7 +2,7 @@ package com.rora.phase.utils.network;
 
 import android.content.Context;
 
-import com.rora.phase.utils.DataResultHelper;
+import com.rora.phase.utils.DataResponse;
 import com.rora.phase.utils.SharedPreferencesHelper;
 
 import org.json.JSONObject;
@@ -74,7 +74,7 @@ public class PhaseServiceHelper {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.HEADERS);
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         if (auth) {
             httpClient.addInterceptor(chain -> {
@@ -97,8 +97,8 @@ public class PhaseServiceHelper {
         return userPhaseService;
     }
 
-    public static <T> DataResultHelper<T> handleResponse(Response<T> response) {
-        DataResultHelper<T> data = new DataResultHelper<>();
+    public static <T> DataResponse<T> handleResponse(Response<T> response) {
+        DataResponse<T> data = new DataResponse<>();
         if(response.code() == 200) {
             data.setData(response.body());
         } else {
@@ -109,7 +109,7 @@ public class PhaseServiceHelper {
             } catch (Exception e) {
                 err = e.getMessage();
             }
-            data.setErrMsg(err);
+            data.setMsg(err);
         }
         return data;
     }

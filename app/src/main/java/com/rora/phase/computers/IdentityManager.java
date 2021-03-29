@@ -7,7 +7,7 @@ import java.io.OutputStreamWriter;
 import java.util.Locale;
 import java.util.Random;
 
-import com.rora.phase.LimeLog;
+import com.rora.phase.RoraLog;
 
 import android.content.Context;
 
@@ -23,7 +23,7 @@ public class IdentityManager {
             uniqueId = generateNewUniqueId(c);
         }
 
-        LimeLog.info("UID is now: "+uniqueId);
+        RoraLog.info("UID is now: "+uniqueId);
     }
 
     public String getUniqueId() {
@@ -34,20 +34,20 @@ public class IdentityManager {
         // 2 Hex digits per byte
         char[] uid = new char[UID_SIZE_IN_BYTES * 2];
         InputStreamReader reader = null;
-        LimeLog.info("Reading UID from disk");
+        RoraLog.info("Reading UID from disk");
         try {
             reader = new InputStreamReader(c.openFileInput(UNIQUE_ID_FILE_NAME));
             if (reader.read(uid) != UID_SIZE_IN_BYTES * 2)
             {
-                LimeLog.severe("UID file data is truncated");
+                RoraLog.severe("UID file data is truncated");
                 return null;
             }
             return new String(uid);
         } catch (FileNotFoundException e) {
-            LimeLog.info("No UID file found");
+            RoraLog.info("No UID file found");
             return null;
         } catch (IOException e) {
-            LimeLog.severe("Error while reading UID file");
+            RoraLog.severe("Error while reading UID file");
             e.printStackTrace();
             return null;
         } finally {
@@ -61,16 +61,16 @@ public class IdentityManager {
 
     private static String generateNewUniqueId(Context c) {
         // Generate a new UID hex string
-        LimeLog.info("Generating new UID");
+        RoraLog.info("Generating new UID");
         String uidStr = String.format((Locale)null, "%016x", new Random().nextLong());
 
         OutputStreamWriter writer = null;
         try {
             writer = new OutputStreamWriter(c.openFileOutput(UNIQUE_ID_FILE_NAME, 0));
             writer.write(uidStr);
-            LimeLog.info("UID written to disk");
+            RoraLog.info("UID written to disk");
         } catch (IOException e) {
-            LimeLog.severe("Error while writing UID file");
+            RoraLog.severe("Error while writing UID file");
             e.printStackTrace();
         } finally {
             if (writer != null) {

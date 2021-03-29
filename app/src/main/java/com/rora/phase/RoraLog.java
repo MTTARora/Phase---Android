@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
-public class LimeLog {
-    private static final Logger LOGGER = Logger.getLogger(LimeLog.class.getName());
+public class RoraLog {
+    private static final Logger LOGGER = Logger.getLogger(RoraLog.class.getName());
 
     public static void info(String msg) {
         LOGGER.info(msg);
