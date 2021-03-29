@@ -57,10 +57,6 @@ public class UserViewModel extends AndroidViewModel {
         userRepository.signIn(loginIdentify);
     }
 
-    public void getUserData() {
-        userRepository.getUserInfo();
-    }
-
     public void getRecentPlayData() {
         userRepository.getRecentPlayData();
     }

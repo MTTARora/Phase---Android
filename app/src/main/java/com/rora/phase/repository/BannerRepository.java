@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.rora.phase.model.Banner;
 import com.rora.phase.model.Game;
+import com.rora.phase.utils.network.APIServicesHelper;
 import com.rora.phase.utils.network.BaseResponse;
 import com.rora.phase.utils.network.PhaseService;
 import com.rora.phase.utils.network.PhaseServiceHelper;
@@ -36,20 +37,31 @@ public class BannerRepository {
     }
 
     public void getBannerListData() {
-        phaseService.getBannerList().enqueue(new Callback<BaseResponse<List<Banner>>>() {
-            @Override
-            public void onResponse(Call<BaseResponse<List<Banner>>> call, Response<BaseResponse<List<Banner>>> response) {
-                List<Banner> listGame = BaseResponse.getResult(response.body());
+        APIServicesHelper<List<Banner>> apiHelper = new APIServicesHelper<>();
+
+        apiHelper.request(phaseService.getBannerList(), (err, data) -> {
+            if (err != null) {
+                bannerList.postValue(new ArrayList<>());
+            } else {
+                List<Banner> listGame = data;
                 listGame = listGame == null ? new ArrayList<>() : listGame;
                 bannerList.postValue(listGame);
             }
-
-            @Override
-            public void onFailure(Call<BaseResponse<List<Banner>>> call, Throwable t) {
-                Log.e(this.getClass().getSimpleName(), t.getMessage());
-                bannerList.postValue(new ArrayList<>());
-            }
         });
+//        phaseService.getBannerList().enqueue(new Callback<BaseResponse<List<Banner>>>() {
+//            @Override
+//            public void onResponse(Call<BaseResponse<List<Banner>>> call, Response<BaseResponse<List<Banner>>> response) {
+//                List<Banner> listGame = BaseResponse.getResult(response.body());
+//                listGame = listGame == null ? new ArrayList<>() : listGame;
+//                bannerList.postValue(listGame);
+//            }
+//
+//            @Override
+//            public void onFailure(Call<BaseResponse<List<Banner>>> call, Throwable t) {
+//                Log.e(this.getClass().getSimpleName(), t.getMessage());
+//                bannerList.postValue(new ArrayList<>());
+//            }
+//        });
     }
 
 }

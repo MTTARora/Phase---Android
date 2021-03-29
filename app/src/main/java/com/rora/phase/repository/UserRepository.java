@@ -17,6 +17,7 @@ import com.rora.phase.nvstream.http.ComputerDetails;
 import com.rora.phase.utils.DataResponse;
 import com.rora.phase.utils.SharedPreferencesHelper;
 import com.rora.phase.utils.callback.OnResultCallBack;
+import com.rora.phase.utils.network.APIServicesHelper;
 import com.rora.phase.utils.network.BaseResponse;
 import com.rora.phase.utils.network.PhaseServiceHelper;
 import com.rora.phase.utils.network.UserPhaseService;
@@ -97,30 +98,39 @@ public class UserRepository {
     }
 
     public void signIn(LoginCredential loginCredential) {
-        userServices.signIn(loginCredential).enqueue(new Callback<BaseResponse<LoginResponse>>() {
-            @Override
-            public void onResponse(Call<BaseResponse<LoginResponse>> call, Response<BaseResponse<LoginResponse>> response) {
-                DataResponse<BaseResponse<LoginResponse>> dataResponse = PhaseServiceHelper.handleResponse(response);
+        APIServicesHelper<LoginResponse> apiHelper = new APIServicesHelper<>();
 
-                if (dataResponse.getMsg() != null) {
-                    updateDataResult.postValue(new DataResponse(dataResponse.getMsg(), null));
-                } else {
-                    LoginResponse resp = BaseResponse.getResult(dataResponse.getData());
-                    User user = resp.getInfo();
-                    String token = resp.getToken();
-
-                    if (token != null && user != null) {
-                        storeLocalUser(user.getUserName(), token);
-                    }
-                    updateDataResult.postValue(new DataResponse(null, null));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<BaseResponse<LoginResponse>> call, Throwable t) {
-                updateDataResult.postValue(new DataResponse("Please try again later!", null));
-            }
+        apiHelper.request(userServices.signIn(loginCredential), (err, data) -> {
+            if (err != null) {
+                updateDataResult.postValue(new DataResponse(err, null));
+            } else
+                updateDataResult.postValue(new DataResponse(null, data));
         });
+
+//        userServices.signIn(loginCredential).enqueue(new Callback<BaseResponse<LoginResponse>>() {
+//            @Override
+//            public void onResponse(Call<BaseResponse<LoginResponse>> call, Response<BaseResponse<LoginResponse>> response) {
+//                DataResponse<BaseResponse<LoginResponse>> dataResponse = PhaseServiceHelper.handleResponse(response);
+//
+//                if (dataResponse.getMsg() != null) {
+//                    updateDataResult.postValue(new DataResponse(dataResponse.getMsg(), null));
+//                } else {
+//                    LoginResponse resp = BaseResponse.getResult(dataResponse.getData());
+//                    User user = resp.getInfo();
+//                    String token = resp.getToken();
+//
+//                    if (token != null && user != null) {
+//                        storeLocalUser(user.getUserName(), token);
+//                    }
+//                    updateDataResult.postValue(new DataResponse(null, null));
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<BaseResponse<LoginResponse>> call, Throwable t) {
+//                updateDataResult.postValue(new DataResponse("Please try again later!", null));
+//            }
+//        });
     }
 
     public void signOut() {
@@ -136,21 +146,6 @@ public class UserRepository {
 
             @Override
             public void onFailure(Call<BaseResponse> call, Throwable t) {
-                updateDataResult.postValue(new DataResponse("Please try again later!", null));
-            }
-        });
-    }
-
-    public void getUserInfo() {
-        userAuthenticatedServices.getUserInfo().enqueue(new Callback<BaseResponse<User>>() {
-            @Override
-            public void onResponse(Call<BaseResponse<User>> call, Response<BaseResponse<User>> response) {
-                user.postValue(BaseResponse.getResult(response.body()));
-            }
-
-            @Override
-            public void onFailure(Call<BaseResponse<User>> call, Throwable t) {
-                user.postValue(null);
                 updateDataResult.postValue(new DataResponse("Please try again later!", null));
             }
         });
@@ -202,53 +197,45 @@ public class UserRepository {
         });
     }
 
-    public void getRecommendedGameListData(int page, int pageSize) {
-        userAuthenticatedServices.getRecommended(page, pageSize).enqueue(new Callback<BaseResponse<List<Game>>>() {
-            @Override
-            public void onResponse(Call<BaseResponse<List<Game>>> call, Response<BaseResponse<List<Game>>> response) {
-                List<Game> list = BaseResponse.getResult(response.body());
-                list = list == null ? new ArrayList<>() : list;
-                recommendedList.postValue(list);
-            }
-
-            @Override
-            public void onFailure(Call<BaseResponse<List<Game>>> call, Throwable t) {
-                Log.e(this.getClass().getSimpleName(), t.getMessage());
-                recommendedList.postValue(new ArrayList<>());
-            }
-        });
-    }
-
     public void getRecentPlayData() {
 
     }
 
     public void getComputerData(OnResultCallBack<ComputerDetails> callBack) {
-        userAuthenticatedServices.getComputerIP().enqueue(new Callback<BaseResponse<FindingHostResponse>>() {
-            @Override
-            public void onResponse(Call<BaseResponse<FindingHostResponse>> call, Response<BaseResponse<FindingHostResponse>> response) {
-                DataResponse<BaseResponse<FindingHostResponse>> dataResponse = PhaseServiceHelper.handleResponse(response);
-                String err = dataResponse.getMsg();
-                if (err != null) {
-                    callBack.onResult(err, null);
-                } else {
-                    FindingHostResponse resp = BaseResponse.getResult(dataResponse.getData());
+        APIServicesHelper<FindingHostResponse> apiHelper = new APIServicesHelper<>();
 
-                    if (resp.queue != null || resp.host == null)
-                        callBack.onResult("So many players are playing right now, please try again later!", null);
-                    else
-                        callBack.onResult(null, new ComputerDetails(resp.host));
-                    //computer.postValue(new ComputerDetails(host));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<BaseResponse<FindingHostResponse>> call, Throwable t) {
-                Log.e(this.getClass().getSimpleName(), t.getMessage());
-                callBack.onResult("Can't connect to server, please try again later!", null);
-                //computer.postValue(null);
-            }
+        apiHelper.request(userAuthenticatedServices.getComputerIP(), (err, data) -> {
+            if (err != null) {
+                callBack.onResult(err, null);
+            } else
+                callBack.onResult(null, new ComputerDetails(data.host));
         });
+
+//        userAuthenticatedServices.getComputerIP().enqueue(new Callback<BaseResponse<FindingHostResponse>>() {
+//            @Override
+//            public void onResponse(Call<BaseResponse<FindingHostResponse>> call, Response<BaseResponse<FindingHostResponse>> response) {
+//                DataResponse<BaseResponse<FindingHostResponse>> dataResponse = PhaseServiceHelper.handleResponse(response);
+//                String err = dataResponse.getMsg();
+//                if (err != null) {
+//                    callBack.onResult(err, null);
+//                } else {
+//                    FindingHostResponse resp = BaseResponse.getResult(dataResponse.getData());
+//
+//                    if (resp.queue != null || resp.host == null)
+//                        callBack.onResult("So many players are playing right now, please try again later!", null);
+//                    else
+//                        callBack.onResult(null, new ComputerDetails(resp.host));
+//                    //computer.postValue(new ComputerDetails(host));
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<BaseResponse<FindingHostResponse>> call, Throwable t) {
+//                Log.e(this.getClass().getSimpleName(), t.getMessage());
+//                callBack.onResult("Can't connect to server, please try again later!", null);
+//                //computer.postValue(null);
+//            }
+//        });
     }
 
     public void sendPinToHost(String pinStr, String hostId, OnResultCallBack<ComputerDetails> callBack) {
