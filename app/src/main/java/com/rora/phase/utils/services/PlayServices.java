@@ -179,7 +179,7 @@ public class PlayServices extends Service {
                     callBack.onStart(true);
                     callBack.onFindAHost(false);
                     //STEP 2: Get host data
-                    userRepository.getComputerData((errMsg, computer) -> {
+                    userRepository.getComputerData((errMsg, response) -> {
                         callBack.onFindAHost(true);
                         if (errMsg != null) {
                             playHub.stopConnect();
@@ -189,11 +189,21 @@ public class PlayServices extends Service {
 
                         Thread thread = new Thread(() -> {
                             try {
+                                //STEP 2.1: Check queue
+                                if (response.queue != null) {
+                                    state = UserPlayingData.PlayingState.IN_QUEUE;
+                                    callBack.onJoinQueue(response.queue.getTotal(), response.queue.getCurrentPosition());
+//                                    stopConnect(callBack);
+//                                    callBack.onError("So many players are playing right now, please wait!");
+                                    return;
+                                }
+
                                 //STEP 3: Add pc
                                 callBack.onAddPc(false);
-                                String err = addPc(computer);
+                                String err = addPc(new ComputerDetails(response.host));
                                 if (err != null) {
                                     callBack.onError(err);
+                                    stopConnect(callBack);
                                     return;
                                 }
                                 callBack.onAddPc(true);
@@ -217,6 +227,7 @@ public class PlayServices extends Service {
                                 callBack.onStartConnect(true);
                             } catch (InterruptedException e) {
                                 RoraLog.info("Playing Game - Connecting error -- " + e.getMessage());
+                                stopConnect(callBack);
                                 callBack.onError(getApplication().getResources().getString(R.string.undetected_error));
                             }
                         });
@@ -372,6 +383,10 @@ public class PlayServices extends Service {
         return state == UserPlayingData.PlayingState.STOP;
     }
 
+    private UserPlayingData.PlayingState getCurrentState() {
+        return state;
+    }
+
 
     //--------------------------------- Support Classes -------------------------------
 
@@ -431,7 +446,11 @@ public class PlayServices extends Service {
         }
 
         public boolean isStopPlaying() {
-            return  PlayServices.this.isStopPlaying();
+            return PlayServices.this.isStopPlaying();
+        }
+
+        public UserPlayingData.PlayingState getCurrentState() {
+            return PlayServices.this.getCurrentState();
         }
 
     }

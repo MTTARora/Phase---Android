@@ -184,7 +184,7 @@ public class UserRepository {
 
     }
 
-    public void getComputerData(OnResultCallBack<ComputerDetails> callBack) {
+    public void getComputerData(OnResultCallBack<FindingHostResponse> callBack) {
         APIServicesHelper<FindingHostResponse> apiHelper = new APIServicesHelper<>();
 
         apiHelper.request(userAuthenticatedServices.getComputerIP(), (err, data) -> {
@@ -192,11 +192,11 @@ public class UserRepository {
                 callBack.onResult(err, null);
             } else {
                 if (data.queue != null || data.host == null) {
-                    RoraLog.info("So many players are playing right now, please try again later!");
-                    callBack.onResult("So many players are playing right now, please try again later!", null);
+                    RoraLog.info("So many players are playing right now, please wait!");
+                    callBack.onResult(null, data);
                 }
                 else
-                    callBack.onResult(null, new ComputerDetails(data.host));
+                    callBack.onResult(null, data);
             }
         });
     }

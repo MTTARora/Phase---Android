@@ -12,8 +12,9 @@ public class UserPlayingData {
     public enum PlayingState {
         IDLE("0"),
         IN_PROGRESS("1"),
-        PLAYING("2"),
-        STOP("3");
+        IN_QUEUE("2"),
+        PLAYING("3"),
+        STOP("4");
 
         public final String id;
 

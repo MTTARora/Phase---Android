@@ -60,7 +60,7 @@ public class NvApp {
     }
 
     public static NvApp initRemoteApp() {
-        return new NvApp("mstsc.exe", 13906176, false);
+        return new NvApp("mstsc.exe", 15995232, false);
     }
 
     @Override

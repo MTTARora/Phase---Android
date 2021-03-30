@@ -48,6 +48,7 @@ public abstract class BaseFragment extends Fragment {
         };
 
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+        setNavsVisibility(this);
     }
 
     @Override
@@ -68,9 +69,10 @@ public abstract class BaseFragment extends Fragment {
             previousFrag = fm.findFragmentByTag(tag);
         }
 
-        if (previousFrag == null)
+        if (previousFrag == null) {
             stopUpDateHomeScreen = false;
-        //setNavsVisibility(previousFrag);
+//            setNavsVisibility(previousFrag);
+        }
         fm.popBackStack();
     }
 
@@ -146,7 +148,7 @@ public abstract class BaseFragment extends Fragment {
 
     private void setNavsVisibility(Fragment newFragment) {
         setBottomNavVisibility(newFragment);
-        setActionbarVisibility(newFragment);
+//        setActionbarVisibility(newFragment);
     }
 
     private void setActionbarVisibility(Fragment newFragment) {
@@ -163,14 +165,10 @@ public abstract class BaseFragment extends Fragment {
     private void setBottomNavVisibility(Fragment newFragment) {
         if (newFragment instanceof GameDetailFragment
                 || newFragment instanceof GameListFragment) {
-            if (MainActivity.bottomNavView.getVisibility() != GONE) {
-                MainActivity.bottomNavView.setVisibility(View.INVISIBLE);
-                MainActivity.bottomNavView.setVisibility(GONE);
-            }
+            MainActivity.setBottomNavigationVisibility(GONE);
         }
         else {
-            if (MainActivity.bottomNavView.getVisibility() != VISIBLE)
-                MainActivity.bottomNavView.setVisibility(VISIBLE);
+            MainActivity.setBottomNavigationVisibility(VISIBLE);
         }
     }
 

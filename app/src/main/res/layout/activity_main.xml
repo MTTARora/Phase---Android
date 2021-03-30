@@ -9,10 +9,51 @@
         android:id="@+id/nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         app:defaultNavHost="true"
         android:layout_above="@id/bottom_nav_view"
-        app:navGraph="@navigation/mobile_navigation" />
+        app:navGraph="@navigation/mobile_navigation"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/frame_queue"/>
+    <carbon.widget.ConstraintLayout
+        android:id="@+id/frame_queue"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/bottom_nav_view"
+        app:layout_constraintHeight_percent=".1"
+        android:background="@color/colorAccent"
+        android:padding="@dimen/medium_space"
+        android:visibility="gone">
+        <ImageView
+            android:id="@+id/game_banner_queue_imv"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:layout_constraintWidth_percent=".15"
+            android:scaleType="fitXY"
+            android:src="@drawable/banner_test"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginStart="@dimen/medium_space"
+            app:layout_constraintStart_toEndOf="@id/game_banner_queue_imv">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="You're in queue"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1/100"
+                android:textSize="@dimen/header_text_size"/>
+        </LinearLayout>
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:src="@android:drawable/presence_offline"
+            android:background="@android:color/transparent"/>
+    </carbon.widget.ConstraintLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav_view"

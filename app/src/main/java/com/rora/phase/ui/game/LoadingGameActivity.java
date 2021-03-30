@@ -20,6 +20,7 @@ import com.rora.phase.R;
 import com.rora.phase.binding.crypto.AndroidCryptoProvider;
 import com.rora.phase.nvstream.http.ComputerDetails;
 import com.rora.phase.preferences.GlPreferences;
+import com.rora.phase.utils.Dialog;
 import com.rora.phase.utils.UiHelper;
 import com.rora.phase.utils.callback.PlayGameProgressCallBack;
 import com.rora.phase.utils.services.PlayServices;
@@ -127,7 +128,7 @@ public class LoadingGameActivity extends FragmentActivity {
         super.onRestart();
         if (managerBinder != null) {
             pbLoadingProgress.setMax(1);
-            managerBinder.stopConnect(playProgressCallBack);
+            stopConnect();
         }
     }
 
@@ -171,6 +172,13 @@ public class LoadingGameActivity extends FragmentActivity {
         @Override
         public void onFindAHost(boolean isDone) {
             pbLoadingProgress.setProgress(isDone ? 3 : 4);
+        }
+
+        @Override
+        public void onJoinQueue(int total, int position) {
+//            Dialog.displayDialog(getParent(), "So many players are playing right now, please wait!", position + "/" + total, () -> stopConnect());
+//            LoadingGameActivity.this.runOnUiThread(() -> Toast.makeText(getApplicationContext(), position + "/" + total, Toast.LENGTH_LONG).show());
+            LoadingGameActivity.this.finish();
         }
 
         @Override

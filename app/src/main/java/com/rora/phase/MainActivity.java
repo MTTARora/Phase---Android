@@ -1,7 +1,10 @@
 package com.rora.phase;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -19,11 +22,17 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.rora.phase.binding.crypto.AndroidCryptoProvider;
+import com.rora.phase.model.UserPlayingData;
 import com.rora.phase.ui.dashboard.DashboardFragment;
+import com.rora.phase.ui.game.LoadingGameActivity;
 import com.rora.phase.ui.home.HomeFragment;
 import com.rora.phase.ui.settings.SettingsFragment;
 import com.rora.phase.ui.viewmodel.GameViewModel;
 import com.rora.phase.utils.services.PlayServices;
+import com.rora.phase.utils.ui.ViewHelper;
+
+import carbon.widget.ConstraintLayout;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -31,10 +40,33 @@ import static android.view.View.VISIBLE;
 public class MainActivity extends AppCompatActivity {
 
     public static BottomNavigationView bottomNavView;
+    public ConstraintLayout frameQueue;
 
     private GameViewModel gameViewModel;
     private MenuItem currentBottomTab;
     private Menu bottomMenu;
+    private PlayServices.ComputerManagerBinder managerBinder;
+    private final ServiceConnection serviceConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder binder) {
+            final PlayServices.ComputerManagerBinder localBinder = ((PlayServices.ComputerManagerBinder)binder);
+
+            // Wait in a separate thread to avoid stalling the UI
+            new Thread() {
+                @Override
+                public void run() {
+                    // Wait for the binder to be ready
+                    localBinder.waitForReady();
+
+                    // Now make the binder visible
+                    managerBinder = localBinder;
+                }
+            }.start();
+        }
+
+        public void onServiceDisconnected(ComponentName className) {
+            managerBinder = null;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
         gameViewModel = new ViewModelProvider(this).get(GameViewModel.class);
         bottomNavView = findViewById(R.id.bottom_nav_view);
+        frameQueue = findViewById(R.id.frame_queue);
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
                 .build();
@@ -57,7 +90,22 @@ public class MainActivity extends AppCompatActivity {
         currentBottomTab = bottomMenu.getItem(0);
         //bottomNavView.setOnNavigationItemSelectedListener(this);
 
-        startService(new Intent(this, PlayServices.class));
+        Intent serviceIntent = new Intent(this, PlayServices.class);
+        startService(serviceIntent);
+        bindService(serviceIntent, serviceConnection, BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        frameQueue.setVisibility(managerBinder.getCurrentState() == UserPlayingData.PlayingState.IN_QUEUE ? VISIBLE : GONE);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(managerBinder != null)
+            unbindService(serviceConnection);
     }
 
     @Override
@@ -97,8 +145,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void setBottomNavigationVisibility(int visibility) {
-        bottomNavView.setVisibility(visibility);
+    public static void setBottomNavigationVisibility(int visibility) {
+//        if (bottomNavView != null)
+//            bottomNavView.setVisibility(visibility);
     }
 
     //@Override
