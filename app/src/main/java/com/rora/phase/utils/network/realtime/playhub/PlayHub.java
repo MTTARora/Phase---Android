@@ -18,7 +18,7 @@ public class PlayHub {
 
     public void startConnect(Context context, PlayHubListener listener) {
         String token = UserRepository.newInstance(context).getUserToken();
-        hubConnection = HubConnectionBuilder.create(PhaseServiceHelper.playHubUrl).withTransport(TransportEnum.LONG_POLLING)
+        hubConnection = HubConnectionBuilder.create(PhaseServiceHelper.playHubUrl).withTransport(TransportEnum.WEBSOCKETS)
                 //.withHeader("Authorization", token)
                 .withAccessTokenProvider(Single.defer(() -> Single.just(token)))
                 .build();

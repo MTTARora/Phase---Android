@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.rora.phase.ui.game.QueueView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="0dp"
     app:layout_constraintHeight_percent=".1"
@@ -41,4 +41,4 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:src="@android:drawable/presence_offline"
         android:background="@android:color/transparent"/>
-</androidx.constraintlayout.widget.ConstraintLayout>
+</com.rora.phase.ui.game.QueueView>

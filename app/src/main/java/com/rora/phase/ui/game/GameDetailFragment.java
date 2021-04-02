@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -50,6 +51,7 @@ public class GameDetailFragment extends BaseFragment {
 
     private GameViewModel gameViewModel;
     private Game game;
+    private boolean isSelectedGame;
 
     public static final String KEY_GAME = "game";
 
@@ -135,6 +137,12 @@ public class GameDetailFragment extends BaseFragment {
     private void initData() {
         gameViewModel.getGameData().observe(getViewLifecycleOwner(), this::bindData);
         gameViewModel.getGame(game.getId().toString());
+        gameViewModel.getCurrentGame().observe(getViewLifecycleOwner(), new Observer<Game>() {
+            @Override
+            public void onChanged(Game game) {
+                isSelectedGame = game.getId() == game.getId();
+            }
+        });
         //if (game != null)
         //    bindData(game);
     }

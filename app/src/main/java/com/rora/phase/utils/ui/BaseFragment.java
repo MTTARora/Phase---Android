@@ -50,9 +50,9 @@ public abstract class BaseFragment extends Fragment {
         };
 
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
-        setNavsVisibility(this);
 
         initData();
+        setNavsVisibility(this);
     }
 
     @Override
@@ -91,16 +91,17 @@ public abstract class BaseFragment extends Fragment {
         showLoadingScreen();
 
         currentFragment = newFragment;
-        FragmentTransaction transaction = fm.beginTransaction();
-        transaction.setCustomAnimations(
-                R.anim.screen_fadein,  // enter
-                R.anim.screen_fadeout,  // exit
-                R.anim.screen_popup_show,   // popEnter
-                R.anim.screen_popup_hide  // popExit
-        );
-        transaction.replace(R.id.main_container, newFragment, newFragment.getClass().getSimpleName());
-        transaction.addToBackStack(backStackName);
-        transaction.commit();
+        FragmentManagerHelper.replace(fm, R.id.main_container, newFragment, backStackName);
+        //FragmentTransaction transaction = fm.beginTransaction();
+        //transaction.setCustomAnimations(
+        //        R.anim.screen_fadein,  // enter
+        //        R.anim.screen_fadeout,  // exit
+        //        R.anim.screen_popup_show,   // popEnter
+        //        R.anim.screen_popup_hide  // popExit
+        //);
+        //transaction.replace(R.id.main_container, newFragment, newFragment.getClass().getSimpleName());
+        //transaction.addToBackStack(backStackName);
+        //transaction.commit();
     }
 
 

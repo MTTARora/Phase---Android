@@ -10,92 +10,102 @@
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:defaultNavHost="true"
         android:layout_above="@id/bottom_nav_view"
-        app:navGraph="@navigation/mobile_navigation"
+        app:defaultNavHost="true"
+        app:layout_constraintBottom_toTopOf="@id/frame_queue_main"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/frame_queue_main"/>
+        app:navGraph="@navigation/mobile_navigation" />
 
     <!--QUEUE-->
-    <carbon.widget.ConstraintLayout
+    <com.rora.phase.ui.game.QueueView
         android:id="@+id/frame_queue_main"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/bottom_nav_view"
-        app:layout_constraintHeight_percent=".1"
         android:background="@color/colorAccent"
         android:padding="@dimen/medium_space"
-        android:visibility="gone">
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/bottom_nav_view"
+        app:layout_constraintHeight_percent=".1">
+
         <ImageView
             android:id="@+id/game_banner_queue_main_imv"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            app:layout_constraintWidth_percent=".15"
             android:scaleType="fitXY"
-            android:src="@drawable/banner_test"/>
+            android:src="@drawable/banner_test"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_percent=".15" />
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:orientation="vertical"
             android:layout_marginStart="@dimen/medium_space"
+            android:orientation="vertical"
             app:layout_constraintStart_toEndOf="@id/game_banner_queue_main_imv">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="You're in queue"/>
+                android:text="You're in queue" />
+
             <TextView
                 android:id="@+id/queue_main_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="1/100"
-                android:textSize="@dimen/header_text_size"/>
+                android:textSize="@dimen/header_text_size" />
         </LinearLayout>
+
         <ImageButton
             android:id="@+id/end_queue_main_btn"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            app:layout_constraintWidth_percent=".1"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:background="@android:color/transparent"
             android:src="@android:drawable/presence_offline"
-            android:background="@android:color/transparent"/>
-    </carbon.widget.ConstraintLayout>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintWidth_percent=".1" />
+    </com.rora.phase.ui.game.QueueView>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimaryDark"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:itemTextColor="@drawable/bottom_tab_selector"
-        app:itemIconTint="@drawable/bottom_tab_selector"
         android:translationZ="0dp"
         app:elevation="0dp"
+        app:itemIconTint="@drawable/bottom_tab_selector"
+        app:itemTextColor="@drawable/bottom_tab_selector"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:menu="@menu/bottom_nav_menu" />
 
     <FrameLayout
         android:id="@+id/main_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/frame_queue"/>
+        app:layout_constraintBottom_toTopOf="@id/frame_queue"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <include android:id="@+id/frame_queue" layout="@layout/fragment_play_queue" android:visibility="gone"/>
+    <include
+        android:id="@+id/frame_queue"
+        layout="@layout/fragment_play_queue"
+        android:visibility="gone" />
 
     <FrameLayout
         android:id="@+id/main_loading_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="@id/main_container"
-        app:layout_constraintBottom_toBottomOf="@id/main_container"
         android:background="@color/colorAccent"
-        android:visibility="invisible">
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@id/main_container"
+        app:layout_constraintTop_toTopOf="@id/main_container">
+
         <androidx.core.widget.ContentLoadingProgressBar
             android:id="@+id/main_loading_bar"
+            style="?android:attr/progressBarStyleInverse"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:theme="@style/ContentLoadingProgress"
-            style="?android:attr/progressBarStyleInverse"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            android:theme="@style/ContentLoadingProgress" />
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

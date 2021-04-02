@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,13 +24,18 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.rora.phase.model.Game;
 import com.rora.phase.model.UserPlayingData;
 import com.rora.phase.nvstream.http.ComputerDetails;
+import com.rora.phase.ui.game.GameDetailFragment;
+import com.rora.phase.ui.game.QueueView;
 import com.rora.phase.ui.settings.auth.SignInActivity;
+import com.rora.phase.ui.viewmodel.GameViewModel;
 import com.rora.phase.ui.viewmodel.UserViewModel;
 import com.rora.phase.utils.MediaHelper;
 import com.rora.phase.utils.callback.PlayGameProgressCallBack;
 import com.rora.phase.utils.services.PlayServices;
+import com.rora.phase.utils.ui.FragmentManagerHelper;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -37,12 +43,9 @@ import static android.view.View.VISIBLE;
 public class MainActivity extends AppCompatActivity {
 
     public static BottomNavigationView bottomNavView;
-    private ConstraintLayout frameQueueMain, frameQueue;
+    private QueueView queueViewMain, queueView;
 
-    private ImageView imvQueueMain, imvQueue;
-    private TextView tvQueueMain, tvQueue;
-
-    private UserViewModel userViewModel;
+    private GameViewModel gameViewModel;
     private MenuItem currentBottomTab;
     private Menu bottomMenu;
     private PlayServices.ComputerManagerBinder managerBinder;
@@ -74,14 +77,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+        gameViewModel = new ViewModelProvider(this).get(GameViewModel.class);
         bottomNavView = findViewById(R.id.bottom_nav_view);
-        frameQueueMain = findViewById(R.id.frame_queue_main);
-        frameQueue = findViewById(R.id.frame_queue);
-        tvQueueMain = findViewById(R.id.queue_main_tv);
-        tvQueue = findViewById(R.id.queue_tv);
-        imvQueueMain = findViewById(R.id.game_banner_queue_main_imv);
-        imvQueue = findViewById(R.id.game_banner_queue_imv);
+        queueViewMain = new QueueView(this);
+        queueView = new QueueView(this);
 
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
@@ -101,6 +100,10 @@ public class MainActivity extends AppCompatActivity {
         startService(serviceIntent);
         bindService(serviceIntent, serviceConnection, BIND_AUTO_CREATE);
 
+        queueViewMain.setOnClickListener(v -> {
+            FragmentManagerHelper.replace(getSupportFragmentManager(), R.id.main_container, GameDetailFragment.newInstance(managerBinder.getCurrentGame()), null);
+        });
+        queueView.setOnClickListener(v -> FragmentManagerHelper.replace(getSupportFragmentManager(), R.id.main_container, GameDetailFragment.newInstance(managerBinder.getCurrentGame()), null));
         findViewById(R.id.end_queue_main_btn).setOnClickListener(v -> managerBinder.stopConnect(null));
         findViewById(R.id.end_queue_btn).setOnClickListener(v -> managerBinder.stopConnect(null));
     }
@@ -108,7 +111,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        frameQueueMain.setVisibility(managerBinder.getCurrentState() == UserPlayingData.PlayingState.IN_QUEUE ? VISIBLE : GONE);
+
+        queueViewMain.setVisibility(managerBinder.getCurrentState() == UserPlayingData.PlayingState.IN_QUEUE ? VISIBLE : GONE);
     }
 
     @Override
@@ -193,12 +197,11 @@ public class MainActivity extends AppCompatActivity {
     //---------------------------------- PLAY QUEUE ----------------------------------
 
     private void binQueueData(int total, int currentPos) {
-        this.runOnUiThread(() -> {
-            tvQueueMain.setText(total == 0 ? "--/0" : currentPos + "/" + total);
-            MediaHelper.loadImage(imvQueueMain, managerBinder.getCurrentGame().getBanner());
-            tvQueue.setText(total == 0 ? "--/0" : currentPos + "/" + total);
-            MediaHelper.loadImage(imvQueue, managerBinder.getCurrentGame().getBanner());
-        });
+        if (managerBinder == null)
+            return;
+
+        gameViewModel.setCurrentGame(managerBinder.getCurrentGame());
+        queueView.bindData(total, currentPos, managerBinder.getCurrentGame());
     }
 
     public void updateQueue(int visibilityMainFrame, int visibility) {
@@ -207,14 +210,14 @@ public class MainActivity extends AppCompatActivity {
 
         this.runOnUiThread(() -> {
 
-            frameQueueMain.setVisibility(visibilityMainFrame);
+            queueViewMain.setVisibility(visibilityMainFrame);
 
             int count = getSupportFragmentManager().getBackStackEntryCount();
 
-            if (count != 0 && visibility == VISIBLE) {
-                frameQueue.setVisibility(visibility);
-            } else
-                frameQueue.setVisibility(GONE);
+            //if (count != 0 && visibility == VISIBLE) {
+            //} else
+            //    queueView.setVisibility(GONE);
+            queueView.setVisibility((count != 0 && visibility == VISIBLE) ? visibility : GONE);
 
         });
     }
@@ -236,8 +239,10 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onJoinQueue(int total, int position) {
-            binQueueData(total, position);
-            updateQueue(VISIBLE, VISIBLE);
+            MainActivity.this.runOnUiThread(() -> {
+                binQueueData(total, position);
+                updateQueue(VISIBLE, VISIBLE);
+            });
         }
 
         @Override

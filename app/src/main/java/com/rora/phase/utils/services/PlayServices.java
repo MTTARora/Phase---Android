@@ -174,6 +174,9 @@ public class PlayServices extends Service {
      * Start play progress
      * */
     public void startConnectProgress(Activity activity, Game game, PlayGameProgressCallBack callBack) {
+        if (state != UserPlayingData.PlayingState.IDLE)
+            return;
+
         connectThread = new Thread(() -> {
             this.currentGame = game;
             RoraLog.info("Play game - STEP 1: Start Connecting");
@@ -410,7 +413,8 @@ public class PlayServices extends Service {
 
         RoraLog.info("Play game: Stop connecting");
         listener.onStopConnect(false);
-        callBack.onStopConnect(false);
+        if (callBack != null)
+            callBack.onStopConnect(false);
         connectThread.interrupt();
         connectThread = null;
         playHub.stopConnect();
@@ -424,7 +428,8 @@ public class PlayServices extends Service {
 
         RoraLog.info("Play game - Stop connect success");
         listener.onStopConnect(true);
-        callBack.onStopConnect(true);
+        if (callBack != null)
+            callBack.onStopConnect(true);
     }
 
     //===================================================================
