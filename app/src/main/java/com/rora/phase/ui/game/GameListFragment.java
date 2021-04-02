@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.rora.phase.R;
+import com.rora.phase.model.Game;
 import com.rora.phase.ui.adapter.GameVerticalRVAdapter;
 import com.rora.phase.ui.viewmodel.HomeViewModel;
 import com.rora.phase.utils.callback.ILoadMore;
@@ -73,7 +74,7 @@ public class GameListFragment extends BaseFragment {
         rclvGameList.setLayoutManager(linearLayoutManager);
         GameVerticalRVAdapter adapter = new GameVerticalRVAdapter(rclvGameList);
         rclvGameList.setAdapter(adapter);
-        adapter.setOnItemSelectedListener(gameId -> moveTo(GameDetailFragment.newInstance(gameId), GameDetailFragment.class.getSimpleName()));
+        adapter.setOnItemSelectedListener(selectedItem -> moveTo(GameDetailFragment.newInstance((Game) selectedItem), GameDetailFragment.class.getSimpleName()));
 
         adapter.setLoadMore(new ILoadMore() {
             @Override

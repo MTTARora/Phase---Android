@@ -25,15 +25,20 @@ public class PlayHub {
 
         hubConnection.onClosed(exception -> {
             if (listener != null)
-                listener.onDisconnected();
+                listener.onDisconnected(200);
         });
 
         hubConnection.start().subscribe(() -> {
             RoraLog.info("Connect hub success");
             listener.onConnected();
         }, throwable -> {
-            RoraLog.info("Connect hub err: - " + throwable.getMessage());
-             listener.onDisconnected();
+            if (throwable.getMessage().contains("401")) {
+                RoraLog.info("Connect hub err: - Your login session has ended, please login again!");
+                listener.onDisconnected(401);
+            } else {
+                RoraLog.info("Connect hub err: - " + throwable.getMessage());
+                listener.onDisconnected(400);
+            }
         });
     }
 

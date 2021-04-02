@@ -21,6 +21,7 @@ import com.rora.phase.R;
 import com.rora.phase.binding.PlatformBinding;
 import com.rora.phase.computers.IdentityManager;
 import com.rora.phase.discovery.DiscoveryService;
+import com.rora.phase.model.Game;
 import com.rora.phase.model.UserPlayingData;
 import com.rora.phase.nvstream.NvConnection;
 import com.rora.phase.nvstream.http.ComputerDetails;
@@ -64,6 +65,8 @@ public class PlayServices extends Service {
     private IdentityManager idManager;
     UserRepository userRepository;
     private PlayHub playHub;
+    private Thread connectThread;
+    private Game currentGame;
 
     private DiscoveryService.DiscoveryBinder discoveryBinder;
     private final ServiceConnection discoveryServiceConnection = new ServiceConnection() {
@@ -96,7 +99,8 @@ public class PlayServices extends Service {
 
     @Override
     public void onCreate() {
-        bindService(new Intent(this, DiscoveryService.class), discoveryServiceConnection, Service.BIND_AUTO_CREATE);
+        if (discoveryBinder == null)
+            bindService(new Intent(this, DiscoveryService.class), discoveryServiceConnection, Service.BIND_AUTO_CREATE);
 
         // Lookup or generate this device's UID
         idManager = new IdentityManager(this);
@@ -166,24 +170,46 @@ public class PlayServices extends Service {
 
     //====================== PLAYING GAME STEPS =========================
 
-    /** Start the progress after getting ip and ports from STEP 1 */
-    public void startConnectProgress(Activity activity, PlayGameProgressCallBack callBack) {
-        Thread connectThread = new Thread(() -> {
+    /**
+     * Start play progress
+     * */
+    public void startConnectProgress(Activity activity, Game game, PlayGameProgressCallBack callBack) {
+        connectThread = new Thread(() -> {
+            this.currentGame = game;
             RoraLog.info("Play game - STEP 1: Start Connecting");
+            listener.onStart(false);
             callBack.onStart(false);
-            playHub = new PlayHub();
+
+
+            //try {
+            //    Thread.sleep(2000);
+            //    state = UserPlayingData.PlayingState.IN_QUEUE;
+            //    callBack.onJoinQueue(1, 1);
+            //    listener.onJoinQueue(1, 1);
+            //} catch (Exception ex) {
+            //
+            //}
+
             //STEP 1: Connect to hub
+            playHub = new PlayHub();
             playHub.startConnect(getApplicationContext(), new PlayHubListener() {
                 @Override
                 public void onConnected() {
+                    listener.onStart(true);
+                    listener.onFindAHost(false);
                     callBack.onStart(true);
                     callBack.onFindAHost(false);
                     //STEP 2: Get host data
+                    RoraLog.info("Play game - STEP 2: Get available host");
                     userRepository.getComputerData((errMsg, response) -> {
+                        listener.onFindAHost(true);
                         callBack.onFindAHost(true);
                         if (errMsg != null) {
-                            playHub.stopConnect();
-                            callBack.onError(errMsg);
+                            RoraLog.warning("Play Game - Error: " + errMsg);
+                            stopConnect(callBack);
+                            //playHub.stopConnect();
+                            //listener.onError(errMsg);
+                            //callBack.onError(errMsg);
                             return;
                         }
 
@@ -191,44 +217,61 @@ public class PlayServices extends Service {
                             try {
                                 //STEP 2.1: Check queue
                                 if (response.queue != null) {
+                                    RoraLog.info("Play game: So many players are playing right now, please wait!");
                                     state = UserPlayingData.PlayingState.IN_QUEUE;
+                                    listener.onJoinQueue(response.queue.getTotal(), response.queue.getCurrentPosition());
                                     callBack.onJoinQueue(response.queue.getTotal(), response.queue.getCurrentPosition());
-//                                    stopConnect(callBack);
-//                                    callBack.onError("So many players are playing right now, please wait!");
+                                    //stopConnect(callBack);
+                                    //listener.onError("So many players are playing right now, please wait!");
+                                    //callBack.onError("So many players are playing right now, please wait!");
                                     return;
                                 }
 
                                 //STEP 3: Add pc
+                                RoraLog.info("Play game - STEP 3: Add computer -- " + response.host.getPublicIP());
+                                listener.onAddPc(false);
                                 callBack.onAddPc(false);
                                 String err = addPc(new ComputerDetails(response.host));
                                 if (err != null) {
-                                    callBack.onError(err);
+                                    RoraLog.info("Play Game - Error: " + err);
+                                    //listener.onError(err);
+                                    //callBack.onError(err);
                                     stopConnect(callBack);
                                     return;
                                 }
+                                listener.onAddPc(true);
                                 callBack.onAddPc(true);
                                 Thread.sleep(1000);
 
                                 //STEP 4: Pair
+                                RoraLog.info("Play game - STEP 4: Start pairing");
+                                listener.onPairPc(false);
                                 callBack.onPairPc(false);
                                 err = startPairing(callBack);
                                 if (err != null) {
+                                    RoraLog.info("Play Game - Error: " + err);
                                     if (err.equals(getApplication().getResources().getString(R.string.pair_pc_ingame)))
                                         stopConnect(callBack);
-                                    callBack.onError(err);
+                                    //listener.onError(err);
+                                    //callBack.onError(err);
                                     return;
                                 }
+                                listener.onPairPc(true);
                                 callBack.onPairPc(true);
                                 Thread.sleep(1000);
 
                                 //STEP 5: Play
+                                RoraLog.info("Play game - STEP 5: Start remote connect");
+                                listener.onStartConnect(false);
                                 callBack.onStartConnect(false);
                                 start(activity, binder);
+                                listener.onStartConnect(true);
                                 callBack.onStartConnect(true);
                             } catch (InterruptedException e) {
-                                RoraLog.info("Playing Game - Connecting error -- " + e.getMessage());
+                                RoraLog.info("Play Game - Error: " + e.getMessage());
                                 stopConnect(callBack);
-                                callBack.onError(getApplication().getResources().getString(R.string.undetected_error));
+                                //listener.onError(getApplication().getResources().getString(R.string.undetected_error));
+                                //callBack.onError(getApplication().getResources().getString(R.string.undetected_error));
                             }
                         });
                         thread.start();
@@ -236,8 +279,14 @@ public class PlayServices extends Service {
                 }
 
                 @Override
-                public void onDisconnected() {
-                    callBack.onError(getApplication().getResources().getString(R.string.undetected_error));
+                public void onDisconnected(int code) {
+                    if (code == 401) {
+                        userRepository.signOut();
+                        listener.onError("Your login session has ended, please login again!");
+                    }
+                    RoraLog.info("Play Game - Hub disconnected or can't connect!");
+                    //listener.onError(getApplication().getResources().getString(R.string.undetected_error));
+                    //callBack.onError(getApplication().getResources().getString(R.string.undetected_error));
                     stopConnect(callBack);
                 }
             });
@@ -253,7 +302,6 @@ public class PlayServices extends Service {
      * @return An error msg if failed
      * */
     private String addPc(ComputerDetails computerDetails) {
-        RoraLog.info("Playing game - STEP 2: Add computer -- " + computerDetails.toString());
         String err = null;
         try {
             boolean success = computerServices.addComputerBlocking(computerDetails);
@@ -276,7 +324,6 @@ public class PlayServices extends Service {
      * @return An error msg if failed
      * */
     private String startPairing(PlayGameProgressCallBack callBack) {
-        RoraLog.info("Playing game - STEP 3: Start pairing");
         String err = computerServices.checkPairCondition(pollingTuple.computer, binder);
 
         try {
@@ -298,8 +345,8 @@ public class PlayServices extends Service {
             RoraLog.info("Pairing - Waiting for pin confirmation: " + pinStr);
             userRepository.sendPinToHost(pinStr, pollingTuple.computer.hostId, (errMsg, data) -> {
                 if (errMsg != null) {
+                    RoraLog.info("Play Game - Error: " + errMsg);
                     stopConnect(callBack);
-                    callBack.onError(errMsg);
                 }
             });
 
@@ -345,7 +392,6 @@ public class PlayServices extends Service {
     /** STEP 5: Start remote connect
      * */
     private void start(Activity activity, PlayServices.ComputerManagerBinder managerBinder) {
-        RoraLog.info("Playing game - STEP 4: Start remote connect");
         ServerHelper.doStart(activity, NvApp.initRemoteApp(), pollingTuple.computer, managerBinder);
     }
 
@@ -358,23 +404,27 @@ public class PlayServices extends Service {
     /** Use this method in a thread
      * @return An error msg if failed
      * */
-    public void stopConnect(PlayGameProgressCallBack playProgressCallBack) {
-        playProgressCallBack.onStopConnect(false);
-        playHub.stopConnect();
-        if (pollingTuple == null || pollingTuple.computer == null) {
-            RoraLog.info("Stop connect - Error: Couldn't find local data");
-            playProgressCallBack.onStopConnect(true);
+    public void stopConnect(PlayGameProgressCallBack callBack) {
+        if (state == UserPlayingData.PlayingState.IDLE)
             return;
-        }
+
+        RoraLog.info("Play game: Stop connecting");
+        listener.onStopConnect(false);
+        callBack.onStopConnect(false);
+        connectThread.interrupt();
+        connectThread = null;
+        playHub.stopConnect();
 
         state = UserPlayingData.PlayingState.IDLE;
+        currentGame = null;
         pollingTuple = null;
-        listener = null;
+        //listener = null;
         unbindService(discoveryServiceConnection);
         bindService(new Intent(this, DiscoveryService.class), discoveryServiceConnection, Service.BIND_AUTO_CREATE);
 
-        RoraLog.info("Stop connect - Success");
-        playProgressCallBack.onStopConnect(true);
+        RoraLog.info("Play game - Stop connect success");
+        listener.onStopConnect(true);
+        callBack.onStopConnect(true);
     }
 
     //===================================================================
@@ -394,8 +444,8 @@ public class PlayServices extends Service {
         private static final int POLL_DATA_TTL_MS = 30000;
         private static final int MDNS_QUERY_PERIOD_MS = 1000;
 
-        public void startConnectProgress(Activity activity, PlayGameProgressCallBack playProgressCallBack) {
-            PlayServices.this.startConnectProgress(activity, playProgressCallBack);
+        public void startConnectProgress(Activity activity, Game selectedGame, PlayGameProgressCallBack playProgressCallBack) {
+            PlayServices.this.startConnectProgress(activity, selectedGame, playProgressCallBack);
         }
 
         public void stopConnect(PlayGameProgressCallBack playProgressCallBack) {
@@ -407,7 +457,7 @@ public class PlayServices extends Service {
                 return;
 
             RoraLog.info("Start updating computer");
-            PlayServices.this.listener = listener;
+            //PlayServices.this.listener = listener;
 
             // Start mDNS auto discovery too
             discoveryBinder.startDiscovery(MDNS_QUERY_PERIOD_MS);
@@ -451,6 +501,14 @@ public class PlayServices extends Service {
 
         public UserPlayingData.PlayingState getCurrentState() {
             return PlayServices.this.getCurrentState();
+        }
+
+        public void setListener(PlayGameProgressCallBack callBack) {
+            PlayServices.this.listener = callBack;
+        }
+
+        public Game getCurrentGame() {
+            return PlayServices.this.currentGame;
         }
 
     }
@@ -579,8 +637,8 @@ public class PlayServices extends Service {
             }
 
             // Don't call the listener if this is a failed lookup of a new PC
-            if ((!newPc || details.state == ComputerDetails.State.ONLINE) && listener != null)
-                listener.onComputerUpdated(details);
+//            if ((!newPc || details.state == ComputerDetails.State.ONLINE) && listener != null)
+//                listener.onComputerUpdated(details);
 
             return true;
         }

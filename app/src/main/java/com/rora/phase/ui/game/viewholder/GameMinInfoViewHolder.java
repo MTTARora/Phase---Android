@@ -42,7 +42,7 @@ public class GameMinInfoViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bindData(Game game) {
-        MediaHelper.loadImage(game.getBackground(), imvBanner);
+        MediaHelper.loadImage(imvBanner, game.getBackground());
         tvGameName.setText(game.getName());
         tvPayType.setText(game.getPayTypeName());
         switch (game.getPayTypeId()) {
@@ -70,7 +70,7 @@ public class GameMinInfoViewHolder extends RecyclerView.ViewHolder {
 
         itemView.setOnClickListener(v -> {
             if (onItemSelectedListener != null)
-                onItemSelectedListener.onSelected(game.getId().toString());
+                onItemSelectedListener.onSelected(game);
         });
     }
 

@@ -92,7 +92,7 @@ class PlatformViewHolder extends RecyclerView.ViewHolder {
                 break;
         }
 
-        MediaHelper.loadSvg(srcId, imvPlatform);
+        MediaHelper.loadSvg(imvPlatform, srcId);
     }
 
 }

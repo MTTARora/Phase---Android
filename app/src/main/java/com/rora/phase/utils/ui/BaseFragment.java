@@ -2,6 +2,7 @@ package com.rora.phase.utils.ui;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -34,6 +35,7 @@ public abstract class BaseFragment extends Fragment {
     private LinearLayout customActionBar;
 
     public boolean stopUpDateHomeScreen = false;
+    private FragmentManager fm;
     private Fragment currentFragment;
 
     @Override
@@ -49,6 +51,8 @@ public abstract class BaseFragment extends Fragment {
 
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
         setNavsVisibility(this);
+
+        initData();
     }
 
     @Override
@@ -56,14 +60,11 @@ public abstract class BaseFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         view.findViewById(R.id.back_btn).setOnClickListener(v -> onBackPressed());
-
-        //setActionbarVisibility();
     }
 
     private void onBackPressed() {
-        FragmentManager fm = getParentFragmentManager();
-
         Fragment previousFrag = null;
+
         if (fm.getBackStackEntryCount() > 1) {
             String tag = (fm.getBackStackEntryAt(fm.getBackStackEntryCount()-2)).getName();
             previousFrag = fm.findFragmentByTag(tag);
@@ -71,16 +72,26 @@ public abstract class BaseFragment extends Fragment {
 
         if (previousFrag == null) {
             stopUpDateHomeScreen = false;
-//            setNavsVisibility(previousFrag);
+            setNavsVisibility(null);
+            ((MainActivity)getActivity()).updateQueue(VISIBLE, GONE);
         }
         fm.popBackStack();
+    }
+
+    private void initData() {
+        fm = getActivity().getSupportFragmentManager();
+        int count = fm.getBackStackEntryCount();
+        if (count == 0)
+            return;
+        String currentFragTag = fm.getBackStackEntryAt(fm.getBackStackEntryCount()-1).getName();
+        currentFragment = fm.findFragmentByTag(currentFragTag);
     }
 
     public void moveTo(Fragment newFragment, @Nullable String backStackName) {
         showLoadingScreen();
 
         currentFragment = newFragment;
-        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        FragmentTransaction transaction = fm.beginTransaction();
         transaction.setCustomAnimations(
                 R.anim.screen_fadein,  // enter
                 R.anim.screen_fadeout,  // exit
@@ -91,6 +102,9 @@ public abstract class BaseFragment extends Fragment {
         transaction.addToBackStack(backStackName);
         transaction.commit();
     }
+
+
+    //----------------------------- ACTIONBAR --------------------------------
 
     public void showActionbar(View root, String title, boolean enableBackBtn) {
         customActionBar = root.findViewById(R.id.custom_toolbar);
@@ -131,6 +145,9 @@ public abstract class BaseFragment extends Fragment {
         }
     }
 
+    //------------------------------------------------------------------------------------
+
+
     public void showLoadingScreen() {
         (getActivity().findViewById(R.id.main_loading_view)).setVisibility(VISIBLE);
     }
@@ -144,11 +161,10 @@ public abstract class BaseFragment extends Fragment {
         }
     }
 
-    //------------------------------------------------------
-
     private void setNavsVisibility(Fragment newFragment) {
-        setBottomNavVisibility(newFragment);
-//        setActionbarVisibility(newFragment);
+        //setBottomNavVisibility(newFragment);
+        //setActionbarVisibility(newFragment);
+        setQueueFrameVisibility();
     }
 
     private void setActionbarVisibility(Fragment newFragment) {
@@ -163,6 +179,11 @@ public abstract class BaseFragment extends Fragment {
     }
 
     private void setBottomNavVisibility(Fragment newFragment) {
+        if (fm.getBackStackEntryCount() == 0) {
+            MainActivity.setBottomNavigationVisibility(VISIBLE);
+            return;
+        }
+
         if (newFragment instanceof GameDetailFragment
                 || newFragment instanceof GameListFragment) {
             MainActivity.setBottomNavigationVisibility(GONE);
@@ -170,6 +191,13 @@ public abstract class BaseFragment extends Fragment {
         else {
             MainActivity.setBottomNavigationVisibility(VISIBLE);
         }
+    }
+
+    private void setQueueFrameVisibility() {
+        if (currentFragment == null)
+            ((MainActivity) getActivity()).updateQueue(VISIBLE, GONE);
+        else
+            ((MainActivity) getActivity()).updateQueue(GONE, VISIBLE);
     }
 
 }

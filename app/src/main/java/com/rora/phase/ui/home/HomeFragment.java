@@ -21,6 +21,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.rora.phase.R;
+import com.rora.phase.model.Game;
 import com.rora.phase.model.enums.PayTypeEnum;
 import com.rora.phase.ui.adapter.BannerVPAdapter;
 import com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter;
@@ -152,11 +153,11 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         setupGameRecyclerView(rclvDiscover, new GameMinInfoRecyclerViewAdapter(GameMinInfoRecyclerViewAdapter.VIEW_TYPE_NORMAL, 0), ViewHelper.getLayoutManager(getActivity(), 2, 0));
 
         CategoryRecyclerViewAdapter categoryAdapter =  new CategoryRecyclerViewAdapter(0.24, NORMAL_SIZE, true,
-                selectedItemId -> goToGameListScreen(selectedItemId, HomeViewModel.GameListType.BY_CATEGORY, selectedItemId));
+                selectedItemId -> goToGameListScreen((String)selectedItemId, HomeViewModel.GameListType.BY_CATEGORY, (String)selectedItemId));
         setupRecyclerView(rclvCategory, categoryAdapter, new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
         CategoryRecyclerViewAdapter categoryDiscoveryAdapter =  new CategoryRecyclerViewAdapter(0, MEDIUM_SIZE, false,
-                selectedItemId -> homeViewModel.getGamesDataByType(HomeViewModel.GameListType.BY_CATEGORY, selectedItemId));
+                selectedItemId -> homeViewModel.getGamesDataByType(HomeViewModel.GameListType.BY_CATEGORY, (String) selectedItemId));
         setupRecyclerView(rclvCategoryDiscover, categoryDiscoveryAdapter, ViewHelper.getLayoutManager(getActivity(), 5, 0));
     }
 
@@ -264,7 +265,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         view.setLayoutManager(layoutManager);
         view.setHasFixedSize(true);
 
-        adapter.setOnItemSelectedListener(selectedItemId -> moveTo(GameDetailFragment.newInstance(selectedItemId), GameDetailFragment.class.getSimpleName()));
+        adapter.setOnItemSelectedListener(selectedItem -> moveTo(GameDetailFragment.newInstance((Game) selectedItem), GameDetailFragment.class.getSimpleName()));
     }
 
     private void setupRecyclerView(RecyclerView view, RecyclerView.Adapter adapter, RecyclerView.LayoutManager layoutManager) {

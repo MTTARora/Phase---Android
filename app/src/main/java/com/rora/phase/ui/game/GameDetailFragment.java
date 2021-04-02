@@ -5,11 +5,11 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +34,7 @@ import com.rora.phase.utils.MediaHelper;
 import com.rora.phase.utils.ui.BaseFragment;
 import com.rora.phase.utils.ui.ViewHelper;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,13 +49,13 @@ public class GameDetailFragment extends BaseFragment {
     private ImageButton btnFavorite;
 
     private GameViewModel gameViewModel;
-    private String gameId;
+    private Game game;
 
-    public static final String KEY_GAME_ID = "gameId";
+    public static final String KEY_GAME = "game";
 
-    public static GameDetailFragment newInstance(String gameId) {
+    public static GameDetailFragment newInstance(Game game) {
         Bundle args = new Bundle();
-        args.putString(KEY_GAME_ID, gameId);
+        args.putParcelable(KEY_GAME, game);
         GameDetailFragment fragment = new GameDetailFragment();
         fragment.setArguments(args);
 
@@ -68,7 +69,7 @@ public class GameDetailFragment extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         gameViewModel = new ViewModelProvider(this).get(GameViewModel.class);
         if (getArguments() != null) {
-            gameId = getArguments().getString(KEY_GAME_ID);
+            game = (Game) getArguments().getParcelable(KEY_GAME);
         }
 
         View root = inflater.inflate(R.layout.fragment_game_detail, container, false);
@@ -120,7 +121,9 @@ public class GameDetailFragment extends BaseFragment {
                 return;
             }
 
-            getActivity().startActivity(new Intent(getContext(), LoadingGameActivity.class));
+            Intent playIntent = new Intent(getContext(), LoadingGameActivity.class);
+            playIntent.putExtra(KEY_GAME, game.toJson());
+            getActivity().startActivity(playIntent);
         });
 
         btnFavorite.setOnClickListener(v -> {
@@ -131,11 +134,14 @@ public class GameDetailFragment extends BaseFragment {
 
     private void initData() {
         gameViewModel.getGameData().observe(getViewLifecycleOwner(), this::bindData);
-        gameViewModel.getGame(gameId);
+        gameViewModel.getGame(game.getId().toString());
+        //if (game != null)
+        //    bindData(game);
     }
 
     private void bindData(Game game) {
-        MediaHelper.loadImage(game.getBanner(), imvBanner);
+        this.game = game;
+        MediaHelper.loadImage(imvBanner, game.getBanner());
 
         tvGameName.setText(game.getName());
         tvPayType.setText(game.getPayTypeName());

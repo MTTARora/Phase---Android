@@ -18,6 +18,7 @@ import androidx.fragment.app.FragmentActivity;
 import com.rora.phase.RoraLog;
 import com.rora.phase.R;
 import com.rora.phase.binding.crypto.AndroidCryptoProvider;
+import com.rora.phase.model.Game;
 import com.rora.phase.nvstream.http.ComputerDetails;
 import com.rora.phase.preferences.GlPreferences;
 import com.rora.phase.utils.Dialog;
@@ -27,6 +28,8 @@ import com.rora.phase.utils.services.PlayServices;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
+
+import static com.rora.phase.ui.game.GameDetailFragment.KEY_GAME;
 
 public class LoadingGameActivity extends FragmentActivity {
 
@@ -154,7 +157,8 @@ public class LoadingGameActivity extends FragmentActivity {
     }
 
     private void startConnect() {
-        managerBinder.startConnectProgress(this, playProgressCallBack);
+        Game game =  Game.fromJson((getIntent().getStringExtra(KEY_GAME)));
+        managerBinder.startConnectProgress(this, game, playProgressCallBack);
     }
 
     private void stopConnect() {
@@ -176,8 +180,6 @@ public class LoadingGameActivity extends FragmentActivity {
 
         @Override
         public void onJoinQueue(int total, int position) {
-//            Dialog.displayDialog(getParent(), "So many players are playing right now, please wait!", position + "/" + total, () -> stopConnect());
-//            LoadingGameActivity.this.runOnUiThread(() -> Toast.makeText(getApplicationContext(), position + "/" + total, Toast.LENGTH_LONG).show());
             LoadingGameActivity.this.finish();
         }
 
