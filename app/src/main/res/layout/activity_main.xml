@@ -17,31 +17,44 @@
         app:navGraph="@navigation/mobile_navigation" />
 
     <!--QUEUE-->
-    <com.rora.phase.ui.game.QueueView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/frame_queue_main"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:background="@color/colorAccent"
         android:padding="@dimen/medium_space"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/bottom_nav_view"
-        app:layout_constraintHeight_percent=".1">
+        app:layout_constraintBottom_toTopOf="@id/bottom_nav_view">
 
-        <ImageView
+        <carbon.widget.ImageView
             android:id="@+id/game_banner_queue_main_imv"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:scaleType="fitXY"
             android:src="@drawable/banner_test"
+            app:carbon_cornerRadius="@dimen/medium_radius"
+            app:layout_constraintBottom_toBottomOf="@id/frame_info_queue_main"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/frame_info_queue_main"
             app:layout_constraintWidth_percent=".15" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:id="@+id/frame_info_queue_main"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/medium_space"
             android:orientation="vertical"
-            app:layout_constraintStart_toEndOf="@id/game_banner_queue_main_imv">
+            app:layout_constraintEnd_toStartOf="@id/end_queue_main_btn"
+            app:layout_constraintStart_toEndOf="@+id/game_banner_queue_main_imv"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/tv_game_name_queue_main"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:lines="2"
+                android:text="PUBG" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -53,18 +66,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="1/100"
-                android:textSize="@dimen/header_text_size" />
+                android:textSize="@dimen/title_text_size" />
         </LinearLayout>
 
         <ImageButton
             android:id="@+id/end_queue_main_btn"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:background="@android:color/transparent"
             android:src="@android:drawable/presence_offline"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_percent=".1" />
-    </com.rora.phase.ui.game.QueueView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav_view"
@@ -86,7 +101,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <include
-        android:id="@+id/frame_queue"
+        android:id="@id/frame_queue"
         layout="@layout/fragment_play_queue"
         android:visibility="gone" />
 

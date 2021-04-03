@@ -81,4 +81,7 @@ public class UserViewModel extends AndroidViewModel {
         return new User(userRepository.getUserToken());
     }
 
+    public void resetPlayData() {
+        userRepository.storeCurrentGame(null);
+    }
 }

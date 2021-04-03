@@ -179,6 +179,7 @@ public class PlayServices extends Service {
 
         connectThread = new Thread(() -> {
             this.currentGame = game;
+            userRepository.storeCurrentGame(game);
             RoraLog.info("Play game - STEP 1: Start Connecting");
             listener.onStart(false);
             callBack.onStart(false);
@@ -418,10 +419,9 @@ public class PlayServices extends Service {
         connectThread.interrupt();
         connectThread = null;
         playHub.stopConnect();
-
-        state = UserPlayingData.PlayingState.IDLE;
         currentGame = null;
         pollingTuple = null;
+        userRepository.storeCurrentGame(null);
         //listener = null;
         unbindService(discoveryServiceConnection);
         bindService(new Intent(this, DiscoveryService.class), discoveryServiceConnection, Service.BIND_AUTO_CREATE);
@@ -430,6 +430,8 @@ public class PlayServices extends Service {
         listener.onStopConnect(true);
         if (callBack != null)
             callBack.onStopConnect(true);
+
+        state = UserPlayingData.PlayingState.IDLE;
     }
 
     //===================================================================

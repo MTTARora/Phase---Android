@@ -254,6 +254,17 @@ public class UserRepository {
         dbSharedPref.saveUserPlayState(state.id);
     }
 
+    public void storeCurrentGame(Game game) {
+        dbSharedPref.setCurrentGame(game == null ? null : game.toJson());
+    }
+
+    public Game getCurrentGame() {
+        String jsonGame = dbSharedPref.getCurrentGame();
+        Game game = Game.fromJson(jsonGame);
+
+        return game;
+    }
+
     //----------------------------------------------------------------------------------------
 
 }

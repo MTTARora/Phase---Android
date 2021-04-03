@@ -1,6 +1,8 @@
 package com.rora.phase.ui.game;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,7 +12,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Parcelable;
+import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +25,8 @@ import com.rora.phase.R;
 import com.rora.phase.model.Banner;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.Screenshot;
+import com.rora.phase.model.User;
+import com.rora.phase.repository.UserRepository;
 import com.rora.phase.ui.adapter.BannerVPAdapter;
 import com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter;
 import com.rora.phase.ui.adapter.GameMinInfoRecyclerViewAdapter;
@@ -32,10 +36,11 @@ import com.rora.phase.ui.settings.auth.SignInActivity;
 import com.rora.phase.ui.viewmodel.GameViewModel;
 import com.rora.phase.utils.DateTimeHelper;
 import com.rora.phase.utils.MediaHelper;
+import com.rora.phase.utils.services.PlayServices;
+import com.rora.phase.utils.services.PlayServicesMessageSender;
 import com.rora.phase.utils.ui.BaseFragment;
 import com.rora.phase.utils.ui.ViewHelper;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,11 +52,11 @@ public class GameDetailFragment extends BaseFragment {
     private ImageView imvBanner;
     private RecyclerView rclvPlatform, rclvCategory, rclvScreenshot, rclvSeries, rclvSimilar;
     private TextView tvGameName, tvPayType, tvAgeRating, tvRelease, tvDesc;
-    private ImageButton btnFavorite;
+    private ImageButton btnFavorite, btnPlay;
 
     private GameViewModel gameViewModel;
     private Game game;
-    private boolean isSelectedGame;
+    private boolean isPlayingGame;
 
     public static final String KEY_GAME = "game";
 
@@ -69,9 +74,9 @@ public class GameDetailFragment extends BaseFragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        gameViewModel = new ViewModelProvider(this).get(GameViewModel.class);
+        gameViewModel = new ViewModelProvider(requireActivity()).get(GameViewModel.class);
         if (getArguments() != null) {
-            game = (Game) getArguments().getParcelable(KEY_GAME);
+            game = getArguments().getParcelable(KEY_GAME);
         }
 
         View root = inflater.inflate(R.layout.fragment_game_detail, container, false);
@@ -93,10 +98,20 @@ public class GameDetailFragment extends BaseFragment {
         tvDesc = root.findViewById(R.id.game_desc_tv);
 
         btnFavorite = root.findViewById(R.id.favorite_btn);
+        btnPlay = root.findViewById(R.id.play_btn);
 
         initView(root);
         initData();
         return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        Game currentPlayingGame = UserRepository.newInstance(getContext()).getCurrentGame();
+        isPlayingGame = currentPlayingGame != null && (currentPlayingGame.getId() == game.getId());
+        btnPlay.setImageResource(isPlayingGame ? android.R.drawable.ic_lock_power_off : R.drawable.ic_play);
     }
 
     //---------------------------------------------------------------------------------------
@@ -115,7 +130,12 @@ public class GameDetailFragment extends BaseFragment {
         rclvSimilar.setAdapter(adapter);
 
         root.findViewById(R.id.back_btn).setOnClickListener(v -> getActivity().onBackPressed());
-        root.findViewById(R.id.play_btn).setOnClickListener(v -> {
+        btnPlay.setOnClickListener(v -> {
+            if (isPlayingGame) {
+                playServicesMsgSenderCallback.sendMessage(PlayServicesMessageSender.MsgCode.STOP);
+                return;
+            }
+
             if (!gameViewModel.isUserLogged()) {
                 Intent intent = new Intent(getActivity(), SignInActivity.class);
                 intent.putExtra(SignInActivity.START_IN_APP_PARAM, true);
@@ -136,18 +156,21 @@ public class GameDetailFragment extends BaseFragment {
 
     private void initData() {
         gameViewModel.getGameData().observe(getViewLifecycleOwner(), this::bindData);
+
         gameViewModel.getGame(game.getId().toString());
-        gameViewModel.getCurrentGame().observe(getViewLifecycleOwner(), new Observer<Game>() {
-            @Override
-            public void onChanged(Game game) {
-                isSelectedGame = game.getId() == game.getId();
-            }
+        gameViewModel.getCurrentGame().observe(getViewLifecycleOwner(), game -> {
+            isPlayingGame = game != null;
+
+            btnPlay.setImageResource(isPlayingGame ? android.R.drawable.ic_lock_power_off : R.drawable.ic_play);
         });
         //if (game != null)
         //    bindData(game);
     }
 
     private void bindData(Game game) {
+        if (this.game.getId() != game.getId()) //Handle stupid err - duplicate response from live data
+            return;
+
         this.game = game;
         MediaHelper.loadImage(imvBanner, game.getBanner());
 

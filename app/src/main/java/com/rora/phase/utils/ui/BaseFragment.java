@@ -1,8 +1,8 @@
 package com.rora.phase.utils.ui;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -10,20 +10,15 @@ import android.widget.TextView;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 
 import com.rora.phase.MainActivity;
 import com.rora.phase.R;
 import com.rora.phase.ui.game.GameDetailFragment;
 import com.rora.phase.ui.game.GameListFragment;
 import com.rora.phase.ui.home.HomeFragment;
+import com.rora.phase.utils.services.PlayServicesMessageSender;
 
 import javax.annotation.Nullable;
 
@@ -37,6 +32,17 @@ public abstract class BaseFragment extends Fragment {
     public boolean stopUpDateHomeScreen = false;
     private FragmentManager fm;
     private Fragment currentFragment;
+    protected PlayServicesMessageSender.Sender playServicesMsgSenderCallback;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            playServicesMsgSenderCallback = (PlayServicesMessageSender.Sender) context;
+        } catch (ClassCastException e) {
+            // Error, class doesn't implement the interface
+        }
+    }
 
     @Override
     public void onCreate(@androidx.annotation.Nullable Bundle savedInstanceState) {
@@ -60,6 +66,12 @@ public abstract class BaseFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         view.findViewById(R.id.back_btn).setOnClickListener(v -> onBackPressed());
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        playServicesMsgSenderCallback = null;
     }
 
     private void onBackPressed() {

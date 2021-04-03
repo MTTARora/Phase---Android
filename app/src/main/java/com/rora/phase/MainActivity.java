@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,22 +27,24 @@ import com.rora.phase.model.Game;
 import com.rora.phase.model.UserPlayingData;
 import com.rora.phase.nvstream.http.ComputerDetails;
 import com.rora.phase.ui.game.GameDetailFragment;
-import com.rora.phase.ui.game.QueueView;
 import com.rora.phase.ui.settings.auth.SignInActivity;
 import com.rora.phase.ui.viewmodel.GameViewModel;
-import com.rora.phase.ui.viewmodel.UserViewModel;
 import com.rora.phase.utils.MediaHelper;
 import com.rora.phase.utils.callback.PlayGameProgressCallBack;
 import com.rora.phase.utils.services.PlayServices;
+import com.rora.phase.utils.services.PlayServicesMessageSender;
 import com.rora.phase.utils.ui.FragmentManagerHelper;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements PlayServicesMessageSender.Sender {
 
     public static BottomNavigationView bottomNavView;
-    private QueueView queueViewMain, queueView;
+    private ConstraintLayout queueViewMain;
+    private ConstraintLayout queueView;
+    private ImageView imvQueueMain, imvQueue;
+    private TextView tvQueueMain, tvQueue, tvGameNameMain, tvGameName;
 
     private GameViewModel gameViewModel;
     private MenuItem currentBottomTab;
@@ -79,22 +80,21 @@ public class MainActivity extends AppCompatActivity {
 
         gameViewModel = new ViewModelProvider(this).get(GameViewModel.class);
         bottomNavView = findViewById(R.id.bottom_nav_view);
-        queueViewMain = new QueueView(this);
-        queueView = new QueueView(this);
+        queueViewMain = findViewById(R.id.frame_queue_main);
+        queueView = findViewById(R.id.frame_queue);
+        imvQueueMain = findViewById(R.id.game_banner_queue_main_imv);
+        imvQueue = findViewById(R.id.game_banner_queue_imv);
+        tvQueueMain = findViewById(R.id.queue_main_tv);
+        tvQueue = findViewById(R.id.queue_tv);
+        tvGameNameMain = findViewById(R.id.tv_game_name_queue_main);
+        tvGameName = findViewById(R.id.tv_game_name_queue);
 
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
-                .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        //NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(bottomNavView, navController);
-
-        //navController.addOnDestinationChangedListener(this);
 
         bottomMenu = (new PopupMenu(this, null)).getMenu();
         getMenuInflater().inflate(R.menu.bottom_nav_menu, bottomMenu);
         currentBottomTab = bottomMenu.getItem(0);
-        //bottomNavView.setOnNavigationItemSelectedListener(this);
 
         Intent serviceIntent = new Intent(this, PlayServices.class);
         startService(serviceIntent);
@@ -197,11 +197,26 @@ public class MainActivity extends AppCompatActivity {
     //---------------------------------- PLAY QUEUE ----------------------------------
 
     private void binQueueData(int total, int currentPos) {
-        if (managerBinder == null)
+        if (managerBinder == null || managerBinder.getCurrentGame() == null)
             return;
 
+        Game game = managerBinder.getCurrentGame();
         gameViewModel.setCurrentGame(managerBinder.getCurrentGame());
-        queueView.bindData(total, currentPos, managerBinder.getCurrentGame());
+        if (total == 0) {
+            tvQueueMain.setText("--/0");
+            MediaHelper.loadImage(imvQueueMain, null);
+            tvQueue.setText("--/0");
+            MediaHelper.loadImage(imvQueue, null);
+            tvGameNameMain.setText("");
+            tvGameName.setText("");
+        } else {
+            tvQueueMain.setText(currentPos + "/" + total);
+            MediaHelper.loadImage(imvQueueMain, game.getBanner());
+            tvQueue.setText(currentPos + "/" + total);
+            MediaHelper.loadImage(imvQueue, game.getBanner());
+            tvGameNameMain.setText(game.getName());
+            tvGameName.setText(game.getName());
+        }
     }
 
     public void updateQueue(int visibilityMainFrame, int visibility) {
@@ -214,9 +229,6 @@ public class MainActivity extends AppCompatActivity {
 
             int count = getSupportFragmentManager().getBackStackEntryCount();
 
-            //if (count != 0 && visibility == VISIBLE) {
-            //} else
-            //    queueView.setVisibility(GONE);
             queueView.setVisibility((count != 0 && visibility == VISIBLE) ? visibility : GONE);
 
         });
@@ -267,8 +279,11 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onStopConnect(boolean isDone) {
+            if (!isDone)
+                return;
             updateQueue(GONE, GONE);
             binQueueData(0, 0);
+            gameViewModel.setCurrentGame(null);
         }
 
         @Override
@@ -281,4 +296,17 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+    @Override
+    public void sendMessage(PlayServicesMessageSender.MsgCode code) {
+        switch (code) {
+            case PLAY:
+                break;
+            case STOP:
+                managerBinder.stopConnect(playGameProgressCallBack);
+                break;
+            default:
+                break;
+        }
+    }
 }

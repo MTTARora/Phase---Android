@@ -25,6 +25,7 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         UserViewModel userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+        userViewModel.resetPlayData();
 
         Intent intent;
         if (userViewModel.isUserLogged()) {
