@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
@@ -101,11 +102,29 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
         bindService(serviceIntent, serviceConnection, BIND_AUTO_CREATE);
 
         queueViewMain.setOnClickListener(v -> {
-            FragmentManagerHelper.replace(getSupportFragmentManager(), R.id.main_container, GameDetailFragment.newInstance(managerBinder.getCurrentGame()), null);
+            goToGameDetails();
+            //FragmentManagerHelper.replace(getSupportFragmentManager(), R.id.main_container, GameDetailFragment.newInstance(managerBinder.getCurrentGame()), null);
         });
-        queueView.setOnClickListener(v -> FragmentManagerHelper.replace(getSupportFragmentManager(), R.id.main_container, GameDetailFragment.newInstance(managerBinder.getCurrentGame()), null));
+        queueView.setOnClickListener(v -> {
+            goToGameDetails();
+            //FragmentManagerHelper.replace(getSupportFragmentManager(), R.id.main_container, GameDetailFragment.newInstance(managerBinder.getCurrentGame()), null);
+        });
         findViewById(R.id.end_queue_main_btn).setOnClickListener(v -> managerBinder.stopConnect(null));
         findViewById(R.id.end_queue_btn).setOnClickListener(v -> managerBinder.stopConnect(null));
+    }
+
+    private void goToGameDetails() {
+        Fragment currentDisplayScreen = FragmentManagerHelper.getCurrentFrag(getSupportFragmentManager(), R.id.main_container);
+        if (currentDisplayScreen != null && currentDisplayScreen instanceof GameDetailFragment) {
+            if(((GameDetailFragment) currentDisplayScreen).getCurrentGameId() != managerBinder.getCurrentGame().getId()) {
+                getSupportFragmentManager().popBackStack();
+                FragmentManagerHelper.replace(getSupportFragmentManager(), R.id.main_container, GameDetailFragment.newInstance(managerBinder.getCurrentGame()), GameDetailFragment.class.getSimpleName());
+            }
+
+            return;
+        }
+
+        FragmentManagerHelper.replace(getSupportFragmentManager(), R.id.main_container, GameDetailFragment.newInstance(managerBinder.getCurrentGame()), GameDetailFragment.class.getSimpleName());
     }
 
     @Override

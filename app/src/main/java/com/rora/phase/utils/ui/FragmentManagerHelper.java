@@ -10,6 +10,17 @@ import javax.annotation.Nullable;
 
 public class FragmentManagerHelper {
 
+    public static Fragment getCurrentFrag(FragmentManager fm, int containerViewId) {
+        Fragment fragment = null;
+        int count = fm.getBackStackEntryCount();
+        if (count != 0) {
+            String tag = fm.getBackStackEntryAt(count - 1).getName();
+            fragment = fm.findFragmentByTag(tag);
+        }
+
+        return fragment;
+    }
+
     public static void replace(FragmentManager fm, int containerViewId, Fragment destFrag, @Nullable String backStackName) {
         FragmentTransaction transaction = fm.beginTransaction();
 

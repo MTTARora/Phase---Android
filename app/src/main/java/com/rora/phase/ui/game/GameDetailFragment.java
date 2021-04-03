@@ -206,4 +206,8 @@ public class GameDetailFragment extends BaseFragment {
         view.setHasFixedSize(true);
     }
 
+    public int getCurrentGameId() {
+        return game.getId();
+    }
+
 }
