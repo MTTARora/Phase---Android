@@ -18,7 +18,6 @@
             android:minHeight="@dimen/banner_height"
             android:scaleType="fitXY"
             app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/banner_test"
             app:carbon_cornerRadiusBottomStart="@dimen/maxxx_radius"
             app:carbon_cornerRadiusBottomEnd="@dimen/maxxx_radius"/>
 
@@ -50,7 +49,7 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="2"
-                    android:text="PUBG"
+                    android:text="--"
                     android:textSize="@dimen/title_text_size"
                     android:textStyle="bold"/>
 

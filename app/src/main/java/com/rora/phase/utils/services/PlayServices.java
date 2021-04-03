@@ -286,6 +286,7 @@ public class PlayServices extends Service {
                 public void onDisconnected(int code) {
                     if (code == 401) {
                         userRepository.signOut();
+                        callBack.onError("login ended");
                         listener.onError("Your login session has ended, please login again!");
                     }
                     RoraLog.info("Play Game - Hub disconnected or can't connect!");

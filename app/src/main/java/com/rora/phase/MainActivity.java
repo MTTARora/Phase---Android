@@ -114,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
     }
 
     private void goToGameDetails() {
+        findViewById(R.id.main_loading_view).setVisibility(VISIBLE);
         Fragment currentDisplayScreen = FragmentManagerHelper.getCurrentFrag(getSupportFragmentManager(), R.id.main_container);
         if (currentDisplayScreen != null && currentDisplayScreen instanceof GameDetailFragment) {
             if(((GameDetailFragment) currentDisplayScreen).getCurrentGameId() != managerBinder.getCurrentGame().getId()) {

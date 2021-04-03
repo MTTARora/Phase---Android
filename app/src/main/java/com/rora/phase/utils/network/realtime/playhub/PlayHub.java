@@ -43,8 +43,12 @@ public class PlayHub {
     }
 
     public void stopConnect() {
-        if (!(hubConnection.getConnectionState() == HubConnectionState.DISCONNECTED))
-            hubConnection.stop();
+        try {
+            if (!(hubConnection.getConnectionState() == HubConnectionState.DISCONNECTED))
+                hubConnection.stop();
+        } catch (Exception ex) {
+            RoraLog.warning("Stop connect hub err: " + ex.getMessage());
+        }
     }
 
 }

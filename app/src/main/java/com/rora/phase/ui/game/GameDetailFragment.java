@@ -190,11 +190,11 @@ public class GameDetailFragment extends BaseFragment {
         }
         ((BannerVPAdapter)rclvScreenshot.getAdapter()).bindData(banners);
 
-        if (game.getSeriesId() == 0) {
+        //if (game.getSeriesId() == 0) {
             frameSeries.setVisibility(View.GONE);
-        } else {
-            //((GameMinInfoRecyclerViewAdapter)rclvSeries.getAdapter()).bindData(game.getSeriesId());
-        }
+        //} else {
+        //    ((GameMinInfoRecyclerViewAdapter)rclvSeries.getAdapter()).bindData(game.getSeriesId());
+        //}
         //((GameVerticalRVAdapter)rclvSimilar.getAdapter()).bindData(game.getPlatforms());
 
         hideLoadingScreen();
