@@ -178,6 +178,7 @@ public class PlayServices extends Service {
             return;
 
         connectThread = new Thread(() -> {
+            state = UserPlayingData.PlayingState.IN_PROGRESS;
             this.currentGame = game;
             userRepository.storeCurrentGame(game);
             RoraLog.info("Play game - STEP 1: Start Connecting");

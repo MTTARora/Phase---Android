@@ -114,10 +114,10 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
     }
 
     private void goToGameDetails() {
-        findViewById(R.id.main_loading_view).setVisibility(VISIBLE);
         Fragment currentDisplayScreen = FragmentManagerHelper.getCurrentFrag(getSupportFragmentManager(), R.id.main_container);
         if (currentDisplayScreen != null && currentDisplayScreen instanceof GameDetailFragment) {
             if(((GameDetailFragment) currentDisplayScreen).getCurrentGameId() != managerBinder.getCurrentGame().getId()) {
+                findViewById(R.id.main_loading_view).setVisibility(VISIBLE);
                 getSupportFragmentManager().popBackStack();
                 FragmentManagerHelper.replace(getSupportFragmentManager(), R.id.main_container, GameDetailFragment.newInstance(managerBinder.getCurrentGame()), GameDetailFragment.class.getSimpleName());
             }
@@ -125,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
             return;
         }
 
+        findViewById(R.id.main_loading_view).setVisibility(VISIBLE);
         FragmentManagerHelper.replace(getSupportFragmentManager(), R.id.main_container, GameDetailFragment.newInstance(managerBinder.getCurrentGame()), GameDetailFragment.class.getSimpleName());
     }
 
@@ -222,21 +223,23 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
 
         Game game = managerBinder.getCurrentGame();
         gameViewModel.setCurrentGame(managerBinder.getCurrentGame());
-        if (total == 0) {
-            tvQueueMain.setText("--/0");
-            MediaHelper.loadImage(imvQueueMain, null);
-            tvQueue.setText("--/0");
-            MediaHelper.loadImage(imvQueue, null);
-            tvGameNameMain.setText("");
-            tvGameName.setText("");
-        } else {
-            tvQueueMain.setText(currentPos + "/" + total);
-            MediaHelper.loadImage(imvQueueMain, game.getBanner());
-            tvQueue.setText(currentPos + "/" + total);
-            MediaHelper.loadImage(imvQueue, game.getBanner());
-            tvGameNameMain.setText(game.getName());
-            tvGameName.setText(game.getName());
-        }
+        this.runOnUiThread(() -> {
+            if (total == 0) {
+                tvQueueMain.setText("--/0");
+                MediaHelper.loadImage(imvQueueMain, null);
+                tvQueue.setText("--/0");
+                MediaHelper.loadImage(imvQueue, null);
+                tvGameNameMain.setText("");
+                tvGameName.setText("");
+            } else {
+                tvQueueMain.setText(currentPos + "/" + total);
+                MediaHelper.loadImage(imvQueueMain, game.getBanner());
+                tvQueue.setText(currentPos + "/" + total);
+                MediaHelper.loadImage(imvQueue, game.getBanner());
+                tvGameNameMain.setText(game.getName());
+                tvGameName.setText(game.getName());
+            }
+        });
     }
 
     public void updateQueue(int visibilityMainFrame, int visibility) {

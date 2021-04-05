@@ -1,18 +1,14 @@
 package com.rora.phase.ui.game;
 
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +21,6 @@ import com.rora.phase.R;
 import com.rora.phase.model.Banner;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.Screenshot;
-import com.rora.phase.model.User;
 import com.rora.phase.repository.UserRepository;
 import com.rora.phase.ui.adapter.BannerVPAdapter;
 import com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter;
@@ -35,8 +30,8 @@ import com.rora.phase.ui.adapter.PlatformRecyclerViewAdapter;
 import com.rora.phase.ui.settings.auth.SignInActivity;
 import com.rora.phase.ui.viewmodel.GameViewModel;
 import com.rora.phase.utils.DateTimeHelper;
+import com.rora.phase.utils.Dialog;
 import com.rora.phase.utils.MediaHelper;
-import com.rora.phase.utils.services.PlayServices;
 import com.rora.phase.utils.services.PlayServicesMessageSender;
 import com.rora.phase.utils.ui.BaseFragment;
 import com.rora.phase.utils.ui.ViewHelper;
@@ -56,7 +51,7 @@ public class GameDetailFragment extends BaseFragment {
 
     private GameViewModel gameViewModel;
     private Game game;
-    private boolean isPlayingGame;
+    private boolean isPlayingThisGame;
 
     public static final String KEY_GAME = "game";
 
@@ -110,8 +105,8 @@ public class GameDetailFragment extends BaseFragment {
         super.onResume();
 
         Game currentPlayingGame = UserRepository.newInstance(getContext()).getCurrentGame();
-        isPlayingGame = currentPlayingGame != null && (currentPlayingGame.getId() == game.getId());
-        btnPlay.setImageResource(isPlayingGame ? android.R.drawable.ic_lock_power_off : R.drawable.ic_play);
+        isPlayingThisGame = currentPlayingGame != null && (currentPlayingGame.getId() == game.getId());
+        btnPlay.setImageResource(isPlayingThisGame ? android.R.drawable.ic_lock_power_off : R.drawable.ic_play);
     }
 
     //---------------------------------------------------------------------------------------
@@ -131,21 +126,25 @@ public class GameDetailFragment extends BaseFragment {
 
         root.findViewById(R.id.back_btn).setOnClickListener(v -> getActivity().onBackPressed());
         btnPlay.setOnClickListener(v -> {
-            if (isPlayingGame) {
+            if (isPlayingThisGame) {
                 playServicesMsgSenderCallback.sendMessage(PlayServicesMessageSender.MsgCode.STOP);
                 return;
             }
 
-            if (!gameViewModel.isUserLogged()) {
-                Intent intent = new Intent(getActivity(), SignInActivity.class);
-                intent.putExtra(SignInActivity.START_IN_APP_PARAM, true);
-                startActivity(intent);
+            if (gameViewModel.getCurrentGame().getValue() != null && gameViewModel.getCurrentGame().getValue().getId() != game.getId()) {
+                Dialog.displayDialog(getActivity(), "Switch Game", "You are playing " + gameViewModel.getCurrentGame().getValue().getName() + ", do you want to switch to " + game.getName() + " ?", null, null, () -> {
+                    try {
+                        playServicesMsgSenderCallback.sendMessage(PlayServicesMessageSender.MsgCode.STOP);
+                        Thread.sleep(500);
+
+                        startConnect();
+                    } catch (InterruptedException e) { e.printStackTrace(); }
+                }, () -> {});
+
                 return;
             }
 
-            Intent playIntent = new Intent(getContext(), LoadingGameActivity.class);
-            playIntent.putExtra(KEY_GAME, game.toJson());
-            getActivity().startActivity(playIntent);
+            startConnect();
         });
 
         btnFavorite.setOnClickListener(v -> {
@@ -156,19 +155,20 @@ public class GameDetailFragment extends BaseFragment {
 
     private void initData() {
         gameViewModel.getGameData().observe(getViewLifecycleOwner(), this::bindData);
-
-        gameViewModel.getGame(game.getId().toString());
         gameViewModel.getCurrentGame().observe(getViewLifecycleOwner(), game -> {
-            isPlayingGame = game != null;
+            isPlayingThisGame = game != null;
 
-            btnPlay.setImageResource(isPlayingGame ? android.R.drawable.ic_lock_power_off : R.drawable.ic_play);
+            btnPlay.setImageResource(isPlayingThisGame ? android.R.drawable.ic_lock_power_off : R.drawable.ic_play);
         });
+
+        if (game != null)
+            gameViewModel.getGame(game.getId().toString());
         //if (game != null)
         //    bindData(game);
     }
 
     private void bindData(Game game) {
-        if (this.game.getId() != game.getId()) //Handle stupid err - duplicate response from live data
+        if (game == null || this.game.getId() != game.getId()) //Handle stupid err - duplicate response from live data
             return;
 
         this.game = game;
@@ -208,6 +208,19 @@ public class GameDetailFragment extends BaseFragment {
 
     public int getCurrentGameId() {
         return game.getId();
+    }
+
+    private void startConnect() {
+        if (!gameViewModel.isUserLogged()) {
+            Intent intent = new Intent(getActivity(), SignInActivity.class);
+            intent.putExtra(SignInActivity.START_IN_APP_PARAM, true);
+            startActivity(intent);
+            return;
+        }
+
+        Intent playIntent = new Intent(getContext(), LoadingGameActivity.class);
+        playIntent.putExtra(KEY_GAME, game.toJson());
+        getActivity().startActivity(playIntent);
     }
 
 }

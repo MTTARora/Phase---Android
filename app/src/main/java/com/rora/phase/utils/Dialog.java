@@ -9,22 +9,30 @@ import android.widget.Button;
 
 import com.rora.phase.R;
 
+import javax.annotation.Nullable;
+
 public class Dialog implements Runnable {
     private final String title;
     private final String message;
+    private final String positiveBtnTitle;
+    private final String negativeBtnTitle;
     private final Activity activity;
-    private final Runnable runOnDismiss;
+    private final Runnable runOnPositiveDismiss;
+    private final Runnable runOnNegativeDismiss;
 
     private AlertDialog alert;
 
     private static final ArrayList<Dialog> rundownDialogs = new ArrayList<>();
 
-    private Dialog(Activity activity, String title, String message, Runnable runOnDismiss)
+    private Dialog(Activity activity, String title, String message, @Nullable String positiveBtnTitle, @Nullable String negativeBtnTitle, Runnable runOnPositiveDismiss, Runnable runOnNegativeDismiss)
     {
         this.activity = activity;
         this.title = title;
         this.message = message;
-        this.runOnDismiss = runOnDismiss;
+        this.positiveBtnTitle = positiveBtnTitle;
+        this.negativeBtnTitle = negativeBtnTitle;
+        this.runOnPositiveDismiss = runOnPositiveDismiss;
+        this.runOnNegativeDismiss = runOnNegativeDismiss;
     }
 
     public static void closeDialogs()
@@ -40,18 +48,40 @@ public class Dialog implements Runnable {
         }
     }
 
-    public static void displayDialog(final Activity activity, String title, String message, final boolean endAfterDismiss)
+    public static void displayDialog(final Activity activity, String title, String message, @Nullable String positiveBtnTitle, @Nullable String negativeBtnTitle, Runnable runOnPositiveDismiss, @Nullable Runnable runOnNegativeDismiss, final boolean endAfterDismiss)
     {
-        activity.runOnUiThread(new Dialog(activity, title, message, () -> {
+        activity.runOnUiThread(new Dialog(activity, title, message, positiveBtnTitle, negativeBtnTitle, () -> {
+            if (endAfterDismiss) {
+                activity.finish();
+            }
+        }, () -> {
             if (endAfterDismiss) {
                 activity.finish();
             }
         }));
     }
 
-    public static void displayDialog(Activity activity, String title, String message, Runnable runOnDismiss)
+    public static void displayDialog(final Activity activity, String title, String message, final boolean endAfterDismiss)
     {
-        activity.runOnUiThread(new Dialog(activity, title, message, runOnDismiss));
+        activity.runOnUiThread(new Dialog(activity, title, message, null, null, () -> {
+            if (endAfterDismiss) {
+                activity.finish();
+            }
+        }, () -> {
+            if (endAfterDismiss) {
+                activity.finish();
+            }
+        }));
+    }
+
+    public static void displayDialog(Activity activity, String title, String message, @Nullable String positiveBtnTitle, @Nullable String negativeBtnTitle, Runnable runOnPositiveDismiss, @Nullable Runnable runOnNegativeDismiss)
+    {
+        activity.runOnUiThread(new Dialog(activity, title, message, positiveBtnTitle, negativeBtnTitle, runOnPositiveDismiss, runOnNegativeDismiss));
+    }
+
+    public static void displayDialog(Activity activity, String title, String message, Runnable runOnPositiveDismiss)
+    {
+        activity.runOnUiThread(new Dialog(activity, title, message, null, null, runOnPositiveDismiss, null));
     }
 
     @Override
@@ -67,38 +97,44 @@ public class Dialog implements Runnable {
         alert.setCancelable(false);
         alert.setCanceledOnTouchOutside(false);
  
-        alert.setButton(AlertDialog.BUTTON_POSITIVE, activity.getResources().getText(android.R.string.ok), new DialogInterface.OnClickListener() {
-              public void onClick(DialogInterface dialog, int which) {
-                  synchronized (rundownDialogs) {
-                      rundownDialogs.remove(Dialog.this);
-                      alert.dismiss();
-                  }
-
-                  runOnDismiss.run();
-              }
-        });
-        alert.setButton(AlertDialog.BUTTON_NEUTRAL, activity.getResources().getText(R.string.help), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                synchronized (rundownDialogs) {
-                    rundownDialogs.remove(Dialog.this);
-                    alert.dismiss();
-                }
-
-                runOnDismiss.run();
-
-                HelpLauncher.launchTroubleshooting(activity);
+        alert.setButton(AlertDialog.BUTTON_POSITIVE, positiveBtnTitle == null ? activity.getResources().getText(android.R.string.ok) : positiveBtnTitle, (dialog, which) -> {
+            synchronized (rundownDialogs) {
+                rundownDialogs.remove(Dialog.this);
+                alert.dismiss();
             }
-        });
-        alert.setOnShowListener(new DialogInterface.OnShowListener(){
 
-            @Override
-            public void onShow(DialogInterface dialog) {
-                // Set focus to the OK button by default
-                Button button = alert.getButton(AlertDialog.BUTTON_POSITIVE);
-                button.setFocusable(true);
-                button.setFocusableInTouchMode(true);
-                button.requestFocus();
-            }
+            runOnPositiveDismiss.run();
+        });
+
+        //alert.setButton(AlertDialog.BUTTON_NEUTRAL, activity.getResources().getText(R.string.help), new DialogInterface.OnClickListener() {
+        //    public void onClick(DialogInterface dialog, int which) {
+        //        synchronized (rundownDialogs) {
+        //            rundownDialogs.remove(Dialog.this);
+        //            alert.dismiss();
+        //        }
+        //
+        //        runOnPositiveDismiss.run();
+        //
+        //        HelpLauncher.launchTroubleshooting(activity);
+        //    }
+        //});
+
+        if (negativeBtnTitle != null || runOnNegativeDismiss != null)
+            alert.setButton(AlertDialog.BUTTON_NEGATIVE, negativeBtnTitle == null ? activity.getResources().getText(android.R.string.cancel) : negativeBtnTitle, (dialog, which) -> {
+               synchronized (rundownDialogs) {
+                   rundownDialogs.remove(Dialog.this);
+                   alert.dismiss();
+               }
+
+               runOnNegativeDismiss.run();
+            });
+
+        alert.setOnShowListener(dialog -> {
+            // Set focus to the OK button by default
+            Button button = alert.getButton(AlertDialog.BUTTON_POSITIVE);
+            button.setFocusable(true);
+            button.setFocusableInTouchMode(true);
+            button.requestFocus();
         });
 
         synchronized (rundownDialogs) {

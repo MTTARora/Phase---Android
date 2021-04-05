@@ -228,10 +228,8 @@ public class LoadingGameActivity extends FragmentActivity {
 
         @Override
         public void onStopConnect(boolean isDone) {
-            if (isDone) {
-                pbLoadingProgress.setProgress(1);
-                LoadingGameActivity.this.finish();
-            }
+            pbLoadingProgress.setProgress(1);
+            LoadingGameActivity.this.finish();
         }
 
         @Override
