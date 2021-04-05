@@ -255,8 +255,7 @@ public class PlayServices extends Service {
                                 err = startPairing(callBack);
                                 if (err != null) {
                                     RoraLog.info("Play Game - Error: " + err);
-                                    if (err.equals(getApplication().getResources().getString(R.string.pair_pc_ingame)))
-                                        stopConnect(callBack);
+                                    stopConnect(callBack);
                                     //listener.onError(err);
                                     //callBack.onError(err);
                                     return;

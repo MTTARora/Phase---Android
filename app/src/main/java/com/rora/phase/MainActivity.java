@@ -101,14 +101,8 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
         startService(serviceIntent);
         bindService(serviceIntent, serviceConnection, BIND_AUTO_CREATE);
 
-        queueViewMain.setOnClickListener(v -> {
-            goToGameDetails();
-            //FragmentManagerHelper.replace(getSupportFragmentManager(), R.id.main_container, GameDetailFragment.newInstance(managerBinder.getCurrentGame()), null);
-        });
-        queueView.setOnClickListener(v -> {
-            goToGameDetails();
-            //FragmentManagerHelper.replace(getSupportFragmentManager(), R.id.main_container, GameDetailFragment.newInstance(managerBinder.getCurrentGame()), null);
-        });
+        queueViewMain.setOnClickListener(v -> goToGameDetails());
+        queueView.setOnClickListener(v -> goToGameDetails());
         findViewById(R.id.end_queue_main_btn).setOnClickListener(v -> managerBinder.stopConnect(null));
         findViewById(R.id.end_queue_btn).setOnClickListener(v -> managerBinder.stopConnect(null));
     }

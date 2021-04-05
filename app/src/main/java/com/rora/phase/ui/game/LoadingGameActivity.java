@@ -20,6 +20,7 @@ import com.rora.phase.RoraLog;
 import com.rora.phase.R;
 import com.rora.phase.binding.crypto.AndroidCryptoProvider;
 import com.rora.phase.model.Game;
+import com.rora.phase.model.UserPlayingData;
 import com.rora.phase.nvstream.http.ComputerDetails;
 import com.rora.phase.preferences.GlPreferences;
 import com.rora.phase.utils.Dialog;
@@ -135,6 +136,16 @@ public class LoadingGameActivity extends FragmentActivity {
             stopConnect();
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (managerBinder != null && managerBinder.getCurrentState() != UserPlayingData.PlayingState.IN_QUEUE) {
+            pbLoadingProgress.setMax(1);
+            stopConnect();
+        }
+    }
+
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
