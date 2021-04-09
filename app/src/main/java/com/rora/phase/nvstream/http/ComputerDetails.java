@@ -5,6 +5,7 @@ import com.rora.phase.model.Host;
 
 import java.io.Serializable;
 import java.security.cert.X509Certificate;
+import java.util.List;
 
 
 public class ComputerDetails implements Serializable {
@@ -32,6 +33,7 @@ public class ComputerDetails implements Serializable {
     public PairingManager.PairState pairState;
     public int runningGameId;
     public String rawAppList;
+    public List<NvApp> appList;
 
     public ComputerDetails() {
         // Use defaults
@@ -44,10 +46,19 @@ public class ComputerDetails implements Serializable {
     }
 
     public ComputerDetails(Host host) {
+        //this.hostId = host.getIdHost();
+        //this.manualAddress = host.getPublicIP();
+        //this.httpsPort1 = host.getPort();
+        //state = State.UNKNOWN;
         this.hostId = host.getIdHost();
+        this.name = host.getIdHost().toUpperCase();
+        this.activeAddress = host.getPublicIP();
         this.manualAddress = host.getPublicIP();
+        this.localAddress = host.getLanIP();
+        this.macAddress = host.getMacAddress();
         this.httpsPort1 = host.getPort();
-        state = State.UNKNOWN;
+        state = State.ONLINE;
+        pairState = PairingManager.PairState.NOT_PAIRED;
     }
 
     public void update(ComputerDetails details) {

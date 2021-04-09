@@ -126,7 +126,8 @@ public class Dialog implements Runnable {
                    alert.dismiss();
                }
 
-               runOnNegativeDismiss.run();
+               if (runOnNegativeDismiss != null)
+                runOnNegativeDismiss.run();
             });
 
         alert.setOnShowListener(dialog -> {

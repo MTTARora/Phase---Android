@@ -31,7 +31,6 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:scaleType="fitXY"
-            android:src="@drawable/banner_test"
             app:carbon_cornerRadius="@dimen/medium_radius"
             app:layout_constraintBottom_toBottomOf="@id/frame_info_queue_main"
             app:layout_constraintStart_toStartOf="parent"
@@ -105,22 +104,8 @@
         layout="@layout/fragment_play_queue"
         android:visibility="gone" />
 
-    <FrameLayout
+    <include
         android:id="@+id/main_loading_view"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:background="@color/colorAccent"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@id/main_container"
-        app:layout_constraintTop_toTopOf="@id/main_container">
-
-        <androidx.core.widget.ContentLoadingProgressBar
-            android:id="@+id/main_loading_bar"
-            style="?android:attr/progressBarStyleInverse"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:theme="@style/ContentLoadingProgress" />
-    </FrameLayout>
+        layout="@layout/loading_layout"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

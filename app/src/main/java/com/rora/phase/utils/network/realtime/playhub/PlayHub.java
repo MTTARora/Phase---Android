@@ -11,6 +11,7 @@ import com.rora.phase.repository.UserRepository;
 import com.rora.phase.utils.network.PhaseServiceHelper;
 
 import io.reactivex.Single;
+import io.reactivex.functions.Action;
 
 public class PlayHub {
 
@@ -45,7 +46,9 @@ public class PlayHub {
     public void stopConnect() {
         try {
             if (!(hubConnection.getConnectionState() == HubConnectionState.DISCONNECTED))
-                hubConnection.stop();
+                hubConnection.stop().subscribe(() -> RoraLog.warning("Stop connected hub!"), throwable -> {
+                    RoraLog.info("Stop connected hub err: - " + throwable == null ? "???" : throwable.toString());
+                });
         } catch (Exception ex) {
             RoraLog.warning("Stop connect hub err: " + ex.getMessage());
         }

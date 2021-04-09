@@ -138,12 +138,16 @@ public class LoadingGameActivity extends FragmentActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (managerBinder != null && managerBinder.getCurrentState() != UserPlayingData.PlayingState.IN_QUEUE) {
-            pbLoadingProgress.setMax(1);
-            stopConnect();
-        }
+    public void onBackPressed() {
+        Dialog.displayDialog(this, getResources().getString(R.string.stop_playing_msg) + "?", null, "Yes", "No", new Runnable() {
+            @Override
+            public void run() {
+                if (managerBinder != null && managerBinder.getCurrentState() != UserPlayingData.PlayingState.IN_QUEUE) {
+                    stopConnect();
+                }
+                LoadingGameActivity.super.onBackPressed();
+            }
+        }, null);
     }
 
     @Override
@@ -238,7 +242,7 @@ public class LoadingGameActivity extends FragmentActivity {
         }
 
         @Override
-        public void onStopConnect(boolean isDone) {
+        public void onStopConnect(boolean isDone, String err) {
             pbLoadingProgress.setProgress(1);
             LoadingGameActivity.this.finish();
         }

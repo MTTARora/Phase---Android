@@ -105,7 +105,7 @@ public class GameDetailFragment extends BaseFragment {
         super.onResume();
 
         Game currentPlayingGame = UserRepository.newInstance(getContext()).getCurrentGame();
-        isPlayingThisGame = currentPlayingGame != null && (currentPlayingGame.getId() == game.getId());
+        //isPlayingThisGame = currentPlayingGame != null && (currentPlayingGame.getId() == game.getId());
         btnPlay.setImageResource(isPlayingThisGame ? android.R.drawable.ic_lock_power_off : R.drawable.ic_play);
     }
 

@@ -10,6 +10,6 @@ public interface PlayGameProgressCallBack {
     void onPairPc(boolean isDone);
     void onStartConnect(boolean isDone);
     void onComputerUpdated(ComputerDetails computer);
-    void onStopConnect(boolean isDone);
+    void onStopConnect(boolean isDone, String err);
     void onError(String err);
 }

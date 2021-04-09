@@ -295,9 +295,13 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
         }
 
         @Override
-        public void onStopConnect(boolean isDone) {
+        public void onStopConnect(boolean isDone, String err) {
             if (!isDone)
                 return;
+
+            if (err != null)
+                MainActivity.this.runOnUiThread(() -> Toast.makeText(getApplicationContext(), err, Toast.LENGTH_LONG).show());
+
             updateQueue(GONE, GONE);
             binQueueData(0, 0);
             gameViewModel.setCurrentGame(null);

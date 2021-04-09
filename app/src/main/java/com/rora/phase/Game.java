@@ -16,6 +16,7 @@ import com.rora.phase.binding.video.CrashListener;
 import com.rora.phase.binding.video.MediaCodecDecoderRenderer;
 import com.rora.phase.binding.video.MediaCodecHelper;
 import com.rora.phase.binding.video.PerfOverlayListener;
+import com.rora.phase.model.UserPlayingData;
 import com.rora.phase.nvstream.NvConnection;
 import com.rora.phase.nvstream.NvConnectionListener;
 import com.rora.phase.nvstream.StreamConfiguration;
@@ -29,6 +30,7 @@ import com.rora.phase.preferences.GlPreferences;
 import com.rora.phase.preferences.PreferenceConfiguration;
 import com.rora.phase.ui.GameGestures;
 import com.rora.phase.ui.StreamView;
+import com.rora.phase.ui.game.LoadingGameActivity;
 import com.rora.phase.ui.viewmodel.GameViewModel;
 import com.rora.phase.utils.Dialog;
 import com.rora.phase.utils.NetHelper;
@@ -548,8 +550,10 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
             }
 
             // If we can't find an AVC decoder, we can't proceed
-            Dialog.displayDialog(this, getResources().getString(R.string.conn_error_title),
-                    "This device or ROM doesn't support hardware accelerated H.264 playback.", true);
+
+            RoraLog.warning("Game - " + getResources().getString(R.string.conn_error_title) + ": This device or ROM doesn't support hardware accelerated H.264 playback.");
+            finish();
+            //Dialog.displayDialog(this, getResources().getString(R.string.conn_error_title), "This device or ROM doesn't support hardware accelerated H.264 playback.", true);
             return;
         }
 
@@ -864,6 +868,10 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
     protected void onDestroy() {
         super.onDestroy();
 
+        if (managerBinder != null) {
+            managerBinder.stopConnect(null);
+        }
+
         if (controllerHandler != null) {
             InputManager inputManager = (InputManager) getSystemService(Context.INPUT_SERVICE);
             inputManager.unregisterInputDeviceListener(controllerHandler);
@@ -944,6 +952,20 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
         }
 
         finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Dialog.displayDialog(this, getResources().getString(R.string.stop_playing_msg) + " ?", null, "Yes", "No", new Runnable() {
+            @Override
+            public void run() {
+                if (managerBinder != null && managerBinder.getCurrentState() != UserPlayingData.PlayingState.IN_QUEUE) {
+                    new Thread(() -> managerBinder.stopConnect(null)).start();
+                    unbindService(serviceConnection);
+                }
+                Game.super.onBackPressed();
+            }
+        }, null);
     }
 
     private final Runnable toggleGrab = new Runnable() {
@@ -1586,7 +1608,9 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
                         dialogText += "\n\n" + getResources().getString(R.string.nettest_text_blocked);
                     }
 
-                    Dialog.displayDialog(Game.this, getResources().getString(R.string.conn_error_title), dialogText, true);
+                    RoraLog.warning("Game - " + getResources().getString(R.string.conn_error_title) + " : " + dialogText);
+                    finish();
+                    //Dialog.displayDialog(Game.this, getResources().getString(R.string.conn_error_title), dialogText, true);
                 }
             }
         });
@@ -1647,8 +1671,9 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
                                     MoonBridge.stringifyPortFlags(portFlags, "\n", NvHTTP.HTTPS_PORT1);
                         }
 
-                        Dialog.displayDialog(Game.this, getResources().getString(R.string.conn_terminated_title),
-                                message, true);
+                        RoraLog.warning("Game - " + getResources().getString(R.string.conn_terminated_title) + " : " + message);
+                        finish();
+                        //Dialog.displayDialog(Game.this, getResources().getString(R.string.conn_terminated_title), message, true);
                     }
                     else {
                         finish();
