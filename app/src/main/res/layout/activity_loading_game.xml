@@ -6,7 +6,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.game.LoadingGameActivity">
 
-    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:id="@+id/loading_game_progress_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/please_wait_msg"
+        app:layout_constraintBottom_toTopOf="@id/loading_game_pb"
+        app:layout_constraintStart_toStartOf="@id/loading_game_pb"
+        app:layout_constraintEnd_toEndOf="@id/loading_game_pb"/>
+
     <ProgressBar
         android:id="@+id/loading_game_pb"
         android:layout_width="0dp"

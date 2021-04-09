@@ -34,6 +34,7 @@ public class ComputerDetails implements Serializable {
     public int runningGameId;
     public String rawAppList;
     public List<NvApp> appList;
+    public NvApp remoteApp;
 
     public ComputerDetails() {
         // Use defaults
@@ -90,6 +91,14 @@ public class ComputerDetails implements Serializable {
         this.pairState = details.pairState;
         this.runningGameId = details.runningGameId;
         this.rawAppList = details.rawAppList;
+    }
+
+    public NvApp getRemoveApp() {
+        return remoteApp;
+    }
+
+    public void setRemoteApp(NvApp remoteApp) {
+        this.remoteApp = remoteApp;
     }
 
     @Override

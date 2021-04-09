@@ -212,6 +212,17 @@ public class UserRepository {
         });
     }
 
+    public void prepareAppHost(Integer appId, OnResultCallBack<String> callBack) {
+        APIServicesHelper apiHelper = new APIServicesHelper<>();
+
+        apiHelper.request(userAuthenticatedServices.prepareApp(appId.toString()), (err, data) -> {
+            if (err != null && !err.contains("success")) {
+                callBack.onResult(err, null);
+            } else
+                callBack.onResult(null, null);
+        });
+    }
+
     //----------------------------------------------------------------------------------------
 
 

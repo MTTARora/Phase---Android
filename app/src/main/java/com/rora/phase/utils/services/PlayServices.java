@@ -19,7 +19,6 @@ import androidx.annotation.Nullable;
 import com.rora.phase.RoraLog;
 import com.rora.phase.R;
 import com.rora.phase.binding.PlatformBinding;
-import com.rora.phase.computers.ComputerManagerService;
 import com.rora.phase.computers.IdentityManager;
 import com.rora.phase.discovery.DiscoveryService;
 import com.rora.phase.model.Game;
@@ -29,12 +28,12 @@ import com.rora.phase.nvstream.http.ComputerDetails;
 import com.rora.phase.nvstream.http.NvApp;
 import com.rora.phase.nvstream.http.NvHTTP;
 import com.rora.phase.nvstream.http.PairingManager;
-import com.rora.phase.nvstream.jni.MoonBridge;
 import com.rora.phase.nvstream.mdns.MdnsComputer;
 import com.rora.phase.nvstream.mdns.MdnsDiscoveryListener;
 import com.rora.phase.repository.UserRepository;
 import com.rora.phase.utils.NetHelper;
 import com.rora.phase.utils.ServerHelper;
+import com.rora.phase.utils.callback.OnResultCallBack;
 import com.rora.phase.utils.callback.PlayGameProgressCallBack;
 import com.rora.phase.utils.network.realtime.playhub.PlayHub;
 import com.rora.phase.utils.network.realtime.playhub.PlayHubListener;
@@ -47,14 +46,9 @@ import java.io.StringReader;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.InterfaceAddress;
-import java.net.NetworkInterface;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -207,7 +201,7 @@ public class PlayServices extends Service {
                             return;
                         }
 
-                        Thread thread = new Thread(() -> {
+                        new Thread(() -> {
                             try {
                                 //STEP 2.1: Check queue
                                 if (response.queue != null) {
@@ -219,13 +213,14 @@ public class PlayServices extends Service {
                                 }
 
                                 //STEP 3: Pair
+                                RoraLog.info("Play game - STEP 3: Start pairing...");
+                                listener.onPairPc(false);
+                                callBack.onPairPc(false);
                                 ComputerDetails computer = new ComputerDetails(response.host);
                                 pollingTuple = new PollingTuple(computer, null);
                                 NvHTTP.HTTPS_PORT1 = computer.httpsPort1;
                                 NvHTTP.HTTP_PORT2 = computer.httpsPort1+1;
-                                RoraLog.info("Play game - STEP 3: Start pairing...");
-                                listener.onPairPc(false);
-                                callBack.onPairPc(false);
+
                                 String err = startPairing(callBack);
                                 if (err != null) {
                                     RoraLog.info("Play Game - Error: " + err);
@@ -236,42 +231,64 @@ public class PlayServices extends Service {
                                 callBack.onPairPc(true);
                                 Thread.sleep(1000);
 
+
                                 //STEP 4: Get game list from nvdia
                                 RoraLog.info("Play game - STEP 4: Getting app list from nvidia...");
-                                err = getAppList();
+                                listener.onGetHostApps(false);
+                                callBack.onGetHostApps(false);
+                                err = getNecessaryAppFromNvidia();
                                 if (err != null) {
                                     RoraLog.info("Play Game - Error: " + err);
                                     stopConnect(callBack, errMsg);
                                     return;
                                 }
+                                listener.onGetHostApps(true);
+                                callBack.onGetHostApps(true);
 
-                                //STEP 5: Play
-                                RoraLog.info("Play game - STEP 5: Start remote connect...");
-                                listener.onStartConnect(false);
-                                callBack.onStartConnect(false);
-                                err = start(activity, binder);
-                                if (err != null) {
-                                    RoraLog.info("Play Game - Error: " + err);
-                                    stopConnect(callBack, errMsg);
-                                    return;
-                                }
-
-                                listener.onStartConnect(true);
-                                callBack.onStartConnect(true);
+                                //STEP 5: Request host to prepare app if pair success
+                                RoraLog.info("Play game - STEP 5: Pair success, requesting host for preparation app...");
+                                listener.onPrepareHost(false);
+                                callBack.onPrepareHost(false);
+                                userRepository.prepareAppHost(game.getId(), (error, data) -> {
+                                    if (error != null) {
+                                        RoraLog.info("Play Game - Error: " + error);
+                                        stopConnect(callBack, error);
+                                        return;
+                                    }
+                                });
+                                listener.onPrepareHost(true);
+                                callBack.onPrepareHost(true);
                             } catch (InterruptedException e) {
                                 RoraLog.info("Play Game - Error: " + e.getMessage());
                                 stopConnect(callBack, errMsg);
                             }
-                        });
-                        thread.start();
+                        }).start();
                     });
+                }
+
+                @Override
+                public void onAppReady() {
+                    //STEP 6: Play
+                    RoraLog.info("Play game - STEP 6: Start remote connect...");
+                    listener.onStartConnect(false);
+                    callBack.onStartConnect(false);
+                    String error = start(activity, binder);
+                    if (error != null) {
+                        RoraLog.info("Play Game - Error: " + error);
+                        stopConnect(callBack, error);
+                        return;
+                    }
+
+                    RoraLog.info("Play game - FINAL: Everything is done, ready to play!");
+                    listener.onStartConnect(true);
+                    callBack.onStartConnect(true);
                 }
 
                 @Override
                 public void onDisconnected(int code) {
                     if (code == 401) {
                         userRepository.signOut();
-                        callBack.onError("login ended");
+                        callBack.onError("login session ended");
                         listener.onError("Your login session has ended, please login again!");
                     }
                     RoraLog.info("Play Game - Hub disconnected or can't connect!");
@@ -362,16 +379,22 @@ public class PlayServices extends Service {
      *
      * @return An error msg if failed
      * */
-    private String getAppList() {
+    private String getNecessaryAppFromNvidia() {
         try {
             NvHTTP http = new NvHTTP(pollingTuple.computer.activeAddress, idManager.getUniqueId(), pollingTuple.computer.serverCert, PlatformBinding.getCryptoProvider(this));
             String appList = http.getAppListRaw();
             if (appList != null) {
                 pollingTuple.computer.rawAppList = appList;
                 pollingTuple.computer.appList = NvHTTP.getAppListByReader(new StringReader(appList));
-                return null;
-            }
+                for (NvApp nvApp : pollingTuple.computer.appList) {
+                    if (nvApp.getAppName().equals("mstsc.exe")) {
+                        pollingTuple.computer.setRemoteApp(nvApp);
+                        break;
+                    }
+                }
 
+                return pollingTuple.computer.getRemoveApp() == null ?  "Couldn't find necessary app from host!" : null;
+            }
             return "Couldn't get app list from nvidia";
         } catch (Exception e) {
             e.printStackTrace();
@@ -383,16 +406,8 @@ public class PlayServices extends Service {
     /** STEP 5: Start remote connect
      * */
     private String start(Activity activity, PlayServices.ComputerManagerBinder managerBinder) {
-        NvApp remoteApp = null;
-        for (NvApp nvApp : pollingTuple.computer.appList) {
-            if (nvApp.getAppName().equals("mstsc.exe")) {
-                remoteApp = nvApp;
-                break;
-            }
-        }
-
-        if (remoteApp != null) {
-            ServerHelper.doStart(activity, remoteApp, pollingTuple.computer, managerBinder);
+        if (pollingTuple.computer.getRemoveApp() != null) {
+            ServerHelper.doStart(activity, pollingTuple.computer.getRemoveApp(), pollingTuple.computer, managerBinder);
             return null;
         }
         else
@@ -421,14 +436,15 @@ public class PlayServices extends Service {
             playHub.stopConnect();
             Thread.sleep(1000);
 
-            connectThread.interrupt();
-            connectThread = null;
+            if (connectThread != null)
+                connectThread.interrupt();
             currentGame = null;
             pollingTuple = null;
             userRepository.storeCurrentGame(null);
             //listener = null;
             unbindService(discoveryServiceConnection);
             bindService(new Intent(this, DiscoveryService.class), discoveryServiceConnection, Service.BIND_AUTO_CREATE);
+            connectThread = null;
 
             RoraLog.info("Play game - Stop connect success");
             listener.onStopConnect(true, err);
@@ -444,14 +460,16 @@ public class PlayServices extends Service {
     }
 
     private void stopNvdiaConnect() {
-        try {
-            NvHTTP http = new NvHTTP(pollingTuple.computer.activeAddress, idManager.getUniqueId(), pollingTuple.computer.serverCert, PlatformBinding.getCryptoProvider(this));
-            http.unpair();
-            RoraLog.warning("Play game: stop nvidia connect success!" );
-        } catch (Exception e) {
-            e.printStackTrace();
-            RoraLog.warning("Play game: stop nvidia connect err: " + e.getMessage());
-        }
+        new Thread(() -> {
+            try {
+                NvHTTP http = new NvHTTP(pollingTuple.computer.activeAddress, idManager.getUniqueId(), pollingTuple.computer.serverCert, PlatformBinding.getCryptoProvider(this));
+                http.unpair();
+                RoraLog.warning("Play game: stop nvidia connect success!" );
+            } catch (Exception e) {
+                e.printStackTrace();
+                RoraLog.warning("Play game: stop nvidia connect err: " + e.getMessage());
+            }
+        }).start();
     }
 
     //===================================================================

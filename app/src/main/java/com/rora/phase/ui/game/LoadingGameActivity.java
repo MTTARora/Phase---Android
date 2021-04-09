@@ -12,6 +12,7 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.FragmentActivity;
@@ -21,7 +22,6 @@ import com.rora.phase.R;
 import com.rora.phase.binding.crypto.AndroidCryptoProvider;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.UserPlayingData;
-import com.rora.phase.nvstream.http.ComputerDetails;
 import com.rora.phase.preferences.GlPreferences;
 import com.rora.phase.utils.Dialog;
 import com.rora.phase.utils.UiHelper;
@@ -35,6 +35,7 @@ import static com.rora.phase.ui.game.GameDetailFragment.KEY_GAME;
 
 public class LoadingGameActivity extends FragmentActivity {
 
+    private TextView tvLoadingProgress;
     private ProgressBar pbLoadingProgress;
 
     private boolean completeOnCreateCalled;
@@ -93,6 +94,7 @@ public class LoadingGameActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading_game);
 
+        tvLoadingProgress = findViewById(R.id.loading_game_progress_tv);
         pbLoadingProgress = findViewById(R.id.loading_game_pb);
 
         // Create a GLSurfaceView to fetch GLRenderer unless we have a cached result already.
@@ -208,11 +210,13 @@ public class LoadingGameActivity extends FragmentActivity {
     private final PlayGameProgressCallBack playProgressCallBack =  new PlayGameProgressCallBack() {
         @Override
         public void onStart(boolean isDone) {
+            tvLoadingProgress.setText(getResources().getString(R.string.getting_data_from_server_play_msg));
             pbLoadingProgress.setProgress(isDone ? 1 : 2);
         }
 
         @Override
         public void onFindAHost(boolean isDone) {
+            tvLoadingProgress.setText(getResources().getString(R.string.finding_a_host_play_msg));
             pbLoadingProgress.setProgress(isDone ? 3 : 4);
         }
 
@@ -222,23 +226,27 @@ public class LoadingGameActivity extends FragmentActivity {
         }
 
         @Override
-        public void onAddPc(boolean isDone) {
+        public void onPairPc(boolean isDone) {
+            tvLoadingProgress.setText(getResources().getString(R.string.connecting_to_host_play_msg));
             pbLoadingProgress.setProgress(isDone ? 5 : 6);
         }
 
         @Override
-        public void onPairPc(boolean isDone) {
+        public void onGetHostApps(boolean isDone) {
+            tvLoadingProgress.setText(getResources().getString(R.string.getting_necessary_data_play_msg));
             pbLoadingProgress.setProgress(isDone ? 7 : 8);
         }
 
         @Override
-        public void onStartConnect(boolean isDone) {
+        public void onPrepareHost(boolean isDone) {
+            tvLoadingProgress.setText(getResources().getString(R.string.preparing_environment_play_msg));
             pbLoadingProgress.setProgress(isDone ? 9 : 10);
         }
 
         @Override
-        public void onComputerUpdated(ComputerDetails computer) {
-
+        public void onStartConnect(boolean isDone) {
+            tvLoadingProgress.setText(getResources().getString(R.string.done_play_msg));
+            pbLoadingProgress.setProgress(isDone ? 11 : 12);
         }
 
         @Override

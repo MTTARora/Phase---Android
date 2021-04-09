@@ -275,22 +275,22 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
         }
 
         @Override
-        public void onAddPc(boolean isDone) {
-
-        }
-
-        @Override
         public void onPairPc(boolean isDone) {
 
         }
 
         @Override
-        public void onStartConnect(boolean isDone) {
+        public void onGetHostApps(boolean isDone) {
 
         }
 
         @Override
-        public void onComputerUpdated(ComputerDetails computer) {
+        public void onPrepareHost(boolean isDone) {
+
+        }
+
+        @Override
+        public void onStartConnect(boolean isDone) {
 
         }
 

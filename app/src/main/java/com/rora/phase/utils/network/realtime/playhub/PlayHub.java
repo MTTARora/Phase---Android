@@ -2,6 +2,7 @@ package com.rora.phase.utils.network.realtime.playhub;
 
 import android.content.Context;
 
+import com.microsoft.signalr.Action;
 import com.microsoft.signalr.HubConnection;
 import com.microsoft.signalr.HubConnectionBuilder;
 import com.microsoft.signalr.HubConnectionState;
@@ -11,7 +12,6 @@ import com.rora.phase.repository.UserRepository;
 import com.rora.phase.utils.network.PhaseServiceHelper;
 
 import io.reactivex.Single;
-import io.reactivex.functions.Action;
 
 public class PlayHub {
 
@@ -41,6 +41,8 @@ public class PlayHub {
                 listener.onDisconnected(400);
             }
         });
+
+        hubConnection.on("OnAppReady", () -> listener.onAppReady());
     }
 
     public void stopConnect() {

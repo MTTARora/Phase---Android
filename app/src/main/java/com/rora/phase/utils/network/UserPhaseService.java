@@ -60,4 +60,7 @@ public interface UserPhaseService {
     @POST("./play/confirm-pin")
     Call<BaseResponse> sendPinToHost(@Body PinConfirmBody confirmData);
 
+    @GET("./play/prepare-app")
+    Call<BaseResponse<String>> prepareApp(@Query("appId") String appId);
+
 }

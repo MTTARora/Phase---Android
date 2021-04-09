@@ -103,12 +103,13 @@ public class PhaseServiceHelper {
             data.setData(response.body());
         } else {
             String err = "No data to fetch, please try again later!";
-            try {
-                JSONObject jObjError = new JSONObject(response.errorBody().string());
-                err = jObjError.getString("message");
-            } catch (Exception e) {
-                err = e.getMessage();
-            }
+            if (response.body() != null)
+                try {
+                    JSONObject jObjError = new JSONObject(response.errorBody().string());
+                    err = jObjError.getString("message");
+                } catch (Exception e) {
+                    err = e.getMessage();
+                }
             data.setMsg(err);
         }
         return data;
