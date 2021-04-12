@@ -224,7 +224,7 @@ public class PlayServices extends Service {
                                 String err = startPairing(callBack);
                                 if (err != null) {
                                     RoraLog.info("Play Game - Error: " + err);
-                                    stopConnect(callBack, errMsg);
+                                    stopConnect(callBack, err);
                                     return;
                                 }
                                 listener.onPairPc(true);
@@ -239,7 +239,7 @@ public class PlayServices extends Service {
                                 err = getNecessaryAppFromNvidia();
                                 if (err != null) {
                                     RoraLog.info("Play Game - Error: " + err);
-                                    stopConnect(callBack, errMsg);
+                                    stopConnect(callBack, err);
                                     return;
                                 }
                                 listener.onGetHostApps(true);
@@ -249,7 +249,7 @@ public class PlayServices extends Service {
                                 RoraLog.info("Play game - STEP 5: Pair success, requesting host for preparation app...");
                                 listener.onPrepareHost(false);
                                 callBack.onPrepareHost(false);
-                                userRepository.prepareAppHost(game.getId(), (error, data) -> {
+                                userRepository.prepareAppHost(game.getId().toString(), "1", null, null, (error, data) -> {
                                     if (error != null) {
                                         RoraLog.info("Play Game - Error: " + error);
                                         stopConnect(callBack, error);
@@ -260,14 +260,19 @@ public class PlayServices extends Service {
                                 callBack.onPrepareHost(true);
                             } catch (InterruptedException e) {
                                 RoraLog.info("Play Game - Error: " + e.getMessage());
-                                stopConnect(callBack, errMsg);
+                                stopConnect(callBack, e.getMessage());
                             }
                         }).start();
                     });
                 }
 
                 @Override
-                public void onAppReady() {
+                public void onAppReady(boolean isSuccess) {
+                    if (!isSuccess) {
+                        stopConnect(callBack, getResources().getString(R.string.undetected_error_from_server));
+                        return;
+                    }
+
                     //STEP 6: Play
                     RoraLog.info("Play game - STEP 6: Start remote connect...");
                     listener.onStartConnect(false);

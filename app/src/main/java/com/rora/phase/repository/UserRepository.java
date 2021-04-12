@@ -14,6 +14,7 @@ import com.rora.phase.model.api.FindingHostResponse;
 import com.rora.phase.model.api.LoginCredential;
 import com.rora.phase.model.api.LoginResponse;
 import com.rora.phase.model.api.PinConfirmBody;
+import com.rora.phase.model.api.PrepareAppModel;
 import com.rora.phase.nvstream.http.ComputerDetails;
 import com.rora.phase.utils.DataResponse;
 import com.rora.phase.utils.SharedPreferencesHelper;
@@ -212,10 +213,10 @@ public class UserRepository {
         });
     }
 
-    public void prepareAppHost(Integer appId, OnResultCallBack<String> callBack) {
+    public void prepareAppHost(String gameId, String platformId, String platformUsername, String platformPassword, OnResultCallBack<String> callBack) {
         APIServicesHelper apiHelper = new APIServicesHelper<>();
-
-        apiHelper.request(userAuthenticatedServices.prepareApp(appId.toString()), (err, data) -> {
+        PrepareAppModel data = new PrepareAppModel(gameId, platformId, platformUsername, platformPassword);
+        apiHelper.request(userAuthenticatedServices.prepareApp(data), (err, result) -> {
             if (err != null && !err.contains("success")) {
                 callBack.onResult(err, null);
             } else

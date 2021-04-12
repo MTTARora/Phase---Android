@@ -7,6 +7,7 @@ import com.rora.phase.model.api.FindingHostResponse;
 import com.rora.phase.model.api.LoginCredential;
 import com.rora.phase.model.api.LoginResponse;
 import com.rora.phase.model.api.PinConfirmBody;
+import com.rora.phase.model.api.PrepareAppModel;
 
 import java.util.List;
 
@@ -60,7 +61,7 @@ public interface UserPhaseService {
     @POST("./play/confirm-pin")
     Call<BaseResponse> sendPinToHost(@Body PinConfirmBody confirmData);
 
-    @GET("./play/prepare-app")
-    Call<BaseResponse<String>> prepareApp(@Query("appId") String appId);
+    @POST("./play/prepare-app")
+    Call<BaseResponse<String>> prepareApp(@Body PrepareAppModel data);
 
 }

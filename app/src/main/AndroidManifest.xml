@@ -83,7 +83,7 @@
         </activity>
         <activity
             android:name=".ui.game.LoadingGameActivity"
-            android:screenOrientation="userLandscape"
+            android:screenOrientation="sensorLandscape"
             android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen" />
         <activity
             android:name=".PcView"
@@ -143,7 +143,7 @@
             android:noHistory="true"
             android:preferMinimalPostProcessing="true"
             android:resizeableActivity="true"
-            android:screenOrientation="userLandscape"
+            android:screenOrientation="sensorLandscape"
             android:supportsPictureInPicture="true"
             android:theme="@style/StreamTheme">
             <meta-data

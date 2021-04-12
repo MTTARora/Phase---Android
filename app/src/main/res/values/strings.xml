@@ -264,5 +264,6 @@
     <string name="preparing_environment_play_msg">Preparing environment...</string>
     <string name="done_play_msg">Done!</string>
     <string name="please_wait_msg">Please wait...</string>
+    <string name="undetected_error_from_server">Undetected error from server, please try again later!</string>
 
 </resources>

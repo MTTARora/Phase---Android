@@ -102,7 +102,7 @@ public class PhaseServiceHelper {
         if(response.code() == 200) {
             data.setData(response.body());
         } else {
-            String err = "No data to fetch, please try again later!";
+            String err = "Could not get data from server, please try again later!";
             if (response.body() != null)
                 try {
                     JSONObject jObjError = new JSONObject(response.errorBody().string());

@@ -42,7 +42,7 @@ public class PlayHub {
             }
         });
 
-        hubConnection.on("OnAppReady", () -> listener.onAppReady());
+        hubConnection.on("OnAppReady", (isSuccess) -> listener.onAppReady(isSuccess), boolean.class);
     }
 
     public void stopConnect() {
