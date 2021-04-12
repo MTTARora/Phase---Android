@@ -103,13 +103,22 @@ public class PhaseServiceHelper {
             data.setData(response.body());
         } else {
             String err = "Could not get data from server, please try again later!";
-            if (response.body() != null)
+            if (response.errorBody() != null) {
                 try {
                     JSONObject jObjError = new JSONObject(response.errorBody().string());
                     err = jObjError.getString("message");
                 } catch (Exception e) {
                     err = e.getMessage();
                 }
+            } else if (response.body() != null) {
+                try {
+                    JSONObject jObjError = new JSONObject(response.errorBody().string());
+                    err = jObjError.getString("message");
+                } catch (Exception e) {
+                    err = e.getMessage();
+                }
+            }
+
             data.setMsg(err);
         }
         return data;
