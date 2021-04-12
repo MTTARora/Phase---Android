@@ -43,6 +43,7 @@ public class PlayHub {
         });
 
         hubConnection.on("OnAppReady", (isSuccess) -> listener.onAppReady(isSuccess), boolean.class);
+        hubConnection.on("PlayingError", (err) -> listener.onDisconnected(500), String.class);
     }
 
     public void stopConnect() {
