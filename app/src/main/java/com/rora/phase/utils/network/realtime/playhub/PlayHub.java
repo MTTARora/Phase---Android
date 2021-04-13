@@ -45,7 +45,9 @@ public class PlayHub {
         hubConnection.on("OnAppReady", listener::onAppReady, boolean.class);
         hubConnection.on("PlayingError", (err) -> listener.onDisconnected(500), String.class);
         hubConnection.on("OnHostAvailable", listener::onHostAvailable, Host.class);
-        hubConnection.on("UpdatePlayQueue", listener::onUpdatePlayQueue, int.class);
+        hubConnection.on("UpdatePlayQueue", (position) -> {
+            listener.onUpdatePlayQueue(position);
+        }, int.class);
     }
 
     public void stopConnect() {

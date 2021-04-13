@@ -224,7 +224,7 @@ public class PlayServices extends Service {
 
                 @Override
                 public void onUpdatePlayQueue(int position) {
-                    listener.onQueueUpdated(false, position, 0);
+                    listener.onQueueUpdated(false, 0, position);
                 }
 
                 @Override
