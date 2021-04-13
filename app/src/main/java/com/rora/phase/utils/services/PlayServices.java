@@ -22,6 +22,7 @@ import com.rora.phase.binding.PlatformBinding;
 import com.rora.phase.computers.IdentityManager;
 import com.rora.phase.discovery.DiscoveryService;
 import com.rora.phase.model.Game;
+import com.rora.phase.model.Host;
 import com.rora.phase.model.UserPlayingData;
 import com.rora.phase.nvstream.NvConnection;
 import com.rora.phase.nvstream.http.ComputerDetails;
@@ -33,7 +34,6 @@ import com.rora.phase.nvstream.mdns.MdnsDiscoveryListener;
 import com.rora.phase.repository.UserRepository;
 import com.rora.phase.utils.NetHelper;
 import com.rora.phase.utils.ServerHelper;
-import com.rora.phase.utils.callback.OnResultCallBack;
 import com.rora.phase.utils.callback.PlayGameProgressCallBack;
 import com.rora.phase.utils.network.realtime.playhub.PlayHub;
 import com.rora.phase.utils.network.realtime.playhub.PlayHubListener;
@@ -207,63 +207,29 @@ public class PlayServices extends Service {
                                 if (response.queue != null) {
                                     RoraLog.info("Play game: So many players are playing right now, please wait!");
                                     state = UserPlayingData.PlayingState.IN_QUEUE;
-                                    listener.onJoinQueue(response.queue.getTotal(), response.queue.getCurrentPosition());
-                                    callBack.onJoinQueue(response.queue.getTotal(), response.queue.getCurrentPosition());
+                                    listener.onQueueUpdated(true, response.queue.getTotal(), response.queue.getCurrentPosition());
+                                    callBack.onQueueUpdated(true, response.queue.getTotal(), response.queue.getCurrentPosition());
                                     return;
                                 }
 
                                 //STEP 3: Pair
-                                RoraLog.info("Play game - STEP 3: Start pairing...");
-                                listener.onPairPc(false);
-                                callBack.onPairPc(false);
-                                ComputerDetails computer = new ComputerDetails(response.host);
-                                pollingTuple = new PollingTuple(computer, null);
-                                NvHTTP.HTTPS_PORT1 = computer.httpsPort1;
-                                NvHTTP.HTTP_PORT2 = computer.httpsPort1+1;
-
-                                String err = startPairing(callBack);
-                                if (err != null) {
-                                    RoraLog.info("Play Game - Error: " + err);
-                                    stopConnect(callBack, err);
-                                    return;
-                                }
-                                listener.onPairPc(true);
-                                callBack.onPairPc(true);
-                                Thread.sleep(1000);
-
-
-                                //STEP 4: Get game list from nvdia
-                                RoraLog.info("Play game - STEP 4: Getting app list from nvidia...");
-                                listener.onGetHostApps(false);
-                                callBack.onGetHostApps(false);
-                                err = getNecessaryAppFromNvidia();
-                                if (err != null) {
-                                    RoraLog.info("Play Game - Error: " + err);
-                                    stopConnect(callBack, err);
-                                    return;
-                                }
-                                listener.onGetHostApps(true);
-                                callBack.onGetHostApps(true);
-
-                                //STEP 5: Request host to prepare app if pair success
-                                RoraLog.info("Play game - STEP 5: Pair success, requesting host for preparation app...");
-                                listener.onPrepareHost(false);
-                                callBack.onPrepareHost(false);
-                                userRepository.prepareAppHost(game.getId().toString(), "1", null, null, (error, data) -> {
-                                    if (error != null) {
-                                        RoraLog.info("Play Game - Error: " + error);
-                                        stopConnect(callBack, error);
-                                        return;
-                                    }
-                                });
-                                listener.onPrepareHost(true);
-                                callBack.onPrepareHost(true);
-                            } catch (InterruptedException e) {
+                                continueProgressWithAvailableHost(response.host, callBack);
+                            } catch (Exception e) {
                                 RoraLog.info("Play Game - Error: " + e.getMessage());
                                 stopConnect(callBack, e.getMessage());
                             }
                         }).start();
                     });
+                }
+
+                @Override
+                public void onUpdatePlayQueue(int position) {
+                    listener.onQueueUpdated(false, position, 0);
+                }
+
+                @Override
+                public void onHostAvailable(Host host) {
+                    continueProgressWithAvailableHost(host, callBack);
                 }
 
                 @Override
@@ -284,6 +250,7 @@ public class PlayServices extends Service {
                         return;
                     }
 
+                    state = UserPlayingData.PlayingState.PLAYING;
                     RoraLog.info("Play game - FINAL: Everything is done, ready to play!");
                     listener.onStartConnect(true);
                     callBack.onStartConnect(true);
@@ -312,6 +279,59 @@ public class PlayServices extends Service {
         });
         connectThread.setName("Play Service - playing progress");
         connectThread.start();
+    }
+
+    private void continueProgressWithAvailableHost(Host host, PlayGameProgressCallBack callBack) {
+        try {
+            RoraLog.info("Play game - STEP 3: Start pairing...");
+            listener.onPairPc(false);
+            callBack.onPairPc(false);
+            ComputerDetails computer = new ComputerDetails(host);
+            pollingTuple = new PollingTuple(computer, null);
+            NvHTTP.HTTPS_PORT1 = computer.httpsPort1;
+            NvHTTP.HTTP_PORT2 = computer.httpsPort1+1;
+
+            String err = startPairing(callBack);
+            if (err != null) {
+                RoraLog.info("Play Game - Error: " + err);
+                stopConnect(callBack, err);
+                return;
+            }
+            listener.onPairPc(true);
+            callBack.onPairPc(true);
+            Thread.sleep(1000);
+
+
+            //STEP 4: Get game list from nvdia
+            RoraLog.info("Play game - STEP 4: Getting app list from nvidia...");
+            listener.onGetHostApps(false);
+            callBack.onGetHostApps(false);
+            err = getNecessaryAppFromNvidia();
+            if (err != null) {
+                RoraLog.info("Play Game - Error: " + err);
+                stopConnect(callBack, err);
+                return;
+            }
+            listener.onGetHostApps(true);
+            callBack.onGetHostApps(true);
+
+            //STEP 5: Request host to prepare app if pair success
+            RoraLog.info("Play game - STEP 5: Pair success, requesting host for preparation app...");
+            listener.onPrepareHost(false);
+            callBack.onPrepareHost(false);
+            userRepository.prepareAppHost(currentGame.getId().toString(), "1", null, null, (error, data) -> {
+                if (error != null) {
+                    RoraLog.info("Play Game - Error: " + error);
+                    stopConnect(callBack, error);
+                    return;
+                }
+            });
+            listener.onPrepareHost(true);
+            callBack.onPrepareHost(true);
+        } catch (Exception e) {
+            RoraLog.info("Play Game - Error: " + e.getMessage());
+            stopConnect(callBack, e.getMessage());
+        }
     }
 
     /** STEP 3: Pair computer
@@ -461,6 +481,7 @@ public class PlayServices extends Service {
             connectThread = null;
 
             RoraLog.info("Play game - Stop connect success");
+            state = UserPlayingData.PlayingState.STOP;
             listener.onStopConnect(true, err);
             if (callBack != null)
                 callBack.onStopConnect(true, err);

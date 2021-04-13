@@ -210,49 +210,63 @@ public class LoadingGameActivity extends FragmentActivity {
     private final PlayGameProgressCallBack playProgressCallBack =  new PlayGameProgressCallBack() {
         @Override
         public void onStart(boolean isDone) {
-            tvLoadingProgress.setText(getResources().getString(R.string.getting_data_from_server_play_msg));
-            pbLoadingProgress.setProgress(isDone ? 1 : 2);
+            LoadingGameActivity.this.runOnUiThread(() -> {
+                tvLoadingProgress.setText(getResources().getString(R.string.getting_data_from_server_play_msg));
+                pbLoadingProgress.setProgress(isDone ? 1 : 2);
+            });
         }
 
         @Override
         public void onFindAHost(boolean isDone) {
-            tvLoadingProgress.setText(getResources().getString(R.string.finding_a_host_play_msg));
-            pbLoadingProgress.setProgress(isDone ? 3 : 4);
+            LoadingGameActivity.this.runOnUiThread(() -> {
+                tvLoadingProgress.setText(getResources().getString(R.string.finding_a_host_play_msg));
+                pbLoadingProgress.setProgress(isDone ? 3 : 4);
+            });
         }
 
         @Override
-        public void onJoinQueue(int total, int position) {
+        public void onQueueUpdated(boolean isFirstInit, int total, int position) {
             LoadingGameActivity.this.finish();
         }
 
         @Override
         public void onPairPc(boolean isDone) {
-            tvLoadingProgress.setText(getResources().getString(R.string.connecting_to_host_play_msg));
-            pbLoadingProgress.setProgress(isDone ? 5 : 6);
+            LoadingGameActivity.this.runOnUiThread(() -> {
+                tvLoadingProgress.setText(getResources().getString(R.string.connecting_to_host_play_msg));
+                pbLoadingProgress.setProgress(isDone ? 5 : 6);
+            });
         }
 
         @Override
         public void onGetHostApps(boolean isDone) {
-            tvLoadingProgress.setText(getResources().getString(R.string.getting_necessary_data_play_msg));
-            pbLoadingProgress.setProgress(isDone ? 7 : 8);
+            LoadingGameActivity.this.runOnUiThread(() -> {
+                tvLoadingProgress.setText(getResources().getString(R.string.getting_necessary_data_play_msg));
+                pbLoadingProgress.setProgress(isDone ? 7 : 8);
+            });
         }
 
         @Override
         public void onPrepareHost(boolean isDone) {
-            tvLoadingProgress.setText(getResources().getString(R.string.preparing_environment_play_msg));
-            pbLoadingProgress.setProgress(isDone ? 9 : 10);
+            LoadingGameActivity.this.runOnUiThread(() -> {
+                tvLoadingProgress.setText(getResources().getString(R.string.preparing_environment_play_msg));
+                pbLoadingProgress.setProgress(isDone ? 9 : 10);
+            });
         }
 
         @Override
         public void onStartConnect(boolean isDone) {
-            tvLoadingProgress.setText(getResources().getString(R.string.done_play_msg));
-            pbLoadingProgress.setProgress(isDone ? 11 : 12);
+            LoadingGameActivity.this.runOnUiThread(() -> {
+                tvLoadingProgress.setText(getResources().getString(R.string.done_play_msg));
+                pbLoadingProgress.setProgress(isDone ? 11 : 12);
+            });
         }
 
         @Override
         public void onStopConnect(boolean isDone, String err) {
-            pbLoadingProgress.setProgress(1);
-            LoadingGameActivity.this.finish();
+            LoadingGameActivity.this.runOnUiThread(() -> {
+                pbLoadingProgress.setProgress(1);
+                LoadingGameActivity.this.finish();
+            });
         }
 
         @Override

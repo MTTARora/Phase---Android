@@ -85,7 +85,7 @@ public abstract class BaseFragment extends Fragment {
         if (previousFrag == null) {
             stopUpDateHomeScreen = false;
             setNavsVisibility(null);
-            ((MainActivity)getActivity()).updateQueue(VISIBLE, GONE);
+            ((MainActivity)getActivity()).updateQueueVisibility(VISIBLE, GONE);
         }
         fm.popBackStack();
     }
@@ -208,9 +208,9 @@ public abstract class BaseFragment extends Fragment {
 
     private void setQueueFrameVisibility() {
         if (currentFragment == null)
-            ((MainActivity) getActivity()).updateQueue(VISIBLE, GONE);
+            ((MainActivity) getActivity()).updateQueueVisibility(VISIBLE, GONE);
         else
-            ((MainActivity) getActivity()).updateQueue(GONE, VISIBLE);
+            ((MainActivity) getActivity()).updateQueueVisibility(GONE, VISIBLE);
     }
 
 }

@@ -40,16 +40,21 @@
             android:text="PUBG" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="You're in queue" />
-
-        <TextView
             android:id="@+id/queue_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="1/100"
-            android:textSize="@dimen/title_text_size" />
+            android:text="@string/in_queue_msg" />
+
+        <ProgressBar
+            android:id="@+id/loading_game_queue_pb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:visibility="gone"/>
     </LinearLayout>
 
     <ImageButton
