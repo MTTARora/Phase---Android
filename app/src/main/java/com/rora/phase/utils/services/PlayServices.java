@@ -15,6 +15,8 @@ import android.os.IBinder;
 import android.os.SystemClock;
 
 import androidx.annotation.Nullable;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.rora.phase.RoraLog;
 import com.rora.phase.R;
@@ -56,7 +58,7 @@ public class PlayServices extends Service {
     private final PlayServices.ComputerManagerBinder binder = new PlayServices.ComputerManagerBinder();
     private final ComputerServices computerServices = new ComputerServices();
 
-    private UserPlayingData.PlayingState state = UserPlayingData.PlayingState.IDLE;
+    private MutableLiveData<UserPlayingData.PlayingState> state = new MutableLiveData<>();
     private PollingTuple pollingTuple;
     private PlayGameProgressCallBack listener = null;
     private IdentityManager idManager;
@@ -102,12 +104,13 @@ public class PlayServices extends Service {
         // Lookup or generate this device's UID
         idManager = new IdentityManager(this);
         userRepository = new UserRepository(getApplicationContext());
+        state.postValue(UserPlayingData.PlayingState.IDLE);
     }
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
-        if (state == UserPlayingData.PlayingState.IN_PROGRESS || state == UserPlayingData.PlayingState.PLAYING) {
+        if (state.getValue() == UserPlayingData.PlayingState.IN_PROGRESS || state.getValue() == UserPlayingData.PlayingState.PLAYING) {
             stopConnect(null, null);
         }
         stopSelf();
@@ -171,12 +174,12 @@ public class PlayServices extends Service {
      * Start play progress
      * */
     public void startConnectProgress(Activity activity, Game game, PlayGameProgressCallBack callBack) {
-        if (state != UserPlayingData.PlayingState.IDLE)
+        if (state.getValue() != UserPlayingData.PlayingState.IDLE)
             return;
 
         connectThread = new Thread(() -> {
             RoraLog.info("Play game - STEP 1: Start Connecting");
-            state = UserPlayingData.PlayingState.IN_PROGRESS;
+            state.postValue(UserPlayingData.PlayingState.IN_PROGRESS);
             this.currentGame = game;
             userRepository.storeCurrentGame(game);
 
@@ -206,7 +209,7 @@ public class PlayServices extends Service {
                                 //STEP 2.1: Check queue
                                 if (response.queue != null) {
                                     RoraLog.info("Play game: So many players are playing right now, please wait!");
-                                    state = UserPlayingData.PlayingState.IN_QUEUE;
+                                    state.postValue(UserPlayingData.PlayingState.IN_QUEUE);
                                     listener.onQueueUpdated(true, response.queue.getTotal(), response.queue.getCurrentPosition());
                                     callBack.onQueueUpdated(true, response.queue.getTotal(), response.queue.getCurrentPosition());
                                     return;
@@ -250,7 +253,7 @@ public class PlayServices extends Service {
                         return;
                     }
 
-                    state = UserPlayingData.PlayingState.PLAYING;
+                    state.postValue(UserPlayingData.PlayingState.PLAYING);
                     RoraLog.info("Play game - FINAL: Everything is done, ready to play!");
                     listener.onStartConnect(true);
                     callBack.onStartConnect(true);
@@ -361,7 +364,7 @@ public class PlayServices extends Service {
 
             //STEP 4.2: SEND PIN TO HOST
             RoraLog.info("Pairing - Waiting for pin confirmation: " + pinStr);
-            userRepository.sendPinToHost(pinStr, pollingTuple.computer.hostId, (errMsg, data) -> {
+            userRepository.sendPinToHost(pinStr, (errMsg, data) -> {
                 if (errMsg != null) {
                     RoraLog.info("Play Game - Error: " + errMsg);
                     stopConnect(callBack, errMsg);
@@ -458,10 +461,11 @@ public class PlayServices extends Service {
      * @return An error msg if failed
      * */
     public void stopConnect(PlayGameProgressCallBack callBack, String err) {
-        if (state == UserPlayingData.PlayingState.IDLE)
+        if (state.getValue() == UserPlayingData.PlayingState.IDLE)
             return;
 
         try {
+            state.postValue(UserPlayingData.PlayingState.IN_STOP_PROGRESS);
             RoraLog.info("Play game: Stop connecting");
             listener.onStopConnect(false, err);
             if (callBack != null)
@@ -481,12 +485,12 @@ public class PlayServices extends Service {
             connectThread = null;
 
             RoraLog.info("Play game - Stop connect success");
-            state = UserPlayingData.PlayingState.STOP;
+            state.postValue(UserPlayingData.PlayingState.STOPPED);
             listener.onStopConnect(true, err);
             if (callBack != null)
                 callBack.onStopConnect(true, err);
 
-            state = UserPlayingData.PlayingState.IDLE;
+            state.postValue(UserPlayingData.PlayingState.IDLE);
         } catch (Exception ex) {
             listener.onStopConnect(true, ex.getMessage());
             if (callBack != null)
@@ -510,11 +514,11 @@ public class PlayServices extends Service {
     //===================================================================
 
     private boolean isStopPlaying() {
-        return state == UserPlayingData.PlayingState.STOP;
+        return state.getValue() == UserPlayingData.PlayingState.STOPPED;
     }
 
     private UserPlayingData.PlayingState getCurrentState() {
-        return state;
+        return state.getValue();
     }
 
 
@@ -585,6 +589,10 @@ public class PlayServices extends Service {
 
         public void setListener(PlayGameProgressCallBack callBack) {
             PlayServices.this.listener = callBack;
+        }
+
+        public LiveData<UserPlayingData.PlayingState> setStateListener() {
+            return PlayServices.this.state;
         }
 
         public Game getCurrentGame() {
@@ -891,7 +899,7 @@ public class PlayServices extends Service {
                 public void run() {
 
                     int offlineCount = 0;
-                    while (!isInterrupted() && (state == UserPlayingData.PlayingState.IN_PROGRESS || state == UserPlayingData.PlayingState.PLAYING)) {
+                    while (!isInterrupted() && (state.getValue() == UserPlayingData.PlayingState.IN_PROGRESS || state.getValue() == UserPlayingData.PlayingState.PLAYING)) {
                         try {
                             // Only allow one request to the machine at a time
                             synchronized (tuple.networkLock) {

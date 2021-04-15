@@ -21,13 +21,11 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.UserPlayingData;
-import com.rora.phase.nvstream.http.ComputerDetails;
 import com.rora.phase.ui.game.GameDetailFragment;
 import com.rora.phase.ui.settings.auth.SignInActivity;
 import com.rora.phase.ui.viewmodel.GameViewModel;
@@ -244,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
     }
 
     public void updateQueueVisibility(int visibilityMainFrame, int visibility) {
-        if (managerBinder == null || (managerBinder.getCurrentState() != UserPlayingData.PlayingState.IN_QUEUE && managerBinder.getCurrentState() != UserPlayingData.PlayingState.STOP))
+        if (managerBinder == null || (managerBinder.getCurrentState() != UserPlayingData.PlayingState.IN_QUEUE && managerBinder.getCurrentState() != UserPlayingData.PlayingState.STOPPED))
             return;
 
         this.runOnUiThread(() -> {

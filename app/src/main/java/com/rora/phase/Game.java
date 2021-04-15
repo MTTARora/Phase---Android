@@ -82,6 +82,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import java.io.ByteArrayInputStream;
@@ -97,7 +98,6 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
     PerfOverlayListener
 {
     private int lastButtonState = 0;
-    private GameViewModel gameViewModel;
 
     // Only 2 touches are supported
     private final TouchContext[] touchContextMap = new TouchContext[2];
@@ -178,12 +178,19 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
                     // Wait for the binder to be ready
                     //localBinder.waitForReady();
                     managerBinder = localBinder;
+                    Game.this.runOnUiThread(() -> managerBinder.setStateListener().observe(Game.this, playingStateObserver));
                 }
             }.start();
         }
 
         public void onServiceDisconnected(ComponentName className) {
             managerBinder = null;
+        }
+    };
+
+    private final Observer<UserPlayingData.PlayingState> playingStateObserver = playingState -> {
+        if(playingState == UserPlayingData.PlayingState.IN_STOP_PROGRESS || playingState == UserPlayingData.PlayingState.STOPPED) {
+            Game.this.finish();
         }
     };
 
@@ -199,7 +206,6 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        gameViewModel = new ViewModelProvider(this).get(GameViewModel.class);
         UiHelper.setLocale(this);
 
         // We don't want a title bar
@@ -869,6 +875,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
         super.onDestroy();
 
         if (managerBinder != null) {
+            managerBinder.setStateListener().removeObserver(playingStateObserver);
             managerBinder.stopConnect(null);
         }
 

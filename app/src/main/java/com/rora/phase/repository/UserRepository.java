@@ -1,7 +1,6 @@
 package com.rora.phase.repository;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
@@ -24,7 +23,6 @@ import com.rora.phase.utils.network.BaseResponse;
 import com.rora.phase.utils.network.PhaseServiceHelper;
 import com.rora.phase.utils.network.UserPhaseService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -202,11 +200,11 @@ public class UserRepository {
         });
     }
 
-    public void sendPinToHost(String pinStr, String hostId, OnResultCallBack<ComputerDetails> callBack) {
+    public void sendPinToHost(String pinStr, OnResultCallBack<ComputerDetails> callBack) {
         APIServicesHelper apiHelper = new APIServicesHelper<>();
 
-        apiHelper.request(userAuthenticatedServices.sendPinToHost(new PinConfirmBody(pinStr, hostId)), (err, data) -> {
-            if (err != null && !err.contains("success")) {
+        apiHelper.request(userAuthenticatedServices.sendPinToHost(new PinConfirmBody(pinStr)), (err, data) -> {
+            if (err != null) {
                 callBack.onResult(err, null);
             } else
                 callBack.onResult(null, null);
@@ -259,7 +257,7 @@ public class UserRepository {
     }
 
     public boolean isStopPlaying() {
-        return dbSharedPref.getUserPlayState().equals(UserPlayingData.PlayingState.STOP.id);
+        return dbSharedPref.getUserPlayState().equals(UserPlayingData.PlayingState.STOPPED.id);
     }
 
     public void savePlayState(UserPlayingData.PlayingState state) {

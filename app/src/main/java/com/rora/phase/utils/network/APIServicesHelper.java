@@ -34,8 +34,11 @@ public class APIServicesHelper<T> {
                     }
                 }
 
-                if (err != null)
+                if (err != null && !err.contains("success"))
                     RoraLog.warning("API Services - request err: " + err);
+
+                if (err != null && err.contains("success"))
+                    err = null;
 
                 callBack.onResponse(err, data);
             }
