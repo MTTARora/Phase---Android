@@ -29,9 +29,9 @@ public class GameInfoViewHolder extends RecyclerView.ViewHolder {
     public GameInfoViewHolder(@NonNull View itemView) {
         super(itemView);
         imvBanner = itemView.findViewById(R.id.banner_game_info_imv);
-        tvName = itemView.findViewById(R.id.game_name_info_tv);
-        tvPayType = itemView.findViewById(R.id.pay_type_tv);
-        rclvPlatform = itemView.findViewById(R.id.platform_rclv);
+        tvName = itemView.findViewById(R.id.game_name_item_game_info_tv);
+        tvPayType = itemView.findViewById(R.id.pay_type_item_game_info_tv);
+        rclvPlatform = itemView.findViewById(R.id.platform_item_game_info_rclv);
 
         rclvPlatform.setLayoutManager(new LinearLayoutManager(itemView.getContext(), RecyclerView.HORIZONTAL, false));
         rclvPlatform.setAdapter(new PlatformRecyclerViewAdapter());
@@ -44,28 +44,6 @@ public class GameInfoViewHolder extends RecyclerView.ViewHolder {
         MediaHelper.loadImage(imvBanner, game.getBackground());
         tvName.setText(game.getName());
         tvPayType.setText(game.getPayTypeName());
-
-        switch (game.getPayTypeId()) {
-            case 1:
-                tvPayType.setBackgroundColor(context.getColor(android.R.color.holo_blue_light));
-                tvPayType.setTextColor(context.getColor(R.color.dim));
-                break;
-            case 2:
-                tvPayType.setBackgroundColor(context.getColor(R.color.yellow));
-                tvPayType.setTextColor(context.getColor(R.color.dim));
-                break;
-            case 3:
-                tvPayType.setBackgroundColor(context.getColor(R.color.red));
-                tvPayType.setTextColor(context.getColor(R.color.white));
-                break;
-            case 4:
-                tvPayType.setBackgroundColor(context.getColor(R.color.green));
-                tvPayType.setTextColor(context.getColor(R.color.green_dark));
-                break;
-            default:
-                tvPayType.setBackgroundColor(context.getColor(R.color.gray));
-                break;
-        }
         ((PlatformRecyclerViewAdapter) Objects.requireNonNull(rclvPlatform.getAdapter())).bindData(game.getPlatforms());
 
         itemView.setOnClickListener(v -> {
