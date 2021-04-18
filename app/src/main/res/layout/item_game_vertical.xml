@@ -44,9 +44,8 @@
             android:paddingHorizontal="@dimen/min_space"
             android:paddingTop="@dimen/medium_space"
             android:paddingBottom="@dimen/min_space"
-            android:textColor="@color/white"
+            android:textColor="@color/colorPrimary"
             android:textSize="@dimen/min_text_size"
-            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent" />
     </carbon.widget.ConstraintLayout>
 
@@ -62,7 +61,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:maxLines="2"
+            android:maxLines="1"
             android:textColor="@color/colorText"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -71,10 +70,10 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:ellipsize="end"
-            android:textSize="@dimen/normal_text_size"
             android:maxLines="3"
-            app:layout_constraintTop_toBottomOf="@id/game_name_vertical_item_tv"
-            app:layout_constraintBottom_toTopOf="@id/category_item_game" />
+            android:textSize="@dimen/normal_text_size"
+            app:layout_constraintBottom_toTopOf="@id/category_item_game"
+            app:layout_constraintTop_toBottomOf="@id/game_name_vertical_item_tv" />
 
         <TextView
             android:id="@+id/category_item_game"
@@ -83,6 +82,7 @@
             android:ellipsize="end"
             android:lines="1"
             android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/normal_text_size"
             android:textStyle="italic"
             app:layout_constraintBottom_toBottomOf="parent" />
 

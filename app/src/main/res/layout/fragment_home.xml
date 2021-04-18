@@ -35,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/max_space"
                 android:clipToPadding="false"
-                android:paddingHorizontal="@dimen/medium_space" />
+                android:paddingHorizontal="@dimen/min_space" />
 
             <!--MAIN LIST-->
             <androidx.recyclerview.widget.RecyclerView

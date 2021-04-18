@@ -56,7 +56,7 @@ public class CategoryRVAdapter extends BaseRVAdapter {
                 ViewHelper.setSizePercentageWithScreen(root, .2, 0);
                 break;
             case NORMAL_SIZE:
-                ViewHelper.setSizePercentageWithScreenAndItSelf(root, 0.24, 0, 2);
+                ViewHelper.setSizePercentageWithScreenAndItSelf(root, 0.25, 0, 2);
                 break;
         }
 
@@ -120,7 +120,7 @@ class CategoryViewHolder extends BaseRVViewHolder {
         btnCategory.setText(category.getTag());
 
         if (!hasBackground)
-            btnCategory.setBackgroundColor(context.getColor(isSelected ? R.color.red : R.color.dim));
+            btnCategory.setBackgroundColor(context.getColor(isSelected ? R.color.colorPrimary : R.color.dim));
         else
             btnCategory.setBackgroundColor(context.getColor(R.color.colorPrimary));
 

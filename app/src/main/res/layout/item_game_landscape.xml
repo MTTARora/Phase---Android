@@ -67,9 +67,8 @@
                     android:paddingHorizontal="@dimen/min_space"
                     android:paddingTop="@dimen/medium_space"
                     android:paddingBottom="@dimen/min_space"
-                    android:textColor="@color/white"
+                    android:textColor="@color/colorPrimary"
                     android:textSize="@dimen/min_text_size"
-                    android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -86,6 +85,7 @@
         android:lines="2"
         android:paddingHorizontal="@dimen/min_space"
         android:paddingVertical="@dimen/min_space"
+        android:textColor="@color/colorText"
         android:textSize="@dimen/normal_text_size"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent" />
