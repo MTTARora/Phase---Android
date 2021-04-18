@@ -31,7 +31,8 @@ public class BannerVPAdapter  extends RecyclerView.Adapter<BannerViewHolder> {
     public BannerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View root = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_banner, parent, false);
         if (widthPercent != 0) {
-            ViewHelper.setSizePercentageWithScreenAndItSelf(root, widthPercent, 0, 1.5);
+            //ViewHelper.setSizePercentageWithScreenAndItSelf(root, widthPercent, 0, 1.5);
+            ViewHelper.setSizePercentageWithScreen(root, widthPercent, 0);
 
             RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) root.getLayoutParams();
 

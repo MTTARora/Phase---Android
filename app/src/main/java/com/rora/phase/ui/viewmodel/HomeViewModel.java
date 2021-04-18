@@ -40,7 +40,7 @@ public class HomeViewModel extends AndroidViewModel {
         BY_PAY_TYPE,
         RECOMMENDED;
 
-        public static GameListType fromHomeListType(HomeUIData.Type homeType) {
+        public static GameListType getTypeFromHomeListType(HomeUIData.Type homeType) {
             switch (homeType) {
                 case HOT:
                     return HOT;
@@ -50,6 +50,8 @@ public class HomeViewModel extends AndroidViewModel {
                     return TRENDING;
                 case NEW:
                     return NEW;
+                case DISCOVER_BY_CATEGORY:
+                    return BY_CATEGORY;
                 default:
                     return null;
             }

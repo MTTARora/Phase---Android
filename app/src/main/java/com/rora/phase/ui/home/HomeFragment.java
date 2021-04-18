@@ -23,8 +23,8 @@ import com.rora.phase.model.Game;
 import com.rora.phase.model.enums.PayTypeEnum;
 import com.rora.phase.model.ui.HomeUIData;
 import com.rora.phase.ui.adapter.BannerVPAdapter;
-import com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter;
-import com.rora.phase.ui.adapter.GameMinInfoRecyclerViewAdapter;
+import com.rora.phase.ui.adapter.CategoryRVAdapter;
+import com.rora.phase.ui.adapter.GameRVAdapter;
 import com.rora.phase.ui.adapter.TabPagerAdapter;
 import com.rora.phase.ui.game.GameDetailFragment;
 import com.rora.phase.ui.game.GameListFragment;
@@ -39,12 +39,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter.MEDIUM_SIZE;
-import static com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter.NORMAL_SIZE;
+import static com.rora.phase.ui.adapter.CategoryRVAdapter.MEDIUM_SIZE;
+import static com.rora.phase.ui.adapter.CategoryRVAdapter.NORMAL_SIZE;
 
-public class HomeFragment extends BaseFragment implements View.OnClickListener {
+public class HomeFragment extends BaseFragment {
 
-    private RecyclerView rclMain, rclvDiscover, rclvCategoryDiscover, rclvCategory;
+    private RecyclerView rclMain, rclvCategory;
     private SwipeRefreshLayout refreshLayout;
     private ViewPager2 vpBanner, vpOtherGames;
     private TabLayout tbOtherGames;
@@ -100,13 +100,10 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 
         rclMain = root.findViewById(R.id.main_rclv_home_screen);
         rclvCategory = root.findViewById(R.id.category_rclv);
-        rclvDiscover = root.findViewById(R.id.discover_rclv);
-        rclvCategoryDiscover = root.findViewById(R.id.category_discover_rclv);
 
         initView(root);
         bindData();
 
-        root.findViewById(R.id.btn_view_all_discover).setOnClickListener(this);
         return root;
     }
 
@@ -131,29 +128,30 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 
         setupBannerView();
 
-        HomeRVAdapter homeAdapter = new HomeRVAdapter(getContext());
+        HomeRVAdapter homeAdapter = new HomeRVAdapter(getActivity());
         rclMain.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
         rclMain.setAdapter(homeAdapter);
         rclMain.setHasFixedSize(true);
 
         homeAdapter.setOnViewAllClickListener(selectedItem -> {
-            HomeViewModel.GameListType gameListType = HomeViewModel.GameListType.fromHomeListType(selectedItem.type);
-            if (gameListType != null);
-                goToGameListScreen(selectedItem.getSessionName(getActivity()), gameListType, "");
-        });
-        homeAdapter.setOnChildItemClickListener(selectedItem -> {
-            moveTo(GameDetailFragment.newInstance((Game) selectedItem), GameDetailFragment.class.getSimpleName());
-        });
+            HomeViewModel.GameListType gameListType = HomeViewModel.GameListType.getTypeFromHomeListType(selectedItem.type);
+            if (gameListType != null) {
+                if (gameListType == HomeViewModel.GameListType.BY_CATEGORY) {
+                    //if (rclvDiscover.getAdapter().getItemCount() == 0)
+                    goToGameListScreen(homeViewModel.getCurrentSelectedItemId(), HomeViewModel.GameListType.BY_CATEGORY, homeViewModel.getCurrentSelectedItemId());
+                } else {
+                    goToGameListScreen(selectedItem.getSessionName(getActivity()), gameListType, "");
+                }
+            }
 
-        setupGameRecyclerView(rclvDiscover, new GameMinInfoRecyclerViewAdapter(GameMinInfoRecyclerViewAdapter.VIEW_TYPE_NORMAL, 0), ViewHelper.getLayoutManager(getActivity(), 2, 0));
+        });
+        homeAdapter.setOnChildItemClickListener(selectedItem -> moveTo(GameDetailFragment.newInstance((Game) selectedItem), GameDetailFragment.class.getSimpleName()));
 
-        CategoryRecyclerViewAdapter categoryAdapter =  new CategoryRecyclerViewAdapter(0.24, NORMAL_SIZE, true,
-                selectedItemId -> goToGameListScreen((String)selectedItemId, HomeViewModel.GameListType.BY_CATEGORY, (String)selectedItemId));
+        homeAdapter.setOnCategoryClickListener(selectedItemId -> homeViewModel.getGamesDataByType(HomeViewModel.GameListType.BY_CATEGORY, (String) selectedItemId));
+
+        CategoryRVAdapter categoryAdapter =  new CategoryRVAdapter(NORMAL_SIZE, true);
         setupRecyclerView(rclvCategory, categoryAdapter, new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-
-        CategoryRecyclerViewAdapter categoryDiscoveryAdapter =  new CategoryRecyclerViewAdapter(0, MEDIUM_SIZE, false,
-                selectedItemId -> homeViewModel.getGamesDataByType(HomeViewModel.GameListType.BY_CATEGORY, (String) selectedItemId));
-        setupRecyclerView(rclvCategoryDiscover, categoryDiscoveryAdapter, ViewHelper.getLayoutManager(getActivity(), 5, 0));
+        categoryAdapter.setOnItemSelectedListener(selectedItemId -> goToGameListScreen((String)selectedItemId, HomeViewModel.GameListType.BY_CATEGORY, (String)selectedItemId));
     }
 
     private void bindData() {
@@ -188,16 +186,8 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 
         homeViewModel.getCategoryList().observe(getViewLifecycleOwner(), tags -> {
             if (!stopUpDateHomeScreen) {
-                //imvErrTrending.setVisibility(games == null || games.size() == 0 ? View.VISIBLE : View.GONE);
-                ((CategoryRecyclerViewAdapter) Objects.requireNonNull(rclvCategoryDiscover.getAdapter())).bindData(tags);
-                ((CategoryRecyclerViewAdapter) Objects.requireNonNull(rclvCategory.getAdapter())).bindData(tags);
-            }
-        });
-
-        homeViewModel.getGameByCategoryList().observe(getViewLifecycleOwner(), games -> {
-            if (!stopUpDateHomeScreen) {
-                //imvErrTrending.setVisibility(games == null || games.size() == 0 ? View.VISIBLE : View.GONE);
-                ((GameMinInfoRecyclerViewAdapter) Objects.requireNonNull(rclvDiscover.getAdapter())).bindData(games);
+                ((HomeRVAdapter)rclMain.getAdapter()).bindDataWithCategoryData(new HomeUIData(HomeUIData.Type.DISCOVER_BY_CATEGORY, null, tags));
+                ((CategoryRVAdapter) Objects.requireNonNull(rclvCategory.getAdapter())).bindData(tags);
             }
             hideLoadingScreen();
         });
@@ -208,11 +198,11 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     private void updateData() {
         stopUpDateHomeScreen = false;
         homeViewModel.getBannerListData();
-        homeViewModel.getCategoryListData();
         homeViewModel.getGamesDataByType(HomeViewModel.GameListType.TRENDING, null);
         homeViewModel.getGamesDataByType(HomeViewModel.GameListType.HOT, null);
         homeViewModel.getGamesDataByType(HomeViewModel.GameListType.EDITOR, null);
         homeViewModel.getGamesDataByType(HomeViewModel.GameListType.NEW, null);
+        homeViewModel.getCategoryListData();
     }
 
     private void setupBannerView() {
@@ -269,17 +259,5 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     }
 
     //----------------- EVENT ---------------
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_view_all_discover:
-                if (rclvDiscover.getAdapter().getItemCount() == 0)
-                    break;
-                goToGameListScreen(homeViewModel.getCurrentSelectedItemId(), HomeViewModel.GameListType.BY_CATEGORY, homeViewModel.getCurrentSelectedItemId());
-                break;
-            default: break;
-        }
-    }
 
 }

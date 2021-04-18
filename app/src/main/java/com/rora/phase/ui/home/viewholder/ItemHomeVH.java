@@ -13,21 +13,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.rora.phase.R;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.ui.HomeUIData;
-import com.rora.phase.ui.adapter.GameInfoRecyclerViewAdapter;
+import com.rora.phase.ui.adapter.GameRVAdapter;
 import com.rora.phase.utils.callback.OnItemSelectedListener;
 import com.rora.phase.utils.ui.BaseRVAdapter;
+import com.rora.phase.utils.ui.BaseRVViewHolder;
 
-public class ItemHomeViewHolder extends RecyclerView.ViewHolder {
+public class ItemHomeVH extends BaseRVViewHolder {
 
     private TextView tvSession;
     private RecyclerView rclvList;
     private ImageView errImv;
     private ImageButton btnViewAll;
 
-    private OnItemSelectedListener<HomeUIData> onViewAllClickListener;
-    private OnItemSelectedListener<Game> onChildItemClickListener;
-
-    public ItemHomeViewHolder(@NonNull View itemView) {
+    public ItemHomeVH(@NonNull View itemView) {
         super(itemView);
 
         tvSession = itemView.findViewById(R.id.session_home_item_tv);
@@ -40,21 +38,30 @@ public class ItemHomeViewHolder extends RecyclerView.ViewHolder {
     public void bindData(Context context, HomeUIData data) {
         tvSession.setText(data.getSessionName(context));
         errImv.setVisibility(data.gameList.size() == 0 ? View.VISIBLE : View.GONE);
-        setupGameRecyclerView(rclvList,
-                new GameInfoRecyclerViewAdapter(GameInfoRecyclerViewAdapter.VIEW_TYPE_NORMAL, 0),
-                new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-        ((GameInfoRecyclerViewAdapter)rclvList.getAdapter()).bindData(data.gameList);
 
-        if (onViewAllClickListener != null)
-            btnViewAll.setOnClickListener(v -> onViewAllClickListener.onSelected(data));
-    }
+        int viewType;
+        switch (data.type) {
+            case EDITOR:
+                viewType = GameRVAdapter.VIEW_TYPE_LANDSCAPE;
+                break;
+            case HOT:
+            case NEW:
+            case TRENDING:
+            default:
+                viewType = GameRVAdapter.VIEW_TYPE_PORTRAIT;
+                break;
+        }
 
-    public void setOnViewAllClickListener(OnItemSelectedListener<HomeUIData> onClickListener) {
-        this.onViewAllClickListener = onClickListener;
-    }
+        if (rclvList.getAdapter() == null) {
+            setupGameRecyclerView(rclvList,
+                    new GameRVAdapter(viewType),
+                    new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+        }
 
-    public void setOnChildItemClickListener(OnItemSelectedListener<Game> onChildItemClickListener) {
-        this.onChildItemClickListener = onChildItemClickListener;
+        ((GameRVAdapter)rclvList.getAdapter()).bindData(data.gameList);
+
+        if (onItemSelectedListener != null)
+            btnViewAll.setOnClickListener(v -> onItemSelectedListener.onSelected(data));
     }
 
     private void setupGameRecyclerView(RecyclerView view, BaseRVAdapter adapter, RecyclerView.LayoutManager layoutManager) {
@@ -62,10 +69,10 @@ public class ItemHomeViewHolder extends RecyclerView.ViewHolder {
         view.setLayoutManager(layoutManager);
         view.setHasFixedSize(true);
 
-        adapter.setOnItemSelectedListener(selectedItem -> {
-            if (onChildItemClickListener != null)
+        if (onChildItemClickListener != null)
+            adapter.setOnItemSelectedListener(selectedItem -> {
                 onChildItemClickListener.onSelected((Game)selectedItem);
-        });
+            });
     }
 
 }

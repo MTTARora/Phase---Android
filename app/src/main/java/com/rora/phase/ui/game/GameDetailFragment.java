@@ -2,13 +2,6 @@ package com.rora.phase.ui.game;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,14 +10,20 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.rora.phase.R;
 import com.rora.phase.model.Banner;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.Screenshot;
 import com.rora.phase.repository.UserRepository;
 import com.rora.phase.ui.adapter.BannerVPAdapter;
-import com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter;
-import com.rora.phase.ui.adapter.GameMinInfoRecyclerViewAdapter;
+import com.rora.phase.ui.adapter.CategoryRVAdapter;
+import com.rora.phase.ui.adapter.GameRVAdapter;
 import com.rora.phase.ui.adapter.GameVerticalRVAdapter;
 import com.rora.phase.ui.adapter.PlatformRecyclerViewAdapter;
 import com.rora.phase.ui.settings.auth.SignInActivity;
@@ -39,7 +38,7 @@ import com.rora.phase.utils.ui.ViewHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter.MIN_SIZE;
+import static com.rora.phase.ui.adapter.CategoryRVAdapter.AUTO_SIZE;
 
 public class GameDetailFragment extends BaseFragment {
 
@@ -116,9 +115,9 @@ public class GameDetailFragment extends BaseFragment {
         ViewHelper.setSizePercentageWithScreen(imvBanner, 0, 0.35);
 
         setupRecyclerView(rclvPlatform, new PlatformRecyclerViewAdapter(), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL , false));
-        setupRecyclerView(rclvCategory,new CategoryRecyclerViewAdapter( 0.11, MIN_SIZE, false, null), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL , false));
+        setupRecyclerView(rclvCategory,new CategoryRVAdapter(AUTO_SIZE, false), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL , false));
         setupRecyclerView(rclvScreenshot, new BannerVPAdapter(.45), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-        setupRecyclerView(rclvSeries, new GameMinInfoRecyclerViewAdapter(GameMinInfoRecyclerViewAdapter.VIEW_TYPE_EXPANDED, 0.8), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        setupRecyclerView(rclvSeries, new GameRVAdapter(GameRVAdapter.VIEW_TYPE_LANDSCAPE), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
         rclvSimilar.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL , false));
         GameVerticalRVAdapter adapter = new GameVerticalRVAdapter(rclvSimilar);
@@ -181,7 +180,7 @@ public class GameDetailFragment extends BaseFragment {
         tvDesc.setText(game.getDesc());
 
         ((PlatformRecyclerViewAdapter)rclvPlatform.getAdapter()).bindData(game.getPlatforms());
-        ((CategoryRecyclerViewAdapter)rclvCategory.getAdapter()).bindData(game.getTags());
+        ((CategoryRVAdapter)rclvCategory.getAdapter()).bindData(game.getTags());
 
         List<Banner> banners = new ArrayList<>();
         banners.add(new Banner(game.getBanner()));

@@ -1,74 +1,82 @@
 package com.rora.phase.ui.home;
 
-import android.content.Context;
+import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.ViewModelProvider;
 
+import com.rora.phase.MainActivity;
 import com.rora.phase.R;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.ui.HomeUIData;
-import com.rora.phase.ui.game.viewholder.GameInfoViewHolder;
-import com.rora.phase.ui.home.viewholder.ItemHomeViewHolder;
+import com.rora.phase.ui.home.viewholder.ItemHomeVH;
+import com.rora.phase.ui.home.viewholder.ItemHomeWithCategoryVH;
+import com.rora.phase.ui.viewmodel.HomeViewModel;
 import com.rora.phase.utils.callback.OnItemSelectedListener;
+import com.rora.phase.utils.ui.BaseRVAdapter;
+import com.rora.phase.utils.ui.BaseRVViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeRVAdapter extends RecyclerView.Adapter<ItemHomeViewHolder> {
+public class HomeRVAdapter extends BaseRVAdapter {
 
-    private Context context;
+    private HomeViewModel homeViewModel;
+    private Activity activity;
     private List<HomeUIData> dataList;
     private OnItemSelectedListener<HomeUIData> onViewAllClickListener;
+    private OnItemSelectedListener<String> onCategoryClickListener;
     private OnItemSelectedListener<Game> onChildItemClickListener;
 
-    public HomeRVAdapter(Context context) {
-        this.context = context;
+    public HomeRVAdapter(Activity activity) {
+        this.activity = activity;
         this.dataList = new ArrayList<>();
         dataList.add(new HomeUIData(HomeUIData.Type.NEW, new ArrayList<>()));
         dataList.add(new HomeUIData(HomeUIData.Type.TRENDING, new ArrayList<>()));
         dataList.add(new HomeUIData(HomeUIData.Type.HOT, new ArrayList<>()));
         dataList.add(new HomeUIData(HomeUIData.Type.EDITOR, new ArrayList<>()));
+        dataList.add(new HomeUIData(HomeUIData.Type.DISCOVER_BY_CATEGORY, new ArrayList<>(), new ArrayList<>()));
     }
 
     @NonNull
     @Override
-    public ItemHomeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        int layoutId = R.layout.item_home;
+    public BaseRVViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         switch (HomeUIData.Type.valueOf(viewType)) {
-            case NEW:
-                layoutId = R.layout.item_home;
-                break;
-            case TRENDING:
-                layoutId = R.layout.item_home;
-                break;
-            case HOT:
-                layoutId = R.layout.item_home;
-                break;
-            case EDITOR:
-                layoutId = R.layout.item_home;
-                break;
-            default:
-                layoutId = R.layout.item_home;
-                return null;
-        }
+            case DISCOVER_BY_CATEGORY:
+                ItemHomeWithCategoryVH root = new ItemHomeWithCategoryVH(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_home_with_category, parent, false));
 
-        return new ItemHomeViewHolder(LayoutInflater.from(parent.getContext()).inflate(layoutId, parent, false));
+                homeViewModel = new ViewModelProvider((MainActivity)activity).get(HomeViewModel.class);
+                homeViewModel.getGameByCategoryList().observe((LifecycleOwner)activity, ((ItemHomeWithCategoryVH) root)::updateGameList);
+                return root;
+            case NEW:
+            case TRENDING:
+            case HOT:
+            case EDITOR:
+            default:
+                return new ItemHomeVH(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_home, parent, false));
+        }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ItemHomeViewHolder holder, int position) {
-        holder.bindData(context, dataList.get(position));
-        holder.setOnViewAllClickListener(selectedItem -> {
-            if (onViewAllClickListener != null)
-                onViewAllClickListener.onSelected(selectedItem);
-        });
-        holder.setOnChildItemClickListener(selectedItem -> {
-            if(onChildItemClickListener != null)
-                onChildItemClickListener.onSelected(selectedItem);
-        });
+    public void onBindViewHolder(@NonNull BaseRVViewHolder holder, int position) {
+        if (onViewAllClickListener != null)
+            holder.setOnItemSelectedListener(selectedItem -> onViewAllClickListener.onSelected((HomeUIData)selectedItem));
+        if(onChildItemClickListener != null)
+            holder.setOnChildItemClickListener(selectedItem -> onChildItemClickListener.onSelected((Game)selectedItem));
+
+        if (holder instanceof ItemHomeVH) {
+            ((ItemHomeVH)holder).bindData(activity, dataList.get(position));
+        } else {
+            ((ItemHomeWithCategoryVH)holder).bindData(activity, dataList.get(position));
+
+            if (onCategoryClickListener != null)
+                ((ItemHomeWithCategoryVH)holder).setOnCategoryClickListener(selectedItem -> onCategoryClickListener.onSelected((String)selectedItem));
+        }
+
+        //holder.bindData(context, dataList.get(position));
     }
 
     @Override
@@ -85,15 +93,28 @@ public class HomeRVAdapter extends RecyclerView.Adapter<ItemHomeViewHolder> {
         for (int i = 0; i < dataList.size(); i++) {
             if (dataList.get(i).type == data.type) {
                 dataList.set(i, data);
+                notifyItemChanged(i);
                 break;
             }
         }
+    }
 
-        notifyDataSetChanged();
+    public void bindDataWithCategoryData(HomeUIData data) {
+        if (dataList.get(4).type != HomeUIData.Type.DISCOVER_BY_CATEGORY)
+            return;
+
+        data.tagList = data.tagList == null ? new ArrayList<>() : data.tagList;
+        dataList.set(4, data);
+
+        notifyItemChanged(4);
     }
 
     public void setOnViewAllClickListener(OnItemSelectedListener<HomeUIData> onClickListener) {
         this.onViewAllClickListener = onClickListener;
+    }
+
+    public void setOnCategoryClickListener(OnItemSelectedListener<String> onCategoryClickListener) {
+        this.onCategoryClickListener = onCategoryClickListener;
     }
 
     public void setOnChildItemClickListener(OnItemSelectedListener<Game> onChildItemClickListener) {

@@ -15,7 +15,7 @@
             android:id="@+id/game_banner_imv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="@dimen/banner_height"
+            app:layout_constraintDimensionRatio="1:0.5625"
             android:scaleType="fitXY"
             app:layout_constraintTop_toTopOf="parent"
             app:carbon_cornerRadiusBottomStart="@dimen/maxxx_radius"

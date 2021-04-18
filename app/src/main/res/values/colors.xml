@@ -4,8 +4,9 @@
     <color name="colorPrimaryDark">#1E2020</color>
     <color name="colorAccent">#2D2E2E</color>
 
+    <color name="colorText">#FFFFFF</color>
     <color name="divider">@color/cardview_dark_background</color>
-    <color name="dim">#CC000000</color>
+    <color name="dim">#BF000000</color>
     <color name="dim_min">#80000000</color>
     <color name="white">#FFFFFF</color>
     <color name="yellow">#DACA3C</color>

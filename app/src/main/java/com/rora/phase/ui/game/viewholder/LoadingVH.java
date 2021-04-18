@@ -7,8 +7,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rora.phase.R;
+import com.rora.phase.utils.ui.BaseRVViewHolder;
 
-public class LoadingVH extends RecyclerView.ViewHolder {
+public class LoadingVH extends BaseRVViewHolder {
 
     public ProgressBar progressBar;
 

@@ -7,42 +7,36 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.rora.phase.R;
 import com.rora.phase.model.Tag;
-import com.rora.phase.utils.callback.OnItemSelectedListener;
+import com.rora.phase.utils.ui.BaseRVAdapter;
+import com.rora.phase.utils.ui.BaseRVViewHolder;
 import com.rora.phase.utils.ui.ViewHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-import static com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter.MEDIUM_SIZE;
-import static com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter.MIN_SIZE;
-import static com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter.NORMAL_SIZE;
+import static com.rora.phase.ui.adapter.CategoryRVAdapter.MEDIUM_SIZE;
+import static com.rora.phase.ui.adapter.CategoryRVAdapter.AUTO_SIZE;
+import static com.rora.phase.ui.adapter.CategoryRVAdapter.NORMAL_SIZE;
 
-public class CategoryRecyclerViewAdapter extends RecyclerView.Adapter<CategoryViewHolder> {
+public class CategoryRVAdapter extends BaseRVAdapter {
 
     private List<Tag> categoryList;
     private List<Boolean> categorySelectedState;
-    private OnItemSelectedListener onItemSelectedListener;
-    private double widthPercentage;
     private int size;
     private boolean hasBackground;
 
-    public static final int MIN_SIZE = 0;
+    public static final int AUTO_SIZE = 0;
     public static final int MEDIUM_SIZE = 1;
     public static final int NORMAL_SIZE = 2;
 
-    public CategoryRecyclerViewAdapter(double widthPercentage, int size, boolean hasBackground, OnItemSelectedListener onItemSelectedListener) {
+    public CategoryRVAdapter(int size, boolean hasBackground) {
         this.categoryList = new ArrayList<>();
         categorySelectedState = new ArrayList<>();
-        this.onItemSelectedListener = onItemSelectedListener;
-        this.widthPercentage = widthPercentage;
         this.size = size;
         this.hasBackground = hasBackground;
     }
@@ -50,28 +44,31 @@ public class CategoryRecyclerViewAdapter extends RecyclerView.Adapter<CategoryVi
 
     @NonNull
     @Override
-    public CategoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public BaseRVViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View root = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_category, parent, false);
 
-        if (widthPercentage != 0) {
-
-            if(size == MIN_SIZE) {
+        switch (size) {
+            case AUTO_SIZE:
                 ViewHelper.setSize(root, WRAP_CONTENT, WRAP_CONTENT);
                 ((ViewGroup.MarginLayoutParams) root.getLayoutParams()).setMarginEnd((int) parent.getContext().getResources().getDimension(R.dimen.min_space));
-            } else {
-                ViewHelper.setSizePercentageWithScreenAndItSelf(root, widthPercentage, 0, 2);
-            }
+                break;
+            case MEDIUM_SIZE:
+                ViewHelper.setSizePercentageWithScreen(root, .2, 0);
+                break;
+            case NORMAL_SIZE:
+                ViewHelper.setSizePercentageWithScreenAndItSelf(root, 0.24, 0, 2);
+                break;
         }
 
         return new CategoryViewHolder(root);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CategoryViewHolder holder, int position) {
-        holder.bindData(categoryList.get(position), onItemSelectedListener != null ? categorySelectedState.get(position) : false, size, hasBackground);
+    public void onBindViewHolder(@NonNull BaseRVViewHolder holder, int position) {
+        ((CategoryViewHolder)holder).bindData(categoryList.get(position), onItemSelectedListener != null ? categorySelectedState.get(position) : false, size, hasBackground);
 
         if (onItemSelectedListener != null)
-            holder.btnCategory.setOnClickListener(v -> {
+            ((CategoryViewHolder)holder).btnCategory.setOnClickListener(v -> {
                 onItemSelectedListener.onSelected(categoryList.get(position).getTag());
 
                 for (int i = 0; i < categorySelectedState.size(); i++) {
@@ -89,8 +86,10 @@ public class CategoryRecyclerViewAdapter extends RecyclerView.Adapter<CategoryVi
     public void bindData(List<Tag> categoryList) {
         this.categoryList = categoryList != null ? categoryList : new ArrayList<>();
 
-        if (onItemSelectedListener != null) {
-            for (int i = 0; i < categoryList.size(); i++) {
+        for (int i = 0; i < categoryList.size(); i++) {
+            if (onItemSelectedListener == null) {
+                categorySelectedState.add(false);
+            } else {
                 if (i == 0)
                     categorySelectedState.add(true);
                 else
@@ -100,10 +99,9 @@ public class CategoryRecyclerViewAdapter extends RecyclerView.Adapter<CategoryVi
 
         notifyDataSetChanged();
     }
-
 }
 
-class CategoryViewHolder extends RecyclerView.ViewHolder {
+class CategoryViewHolder extends BaseRVViewHolder {
 
     public TextView btnCategory;
     private CardView cvFrame;
@@ -127,7 +125,7 @@ class CategoryViewHolder extends RecyclerView.ViewHolder {
             btnCategory.setBackgroundColor(context.getColor(R.color.colorPrimary));
 
         switch (size) {
-            case MIN_SIZE:
+            case AUTO_SIZE:
                 cvFrame.setRadius(context.getResources().getDimension(R.dimen.medium_radius));
                 btnCategory.setTextSize(context.getResources().getDimension(R.dimen.minnnn_text_size));
                 break;
