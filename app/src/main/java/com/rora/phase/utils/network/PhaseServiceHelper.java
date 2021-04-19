@@ -2,6 +2,7 @@ package com.rora.phase.utils.network;
 
 import android.content.Context;
 
+import com.rora.phase.RoraLog;
 import com.rora.phase.utils.DataResponse;
 import com.rora.phase.utils.SharedPreferencesHelper;
 
@@ -103,20 +104,13 @@ public class PhaseServiceHelper {
             data.setData(response.body());
         } else {
             String err = "Could not get data from server, please try again later!";
-            if (response.errorBody() != null) {
-                try {
+            try {
+                if (response.errorBody() != null || response.body() != null) {
                     JSONObject jObjError = new JSONObject(response.errorBody().string());
                     err = jObjError.getString("message");
-                } catch (Exception e) {
-                    err = e.getMessage();
                 }
-            } else if (response.body() != null) {
-                try {
-                    JSONObject jObjError = new JSONObject(response.errorBody().string());
-                    err = jObjError.getString("message");
-                } catch (Exception e) {
-                    err = e.getMessage();
-                }
+            } catch (Exception e) {
+                RoraLog.warning("api response err - " + e.getMessage());
             }
 
             data.setMsg(err);

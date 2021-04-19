@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sign_up_frame"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.settings.auth.SignUpFragment">
+
+    <!--LOGO-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="bottom"
+        android:orientation="vertical"
+        app:layout_constraintHeight_percent=".25"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_launcher_rora" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Create your account"
+            android:textSize="30dp"
+            android:textStyle="bold|italic" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/err_sign_up_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/min_space"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textColor="@android:color/holo_red_light"
+        android:textStyle="italic"
+        app:layout_constraintStart_toStartOf="@id/frame_fields_ui_sign_up"
+        app:layout_constraintEnd_toEndOf="@id/frame_fields_ui_sign_up"
+        app:layout_constraintBottom_toTopOf="@id/frame_fields_ui_sign_up" />
+
+    <!--FIELDS-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/frame_fields_ui_sign_up"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent=".23"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent=".75">
+
+        <TextView
+            android:id="@+id/title_user_name_auth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Email"
+            android:textSize="@dimen/title_text_size"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/user_name_edt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:inputType="text"
+            android:lines="1"
+            android:maxLines="1"
+            android:backgroundTint="@color/colorText"
+            app:layout_constraintTop_toBottomOf="@id/title_user_name_auth" />
+
+        <LinearLayout
+            android:id="@+id/frame_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/max_space"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@id/user_name_edt">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/password_txt"
+                android:textSize="@dimen/title_text_size" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/password_edt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:inputType="textPassword"
+                android:backgroundTint="@color/colorText"
+                android:lines="1"
+                android:maxLines="1" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/max_space"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@id/frame_password">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/confirm_password_txt"
+                android:textSize="@dimen/title_text_size" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/confirm_password_edt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:inputType="textPassword"
+                android:lines="1"
+                android:backgroundTint="@color/colorText"
+                android:maxLines="1"/>
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <CheckBox
+        android:id="@+id/policy_cb"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/maxx_space"
+        android:text="Accept Policy"
+        android:buttonTint="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="@id/frame_fields_ui_sign_up"
+        app:layout_constraintStart_toStartOf="@id/frame_fields_ui_sign_up"
+        app:layout_constraintTop_toBottomOf="@id/frame_fields_ui_sign_up" />
+
+
+    <carbon.widget.Button
+        android:id="@+id/sign_up_btn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/maxx_space"
+        android:layout_weight="4"
+        android:background="@color/colorPrimaryDark"
+        android:focusable="false"
+        android:text="@string/sign_up_text"
+        android:textAllCaps="false"
+        android:textColor="@color/colorPrimary"
+        app:carbon_cornerRadius="@dimen/max_radius"
+        app:layout_constraintEnd_toEndOf="@id/policy_cb"
+        app:layout_constraintStart_toStartOf="@id/policy_cb"
+        app:layout_constraintTop_toBottomOf="@id/policy_cb" />
+
+    <ProgressBar
+        android:id="@+id/sign_up_pb"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/colorPrimary"
+        android:translationZ="10dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@id/sign_up_btn"
+        app:layout_constraintEnd_toEndOf="@id/sign_up_btn"
+        app:layout_constraintStart_toStartOf="@id/sign_up_btn"
+        app:layout_constraintTop_toTopOf="@id/sign_up_btn" />
+
+    <LinearLayout
+        android:id="@+id/sign_up_ui_sign_in"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/already_had_account" />
+
+        <Button
+            android:id="@+id/back_to_sign_in_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/min_space"
+            android:background="@android:color/transparent"
+            android:focusable="false"
+            android:gravity="start|center"
+            android:text="@string/sign_in_text"
+            android:textAllCaps="false"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/sub_title_text_size"
+            android:textStyle="italic" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

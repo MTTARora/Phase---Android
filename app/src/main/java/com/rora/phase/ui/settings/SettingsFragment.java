@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.rora.phase.R;
-import com.rora.phase.ui.settings.auth.SignInActivity;
+import com.rora.phase.ui.settings.auth.AuthActivity;
 
 import carbon.widget.Button;
 
@@ -32,8 +32,8 @@ public class SettingsFragment extends Fragment {
 
         signBtn.setOnClickListener(v -> {
             settingsViewModel.signOut();
-            Intent intent = new Intent(getActivity(), SignInActivity.class);
-            intent.putExtra(SignInActivity.START_IN_APP_PARAM, true);
+            Intent intent = new Intent(getActivity(), AuthActivity.class);
+            intent.putExtra(AuthActivity.START_IN_APP_PARAM, true);
             startActivity(intent);
         });
 

@@ -76,7 +76,7 @@
             android:resizeableActivity="true">
         </activity>
         <activity
-            android:name=".ui.settings.auth.SignInActivity"
+            android:name=".ui.settings.auth.AuthActivity"
             android:label="Sign in"
             android:windowSoftInputMode="adjustPan"
             android:theme="@style/AppTheme">

@@ -26,7 +26,7 @@ import com.rora.phase.ui.adapter.CategoryRVAdapter;
 import com.rora.phase.ui.adapter.GameRVAdapter;
 import com.rora.phase.ui.adapter.GameVerticalRVAdapter;
 import com.rora.phase.ui.adapter.PlatformRecyclerViewAdapter;
-import com.rora.phase.ui.settings.auth.SignInActivity;
+import com.rora.phase.ui.settings.auth.AuthActivity;
 import com.rora.phase.ui.viewmodel.GameViewModel;
 import com.rora.phase.utils.DateTimeHelper;
 import com.rora.phase.utils.Dialog;
@@ -211,8 +211,8 @@ public class GameDetailFragment extends BaseFragment {
 
     private void startConnect() {
         if (!gameViewModel.isUserLogged()) {
-            Intent intent = new Intent(getActivity(), SignInActivity.class);
-            intent.putExtra(SignInActivity.START_IN_APP_PARAM, true);
+            Intent intent = new Intent(getActivity(), AuthActivity.class);
+            intent.putExtra(AuthActivity.START_IN_APP_PARAM, true);
             startActivity(intent);
             return;
         }

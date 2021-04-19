@@ -27,7 +27,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.UserPlayingData;
 import com.rora.phase.ui.game.GameDetailFragment;
-import com.rora.phase.ui.settings.auth.SignInActivity;
+import com.rora.phase.ui.settings.auth.AuthActivity;
 import com.rora.phase.ui.viewmodel.GameViewModel;
 import com.rora.phase.utils.MediaHelper;
 import com.rora.phase.utils.callback.PlayGameProgressCallBack;
@@ -357,8 +357,8 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
         public void onError(String err) {
             if (err.contains("login")) {
                 MainActivity.this.runOnUiThread(() -> Toast.makeText(getApplicationContext(), err, Toast.LENGTH_LONG).show());
-                Intent intent = new Intent(MainActivity.this, SignInActivity.class);
-                intent.putExtra(SignInActivity.START_IN_APP_PARAM, true);
+                Intent intent = new Intent(MainActivity.this, AuthActivity.class);
+                intent.putExtra(AuthActivity.START_IN_APP_PARAM, true);
                 startActivity(intent);
             }
         }

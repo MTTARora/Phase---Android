@@ -8,6 +8,7 @@ import com.rora.phase.model.api.LoginCredential;
 import com.rora.phase.model.api.LoginResponse;
 import com.rora.phase.model.api.PinConfirmBody;
 import com.rora.phase.model.api.PrepareAppModel;
+import com.rora.phase.model.api.SignUpCredential;
 
 import java.util.List;
 
@@ -23,8 +24,8 @@ import retrofit2.http.Query;
 
 public interface UserPhaseService {
 
-    @POST("./auth/sign_up")
-    Call<BaseResponse> signUp(@Body String email, @Body String password);
+    @POST("./register")
+    Call<BaseResponse> signUp(@Body SignUpCredential credential);
 
     @POST("./login")
     Call<BaseResponse<LoginResponse>> signIn(@Body LoginCredential credentials);
