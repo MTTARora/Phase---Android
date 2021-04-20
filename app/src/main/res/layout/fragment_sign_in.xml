@@ -13,8 +13,8 @@
         android:layout_height="0dp"
         android:gravity="bottom"
         android:orientation="vertical"
-        app:layout_constraintHeight_percent=".35"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/err_sign_in_tv">
 
         <ImageView
             android:layout_width="match_parent"
@@ -54,7 +54,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/fields_ui_sign_in"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHeight_percent=".2"
@@ -86,12 +86,14 @@
             app:layout_constraintTop_toBottomOf="@id/title_user_name_auth" />
 
         <TextView
+            android:id="@+id/sign_in_pw_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Password"
             android:textSize="@dimen/title_text_size"
             android:paddingStart="@dimen/min_space"
-            app:layout_constraintBottom_toTopOf="@id/password_edt"
+            android:layout_marginTop="@dimen/max_space"
+            app:layout_constraintTop_toBottomOf="@id/user_name_edt"
             app:layout_constraintEnd_toEndOf="@id/password_edt"
             app:layout_constraintStart_toStartOf="@id/password_edt"
             app:layout_constraintWidth_percent=".75" />
@@ -105,7 +107,7 @@
             android:lines="1"
             android:maxLines="1"
             android:backgroundTint="@color/colorText"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/sign_in_pw_title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintWidth_percent=".75" />

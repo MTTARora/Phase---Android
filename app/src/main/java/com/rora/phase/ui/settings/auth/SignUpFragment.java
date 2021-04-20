@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.rora.phase.R;
 import com.rora.phase.ui.viewmodel.UserViewModel;
 import com.rora.phase.utils.DataResponse;
+import com.rora.phase.utils.Dialog;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
 
@@ -99,8 +100,12 @@ public class SignUpFragment extends Fragment {
                 return;
             }
 
-            getActivity().runOnUiThread(() -> Toast.makeText(getActivity(), getResources().getString(R.string.sign_up_success), Toast.LENGTH_LONG).show());
-            getActivity().getSupportFragmentManager().popBackStack();
+            Dialog.displayNotifyDialog(getActivity(), getResources().getString(R.string.sign_up_success_msg),
+                    getResources().getString(R.string.sent_verify_link_txt),
+                    null,
+                    () -> {
+                getActivity().getSupportFragmentManager().popBackStack();
+                    });
         });
     }
 

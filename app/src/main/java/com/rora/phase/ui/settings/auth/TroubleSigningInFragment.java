@@ -78,28 +78,28 @@ public class TroubleSigningInFragment extends Fragment {
         btnSendVerifyMail = root.findViewById(R.id.send_email_verification_btn);
         btnSendOtherIssues = root.findViewById(R.id.other_issues_send_btn);
 
-        tvForgotPwTitle.setOnClickListener(v -> frameInfoForgotPassword.setVisibility(frameInfoForgotPassword.getVisibility() == View.VISIBLE ? GONE : View.VISIBLE));
-        tvEmailVerificationTitle.setOnClickListener(v -> frameInfoEmailVerification.setVisibility(frameInfoEmailVerification.getVisibility() == View.VISIBLE ? GONE : View.VISIBLE));
-        tvOtherIssuesTitle.setOnClickListener(v -> frameInfoOtherIssues.setVisibility(frameInfoOtherIssues.getVisibility() == View.VISIBLE ? GONE : View.VISIBLE));
+        tvForgotPwTitle.setOnClickListener(v -> {
+            hideSoftKeyboard();
+            frameInfoForgotPassword.setVisibility(frameInfoForgotPassword.getVisibility() == View.VISIBLE ? GONE : View.VISIBLE);
+        });
+        tvEmailVerificationTitle.setOnClickListener(v -> {
+            hideSoftKeyboard();
+            frameInfoEmailVerification.setVisibility(frameInfoEmailVerification.getVisibility() == View.VISIBLE ? GONE : View.VISIBLE);
+        });
+        tvOtherIssuesTitle.setOnClickListener(v -> {
+            hideSoftKeyboard();
+            frameInfoOtherIssues.setVisibility(frameInfoOtherIssues.getVisibility() == View.VISIBLE ? GONE : View.VISIBLE);
+        });
 
         btnSendForgotPw.setOnClickListener(v -> sendForgotPw());
         btnSendVerifyMail.setOnClickListener(v -> sendVerifyMail());
         btnSendOtherIssues.setOnClickListener(v -> sendOtherIssues());
         root.findViewById(R.id.back_to_sign_in_btn).setOnClickListener(v -> getActivity().onBackPressed());
+        root.findViewById(R.id.frame_trouble_sign_in).setOnClickListener(v -> hideSoftKeyboard());
 
         initData();
 
         return root;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        requireView().setOnTouchListener((v, event) -> {
-            hideSoftKeyboard();
-            return true;
-        });
     }
 
     private void initData() {
@@ -225,9 +225,10 @@ public class TroubleSigningInFragment extends Fragment {
     }
 
     private void hideSoftKeyboard() {
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);
-        if (getActivity().getCurrentFocus() != null)
+        if (getActivity().getCurrentFocus() != null) {
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+        }
     }
 
 }

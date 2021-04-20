@@ -61,6 +61,11 @@ public class Dialog implements Runnable {
         }));
     }
 
+    public static void displayNotifyDialog(final Activity activity, String title, String message, @Nullable String positiveBtnTitle, Runnable runOnPositiveDismiss)
+    {
+        activity.runOnUiThread(new Dialog(activity, title, message, positiveBtnTitle, null, runOnPositiveDismiss, null));
+    }
+
     public static void displayDialog(final Activity activity, String title, String message, final boolean endAfterDismiss)
     {
         activity.runOnUiThread(new Dialog(activity, title, message, null, null, () -> {

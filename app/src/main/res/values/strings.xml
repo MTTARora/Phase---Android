@@ -272,7 +272,7 @@
     <string name="please_wait_msg">Please wait...</string>
     <string name="undetected_error_from_server">Undetected error from server, please try again later!</string>
     <string name="in_queue_msg">You\'re in queue:</string>
-    <string name="sign_up_success">Sign up success, please check your email to verify before login</string>
+    <string name="sign_up_success_msg">Sign up success</string>
     <string name="trouble_signing_in_title">Trouble with sign in ?</string>
     <string name="send_txt">Sent</string>
     <string name="email_verification_text">Email verification</string>
@@ -281,5 +281,7 @@
     <string name="describe_issue_hint">Describe your issue here...</string>
     <string name="sent_verify_link_txt">A verification link has been sent to your email address, please check your mailbox.</string>
     <string name="sent_password_reset_link_txt">Your password reset link has been sent to your email address, please check your mailbox.</string>
+    <string name="create_account_title">Create \nyour account</string>
+    <string name="back_to_sign_in_txt">Back to sign in</string>
 
 </resources>
