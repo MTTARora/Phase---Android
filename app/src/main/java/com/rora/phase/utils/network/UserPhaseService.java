@@ -33,6 +33,9 @@ public interface UserPhaseService {
     @POST("/forgot_password")
     Call<BaseResponse> forgotPassword(@Body String email);
 
+    @POST("./verify_mail")
+    Call<BaseResponse> verifyEmail(@Body String email);
+
     @GET("./")
     Call<BaseResponse<User>> getUserInfo();
 

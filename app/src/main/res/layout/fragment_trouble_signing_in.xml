@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/maxx_space"
+    tools:context=".ui.settings.auth.TroubleSigningInFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:id="@+id/trouble_signing_in_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/maxxx_space"
+        android:text="@string/trouble_signing_in_title"
+        android:textColor="@color/colorText"
+        android:textSize="@dimen/max_text_size"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!--FORGOT PASSWORD-->
+    <LinearLayout
+        android:id="@+id/frame_forgot_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/maxxxx_space"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/trouble_signing_in_tv">
+
+        <TextView
+            android:id="@+id/forgot_password_title_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/forgot_password_text"
+            android:textColor="@color/colorText"
+            android:textSize="@dimen/sub_title_text_size"
+            android:textStyle="bold"
+            app:drawableEndCompat="@android:drawable/arrow_down_float" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/frame_info_forgot_pw"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/medium_space"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/msg_result_forgot_password_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/min_space"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:text="@string/fill_in_your_email"
+                android:textStyle="italic"
+                android:visibility="visible"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/email_forgot_password_edt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/medium_space"
+                android:background="@android:color/transparent"
+                android:hint="Email"
+                android:lines="1"
+                android:maxLines="1"
+                android:textStyle="italic"
+                app:layout_constraintEnd_toStartOf="@id/send_forgot_password_btn"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/msg_result_forgot_password_tv" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0.8dp"
+                android:background="@color/colorText"
+                android:layout_marginBottom="@dimen/min_space"
+                app:layout_constraintBottom_toBottomOf="@id/send_forgot_password_btn"
+                app:layout_constraintEnd_toEndOf="@id/email_forgot_password_edt"
+                app:layout_constraintStart_toStartOf="@id/email_forgot_password_edt" />
+
+            <Button
+                android:id="@+id/send_forgot_password_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:focusable="false"
+                android:text="@string/send_txt"
+                android:textAllCaps="false"
+                android:textColor="@color/colorPrimary"
+                app:layout_constraintBottom_toBottomOf="@id/email_forgot_password_edt"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/email_forgot_password_edt" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
+    <!--EMAIL VERIFICATION-->
+    <LinearLayout
+        android:id="@+id/frame_email_verification"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/maxx_space"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/frame_forgot_password">
+
+        <TextView
+            android:id="@+id/email_verification_title_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/email_verification_text"
+            android:textColor="@color/colorText"
+            android:textSize="@dimen/sub_title_text_size"
+            android:textStyle="bold"
+            app:drawableEndCompat="@android:drawable/arrow_down_float" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/frame_info_email_verification"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/medium_space"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/msg_result_email_verification_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/min_space"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:text="@string/fill_in_your_email"
+                android:textStyle="italic"
+                android:visibility="visible"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/email_email_verification_edt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/medium_space"
+                android:background="@android:color/transparent"
+                android:hint="Email"
+                android:lines="1"
+                android:maxLines="1"
+                android:textStyle="italic"
+                app:layout_constraintEnd_toStartOf="@id/send_email_verification_btn"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/msg_result_email_verification_tv" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0.8dp"
+                android:background="@color/colorText"
+                android:layout_marginBottom="@dimen/min_space"
+                app:layout_constraintBottom_toBottomOf="@id/send_email_verification_btn"
+                app:layout_constraintEnd_toEndOf="@id/email_email_verification_edt"
+                app:layout_constraintStart_toStartOf="@id/email_email_verification_edt" />
+
+            <Button
+                android:id="@+id/send_email_verification_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:focusable="false"
+                android:text="@string/send_txt"
+                android:textAllCaps="false"
+                android:textColor="@color/colorPrimary"
+                app:layout_constraintBottom_toBottomOf="@id/email_email_verification_edt"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/email_email_verification_edt" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
+    <!--OTHERS-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/maxx_space"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/frame_email_verification">
+
+        <TextView
+            android:id="@+id/other_issues_title_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/other_issues_txt"
+            android:textColor="@color/colorText"
+            android:textSize="@dimen/sub_title_text_size"
+            android:textStyle="bold"
+            app:drawableEndCompat="@android:drawable/arrow_down_float" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/frame_info_other_issues"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/medium_space"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/msg_result_other_issues_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/min_space"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:text="@string/fill_in_your_email"
+                android:textStyle="italic"
+                android:visibility="visible"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/email_other_issues_edt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/medium_space"
+                android:background="@android:color/transparent"
+                android:hint="Email"
+                android:lines="1"
+                android:maxLines="1"
+                android:textStyle="italic"
+                app:layout_constraintEnd_toStartOf="@id/other_issues_send_btn"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/msg_result_other_issues_tv" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0.8dp"
+                android:background="@color/colorText"
+                android:layout_marginBottom="@dimen/min_space"
+                app:layout_constraintBottom_toBottomOf="@id/other_issues_send_btn"
+                app:layout_constraintEnd_toEndOf="@id/email_other_issues_edt"
+                app:layout_constraintStart_toStartOf="@id/email_other_issues_edt"
+                app:layout_constraintTop_toBottomOf="@id/email_other_issues_edt" />
+
+            <Button
+                android:id="@+id/other_issues_send_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:focusable="false"
+                android:text="@string/send_txt"
+                android:textAllCaps="false"
+                android:textColor="@color/colorPrimary"
+                app:layout_constraintBottom_toBottomOf="@id/email_other_issues_edt"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/email_other_issues_edt" />
+
+            <EditText
+                android:id="@+id/other_issues_describe_edt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/medium_space"
+                android:background="@android:color/transparent"
+                android:gravity="top"
+                android:hint="@string/describe_issue_hint"
+                android:lines="5"
+                app:layout_constraintTop_toBottomOf="@id/other_issues_send_btn" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0.8dp"
+                android:background="@color/colorText"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/other_issues_describe_edt" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/back_to_sign_in_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:background="@android:color/transparent"
+        android:text="Back to sign in"
+        android:textStyle="italic"
+        android:textColor="@color/colorPrimary"
+        android:textAllCaps="false"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

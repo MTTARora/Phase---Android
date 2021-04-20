@@ -23,6 +23,8 @@ public class UserViewModel extends AndroidViewModel {
     private LiveData<List<Game>> recentPlayList, favoriteList;
     private LiveData<DataResponse> signInResult;
     private LiveData<DataResponse> signUpResult;
+    private LiveData<DataResponse> forgotPasswordResult;
+    private LiveData<DataResponse> emailVerificationResult;
 
     public UserViewModel(@NonNull Application application) {
         super(application);
@@ -33,6 +35,8 @@ public class UserViewModel extends AndroidViewModel {
         favoriteList = userRepository.getFavoriteList();
         signInResult = userRepository.getSignInResult();
         signUpResult = userRepository.getSignUpResult();
+        forgotPasswordResult = userRepository.getForgotPasswordResult();
+        emailVerificationResult = userRepository.getEmailVerificationResult();
     }
 
     //-------------------GET/SET--------------------
@@ -55,6 +59,14 @@ public class UserViewModel extends AndroidViewModel {
 
     public LiveData<DataResponse> getSignUpResult() {
         return signUpResult;
+    }
+
+    public LiveData<DataResponse> getForgotPasswordResult() {
+        return forgotPasswordResult;
+    }
+
+    public LiveData<DataResponse> getEmailVerificationResult() {
+        return emailVerificationResult;
     }
 
     //----------------------------------------------
@@ -100,4 +112,13 @@ public class UserViewModel extends AndroidViewModel {
         SignUpCredential signUpIdentify = new SignUpCredential(username, password, confirmPassword);
         userRepository.signUp(signUpIdentify);
     }
+
+    public void forgotPassword(String email) {
+        userRepository.forgotPassword(email);
+    }
+
+    public void verifyEmail(String email) {
+        userRepository.verifyEmail(email);
+    }
+
 }

@@ -40,6 +40,8 @@ public class UserRepository {
     private MutableLiveData<List<Game>> favoriteList, recentPlayList, recommendedList;
     private MutableLiveData<DataResponse> signInResult;
     private MutableLiveData<DataResponse> signUpResult;
+    private MutableLiveData<DataResponse> forgotPasswordResult;
+    private MutableLiveData<DataResponse> emailVerificationResult;
 
     public static UserRepository newInstance(Context context) {
         return new UserRepository(context);
@@ -57,6 +59,8 @@ public class UserRepository {
         recommendedList = new MutableLiveData<>();
         signInResult =  new MutableLiveData<>();
         signUpResult =  new MutableLiveData<>();
+        forgotPasswordResult = new MutableLiveData<>();
+        emailVerificationResult = new MutableLiveData<>();
     }
 
     //--------------------------------GET/SET------------------------
@@ -68,8 +72,17 @@ public class UserRepository {
     public MutableLiveData<DataResponse> getSignInResult() {
         return signInResult;
     }
+
     public MutableLiveData<DataResponse> getSignUpResult() {
         return signUpResult;
+    }
+
+    public MutableLiveData<DataResponse> getForgotPasswordResult() {
+        return forgotPasswordResult;
+    }
+
+    public MutableLiveData<DataResponse> getEmailVerificationResult() {
+        return emailVerificationResult;
     }
 
     public MutableLiveData<List<Game>> getFavoriteList() {
@@ -128,15 +141,25 @@ public class UserRepository {
     }
 
     public void forgotPassword(String email) {
-        userServices.forgotPassword(email).enqueue(new Callback<BaseResponse>() {
-            @Override
-            public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
-                signInResult.postValue(new DataResponse());
-            }
+        APIServicesHelper apiHelper = new APIServicesHelper<>();
 
-            @Override
-            public void onFailure(Call<BaseResponse> call, Throwable t) {
-                signInResult.postValue(new DataResponse("Please try again later!", null));
+        apiHelper.request(userServices.forgotPassword(email), (err, data) -> {
+            if (err != null) {
+                forgotPasswordResult.setValue(new DataResponse(err, null));
+            } else {
+                forgotPasswordResult.setValue(new DataResponse(null, data));
+            }
+        });
+    }
+
+    public void verifyEmail(String email) {
+        APIServicesHelper apiHelper = new APIServicesHelper<>();
+
+        apiHelper.request(userServices.verifyEmail(email), (err, data) -> {
+            if (err != null) {
+                emailVerificationResult.setValue(new DataResponse(err, null));
+            } else {
+                emailVerificationResult.setValue(new DataResponse(null, data));
             }
         });
     }
