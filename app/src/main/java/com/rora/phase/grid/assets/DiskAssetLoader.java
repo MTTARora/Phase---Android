@@ -7,7 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.ImageDecoder;
 import android.os.Build;
 
-import com.rora.phase.LimeLog;
+import com.rora.phase.RoraLog;
 import com.rora.phase.utils.CacheHelper;
 
 import java.io.File;
@@ -74,7 +74,7 @@ public class DiskAssetLoader {
 
         // Make sure the cached asset doesn't exceed the maximum size
         if (file.length() > MAX_ASSET_SIZE) {
-            LimeLog.warning("Removing cached tuple exceeding size threshold: "+tuple);
+            RoraLog.warning("Removing cached tuple exceeding size threshold: "+tuple);
             file.delete();
             return null;
         }
@@ -92,7 +92,7 @@ public class DiskAssetLoader {
                 return null;
             }
 
-            LimeLog.info("Tuple "+tuple+" has cached art of size: "+decodeOnlyOptions.outWidth+"x"+decodeOnlyOptions.outHeight);
+            RoraLog.info("Tuple "+tuple+" has cached art of size: "+decodeOnlyOptions.outWidth+"x"+decodeOnlyOptions.outHeight);
 
             // Load the image scaled to the appropriate size
             BitmapFactory.Options options = new BitmapFactory.Options();
@@ -109,7 +109,7 @@ public class DiskAssetLoader {
 
             bmp = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
             if (bmp != null) {
-                LimeLog.info("Tuple "+tuple+" decoded from disk cache with sample size: "+options.inSampleSize);
+                RoraLog.info("Tuple "+tuple+" decoded from disk cache with sample size: "+options.inSampleSize);
                 return new ScaledBitmap(decodeOnlyOptions.outWidth, decodeOnlyOptions.outHeight, bmp);
             }
         }
@@ -170,7 +170,7 @@ public class DiskAssetLoader {
             }
 
             if (!success) {
-                LimeLog.warning("Unable to populate cache with tuple: "+tuple);
+                RoraLog.warning("Unable to populate cache with tuple: "+tuple);
                 CacheHelper.deleteCacheFile(cacheDir, "boxart", tuple.computer.uuid, tuple.app.getAppId() + ".png");
             }
         }

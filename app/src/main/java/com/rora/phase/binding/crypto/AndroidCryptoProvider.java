@@ -39,7 +39,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Base64;
 
-import com.rora.phase.LimeLog;
+import com.rora.phase.RoraLog;
 import com.rora.phase.nvstream.http.LimelightCryptoProvider;
 
 public class AndroidCryptoProvider implements LimelightCryptoProvider {
@@ -87,7 +87,7 @@ public class AndroidCryptoProvider implements LimelightCryptoProvider {
 
         // If either file was missing, we definitely can't succeed
         if (certBytes == null || keyBytes == null) {
-            LimeLog.info("Missing cert or key; need to generate a new one");
+            RoraLog.info("Missing cert or key; need to generate a new one");
             return false;
         }
 
@@ -99,13 +99,13 @@ public class AndroidCryptoProvider implements LimelightCryptoProvider {
             key = (RSAPrivateKey) keyFactory.generatePrivate(new PKCS8EncodedKeySpec(keyBytes));
         } catch (CertificateException e) {
             // May happen if the cert is corrupt
-            LimeLog.warning("Corrupted certificate");
+            RoraLog.warning("Corrupted certificate");
             return false;
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         } catch (InvalidKeySpecException e) {
             // May happen if the key is corrupt
-            LimeLog.warning("Corrupted key");
+            RoraLog.warning("Corrupted key");
             return false;
         }
 
@@ -151,7 +151,7 @@ public class AndroidCryptoProvider implements LimelightCryptoProvider {
             throw new RuntimeException(e);
         }
 
-        LimeLog.info("Generated a new key pair");
+        RoraLog.info("Generated a new key pair");
 
         // Save the resulting pair
         saveCertKeyPair();
@@ -186,7 +186,7 @@ public class AndroidCryptoProvider implements LimelightCryptoProvider {
             certOut.close();
             keyOut.close();
 
-            LimeLog.info("Saved generated key pair to disk");
+            RoraLog.info("Saved generated key pair to disk");
         } catch (IOException e) {
             // This isn't good because it means we'll have
             // to re-pair next time

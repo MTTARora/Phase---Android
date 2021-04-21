@@ -13,17 +13,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.rora.phase.R;
 import com.rora.phase.model.Game;
+import com.rora.phase.model.Tag;
 import com.rora.phase.ui.game.viewholder.LoadingVH;
 import com.rora.phase.utils.MediaHelper;
 import com.rora.phase.utils.callback.ILoadMore;
 import com.rora.phase.utils.callback.OnItemSelectedListener;
 import com.rora.phase.utils.ui.BaseRVAdapter;
+import com.rora.phase.utils.ui.BaseRVViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import static com.rora.phase.ui.adapter.CategoryRecyclerViewAdapter.MIN_SIZE;
 
 public class GameVerticalRVAdapter extends BaseRVAdapter {
 
@@ -63,7 +63,7 @@ public class GameVerticalRVAdapter extends BaseRVAdapter {
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public BaseRVViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if(viewType == VIEW_TYPE_ITEM)
         {
             View root = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_game_vertical, parent, false);
@@ -78,8 +78,8 @@ public class GameVerticalRVAdapter extends BaseRVAdapter {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        if(holder instanceof  VerticalGameItemVH)
+    public void onBindViewHolder(@NonNull BaseRVViewHolder holder, int position) {
+        if(holder instanceof VerticalGameItemVH)
         {
             ((VerticalGameItemVH) holder).bindData(gameList.get(position));
             ((VerticalGameItemVH) holder).setOnItemSelectedListener(selectedItemId -> {
@@ -123,73 +123,43 @@ public class GameVerticalRVAdapter extends BaseRVAdapter {
 
 }
 
-class VerticalGameItemVH extends RecyclerView.ViewHolder {
+class VerticalGameItemVH extends BaseRVViewHolder {
 
-    private TextView tvGameName, tvPayType;
+    private TextView tvGameName, tvPayType, tvTag, tvDesc;
     private ImageView imvBanner;
-    private RecyclerView rclvTag;
     private RecyclerView rclvPlatform;
-
-    private Context context;
-    private OnItemSelectedListener onItemSelectedListener;
 
     public VerticalGameItemVH(@NonNull View itemView) {
         super(itemView);
 
         imvBanner = itemView.findViewById(R.id.banner_game_info_imv);
-        tvGameName = itemView.findViewById(R.id.game_name_vertical_item_txv);
+        tvGameName = itemView.findViewById(R.id.game_name_vertical_item_tv);
         tvPayType = itemView.findViewById(R.id.pay_type_tv);
-        rclvTag = itemView.findViewById(R.id.category_item_game_rclv);
+        tvTag = itemView.findViewById(R.id.category_item_game);
+        tvDesc = itemView.findViewById(R.id.game_desc_vertical_item_tv);
         rclvPlatform = itemView.findViewById(R.id.platform_rclv);
-
-        rclvTag.setAdapter(new CategoryRecyclerViewAdapter(0.11, MIN_SIZE, false, null));
-        rclvTag.setLayoutManager(new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.HORIZONTAL , false));
-        rclvTag.setHasFixedSize(true);
 
         rclvPlatform.setAdapter(new PlatformRecyclerViewAdapter());
         rclvPlatform.setLayoutManager(new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.HORIZONTAL , false));
         rclvPlatform.setHasFixedSize(true);
-
-        this.context = itemView.getContext();
     }
 
     public void bindData(Game game) {
-        MediaHelper.loadImage(game.getBackground(), imvBanner);
+        MediaHelper.loadImage(imvBanner, game.getBackground());
         tvGameName.setText(game.getName());
         tvPayType.setText(game.getPayTypeName());
-        switch (game.getPayTypeId()) {
-            case 1:
-                tvPayType.setBackgroundColor(context.getColor(android.R.color.holo_blue_light));
-                tvPayType.setTextColor(context.getColor(R.color.dim));
-                break;
-            case 2:
-                tvPayType.setBackgroundColor(context.getColor(R.color.yellow));
-                tvPayType.setTextColor(context.getColor(R.color.dim));
-                break;
-            case 3:
-                tvPayType.setBackgroundColor(context.getColor(R.color.red));
-                tvPayType.setTextColor(context.getColor(R.color.white));
-                break;
-            case 4:
-                tvPayType.setBackgroundColor(context.getColor(R.color.green));
-                tvPayType.setTextColor(context.getColor(R.color.green_dark));
-                break;
-            default:
-                tvPayType.setBackgroundColor(context.getColor(R.color.gray));
-                break;
+        tvDesc.setText(game.getDesc());
+        tvTag.setText("");
+        for (Tag tag : game.getTags()) {
+            tvTag.setText(tvTag.getText() + "#" + tag.getTag() + " ");
         }
 
-        ((CategoryRecyclerViewAdapter) Objects.requireNonNull(rclvTag.getAdapter())).bindData(game.getTags());
         ((PlatformRecyclerViewAdapter) Objects.requireNonNull(rclvPlatform.getAdapter())).bindData(game.getPlatforms());
 
         itemView.setOnClickListener(v -> {
             if (onItemSelectedListener != null)
-                onItemSelectedListener.onSelected(game.getId().toString());
+                onItemSelectedListener.onSelected(game);
         });
-    }
-
-    public void setOnItemSelectedListener(OnItemSelectedListener onItemSelectedListener) {
-        this.onItemSelectedListener = onItemSelectedListener;
     }
 
 }

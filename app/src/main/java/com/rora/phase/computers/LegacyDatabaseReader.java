@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
-import com.rora.phase.LimeLog;
+import com.rora.phase.RoraLog;
 import com.rora.phase.nvstream.http.ComputerDetails;
 
 import java.net.InetAddress;
@@ -31,27 +31,27 @@ public class LegacyDatabaseReader {
         // greater than the allowable IP address length.
         try {
             details.localAddress = InetAddress.getByAddress(c.getBlob(2)).getHostAddress();
-            LimeLog.warning("DB: Legacy local address for " + details.name);
+            RoraLog.warning("DB: Legacy local address for " + details.name);
         } catch (UnknownHostException e) {
             // This is probably a hostname/address with the prefix string
             String stringData = c.getString(2);
             if (stringData.startsWith(ADDRESS_PREFIX)) {
                 details.localAddress = c.getString(2).substring(ADDRESS_PREFIX.length());
             } else {
-                LimeLog.severe("DB: Corrupted local address for " + details.name);
+                RoraLog.severe("DB: Corrupted local address for " + details.name);
             }
         }
 
         try {
             details.remoteAddress = InetAddress.getByAddress(c.getBlob(3)).getHostAddress();
-            LimeLog.warning("DB: Legacy remote address for " + details.name);
+            RoraLog.warning("DB: Legacy remote address for " + details.name);
         } catch (UnknownHostException e) {
             // This is probably a hostname/address with the prefix string
             String stringData = c.getString(3);
             if (stringData.startsWith(ADDRESS_PREFIX)) {
                 details.remoteAddress = c.getString(3).substring(ADDRESS_PREFIX.length());
             } else {
-                LimeLog.severe("DB: Corrupted remote address for " + details.name);
+                RoraLog.severe("DB: Corrupted remote address for " + details.name);
             }
         }
 

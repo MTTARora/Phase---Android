@@ -2,7 +2,7 @@ package com.rora.phase.grid.assets;
 
 import android.content.Context;
 
-import com.rora.phase.LimeLog;
+import com.rora.phase.RoraLog;
 import com.rora.phase.binding.PlatformBinding;
 import com.rora.phase.nvstream.http.NvHTTP;
 import com.rora.phase.utils.ServerHelper;
@@ -28,10 +28,10 @@ public class NetworkAssetLoader {
         } catch (IOException ignored) {}
 
         if (in != null) {
-            LimeLog.info("Network asset load complete: " + tuple);
+            RoraLog.info("Network asset load complete: " + tuple);
         }
         else {
-            LimeLog.info("Network asset load failed: " + tuple);
+            RoraLog.info("Network asset load failed: " + tuple);
         }
 
         return in;

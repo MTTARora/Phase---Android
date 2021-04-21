@@ -1,5 +1,6 @@
 package com.rora.phase.utils.ui;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -9,20 +10,15 @@ import android.widget.TextView;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 
 import com.rora.phase.MainActivity;
 import com.rora.phase.R;
 import com.rora.phase.ui.game.GameDetailFragment;
 import com.rora.phase.ui.game.GameListFragment;
 import com.rora.phase.ui.home.HomeFragment;
+import com.rora.phase.utils.services.PlayServicesMessageSender;
 
 import javax.annotation.Nullable;
 
@@ -34,7 +30,19 @@ public abstract class BaseFragment extends Fragment {
     private LinearLayout customActionBar;
 
     public boolean stopUpDateHomeScreen = false;
+    private FragmentManager fm;
     private Fragment currentFragment;
+    protected PlayServicesMessageSender.Sender playServicesMsgSenderCallback;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            playServicesMsgSenderCallback = (PlayServicesMessageSender.Sender) context;
+        } catch (ClassCastException e) {
+            // Error, class doesn't implement the interface
+        }
+    }
 
     @Override
     public void onCreate(@androidx.annotation.Nullable Bundle savedInstanceState) {
@@ -48,6 +56,9 @@ public abstract class BaseFragment extends Fragment {
         };
 
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+
+        initData();
+        setNavsVisibility(this);
     }
 
     @Override
@@ -55,40 +66,58 @@ public abstract class BaseFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         view.findViewById(R.id.back_btn).setOnClickListener(v -> onBackPressed());
+    }
 
-        //setActionbarVisibility();
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        playServicesMsgSenderCallback = null;
     }
 
     private void onBackPressed() {
-        FragmentManager fm = getParentFragmentManager();
-
         Fragment previousFrag = null;
+
         if (fm.getBackStackEntryCount() > 1) {
             String tag = (fm.getBackStackEntryAt(fm.getBackStackEntryCount()-2)).getName();
             previousFrag = fm.findFragmentByTag(tag);
         }
 
-        if (previousFrag == null)
+        if (previousFrag == null) {
             stopUpDateHomeScreen = false;
-        //setNavsVisibility(previousFrag);
+            setNavsVisibility(null);
+            ((MainActivity)getActivity()).updateQueueVisibility(VISIBLE, GONE);
+        }
         fm.popBackStack();
+    }
+
+    private void initData() {
+        fm = getActivity().getSupportFragmentManager();
+        int count = fm.getBackStackEntryCount();
+        if (count == 0)
+            return;
+        String currentFragTag = fm.getBackStackEntryAt(fm.getBackStackEntryCount()-1).getName();
+        currentFragment = fm.findFragmentByTag(currentFragTag);
     }
 
     public void moveTo(Fragment newFragment, @Nullable String backStackName) {
         showLoadingScreen();
 
         currentFragment = newFragment;
-        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(
-                R.anim.screen_fadein,  // enter
-                R.anim.screen_fadeout,  // exit
-                R.anim.screen_popup_show,   // popEnter
-                R.anim.screen_popup_hide  // popExit
-        );
-        transaction.replace(R.id.main_container, newFragment, newFragment.getClass().getSimpleName());
-        transaction.addToBackStack(backStackName);
-        transaction.commit();
+        FragmentManagerHelper.replace(fm, R.id.main_container, newFragment, backStackName);
+        //FragmentTransaction transaction = fm.beginTransaction();
+        //transaction.setCustomAnimations(
+        //        R.anim.screen_fadein,  // enter
+        //        R.anim.screen_fadeout,  // exit
+        //        R.anim.screen_popup_show,   // popEnter
+        //        R.anim.screen_popup_hide  // popExit
+        //);
+        //transaction.replace(R.id.main_container, newFragment, newFragment.getClass().getSimpleName());
+        //transaction.addToBackStack(backStackName);
+        //transaction.commit();
     }
+
+
+    //----------------------------- ACTIONBAR --------------------------------
 
     public void showActionbar(View root, String title, boolean enableBackBtn) {
         customActionBar = root.findViewById(R.id.custom_toolbar);
@@ -129,6 +158,9 @@ public abstract class BaseFragment extends Fragment {
         }
     }
 
+    //------------------------------------------------------------------------------------
+
+
     public void showLoadingScreen() {
         (getActivity().findViewById(R.id.main_loading_view)).setVisibility(VISIBLE);
     }
@@ -142,11 +174,10 @@ public abstract class BaseFragment extends Fragment {
         }
     }
 
-    //------------------------------------------------------
-
     private void setNavsVisibility(Fragment newFragment) {
-        setBottomNavVisibility(newFragment);
-        setActionbarVisibility(newFragment);
+        //setBottomNavVisibility(newFragment);
+        //setActionbarVisibility(newFragment);
+        setQueueFrameVisibility();
     }
 
     private void setActionbarVisibility(Fragment newFragment) {
@@ -161,17 +192,25 @@ public abstract class BaseFragment extends Fragment {
     }
 
     private void setBottomNavVisibility(Fragment newFragment) {
+        if (fm.getBackStackEntryCount() == 0) {
+            MainActivity.setBottomNavigationVisibility(VISIBLE);
+            return;
+        }
+
         if (newFragment instanceof GameDetailFragment
                 || newFragment instanceof GameListFragment) {
-            if (MainActivity.bottomNavView.getVisibility() != GONE) {
-                MainActivity.bottomNavView.setVisibility(View.INVISIBLE);
-                MainActivity.bottomNavView.setVisibility(GONE);
-            }
+            MainActivity.setBottomNavigationVisibility(GONE);
         }
         else {
-            if (MainActivity.bottomNavView.getVisibility() != VISIBLE)
-                MainActivity.bottomNavView.setVisibility(VISIBLE);
+            MainActivity.setBottomNavigationVisibility(VISIBLE);
         }
+    }
+
+    private void setQueueFrameVisibility() {
+        if (currentFragment == null)
+            ((MainActivity) getActivity()).updateQueueVisibility(VISIBLE, GONE);
+        else
+            ((MainActivity) getActivity()).updateQueueVisibility(GONE, VISIBLE);
     }
 
 }

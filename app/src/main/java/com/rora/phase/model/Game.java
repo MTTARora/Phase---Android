@@ -3,6 +3,7 @@ package com.rora.phase.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -105,6 +106,9 @@ public class Game implements Parcelable {
     @SerializedName("platforms")
     @Expose
     private List<Platform> platforms;
+
+    public Game() {
+    }
 
     public Integer getId() {
         return id;
@@ -387,6 +391,18 @@ public class Game implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
 
+    }
+
+    public String toJson() {
+        Gson gson = new Gson();
+
+        return gson.toJson(this);
+    }
+
+    public static Game fromJson(String json) {
+        Gson gson = new Gson();
+
+        return gson.fromJson(json, Game.class);
     }
 
     //--------------------------------------------------

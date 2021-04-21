@@ -37,18 +37,9 @@
             android:id="@+id/action_gameListFragment_to_gameDetailFragment"
             app:destination="@id/gameDetailFragment" />
     </fragment>
-    <activity
-        android:id="@+id/loadingGameFragment"
-        android:name="com.rora.phase.ui.game.LoadingGameActivity"
-        android:label="fragment_loading_game"
-        tools:layout="@layout/activity_loading_game" />
     <fragment
         android:id="@+id/gameDetailFragment"
         android:name="com.rora.phase.ui.game.GameDetailFragment"
         android:label="fragment_game_detail"
-        tools:layout="@layout/fragment_game_detail" >
-        <action
-            android:id="@+id/action_gameDetailFragment_to_loadingGameFragment"
-            app:destination="@id/loadingGameFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_game_detail" />
 </navigation>

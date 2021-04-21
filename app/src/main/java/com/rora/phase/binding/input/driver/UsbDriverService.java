@@ -16,7 +16,7 @@ import android.os.IBinder;
 import android.view.InputDevice;
 import android.widget.Toast;
 
-import com.rora.phase.LimeLog;
+import com.rora.phase.RoraLog;
 import com.rora.phase.R;
 import com.rora.phase.preferences.PreferenceConfiguration;
 
@@ -137,7 +137,7 @@ public class UsbDriverService extends Service implements UsbDriverListener {
             // Open the device
             UsbDeviceConnection connection = usbManager.openDevice(device);
             if (connection == null) {
-                LimeLog.warning("Unable to open USB device: "+device.getDeviceName());
+                RoraLog.warning("Unable to open USB device: "+device.getDeviceName());
                 return;
             }
 
@@ -193,7 +193,7 @@ public class UsbDriverService extends Service implements UsbDriverListener {
 
     public static boolean kernelSupportsXboxOne() {
         String kernelVersion = System.getProperty("os.version");
-        LimeLog.info("Kernel Version: "+kernelVersion);
+        RoraLog.info("Kernel Version: "+kernelVersion);
 
         if (kernelVersion == null) {
             // We'll assume this is some newer version of Android

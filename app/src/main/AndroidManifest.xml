@@ -55,10 +55,8 @@
         <meta-data
             android:name="com.sec.android.support.multiwindow"
             android:value="true" />
-        <!--
- Samsung DeX support requires explicit placement of android:resizeableActivity="true"
-             in each activity even though it is implied by targeting API 24+
-        -->
+        <!-- Samsung DeX support requires explicit placement of android:resizeableActivity="true"
+             in each activity even though it is implied by targeting API 24+ -->
         <activity
             android:name=".ui.SplashActivity"
             android:label="@string/app_label"
@@ -78,14 +76,15 @@
             android:resizeableActivity="true">
         </activity>
         <activity
-            android:name=".ui.settings.auth.SignInActivity"
+            android:name=".ui.settings.auth.AuthActivity"
             android:label="Sign in"
             android:windowSoftInputMode="adjustPan"
             android:theme="@style/AppTheme">
         </activity>
         <activity
             android:name=".ui.game.LoadingGameActivity"
-            android:screenOrientation="userLandscape" />
+            android:screenOrientation="sensorLandscape"
+            android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen" />
         <activity
             android:name=".PcView"
             android:configChanges="mcc|mnc|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
@@ -144,7 +143,7 @@
             android:noHistory="true"
             android:preferMinimalPostProcessing="true"
             android:resizeableActivity="true"
-            android:screenOrientation="userLandscape"
+            android:screenOrientation="sensorLandscape"
             android:supportsPictureInPicture="true"
             android:theme="@style/StreamTheme">
             <meta-data

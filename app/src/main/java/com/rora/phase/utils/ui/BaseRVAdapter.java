@@ -4,7 +4,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.rora.phase.utils.callback.OnItemSelectedListener;
 
-public abstract class BaseRVAdapter extends RecyclerView.Adapter {
+public abstract class BaseRVAdapter extends RecyclerView.Adapter<BaseRVViewHolder> {
 
     protected OnItemSelectedListener onItemSelectedListener;
 

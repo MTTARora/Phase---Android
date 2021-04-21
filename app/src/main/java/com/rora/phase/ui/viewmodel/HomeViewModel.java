@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData;
 import com.rora.phase.model.Banner;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.Tag;
+import com.rora.phase.model.ui.HomeUIData;
 import com.rora.phase.repository.BannerRepository;
 import com.rora.phase.repository.GameRepository;
 import com.rora.phase.repository.UserRepository;
@@ -37,7 +38,24 @@ public class HomeViewModel extends AndroidViewModel {
         TRENDING,
         BY_CATEGORY,
         BY_PAY_TYPE,
-        RECOMMENDED
+        RECOMMENDED;
+
+        public static GameListType getTypeFromHomeListType(HomeUIData.Type homeType) {
+            switch (homeType) {
+                case HOT:
+                    return HOT;
+                case EDITOR:
+                    return EDITOR;
+                case TRENDING:
+                    return TRENDING;
+                case NEW:
+                    return NEW;
+                case DISCOVER_BY_CATEGORY:
+                    return BY_CATEGORY;
+                default:
+                    return null;
+            }
+        }
     }
 
     public HomeViewModel(Application application) {

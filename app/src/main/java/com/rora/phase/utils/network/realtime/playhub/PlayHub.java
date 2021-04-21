@@ -6,7 +6,8 @@ import com.microsoft.signalr.HubConnection;
 import com.microsoft.signalr.HubConnectionBuilder;
 import com.microsoft.signalr.HubConnectionState;
 import com.microsoft.signalr.TransportEnum;
-import com.rora.phase.LimeLog;
+import com.rora.phase.RoraLog;
+import com.rora.phase.model.Host;
 import com.rora.phase.repository.UserRepository;
 import com.rora.phase.utils.network.PhaseServiceHelper;
 
@@ -18,28 +19,46 @@ public class PlayHub {
 
     public void startConnect(Context context, PlayHubListener listener) {
         String token = UserRepository.newInstance(context).getUserToken();
-        hubConnection = HubConnectionBuilder.create(PhaseServiceHelper.playHubUrl).withTransport(TransportEnum.LONG_POLLING)
+        hubConnection = HubConnectionBuilder.create(PhaseServiceHelper.playHubUrl).withTransport(TransportEnum.WEBSOCKETS)
                 //.withHeader("Authorization", token)
                 .withAccessTokenProvider(Single.defer(() -> Single.just(token)))
                 .build();
 
         hubConnection.onClosed(exception -> {
             if (listener != null)
-                listener.onDisconnected();
+                listener.onDisconnected(200);
         });
 
         hubConnection.start().subscribe(() -> {
-            LimeLog.info("Connect success");
+            RoraLog.info("Connect hub success");
             listener.onConnected();
         }, throwable -> {
-            LimeLog.info("Connect hub err: - " + throwable.getMessage());
-             listener.onDisconnected();
+            if (throwable.getMessage().contains("401")) {
+                RoraLog.info("Connect hub err: - Your login session has ended, please login again!");
+                listener.onDisconnected(401);
+            } else {
+                RoraLog.info("Connect hub err: - " + throwable.getMessage());
+                listener.onDisconnected(400);
+            }
         });
+
+        hubConnection.on("OnAppReady", listener::onAppReady, boolean.class);
+        hubConnection.on("PlayingError", (err) -> listener.onDisconnected(500), String.class);
+        hubConnection.on("OnHostAvailable", listener::onHostAvailable, Host.class);
+        hubConnection.on("UpdatePlayQueue", (position) -> {
+            listener.onUpdatePlayQueue(position);
+        }, int.class);
     }
 
     public void stopConnect() {
-        if (!(hubConnection.getConnectionState() == HubConnectionState.DISCONNECTED))
-            hubConnection.stop();
+        try {
+            if (!(hubConnection.getConnectionState() == HubConnectionState.DISCONNECTED))
+                hubConnection.stop().subscribe(() -> RoraLog.warning("Stop connected hub!"), throwable -> {
+                    RoraLog.info("Stop connected hub err: - " + throwable == null ? "???" : throwable.toString());
+                });
+        } catch (Exception ex) {
+            RoraLog.warning("Stop connect hub err: " + ex.getMessage());
+        }
     }
 
 }

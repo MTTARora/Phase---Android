@@ -21,7 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.rora.phase.LimeLog;
+import com.rora.phase.RoraLog;
 import com.rora.phase.PcView;
 import com.rora.phase.R;
 import com.rora.phase.binding.video.MediaCodecHelper;
@@ -260,7 +260,7 @@ public class StreamSettings extends Activity {
                 if (avcDecoder != null) {
                     Range<Integer> avcWidthRange = avcDecoder.getCapabilitiesForType("video/avc").getVideoCapabilities().getSupportedWidths();
 
-                    LimeLog.info("AVC supported width range: "+avcWidthRange.getLower()+" - "+avcWidthRange.getUpper());
+                    RoraLog.info("AVC supported width range: "+avcWidthRange.getLower()+" - "+avcWidthRange.getUpper());
 
                     // If 720p is not reported as supported, ignore all results from this API
                     if (avcWidthRange.contains(1280)) {
@@ -279,7 +279,7 @@ public class StreamSettings extends Activity {
                 if (hevcDecoder != null) {
                     Range<Integer> hevcWidthRange = hevcDecoder.getCapabilitiesForType("video/hevc").getVideoCapabilities().getSupportedWidths();
 
-                    LimeLog.info("HEVC supported width range: "+hevcWidthRange.getLower()+" - "+hevcWidthRange.getUpper());
+                    RoraLog.info("HEVC supported width range: "+hevcWidthRange.getLower()+" - "+hevcWidthRange.getUpper());
 
                     // If 720p is not reported as supported, ignore all results from this API
                     if (hevcWidthRange.contains(1280)) {
@@ -295,7 +295,7 @@ public class StreamSettings extends Activity {
                     }
                 }
 
-                LimeLog.info("Maximum resolution slot: "+maxSupportedResW);
+                RoraLog.info("Maximum resolution slot: "+maxSupportedResW);
 
                 if (maxSupportedResW != 0) {
                     if (maxSupportedResW < 3840) {
@@ -370,7 +370,7 @@ public class StreamSettings extends Activity {
             // Android L introduces proper 7.1 surround sound support. Remove the 7.1 option
             // for earlier versions of Android to prevent AudioTrack initialization issues.
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                LimeLog.info("Excluding 7.1 surround sound option based on OS");
+                RoraLog.info("Excluding 7.1 surround sound option based on OS");
                 removeValue(PreferenceConfiguration.AUDIO_CONFIG_PREF_STRING, "71", new Runnable() {
                     @Override
                     public void run() {
@@ -382,7 +382,7 @@ public class StreamSettings extends Activity {
             // Android L introduces the drop duplicate behavior of releaseOutputBuffer()
             // that the unlock FPS option relies on to not massively increase latency.
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                LimeLog.info("Excluding unlock FPS toggle based on OS");
+                RoraLog.info("Excluding unlock FPS toggle based on OS");
                 PreferenceCategory category =
                         (PreferenceCategory) findPreference("category_advanced_settings");
                 category.removePreference(findPreference("checkbox_unlock_fps"));
@@ -413,7 +413,7 @@ public class StreamSettings extends Activity {
 
             // Remove HDR preference for devices below Nougat
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-                LimeLog.info("Excluding HDR toggle based on OS");
+                RoraLog.info("Excluding HDR toggle based on OS");
                 PreferenceCategory category =
                         (PreferenceCategory) findPreference("category_advanced_settings");
                 category.removePreference(findPreference("checkbox_enable_hdr"));
@@ -434,7 +434,7 @@ public class StreamSettings extends Activity {
                 }
 
                 if (!foundHdr10) {
-                    LimeLog.info("Excluding HDR toggle based on display capabilities");
+                    RoraLog.info("Excluding HDR toggle based on display capabilities");
                     PreferenceCategory category =
                             (PreferenceCategory) findPreference("category_advanced_settings");
                     category.removePreference(findPreference("checkbox_enable_hdr"));

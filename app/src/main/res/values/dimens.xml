@@ -11,6 +11,8 @@
     <dimen name="normal_space">16dp</dimen>
     <dimen name="max_space">20dp</dimen>
     <dimen name="maxx_space">28dp</dimen>
+    <dimen name="maxxx_space">35dp</dimen>
+    <dimen name="maxxxx_space">45dp</dimen>
 
     <!-- Radius -->
     <dimen name="min_radius">2dp</dimen>
@@ -33,6 +35,7 @@
     <dimen name="ic_min_size">20dp</dimen>
 
     <!-- Text sizes -->
+    <dimen name="max_text_size">30sp</dimen>
     <dimen name="logo_text_size">20sp</dimen>
     <dimen name="header_text_size">20sp</dimen>
     <dimen name="title_text_size">18sp</dimen>
@@ -51,10 +54,9 @@
     <dimen name="banner_height">200dp</dimen>
     <dimen name="game_item_height">150dp</dimen>
     <dimen name="game_min_info_item_height">140dp</dimen>
-    <dimen name="game_min_info_expanded_item_height">200dp</dimen>
     <dimen name="game_info_item_height">240dp</dimen>
     <dimen name="game_info_image_layer_height">160dp</dimen>
     <dimen name="category_height">35dp</dimen>
     <dimen name="vertical_game_item_height">100dp</dimen>
-
+    <dimen name="normal_width_img">205dp</dimen>
 </resources>

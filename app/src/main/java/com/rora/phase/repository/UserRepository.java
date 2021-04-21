@@ -1,28 +1,29 @@
 package com.rora.phase.repository;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
+import com.rora.phase.RoraLog;
 import com.rora.phase.model.Game;
-import com.rora.phase.model.Host;
 import com.rora.phase.model.User;
 import com.rora.phase.model.UserPlayingData;
 import com.rora.phase.model.api.FindingHostResponse;
 import com.rora.phase.model.api.LoginCredential;
 import com.rora.phase.model.api.LoginResponse;
 import com.rora.phase.model.api.PinConfirmBody;
+import com.rora.phase.model.api.PrepareAppModel;
+import com.rora.phase.model.api.SignUpCredential;
 import com.rora.phase.nvstream.http.ComputerDetails;
-import com.rora.phase.utils.DataResultHelper;
+import com.rora.phase.utils.DataResponse;
 import com.rora.phase.utils.SharedPreferencesHelper;
 import com.rora.phase.utils.callback.OnResultCallBack;
+import com.rora.phase.utils.network.APIServicesHelper;
 import com.rora.phase.utils.network.BaseResponse;
 import com.rora.phase.utils.network.PhaseServiceHelper;
 import com.rora.phase.utils.network.UserPhaseService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -37,7 +38,10 @@ public class UserRepository {
 
     private MutableLiveData<User> user;
     private MutableLiveData<List<Game>> favoriteList, recentPlayList, recommendedList;
-    private MutableLiveData<DataResultHelper> updateDataResult;
+    private MutableLiveData<DataResponse> signInResult;
+    private MutableLiveData<DataResponse> signUpResult;
+    private MutableLiveData<DataResponse> forgotPasswordResult;
+    private MutableLiveData<DataResponse> emailVerificationResult;
 
     public static UserRepository newInstance(Context context) {
         return new UserRepository(context);
@@ -53,7 +57,10 @@ public class UserRepository {
         favoriteList =  new MutableLiveData<>();
         recentPlayList =  new MutableLiveData<>();
         recommendedList = new MutableLiveData<>();
-        updateDataResult =  new MutableLiveData<>();
+        signInResult =  new MutableLiveData<>();
+        signUpResult =  new MutableLiveData<>();
+        forgotPasswordResult = new MutableLiveData<>();
+        emailVerificationResult = new MutableLiveData<>();
     }
 
     //--------------------------------GET/SET------------------------
@@ -62,8 +69,20 @@ public class UserRepository {
         return user;
     }
 
-    public MutableLiveData<DataResultHelper> getUpdateDataResult() {
-        return updateDataResult;
+    public MutableLiveData<DataResponse> getSignInResult() {
+        return signInResult;
+    }
+
+    public MutableLiveData<DataResponse> getSignUpResult() {
+        return signUpResult;
+    }
+
+    public MutableLiveData<DataResponse> getForgotPasswordResult() {
+        return forgotPasswordResult;
+    }
+
+    public MutableLiveData<DataResponse> getEmailVerificationResult() {
+        return emailVerificationResult;
     }
 
     public MutableLiveData<List<Game>> getFavoriteList() {
@@ -83,45 +102,38 @@ public class UserRepository {
 
     //--------------------------------- NETWORK SERVICES -----------------------------------
 
-    public void signUp(String email, String password) {
-        userServices.signUp(email, password).enqueue(new Callback<BaseResponse>() {
-            @Override
-            public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
-                updateDataResult.postValue(new DataResultHelper());
-            }
+    public void signUp(SignUpCredential credential) {
+        APIServicesHelper apiHelper = new APIServicesHelper<>();
 
-            @Override
-            public void onFailure(Call<BaseResponse> call, Throwable t) {
-                updateDataResult.postValue(new DataResultHelper("Please try again later!", null));
+        apiHelper.request(userServices.signUp(credential), (err, data) -> {
+            if (err != null) {
+                signUpResult.setValue(new DataResponse(err, null));
+            } else {
+                signUpResult.setValue(new DataResponse(null, data));
             }
         });
     }
 
     public void signIn(LoginCredential loginCredential) {
-        userServices.signIn(loginCredential).enqueue(new Callback<BaseResponse<LoginResponse>>() {
-            @Override
-            public void onResponse(Call<BaseResponse<LoginResponse>> call, Response<BaseResponse<LoginResponse>> response) {
-                DataResultHelper<BaseResponse<LoginResponse>> dataResponse = PhaseServiceHelper.handleResponse(response);
+        APIServicesHelper<LoginResponse> apiHelper = new APIServicesHelper<>();
 
-                if (dataResponse.getErrMsg() != null) {
-                    updateDataResult.postValue(new DataResultHelper(dataResponse.getErrMsg(), null));
-                } else {
-                    LoginResponse resp = BaseResponse.getResult(dataResponse.getData());
-                    User user = resp.getInfo();
-                    String token = resp.getToken();
+        apiHelper.request(userServices.signIn(loginCredential), (err, data) -> {
+            if (err != null) {
+                signInResult.setValue(new DataResponse(err, null));
+            } else {
+                User user = data.getInfo();
+                String token = data.getToken();
 
-                    if (token != null && user != null) {
-                        storeLocalUser(user.getUserName(), token);
-                    }
-                    updateDataResult.postValue(new DataResultHelper(null, null));
+                if (token != null && user != null) {
+                    storeLocalUser(user.getUserName(), token);
                 }
-            }
-
-            @Override
-            public void onFailure(Call<BaseResponse<LoginResponse>> call, Throwable t) {
-                updateDataResult.postValue(new DataResultHelper("Please try again later!", null));
+                signInResult.setValue(new DataResponse(null, data));
             }
         });
+    }
+
+    public void signInAsGuest() {
+        signInResult.postValue(new DataResponse<String>(null, null));
     }
 
     public void signOut() {
@@ -129,30 +141,25 @@ public class UserRepository {
     }
 
     public void forgotPassword(String email) {
-        userServices.forgotPassword(email).enqueue(new Callback<BaseResponse>() {
-            @Override
-            public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
-                updateDataResult.postValue(new DataResultHelper());
-            }
+        APIServicesHelper apiHelper = new APIServicesHelper<>();
 
-            @Override
-            public void onFailure(Call<BaseResponse> call, Throwable t) {
-                updateDataResult.postValue(new DataResultHelper("Please try again later!", null));
+        apiHelper.request(userServices.forgotPassword(email), (err, data) -> {
+            if (err != null) {
+                forgotPasswordResult.setValue(new DataResponse(err, null));
+            } else {
+                forgotPasswordResult.setValue(new DataResponse(null, data));
             }
         });
     }
 
-    public void getUserInfo() {
-        userAuthenticatedServices.getUserInfo().enqueue(new Callback<BaseResponse<User>>() {
-            @Override
-            public void onResponse(Call<BaseResponse<User>> call, Response<BaseResponse<User>> response) {
-                user.postValue(BaseResponse.getResult(response.body()));
-            }
+    public void verifyEmail(String email) {
+        APIServicesHelper apiHelper = new APIServicesHelper<>();
 
-            @Override
-            public void onFailure(Call<BaseResponse<User>> call, Throwable t) {
-                user.postValue(null);
-                updateDataResult.postValue(new DataResultHelper("Please try again later!", null));
+        apiHelper.request(userServices.verifyEmail(email), (err, data) -> {
+            if (err != null) {
+                emailVerificationResult.setValue(new DataResponse(err, null));
+            } else {
+                emailVerificationResult.setValue(new DataResponse(null, data));
             }
         });
     }
@@ -161,12 +168,12 @@ public class UserRepository {
         userAuthenticatedServices.updateInfo(user).enqueue(new Callback<BaseResponse>() {
             @Override
             public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
-                updateDataResult.postValue(new DataResultHelper());
+                signInResult.postValue(new DataResponse());
             }
 
             @Override
             public void onFailure(Call<BaseResponse> call, Throwable t) {
-                updateDataResult.postValue(new DataResultHelper("Please try again later!", null));
+                signInResult.postValue(new DataResponse("Please try again later!", null));
             }
         });
     }
@@ -179,12 +186,12 @@ public class UserRepository {
         userAuthenticatedServices.addFavorite(gameId).enqueue(new Callback<BaseResponse>() {
             @Override
             public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
-                updateDataResult.postValue(new DataResultHelper());
+                signInResult.postValue(new DataResponse());
             }
 
             @Override
             public void onFailure(Call<BaseResponse> call, Throwable t) {
-                updateDataResult.postValue(new DataResultHelper("Please try again later!", null));
+                signInResult.postValue(new DataResponse("Please try again later!", null));
             }
         });
     }
@@ -193,29 +200,12 @@ public class UserRepository {
         userAuthenticatedServices.removeFavorite(gameId).enqueue(new Callback<BaseResponse>() {
             @Override
             public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
-                updateDataResult.postValue(new DataResultHelper());
+                signInResult.postValue(new DataResponse());
             }
 
             @Override
             public void onFailure(Call<BaseResponse> call, Throwable t) {
-                updateDataResult.postValue(new DataResultHelper("Please try again later!", null));
-            }
-        });
-    }
-
-    public void getRecommendedGameListData(int page, int pageSize) {
-        userAuthenticatedServices.getRecommended(page, pageSize).enqueue(new Callback<BaseResponse<List<Game>>>() {
-            @Override
-            public void onResponse(Call<BaseResponse<List<Game>>> call, Response<BaseResponse<List<Game>>> response) {
-                List<Game> list = BaseResponse.getResult(response.body());
-                list = list == null ? new ArrayList<>() : list;
-                recommendedList.postValue(list);
-            }
-
-            @Override
-            public void onFailure(Call<BaseResponse<List<Game>>> call, Throwable t) {
-                Log.e(this.getClass().getSimpleName(), t.getMessage());
-                recommendedList.postValue(new ArrayList<>());
+                signInResult.postValue(new DataResponse("Please try again later!", null));
             }
         });
     }
@@ -224,56 +214,43 @@ public class UserRepository {
 
     }
 
-    public void getComputerData(OnResultCallBack<ComputerDetails> callBack) {
-        userAuthenticatedServices.getComputerIP().enqueue(new Callback<BaseResponse<FindingHostResponse>>() {
-            @Override
-            public void onResponse(Call<BaseResponse<FindingHostResponse>> call, Response<BaseResponse<FindingHostResponse>> response) {
-                DataResultHelper<BaseResponse<FindingHostResponse>> dataResponse = PhaseServiceHelper.handleResponse(response);
-                String err = dataResponse.getErrMsg();
-                if (err != null) {
-                    callBack.onResult(err, null);
-                } else {
-                    FindingHostResponse resp = BaseResponse.getResult(dataResponse.getData());
+    public void getComputerData(OnResultCallBack<FindingHostResponse> callBack) {
+        APIServicesHelper<FindingHostResponse> apiHelper = new APIServicesHelper<>();
 
-                    if (resp.queue != null || resp.host == null)
-                        callBack.onResult("So many players are playing right now, please try again later!", null);
-                    else
-                        callBack.onResult(null, new ComputerDetails(resp.host));
-                    //computer.postValue(new ComputerDetails(host));
+        apiHelper.request(userAuthenticatedServices.getComputerIP(), (err, data) -> {
+            if (err != null) {
+                callBack.onResult(err, null);
+            } else {
+                if (data.queue != null || data.host == null) {
+                    RoraLog.info("So many players are playing right now, please wait!");
+                    callBack.onResult(null, data);
                 }
-            }
-
-            @Override
-            public void onFailure(Call<BaseResponse<FindingHostResponse>> call, Throwable t) {
-                Log.e(this.getClass().getSimpleName(), t.getMessage());
-                callBack.onResult("Can't connect to server, please try again later!", null);
-                //computer.postValue(null);
-            }
-        });
-    }
-
-    public void sendPinToHost(String pinStr, String hostId, OnResultCallBack<ComputerDetails> callBack) {
-        PinConfirmBody body = new PinConfirmBody(pinStr, hostId);
-        userAuthenticatedServices.sendPinToHost(body).enqueue(new Callback<BaseResponse>() {
-            @Override
-            public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
-                DataResultHelper<BaseResponse> dataResponse = PhaseServiceHelper.handleResponse(response);
-                String err = dataResponse.getErrMsg();
-                if (err != null)
-                    callBack.onResult(err, null);
                 else
-                    callBack.onResult(null, null);
-            }
-
-            @Override
-            public void onFailure(Call<BaseResponse> call, Throwable t) {
-                callBack.onResult("Can't connect to server, please try again later!", null);
+                    callBack.onResult(null, data);
             }
         });
     }
 
-    public void stopPlaying() {
+    public void sendPinToHost(String pinStr, OnResultCallBack<ComputerDetails> callBack) {
+        APIServicesHelper apiHelper = new APIServicesHelper<>();
 
+        apiHelper.request(userAuthenticatedServices.sendPinToHost(new PinConfirmBody(pinStr)), (err, data) -> {
+            if (err != null) {
+                callBack.onResult(err, null);
+            } else
+                callBack.onResult(null, null);
+        });
+    }
+
+    public void prepareAppHost(String gameId, String platformId, String platformUsername, String platformPassword, OnResultCallBack<String> callBack) {
+        APIServicesHelper apiHelper = new APIServicesHelper<>();
+        PrepareAppModel data = new PrepareAppModel(gameId, platformId, platformUsername, platformPassword);
+        apiHelper.request(userAuthenticatedServices.prepareApp(data), (err, result) -> {
+            if (err != null && !err.contains("success")) {
+                callBack.onResult(err, null);
+            } else
+                callBack.onResult(null, null);
+        });
     }
 
     //----------------------------------------------------------------------------------------
@@ -311,11 +288,22 @@ public class UserRepository {
     }
 
     public boolean isStopPlaying() {
-        return dbSharedPref.getUserPlayState().equals(UserPlayingData.PlayingState.STOP.id);
+        return dbSharedPref.getUserPlayState().equals(UserPlayingData.PlayingState.STOPPED.id);
     }
 
     public void savePlayState(UserPlayingData.PlayingState state) {
         dbSharedPref.saveUserPlayState(state.id);
+    }
+
+    public void storeCurrentGame(Game game) {
+        dbSharedPref.setCurrentGame(game == null ? null : game.toJson());
+    }
+
+    public Game getCurrentGame() {
+        String jsonGame = dbSharedPref.getCurrentGame();
+        Game game = Game.fromJson(jsonGame);
+
+        return game;
     }
 
     //----------------------------------------------------------------------------------------

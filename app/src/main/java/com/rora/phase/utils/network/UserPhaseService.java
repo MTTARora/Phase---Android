@@ -7,6 +7,8 @@ import com.rora.phase.model.api.FindingHostResponse;
 import com.rora.phase.model.api.LoginCredential;
 import com.rora.phase.model.api.LoginResponse;
 import com.rora.phase.model.api.PinConfirmBody;
+import com.rora.phase.model.api.PrepareAppModel;
+import com.rora.phase.model.api.SignUpCredential;
 
 import java.util.List;
 
@@ -22,14 +24,17 @@ import retrofit2.http.Query;
 
 public interface UserPhaseService {
 
-    @POST("./auth/sign_up")
-    Call<BaseResponse> signUp(@Body String email, @Body String password);
+    @POST("./register")
+    Call<BaseResponse> signUp(@Body SignUpCredential credential);
 
     @POST("./login")
     Call<BaseResponse<LoginResponse>> signIn(@Body LoginCredential credentials);
 
     @POST("/forgot_password")
     Call<BaseResponse> forgotPassword(@Body String email);
+
+    @POST("./verify_mail")
+    Call<BaseResponse> verifyEmail(@Body String email);
 
     @GET("./")
     Call<BaseResponse<User>> getUserInfo();
@@ -59,5 +64,8 @@ public interface UserPhaseService {
 
     @POST("./play/confirm-pin")
     Call<BaseResponse> sendPinToHost(@Body PinConfirmBody confirmData);
+
+    @POST("./play/prepare-app")
+    Call<BaseResponse<String>> prepareApp(@Body PrepareAppModel data);
 
 }

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/loading_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorAccent"
+    android:visibility="visible">
+    <androidx.core.widget.ContentLoadingProgressBar
+        android:id="@+id/main_loading_bar"
+        style="?android:attr/progressBarStyleInverse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:theme="@style/ContentLoadingProgress" />
+    <LinearLayout
+        android:id="@+id/err_loading_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_gravity="center"
+        android:visibility="invisible">
+        <ImageView
+            android:id="@+id/loading_err_imv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_pc_offline"
+            android:scaleType="fitCenter"/>
+        <carbon.widget.Button
+            android:id="@+id/refresh_err_btn"
+            app:layout_constraintTop_toBottomOf="@id/loading_err_imv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="@dimen/medium_space"
+            android:text="@string/undetected_error"
+            android:background="@color/colorPrimaryDark"
+            android:padding="@dimen/medium_space"
+            android:textStyle="italic"
+            android:textAllCaps="false"
+            app:carbon_cornerRadius="@dimen/medium_radius"/>
+    </LinearLayout>
+</FrameLayout>

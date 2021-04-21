@@ -1,6 +1,6 @@
 package com.rora.phase.nvstream.http;
 
-import com.rora.phase.LimeLog;
+import com.rora.phase.RoraLog;
 
 public class NvApp {
     private String appName = "";
@@ -30,7 +30,7 @@ public class NvApp {
             this.appId = Integer.parseInt(appId);
             this.initialized = true;
         } catch (NumberFormatException e) {
-            LimeLog.warning("Malformed app ID: "+appId);
+            RoraLog.warning("Malformed app ID: "+appId);
         }
     }
     
@@ -60,7 +60,7 @@ public class NvApp {
     }
 
     public static NvApp initRemoteApp() {
-        return new NvApp("mstsc.exe", 13906176, false);
+        return new NvApp("mstsc.exe", 15995232, false);
     }
 
     @Override

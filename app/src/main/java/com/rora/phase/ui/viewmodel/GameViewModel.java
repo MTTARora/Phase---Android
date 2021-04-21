@@ -16,23 +16,27 @@ public class GameViewModel extends AndroidViewModel {
 
     private GameRepository gameRepository;
     private MutableLiveData<Game> game;
-    //private MutableLiveData<ComputerDetails> computerDetails;
+    private MutableLiveData<Game> currentGame;
 
     public GameViewModel(Application application) {
         super(application);
         gameRepository = new GameRepository();
 
         game = gameRepository.getSelectedGame();
-        //computerDetails = gameRepository.getComputer();
+        currentGame = new MutableLiveData<>();
     }
 
     public LiveData<Game> getGameData() {
         return game;
     }
 
-    //public LiveData<ComputerDetails> getComputerDetails() {
-    //    return computerDetails;
-    //}
+    public MutableLiveData<Game> getCurrentGame() {
+        return currentGame;
+    }
+
+    public void setCurrentGame(Game game) {
+        currentGame.postValue(game);
+    }
 
     public void getGame(String gameId) {
         gameRepository.getGameData(gameId);

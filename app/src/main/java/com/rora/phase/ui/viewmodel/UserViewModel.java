@@ -9,8 +9,9 @@ import androidx.lifecycle.LiveData;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.User;
 import com.rora.phase.model.api.LoginCredential;
+import com.rora.phase.model.api.SignUpCredential;
 import com.rora.phase.repository.UserRepository;
-import com.rora.phase.utils.DataResultHelper;
+import com.rora.phase.utils.DataResponse;
 
 import java.util.List;
 
@@ -20,7 +21,10 @@ public class UserViewModel extends AndroidViewModel {
 
     private LiveData<User> user;
     private LiveData<List<Game>> recentPlayList, favoriteList;
-    private LiveData<DataResultHelper> updatingDataResult;
+    private LiveData<DataResponse> signInResult;
+    private LiveData<DataResponse> signUpResult;
+    private LiveData<DataResponse> forgotPasswordResult;
+    private LiveData<DataResponse> emailVerificationResult;
 
     public UserViewModel(@NonNull Application application) {
         super(application);
@@ -29,7 +33,10 @@ public class UserViewModel extends AndroidViewModel {
         user = userRepository.getUser();
         recentPlayList = userRepository.getRecentPlayList();
         favoriteList = userRepository.getFavoriteList();
-        updatingDataResult = userRepository.getUpdateDataResult();
+        signInResult = userRepository.getSignInResult();
+        signUpResult = userRepository.getSignUpResult();
+        forgotPasswordResult = userRepository.getForgotPasswordResult();
+        emailVerificationResult = userRepository.getEmailVerificationResult();
     }
 
     //-------------------GET/SET--------------------
@@ -46,8 +53,20 @@ public class UserViewModel extends AndroidViewModel {
         return favoriteList;
     }
 
-    public LiveData<DataResultHelper> getUpdateDataResult() {
-        return updatingDataResult;
+    public LiveData<DataResponse> getSignInResult() {
+        return signInResult;
+    }
+
+    public LiveData<DataResponse> getSignUpResult() {
+        return signUpResult;
+    }
+
+    public LiveData<DataResponse> getForgotPasswordResult() {
+        return forgotPasswordResult;
+    }
+
+    public LiveData<DataResponse> getEmailVerificationResult() {
+        return emailVerificationResult;
     }
 
     //----------------------------------------------
@@ -57,8 +76,8 @@ public class UserViewModel extends AndroidViewModel {
         userRepository.signIn(loginIdentify);
     }
 
-    public void getUserData() {
-        userRepository.getUserInfo();
+    public void signInAsGuest() {
+        userRepository.signInAsGuest();
     }
 
     public void getRecentPlayData() {
@@ -83,6 +102,23 @@ public class UserViewModel extends AndroidViewModel {
 
     public User getLocalUser() {
         return new User(userRepository.getUserToken());
+    }
+
+    public void resetPlayData() {
+        userRepository.storeCurrentGame(null);
+    }
+
+    public void signUp(String username, String password, String confirmPassword) {
+        SignUpCredential signUpIdentify = new SignUpCredential(username, password, confirmPassword);
+        userRepository.signUp(signUpIdentify);
+    }
+
+    public void forgotPassword(String email) {
+        userRepository.forgotPassword(email);
+    }
+
+    public void verifyEmail(String email) {
+        userRepository.verifyEmail(email);
     }
 
 }

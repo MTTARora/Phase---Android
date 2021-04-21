@@ -8,7 +8,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.rora.phase.AppView;
-import com.rora.phase.LimeLog;
+import com.rora.phase.RoraLog;
 import com.rora.phase.R;
 import com.rora.phase.grid.assets.CachedAppAssetLoader;
 import com.rora.phase.grid.assets.DiskAssetLoader;
@@ -98,7 +98,7 @@ public class AppGridAdapter extends GenericGridAdapter<AppView.AppObject> {
             // We don't want to make them bigger before draw-time
             scalingDivisor = 1.0;
         }
-        LimeLog.info("Art scaling divisor: " + scalingDivisor);
+        RoraLog.info("Art scaling divisor: " + scalingDivisor);
 
         if (loader != null) {
             // Cancel operations on the old loader

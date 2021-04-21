@@ -15,19 +15,22 @@ import android.os.IBinder;
 import android.os.SystemClock;
 
 import androidx.annotation.Nullable;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
-import com.rora.phase.LimeLog;
+import com.rora.phase.RoraLog;
 import com.rora.phase.R;
 import com.rora.phase.binding.PlatformBinding;
 import com.rora.phase.computers.IdentityManager;
 import com.rora.phase.discovery.DiscoveryService;
+import com.rora.phase.model.Game;
+import com.rora.phase.model.Host;
 import com.rora.phase.model.UserPlayingData;
 import com.rora.phase.nvstream.NvConnection;
 import com.rora.phase.nvstream.http.ComputerDetails;
 import com.rora.phase.nvstream.http.NvApp;
 import com.rora.phase.nvstream.http.NvHTTP;
 import com.rora.phase.nvstream.http.PairingManager;
-import com.rora.phase.nvstream.jni.MoonBridge;
 import com.rora.phase.nvstream.mdns.MdnsComputer;
 import com.rora.phase.nvstream.mdns.MdnsDiscoveryListener;
 import com.rora.phase.repository.UserRepository;
@@ -41,15 +44,12 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.InterfaceAddress;
-import java.net.NetworkInterface;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -58,12 +58,14 @@ public class PlayServices extends Service {
     private final PlayServices.ComputerManagerBinder binder = new PlayServices.ComputerManagerBinder();
     private final ComputerServices computerServices = new ComputerServices();
 
-    private UserPlayingData.PlayingState state = UserPlayingData.PlayingState.IDLE;
+    private MutableLiveData<UserPlayingData.PlayingState> state = new MutableLiveData<>();
     private PollingTuple pollingTuple;
     private PlayGameProgressCallBack listener = null;
     private IdentityManager idManager;
     UserRepository userRepository;
     private PlayHub playHub;
+    private Thread connectThread;
+    private Game currentGame;
 
     private DiscoveryService.DiscoveryBinder discoveryBinder;
     private final ServiceConnection discoveryServiceConnection = new ServiceConnection() {
@@ -85,6 +87,7 @@ public class PlayServices extends Service {
         }
     };
 
+
     //------------------------------------ Lifecycle ----------------------------------
 
     @Nullable
@@ -95,18 +98,20 @@ public class PlayServices extends Service {
 
     @Override
     public void onCreate() {
-        bindService(new Intent(this, DiscoveryService.class), discoveryServiceConnection, Service.BIND_AUTO_CREATE);
+        if (discoveryBinder == null)
+            bindService(new Intent(this, DiscoveryService.class), discoveryServiceConnection, Service.BIND_AUTO_CREATE);
 
         // Lookup or generate this device's UID
         idManager = new IdentityManager(this);
         userRepository = new UserRepository(getApplicationContext());
+        state.postValue(UserPlayingData.PlayingState.IDLE);
     }
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
-        if (state == UserPlayingData.PlayingState.IN_PROGRESS || state == UserPlayingData.PlayingState.PLAYING) {
-            stopConnect(null);
+        if (state.getValue() == UserPlayingData.PlayingState.IN_PROGRESS || state.getValue() == UserPlayingData.PlayingState.PLAYING) {
+            stopConnect(null, null);
         }
         stopSelf();
     }
@@ -145,7 +150,7 @@ public class PlayServices extends Service {
 
                 // Kick off a server info poll on this machine
                 if (!computerServices.addComputerBlocking(details)) {
-                    LimeLog.warning("Auto-discovered PC failed to respond: "+details);
+                    RoraLog.warning("Auto-discovered PC failed to respond: "+details);
                 }
             }
 
@@ -156,7 +161,7 @@ public class PlayServices extends Service {
 
             @Override
             public void notifyDiscoveryFailure(Exception e) {
-                LimeLog.severe("mDNS discovery failed");
+                RoraLog.severe("mDNS discovery failed");
                 e.printStackTrace();
             }
         };
@@ -165,67 +170,113 @@ public class PlayServices extends Service {
 
     //====================== PLAYING GAME STEPS =========================
 
-    /** Start the progress after getting ip and ports from STEP 1 */
-    public void startConnectProgress(Activity activity, PlayGameProgressCallBack callBack) {
-        Thread connectThread = new Thread(() -> {
+    /**
+     * Start play progress
+     * */
+    public void startConnectProgress(Activity activity, Game game, PlayGameProgressCallBack callBack) {
+        if (state.getValue() != UserPlayingData.PlayingState.IDLE)
+            return;
+
+        connectThread = new Thread(() -> {
+            RoraLog.info("Play game - STEP 1: Start Connecting");
+            state.postValue(UserPlayingData.PlayingState.IN_PROGRESS);
+            this.currentGame = game;
+            userRepository.storeCurrentGame(game);
+
+            listener.onStart(false);
             callBack.onStart(false);
-            playHub = new PlayHub();
+
             //STEP 1: Connect to hub
+            playHub = new PlayHub();
             playHub.startConnect(getApplicationContext(), new PlayHubListener() {
                 @Override
                 public void onConnected() {
-                    callBack.onStart(true);
+                    listener.onFindAHost(false);
                     callBack.onFindAHost(false);
                     //STEP 2: Get host data
-                    userRepository.getComputerData((errMsg, computer) -> {
+                    RoraLog.info("Play game - STEP 2: Get available host");
+                    userRepository.getComputerData((errMsg, response) -> {
+                        listener.onFindAHost(true);
                         callBack.onFindAHost(true);
                         if (errMsg != null) {
-                            playHub.stopConnect();
-                            callBack.onError(errMsg);
+                            RoraLog.warning("Play Game - Error: " + errMsg);
+                            stopConnect(callBack, errMsg);
                             return;
                         }
 
-                        Thread thread = new Thread(() -> {
+                        new Thread(() -> {
                             try {
-                                //STEP 3: Add pc
-                                callBack.onAddPc(false);
-                                String err = addPc(computer);
-                                if (err != null) {
-                                    callBack.onError(err);
+                                //STEP 2.1: Check queue
+                                if (response.queue != null) {
+                                    RoraLog.info("Play game: So many players are playing right now, please wait!");
+                                    state.postValue(UserPlayingData.PlayingState.IN_QUEUE);
+                                    listener.onQueueUpdated(true, response.queue.getTotal(), response.queue.getCurrentPosition());
+                                    callBack.onQueueUpdated(true, response.queue.getTotal(), response.queue.getCurrentPosition());
                                     return;
                                 }
-                                callBack.onAddPc(true);
-                                Thread.sleep(1000);
 
-                                //STEP 4: Pair
-                                callBack.onPairPc(false);
-                                err = startPairing(callBack);
-                                if (err != null) {
-                                    if (err.equals(getApplication().getResources().getString(R.string.pair_pc_ingame)))
-                                        stopConnect(callBack);
-                                    callBack.onError(err);
-                                    return;
-                                }
-                                callBack.onPairPc(true);
-                                Thread.sleep(1000);
-
-                                //STEP 5: Play
-                                callBack.onStartConnect(false);
-                                start(activity, binder);
-                                callBack.onStartConnect(true);
-                            } catch (InterruptedException e) {
-                                LimeLog.info("Playing Game - Connecting error -- " + e.getMessage());
-                                callBack.onError(getApplication().getResources().getString(R.string.undetected_error));
+                                //STEP 3: Pair
+                                continueProgressWithAvailableHost(response.host, callBack);
+                            } catch (Exception e) {
+                                RoraLog.info("Play Game - Error: " + e.getMessage());
+                                stopConnect(callBack, e.getMessage());
                             }
-                        });
-                        thread.start();
+                        }).start();
                     });
                 }
 
                 @Override
-                public void onDisconnected() {
-                    callBack.onError(getApplication().getResources().getString(R.string.undetected_error));
-                    stopConnect(callBack);
+                public void onUpdatePlayQueue(int position) {
+                    listener.onQueueUpdated(false, 0, position);
+                }
+
+                @Override
+                public void onHostAvailable(Host host) {
+                    continueProgressWithAvailableHost(host, callBack);
+                }
+
+                @Override
+                public void onAppReady(boolean isSuccess) {
+                    if (!isSuccess) {
+                        stopConnect(callBack, getResources().getString(R.string.undetected_error_from_server));
+                        return;
+                    }
+
+                    //STEP 6: Play
+                    RoraLog.info("Play game - STEP 6: Start remote connect...");
+                    listener.onStartConnect(false);
+                    callBack.onStartConnect(false);
+                    String error = start(activity, binder);
+                    if (error != null) {
+                        RoraLog.info("Play Game - Error: " + error);
+                        stopConnect(callBack, error);
+                        return;
+                    }
+
+                    state.postValue(UserPlayingData.PlayingState.PLAYING);
+                    RoraLog.info("Play game - FINAL: Everything is done, ready to play!");
+                    listener.onStartConnect(true);
+                    callBack.onStartConnect(true);
+                }
+
+                @Override
+                public void onDisconnected(int code) {
+                    String err = null;
+                    switch (code) {
+                        case 401:
+                            userRepository.signOut();
+                            callBack.onError("login session ended");
+                            listener.onError("Your login session has ended, please login again!");
+                            break;
+                        case 500:
+                            err = getResources().getString(R.string.undetected_error_from_server);
+                            break;
+                        default:
+                            break;
+                    }
+
+                    RoraLog.info("Play Game - Hub disconnected!");
+                    stopConnect(callBack, err);
                 }
             });
         });
@@ -233,29 +284,60 @@ public class PlayServices extends Service {
         connectThread.start();
     }
 
-    /** STEP 3: Connect to pc
-     *
-     * - Try connect to pc and get its state
-     *
-     * @return An error msg if failed
-     * */
-    private String addPc(ComputerDetails computerDetails) {
-        LimeLog.info("Playing game - STEP 2: Add computer -- " + computerDetails.toString());
-        String err = null;
+    private void continueProgressWithAvailableHost(Host host, PlayGameProgressCallBack callBack) {
         try {
-            boolean success = computerServices.addComputerBlocking(computerDetails);
-            if(!success)
-                err = getApplication().getResources().getString(R.string.undetected_error);
-        } catch (IllegalArgumentException e) {
-            err = e.getMessage();
-        }
+            RoraLog.info("Play game - STEP 3: Start pairing...");
+            listener.onPairPc(false);
+            callBack.onPairPc(false);
+            ComputerDetails computer = new ComputerDetails(host);
+            pollingTuple = new PollingTuple(computer, null);
+            NvHTTP.HTTPS_PORT1 = computer.httpsPort1;
+            NvHTTP.HTTP_PORT2 = computer.httpsPort1+1;
 
-        //Optimize here
-        LimeLog.info("Add pc - " + (err == null ? "Success" : ("Error: " + computerServices.handleAddPcErr(computerDetails.manualAddress))));
-        return err;
+            String err = startPairing(callBack);
+            if (err != null) {
+                RoraLog.info("Play Game - Error: " + err);
+                stopConnect(callBack, err);
+                return;
+            }
+            listener.onPairPc(true);
+            callBack.onPairPc(true);
+            Thread.sleep(1000);
+
+
+            //STEP 4: Get game list from nvdia
+            RoraLog.info("Play game - STEP 4: Getting app list from nvidia...");
+            listener.onGetHostApps(false);
+            callBack.onGetHostApps(false);
+            err = getNecessaryAppFromNvidia();
+            if (err != null) {
+                RoraLog.info("Play Game - Error: " + err);
+                stopConnect(callBack, err);
+                return;
+            }
+            listener.onGetHostApps(true);
+            callBack.onGetHostApps(true);
+
+            //STEP 5: Request host to prepare app if pair success
+            RoraLog.info("Play game - STEP 5: Pair success, requesting host for preparation app...");
+            listener.onPrepareHost(false);
+            callBack.onPrepareHost(false);
+            userRepository.prepareAppHost(currentGame.getId().toString(), "1", null, null, (error, data) -> {
+                if (error != null) {
+                    RoraLog.info("Play Game - Error: " + error);
+                    stopConnect(callBack, error);
+                    return;
+                }
+            });
+            listener.onPrepareHost(true);
+            callBack.onPrepareHost(true);
+        } catch (Exception e) {
+            RoraLog.info("Play Game - Error: " + e.getMessage());
+            stopConnect(callBack, e.getMessage());
+        }
     }
 
-    /** STEP 4: Pair computer
+    /** STEP 3: Pair computer
      *
      * - Send paring pin to server and try to pair with computer
      * Use this method in a thread
@@ -263,7 +345,6 @@ public class PlayServices extends Service {
      * @return An error msg if failed
      * */
     private String startPairing(PlayGameProgressCallBack callBack) {
-        LimeLog.info("Playing game - STEP 3: Start pairing");
         String err = computerServices.checkPairCondition(pollingTuple.computer, binder);
 
         try {
@@ -278,15 +359,15 @@ public class PlayServices extends Service {
             if (httpConn.getPairState() == PairingManager.PairState.PAIRED)
                 return null;
 
-            //STEP 3.1: GENERATE AND WAITING FOR SERVER HANDEL PIN
+            //STEP 4.1: GENERATE AND WAIT FOR SERVER HANDEL PIN
             final String pinStr = PairingManager.generatePinString();
 
-            //STEP 3.2: SEND PIN TO HOST
-            LimeLog.info("Pairing - Waiting for pin confirmation: " + pinStr);
-            userRepository.sendPinToHost(pinStr, pollingTuple.computer.hostId, (errMsg, data) -> {
+            //STEP 4.2: SEND PIN TO HOST
+            RoraLog.info("Pairing - Waiting for pin confirmation: " + pinStr);
+            userRepository.sendPinToHost(pinStr, (errMsg, data) -> {
                 if (errMsg != null) {
-                    stopConnect(callBack);
-                    callBack.onError(errMsg);
+                    RoraLog.info("Play Game - Error: " + errMsg);
+                    stopConnect(callBack, errMsg);
                 }
             });
 
@@ -325,15 +406,49 @@ public class PlayServices extends Service {
             err = e.getMessage();
         }
 
-        LimeLog.info("Pairing - " + (err == null ?  "Success" : "Err: " + err));
+        RoraLog.info("Pairing - " + (err == null ?  "Success" : "Err: " + err));
         return err;
     }
 
+    /** STEP 4: Connect to pc
+     *
+     * - Get app list from nvidia
+     *
+     * @return An error msg if failed
+     * */
+    private String getNecessaryAppFromNvidia() {
+        try {
+            NvHTTP http = new NvHTTP(pollingTuple.computer.activeAddress, idManager.getUniqueId(), pollingTuple.computer.serverCert, PlatformBinding.getCryptoProvider(this));
+            String appList = http.getAppListRaw();
+            if (appList != null) {
+                pollingTuple.computer.rawAppList = appList;
+                pollingTuple.computer.appList = NvHTTP.getAppListByReader(new StringReader(appList));
+                for (NvApp nvApp : pollingTuple.computer.appList) {
+                    if (nvApp.getAppName().equals("mstsc.exe")) {
+                        pollingTuple.computer.setRemoteApp(nvApp);
+                        break;
+                    }
+                }
+
+                return pollingTuple.computer.getRemoveApp() == null ?  "Couldn't find necessary app from host!" : null;
+            }
+            return "Couldn't get app list from nvidia";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return e.getMessage();
+        }
+    }
+
+
     /** STEP 5: Start remote connect
      * */
-    private void start(Activity activity, PlayServices.ComputerManagerBinder managerBinder) {
-        LimeLog.info("Playing game - STEP 4: Start remote connect");
-        ServerHelper.doStart(activity, NvApp.initRemoteApp(), pollingTuple.computer, managerBinder);
+    private String start(Activity activity, PlayServices.ComputerManagerBinder managerBinder) {
+        if (pollingTuple.computer.getRemoveApp() != null) {
+            ServerHelper.doStart(activity, pollingTuple.computer.getRemoveApp(), pollingTuple.computer, managerBinder);
+            return null;
+        }
+        else
+            return "Couldn't find necessary app from host!";
     }
 
     /** STEP 6 - FINAL: Counting playtime
@@ -345,73 +460,104 @@ public class PlayServices extends Service {
     /** Use this method in a thread
      * @return An error msg if failed
      * */
-    public void stopConnect(PlayGameProgressCallBack playProgressCallBack) {
-        playProgressCallBack.onStopConnect(false);
-        playHub.stopConnect();
-        if (pollingTuple == null || pollingTuple.computer == null) {
-            LimeLog.info("Stop connect - Error: Couldn't find local data");
-            playProgressCallBack.onStopConnect(true);
+    public void stopConnect(PlayGameProgressCallBack callBack, String err) {
+        if (state.getValue() == UserPlayingData.PlayingState.IDLE)
             return;
+
+        try {
+            state.postValue(UserPlayingData.PlayingState.IN_STOP_PROGRESS);
+            RoraLog.info("Play game: Stop connecting");
+            listener.onStopConnect(false, err);
+            if (callBack != null)
+                callBack.onStopConnect(false, err);
+            stopNvdiaConnect();
+            playHub.stopConnect();
+            Thread.sleep(1000);
+
+            if (connectThread != null)
+                connectThread.interrupt();
+            currentGame = null;
+            pollingTuple = null;
+            userRepository.storeCurrentGame(null);
+            //listener = null;
+            unbindService(discoveryServiceConnection);
+            bindService(new Intent(this, DiscoveryService.class), discoveryServiceConnection, Service.BIND_AUTO_CREATE);
+            connectThread = null;
+
+            RoraLog.info("Play game - Stop connect success");
+            state.postValue(UserPlayingData.PlayingState.STOPPED);
+            listener.onStopConnect(true, err);
+            if (callBack != null)
+                callBack.onStopConnect(true, err);
+
+            state.postValue(UserPlayingData.PlayingState.IDLE);
+        } catch (Exception ex) {
+            listener.onStopConnect(true, ex.getMessage());
+            if (callBack != null)
+                callBack.onStopConnect(true, ex.getMessage());
         }
+    }
 
-        state = UserPlayingData.PlayingState.IDLE;
-        pollingTuple = null;
-        listener = null;
-        unbindService(discoveryServiceConnection);
-        bindService(new Intent(this, DiscoveryService.class), discoveryServiceConnection, Service.BIND_AUTO_CREATE);
-        userRepository.stopPlaying();
-
-        LimeLog.info("Stop connect - Success");
-        playProgressCallBack.onStopConnect(true);
+    private void stopNvdiaConnect() {
+        new Thread(() -> {
+            try {
+                NvHTTP http = new NvHTTP(pollingTuple.computer.activeAddress, idManager.getUniqueId(), pollingTuple.computer.serverCert, PlatformBinding.getCryptoProvider(this));
+                http.unpair();
+                RoraLog.warning("Play game: stop nvidia connect success!" );
+            } catch (Exception e) {
+                e.printStackTrace();
+                RoraLog.warning("Play game: stop nvidia connect err: " + e.getMessage());
+            }
+        }).start();
     }
 
     //===================================================================
 
     private boolean isStopPlaying() {
-        return state == UserPlayingData.PlayingState.STOP;
+        return state.getValue() == UserPlayingData.PlayingState.STOPPED;
     }
 
-    private void updatePlayState(UserPlayingData.PlayingState state) {
-        this.state = state;
+    private UserPlayingData.PlayingState getCurrentState() {
+        return state.getValue();
     }
 
 
-    //--------------------------------- Classes -------------------------------
+    //--------------------------------- Support Classes -------------------------------
 
     public class ComputerManagerBinder extends Binder {
         private static final int POLL_DATA_TTL_MS = 30000;
         private static final int MDNS_QUERY_PERIOD_MS = 1000;
 
-        public void startConnectProgress(Activity activity, PlayGameProgressCallBack playProgressCallBack) {
-            PlayServices.this.startConnectProgress(activity, playProgressCallBack);
+        public void startConnectProgress(Activity activity, Game selectedGame, PlayGameProgressCallBack playProgressCallBack) {
+            PlayServices.this.startConnectProgress(activity, selectedGame, playProgressCallBack);
         }
 
         public void stopConnect(PlayGameProgressCallBack playProgressCallBack) {
-            PlayServices.this.stopConnect(playProgressCallBack);
+            PlayServices.this.stopConnect(playProgressCallBack, null);
         }
 
         public void startPolling(PlayGameProgressCallBack listener) {
             if (pollingTuple == null)
                 return;
 
-            LimeLog.info("Start updating computer");
-            PlayServices.this.listener = listener;
+            RoraLog.info("Start updating computer");
+            //PlayServices.this.listener = listener;
 
             // Start mDNS auto discovery too
             discoveryBinder.startDiscovery(MDNS_QUERY_PERIOD_MS);
 
             // Enforce the poll data TTL
             if (SystemClock.elapsedRealtime() - pollingTuple.lastSuccessfulPollMs > POLL_DATA_TTL_MS) {
-                LimeLog.info("Timing out polled state for "+pollingTuple.computer.name);
+                RoraLog.info("Timing out polled state for "+pollingTuple.computer.name);
                 pollingTuple.computer.state = ComputerDetails.State.UNKNOWN;
             }
 
             // Report this computer initially
-            listener.onComputerUpdated(pollingTuple.computer);
+            //listener.onComputerUpdated(pollingTuple.computer);
         }
 
         public void stopPolling() {
-            LimeLog.info("Stop polling/updating computer");
+            RoraLog.info("Stop polling/updating computer");
 
             // Just call the unbind handler to cleanup
             PlayServices.this.onUnbind(null);
@@ -434,7 +580,23 @@ public class PlayServices extends Service {
         }
 
         public boolean isStopPlaying() {
-            return  PlayServices.this.isStopPlaying();
+            return PlayServices.this.isStopPlaying();
+        }
+
+        public UserPlayingData.PlayingState getCurrentState() {
+            return PlayServices.this.getCurrentState();
+        }
+
+        public void setListener(PlayGameProgressCallBack callBack) {
+            PlayServices.this.listener = callBack;
+        }
+
+        public LiveData<UserPlayingData.PlayingState> setStateListener() {
+            return PlayServices.this.state;
+        }
+
+        public Game getCurrentGame() {
+            return PlayServices.this.currentGame;
         }
 
     }
@@ -464,7 +626,7 @@ public class PlayServices extends Service {
 
                     // If the machine is reachable, it was successful
                     if (pollingTuple.computer.state == ComputerDetails.State.ONLINE) {
-                        LimeLog.info("Adding PC - New PC ("+pollingTuple.computer.name+") is UUID "+pollingTuple.computer.uuid);
+                        RoraLog.info("Adding PC - New PC ("+pollingTuple.computer.name+") is UUID "+pollingTuple.computer.uuid);
 
                         // Start a polling thread for this machine
                         startTupleThread();
@@ -495,7 +657,7 @@ public class PlayServices extends Service {
 
             // If no connection could be established to either IP address, there's nothing we can do
             if (candidateAddress == null) {
-                LimeLog.info("Adding PC - Couldn't connect to this IP address " + details.manualAddress);
+                RoraLog.info("Adding PC - Couldn't connect to this IP address " + details.manualAddress);
                 return false;
             }
 
@@ -533,7 +695,7 @@ public class PlayServices extends Service {
          * @return true if it was modified */
         private boolean runPoll(ComputerDetails details, boolean newPc, int offlineCount) throws InterruptedException {
             if (isStopPlaying()) {
-                stopConnect(null);
+                stopConnect(null, null);
             }
             final int pollTriesBeforeOffline = details.state == ComputerDetails.State.UNKNOWN ? INITIAL_POLL_TRIES : OFFLINE_POLL_TRIES;
 
@@ -563,103 +725,28 @@ public class PlayServices extends Service {
             }
 
             // Don't call the listener if this is a failed lookup of a new PC
-            if ((!newPc || details.state == ComputerDetails.State.ONLINE) && listener != null)
-                listener.onComputerUpdated(details);
+            //if ((!newPc || details.state == ComputerDetails.State.ONLINE) && listener != null)
+            //    listener.onComputerUpdated(details);
 
             return true;
-        }
-
-        public void removeComputer() {
-            if (pollingTuple.thread != null) {
-                // Interrupt the thread on this entry
-                pollingTuple.thread.interrupt();
-                pollingTuple.thread = null;
-            }
-            pollingTuple = null;
         }
 
 
         //--------SUPPORT FUNCTIONS FOR PLAYING--------
 
-        private String handleAddPcErr(String manualAddress) {
-            String err;
-            boolean wrongSiteLocal;
-            int portTestResult;
-
-            wrongSiteLocal = isWrongSubnetSiteLocalAddress(manualAddress);
-
-            if (!wrongSiteLocal)
-                // Run the test before dismissing the spinner because it can take a few seconds.
-                portTestResult = MoonBridge.testClientConnectivity(ServerHelper.CONNECTION_TEST_SERVER, 443,MoonBridge.ML_PORT_FLAG_TCP_47984 | MoonBridge.ML_PORT_FLAG_TCP_47989, NvHTTP.HTTPS_PORT1);
-            else
-                // Don't bother with the test if we succeeded or the IP address was bogus
-                portTestResult = MoonBridge.ML_TEST_RESULT_INCONCLUSIVE;
-
-            if (wrongSiteLocal)
-                err = getApplication().getResources().getString(R.string.addpc_wrong_sitelocal);
-            else {
-                if (portTestResult != MoonBridge.ML_TEST_RESULT_INCONCLUSIVE && portTestResult != 0)
-                    err = getApplication().getResources().getString(R.string.nettest_text_blocked);
-                else
-                    err = getApplication().getResources().getString(R.string.addpc_fail);
-            }
-
-            return getApplication().getResources().getString(R.string.conn_error_title) + " -- " + err;
-        }
-
-        private boolean isWrongSubnetSiteLocalAddress(String address) {
-            try {
-                InetAddress targetAddress = InetAddress.getByName(address);
-                if (!(targetAddress instanceof Inet4Address) || !targetAddress.isSiteLocalAddress()) {
-                    return false;
-                }
-
-                // We have a site-local address. Look for a matching local interface.
-                for (NetworkInterface iface : Collections.list(NetworkInterface.getNetworkInterfaces())) {
-                    for (InterfaceAddress addr : iface.getInterfaceAddresses()) {
-                        if (!(addr.getAddress() instanceof Inet4Address) || !addr.getAddress().isSiteLocalAddress()) {
-                            // Skip non-site-local or non-IPv4 addresses
-                            continue;
-                        }
-
-                        byte[] targetAddrBytes = targetAddress.getAddress();
-                        byte[] ifaceAddrBytes = addr.getAddress().getAddress();
-
-                        // Compare prefix to ensure it's the same
-                        boolean addressMatches = true;
-                        for (int i = 0; i < addr.getNetworkPrefixLength(); i++) {
-                            if ((ifaceAddrBytes[i / 8] & (1 << (i % 8))) != (targetAddrBytes[i / 8] & (1 << (i % 8)))) {
-                                addressMatches = false;
-                                break;
-                            }
-                        }
-
-                        if (addressMatches) {
-                            return false;
-                        }
-                    }
-                }
-
-                // Couldn't find a matching interface
-                return true;
-            } catch (SocketException | UnknownHostException e) {
-                e.printStackTrace();
-                return false;
-            }
-        }
-
         private String checkPairCondition(ComputerDetails computer, PlayServices.ComputerManagerBinder managerBinder) {
             String err = null;
 
-            if (computer.state == ComputerDetails.State.OFFLINE || ServerHelper.getCurrentAddressFromComputer(computer) == null)
-                err = getApplication().getResources().getString(R.string.pair_pc_offline);
-            else if (computer.runningGameId != 0)
+            //if (computer.state == ComputerDetails.State.OFFLINE || ServerHelper.getCurrentAddressFromComputer(computer) == null)
+            //    err = getApplication().getResources().getString(R.string.pair_pc_offline);
+            //else
+                if (computer.runningGameId != 0)
                 err = getApplication().getResources().getString(R.string.pair_pc_ingame);
             else if (managerBinder == null)
                 err = getApplication().getResources().getString(R.string.error_manager_not_running);
 
             if (err != null)
-                LimeLog.info("Pairing - " + "Err: " + err);
+                RoraLog.info("Pairing - " + "Err: " + err);
 
             return err;
         }
@@ -763,13 +850,13 @@ public class PlayServices extends Service {
 
                 // Check if this is the PC we expected
                 if (newDetails.uuid == null) {
-                    LimeLog.severe("Adding PC - Polling returned no UUID!");
+                    RoraLog.severe("Adding PC - Polling returned no UUID!");
                     return null;
                 }
                 // details.uuid can be null on initial PC add
                 else if (details.uuid != null && !details.uuid.equals(newDetails.uuid)) {
                     // We got the wrong PC!
-                    LimeLog.info("Adding PC - Polling returned the wrong PC!");
+                    RoraLog.info("Adding PC - Polling returned the wrong PC!");
                     return null;
                 }
 
@@ -812,13 +899,13 @@ public class PlayServices extends Service {
                 public void run() {
 
                     int offlineCount = 0;
-                    while (!isInterrupted() && (state == UserPlayingData.PlayingState.IN_PROGRESS || state == UserPlayingData.PlayingState.PLAYING)) {
+                    while (!isInterrupted() && (state.getValue() == UserPlayingData.PlayingState.IN_PROGRESS || state.getValue() == UserPlayingData.PlayingState.PLAYING)) {
                         try {
                             // Only allow one request to the machine at a time
                             synchronized (tuple.networkLock) {
                                 // Check if this poll has modified the details
                                 if (!runPoll(tuple.computer, false, offlineCount)) {
-                                    LimeLog.warning(tuple.computer.name + " is offline (try " + offlineCount + ")");
+                                    RoraLog.warning(tuple.computer.name + " is offline (try " + offlineCount + ")");
                                     offlineCount++;
                                 } else {
                                     tuple.lastSuccessfulPollMs = SystemClock.elapsedRealtime();
@@ -829,7 +916,7 @@ public class PlayServices extends Service {
                             // Wait until the next polling interval
                             Thread.sleep(SERVERINFO_POLLING_PERIOD_MS);
                         } catch (InterruptedException e) {
-                            LimeLog.info("Polling - Err: " + e.getMessage());
+                            RoraLog.info("Polling - Err: " + e.getMessage());
                             break;
                         }
                     }

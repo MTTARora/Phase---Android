@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="@dimen/medium_space"
+    android:paddingBottom="2dp"
+    app:cardCornerRadius="@dimen/max_radius">
+
+    <FrameLayout
+        android:layout_width="@dimen/normal_width_img"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@id/game_name_item_game_info_tv"
+        app:layout_constraintDimensionRatio="1:0.5625"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!--<androidx.cardview.widget.CardView-->
+        <!--    android:layout_width="match_parent"-->
+        <!--    android:layout_height="match_parent"-->
+        <!--    android:layout_marginStart="@dimen/min_space"-->
+        <!--    android:layout_marginTop="@dimen/min_space"-->
+        <!--    android:elevation="@dimen/medium_elevation"-->
+        <!--    app:cardBackgroundColor="@color/colorPrimary"-->
+        <!--    app:cardCornerRadius="@dimen/max_radius" />-->
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/min_space"
+            android:layout_marginBottom="@dimen/min_space"
+            app:cardCornerRadius="@dimen/max_radius">
+
+            <ImageView
+                android:id="@+id/banner_game_info_imv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/banner_test" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <carbon.widget.RecyclerView
+                    android:id="@+id/platform_item_game_info_rclv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/min_space"
+                    android:layout_marginEnd="@dimen/min_space"
+                    android:background="@color/colorPrimaryDark"
+                    android:elevation="@dimen/max_elevation"
+                    android:paddingVertical="@dimen/min_space"
+                    android:paddingStart="@dimen/min_space"
+                    app:carbon_cornerRadius="@dimen/maxx_radius"
+                    app:carbon_elevationShadowColor="@color/colorPrimary"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/pay_type_item_game_info_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/shape_dim_fader_corner_rectangle"
+                    android:paddingHorizontal="@dimen/min_space"
+                    android:paddingTop="@dimen/medium_space"
+                    android:paddingBottom="@dimen/min_space"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="@dimen/min_text_size"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </FrameLayout>
+
+    <!--Name-->
+    <TextView
+        android:id="@+id/game_name_item_game_info_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:lines="2"
+        android:paddingHorizontal="@dimen/min_space"
+        android:paddingVertical="@dimen/min_space"
+        android:textColor="@color/colorText"
+        android:textSize="@dimen/normal_text_size"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

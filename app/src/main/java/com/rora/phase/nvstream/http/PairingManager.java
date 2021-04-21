@@ -6,7 +6,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.xmlpull.v1.XmlPullParserException;
 
-import com.rora.phase.LimeLog;
+import com.rora.phase.RoraLog;
 
 import java.security.cert.Certificate;
 import java.io.*;
@@ -185,7 +185,7 @@ public class PairingManager {
         PairingHashAlgorithm hashAlgo;
 
         int serverMajorVersion = http.getServerMajorVersion(serverInfo);
-        LimeLog.info("Pairing with server generation: "+serverMajorVersion);
+        RoraLog.info("Pairing with server generation: "+serverMajorVersion);
         if (serverMajorVersion >= 7) {
             // Gen 7+ uses SHA-256 hashing
             hashAlgo = new Sha256PairingHash();

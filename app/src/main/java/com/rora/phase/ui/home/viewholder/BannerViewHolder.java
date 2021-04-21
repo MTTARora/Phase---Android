@@ -21,7 +21,7 @@ public class BannerViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bindData(Banner banner) {
-        MediaHelper.loadImage(banner.getLink(), bannerImv);
+        MediaHelper.loadImage(bannerImv, banner.getLink());
     }
 
 }

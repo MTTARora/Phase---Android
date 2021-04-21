@@ -16,6 +16,7 @@ import com.rora.phase.binding.video.CrashListener;
 import com.rora.phase.binding.video.MediaCodecDecoderRenderer;
 import com.rora.phase.binding.video.MediaCodecHelper;
 import com.rora.phase.binding.video.PerfOverlayListener;
+import com.rora.phase.model.UserPlayingData;
 import com.rora.phase.nvstream.NvConnection;
 import com.rora.phase.nvstream.NvConnectionListener;
 import com.rora.phase.nvstream.StreamConfiguration;
@@ -29,6 +30,7 @@ import com.rora.phase.preferences.GlPreferences;
 import com.rora.phase.preferences.PreferenceConfiguration;
 import com.rora.phase.ui.GameGestures;
 import com.rora.phase.ui.StreamView;
+import com.rora.phase.ui.game.LoadingGameActivity;
 import com.rora.phase.ui.viewmodel.GameViewModel;
 import com.rora.phase.utils.Dialog;
 import com.rora.phase.utils.NetHelper;
@@ -80,6 +82,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import java.io.ByteArrayInputStream;
@@ -95,7 +98,6 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
     PerfOverlayListener
 {
     private int lastButtonState = 0;
-    private GameViewModel gameViewModel;
 
     // Only 2 touches are supported
     private final TouchContext[] touchContextMap = new TouchContext[2];
@@ -176,12 +178,19 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
                     // Wait for the binder to be ready
                     //localBinder.waitForReady();
                     managerBinder = localBinder;
+                    Game.this.runOnUiThread(() -> managerBinder.setStateListener().observe(Game.this, playingStateObserver));
                 }
             }.start();
         }
 
         public void onServiceDisconnected(ComponentName className) {
             managerBinder = null;
+        }
+    };
+
+    private final Observer<UserPlayingData.PlayingState> playingStateObserver = playingState -> {
+        if(playingState == UserPlayingData.PlayingState.IN_STOP_PROGRESS || playingState == UserPlayingData.PlayingState.STOPPED) {
+            Game.this.finish();
         }
     };
 
@@ -197,7 +206,6 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        gameViewModel = new ViewModelProvider(this).get(GameViewModel.class);
         UiHelper.setLocale(this);
 
         // We don't want a title bar
@@ -422,7 +430,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
 
         // Set to the optimal mode for streaming
         float displayRefreshRate = prepareDisplayForRendering();
-        LimeLog.info("Display refresh rate: "+displayRefreshRate);
+        RoraLog.info("Display refresh rate: "+displayRefreshRate);
 
         // HACK: Despite many efforts to ensure low latency consistent frame
         // delivery, the best non-lossy mechanism is to buffer 1 extra frame
@@ -451,7 +459,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
                 // causing frame pacing issues. See https://issuetracker.google.com/issues/143401475
                 // To work around this, use frame drop mode if we want to stream at >= 60 FPS.
                 if (prefConfig.fps >= 60) {
-                    LimeLog.info("Using Pixel 4 rendering hack");
+                    RoraLog.info("Using Pixel 4 rendering hack");
                     decoderRenderer.enableLegacyFrameDropRendering();
                 }
             }
@@ -459,11 +467,11 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
                 if (prefConfig.unlockFps) {
                     // Use frame drops when rendering above the screen frame rate
                     decoderRenderer.enableLegacyFrameDropRendering();
-                    LimeLog.info("Using drop mode for FPS > Hz");
+                    RoraLog.info("Using drop mode for FPS > Hz");
                 } else if (roundedRefreshRate <= 49) {
                     // Let's avoid clearly bogus refresh rates and fall back to legacy rendering
                     decoderRenderer.enableLegacyFrameDropRendering();
-                    LimeLog.info("Bogus refresh rate: " + roundedRefreshRate);
+                    RoraLog.info("Bogus refresh rate: " + roundedRefreshRate);
                 }
                 // HACK: Avoid crashing on some MTK devices
                 else if (decoderRenderer.isBlacklistedForFrameRate(roundedRefreshRate - 1)) {
@@ -471,14 +479,14 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
                     decoderRenderer.enableLegacyFrameDropRendering();
                 } else {
                     chosenFrameRate = roundedRefreshRate - 1;
-                    LimeLog.info("Adjusting FPS target for screen to " + chosenFrameRate);
+                    RoraLog.info("Adjusting FPS target for screen to " + chosenFrameRate);
                 }
             }
         }
 
         boolean vpnActive = NetHelper.isActiveNetworkVpn(this);
         if (vpnActive) {
-            LimeLog.info("Detected active network is a VPN");
+            RoraLog.info("Detected active network is a VPN");
         }
 
         StreamConfiguration config = new StreamConfiguration.Builder()
@@ -548,8 +556,10 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
             }
 
             // If we can't find an AVC decoder, we can't proceed
-            Dialog.displayDialog(this, getResources().getString(R.string.conn_error_title),
-                    "This device or ROM doesn't support hardware accelerated H.264 playback.", true);
+
+            RoraLog.warning("Game - " + getResources().getString(R.string.conn_error_title) + ": This device or ROM doesn't support hardware accelerated H.264 playback.");
+            finish();
+            //Dialog.displayDialog(this, getResources().getString(R.string.conn_error_title), "This device or ROM doesn't support hardware accelerated H.264 playback.", true);
             return;
         }
 
@@ -665,7 +675,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
                 boolean resolutionFitsStream = candidate.getPhysicalWidth() >= prefConfig.width &&
                         candidate.getPhysicalHeight() >= prefConfig.height;
 
-                LimeLog.info("Examining display mode: "+candidate.getPhysicalWidth()+"x"+
+                RoraLog.info("Examining display mode: "+candidate.getPhysicalWidth()+"x"+
                         candidate.getPhysicalHeight()+"x"+candidate.getRefreshRate());
 
                 if (candidate.getPhysicalWidth() > 4096) {
@@ -711,7 +721,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
                 bestMode = candidate;
                 refreshRateIsGood = isRefreshRateGoodMatch(candidate.getRefreshRate());
             }
-            LimeLog.info("Selected display mode: "+bestMode.getPhysicalWidth()+"x"+
+            RoraLog.info("Selected display mode: "+bestMode.getPhysicalWidth()+"x"+
                     bestMode.getPhysicalHeight()+"x"+bestMode.getRefreshRate());
             windowLayoutParams.preferredDisplayModeId = bestMode.getModeId();
             displayRefreshRate = bestMode.getRefreshRate();
@@ -720,7 +730,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
         else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             float bestRefreshRate = display.getRefreshRate();
             for (float candidate : display.getSupportedRefreshRates()) {
-                LimeLog.info("Examining refresh rate: "+candidate);
+                RoraLog.info("Examining refresh rate: "+candidate);
 
                 if (candidate > bestRefreshRate) {
                     // Ensure the frame rate stays around 60 Hz for <= 60 FPS streams
@@ -733,7 +743,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
                     bestRefreshRate = candidate;
                 }
             }
-            LimeLog.info("Selected refresh rate: "+bestRefreshRate);
+            RoraLog.info("Selected refresh rate: "+bestRefreshRate);
             windowLayoutParams.preferredRefreshRate = bestRefreshRate;
             displayRefreshRate = bestRefreshRate;
         }
@@ -768,7 +778,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
             double screenAspectRatio = ((double)screenSize.y) / screenSize.x;
             double streamAspectRatio = ((double)prefConfig.height) / prefConfig.width;
             if (Math.abs(screenAspectRatio - streamAspectRatio) < 0.001) {
-                LimeLog.info("Stream has compatible aspect ratio with output display");
+                RoraLog.info("Stream has compatible aspect ratio with output display");
                 aspectRatioMatch = true;
             }
         }
@@ -864,6 +874,11 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
     protected void onDestroy() {
         super.onDestroy();
 
+        if (managerBinder != null) {
+            managerBinder.setStateListener().removeObserver(playingStateObserver);
+            managerBinder.stopConnect(null);
+        }
+
         if (controllerHandler != null) {
             InputManager inputManager = (InputManager) getSystemService(Context.INPUT_SERVICE);
             inputManager.unregisterInputDeviceListener(controllerHandler);
@@ -944,6 +959,20 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
         }
 
         finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Dialog.displayDialog(this, getResources().getString(R.string.stop_playing_msg) + " ?", null, "Yes", "No", new Runnable() {
+            @Override
+            public void run() {
+                if (managerBinder != null && managerBinder.getCurrentState() != UserPlayingData.PlayingState.IN_QUEUE) {
+                    new Thread(() -> managerBinder.stopConnect(null)).start();
+                    unbindService(serviceConnection);
+                }
+                Game.super.onBackPressed();
+            }
+        }, null);
     }
 
     private final Runnable toggleGrab = new Runnable() {
@@ -1189,7 +1218,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
 
     @Override
     public void showKeyboard() {
-        LimeLog.info("Showing keyboard overlay");
+        RoraLog.info("Showing keyboard overlay");
         InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
     }
@@ -1568,7 +1597,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
 
                 if (!displayedFailureDialog) {
                     displayedFailureDialog = true;
-                    LimeLog.severe(stage + " failed: " + errorCode);
+                    RoraLog.severe(stage + " failed: " + errorCode);
 
                     // If video initialization failed and the surface is still valid, display extra information for the user
                     if (stage.contains("video") && streamView.getHolder().getSurface().isValid()) {
@@ -1586,7 +1615,9 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
                         dialogText += "\n\n" + getResources().getString(R.string.nettest_text_blocked);
                     }
 
-                    Dialog.displayDialog(Game.this, getResources().getString(R.string.conn_error_title), dialogText, true);
+                    RoraLog.warning("Game - " + getResources().getString(R.string.conn_error_title) + " : " + dialogText);
+                    finish();
+                    //Dialog.displayDialog(Game.this, getResources().getString(R.string.conn_error_title), dialogText, true);
                 }
             }
         });
@@ -1610,7 +1641,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
 
                 if (!displayedFailureDialog) {
                     displayedFailureDialog = true;
-                    LimeLog.severe("Connection terminated: " + errorCode);
+                    RoraLog.severe("Connection terminated: " + errorCode);
                     stopConnection();
 
                     // Display the error dialog if it was an unexpected termination.
@@ -1647,8 +1678,9 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
                                     MoonBridge.stringifyPortFlags(portFlags, "\n", NvHTTP.HTTPS_PORT1);
                         }
 
-                        Dialog.displayDialog(Game.this, getResources().getString(R.string.conn_terminated_title),
-                                message, true);
+                        RoraLog.warning("Game - " + getResources().getString(R.string.conn_terminated_title) + " : " + message);
+                        finish();
+                        //Dialog.displayDialog(Game.this, getResources().getString(R.string.conn_terminated_title), message, true);
                     }
                     else {
                         finish();
@@ -1746,7 +1778,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
 
     @Override
     public void rumble(short controllerNumber, short lowFreqMotor, short highFreqMotor) {
-        LimeLog.info(String.format((Locale)null, "Rumble on gamepad %d: %04x %04x", controllerNumber, lowFreqMotor, highFreqMotor));
+        RoraLog.info(String.format((Locale)null, "Rumble on gamepad %d: %04x %04x", controllerNumber, lowFreqMotor, highFreqMotor));
 
         controllerHandler.handleRumble(controllerNumber, lowFreqMotor, highFreqMotor);
     }
@@ -1818,7 +1850,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
             buttonIndex = MouseButtonPacket.BUTTON_X2;
             break;
         default:
-            LimeLog.warning("Unhandled button: "+buttonId);
+            RoraLog.warning("Unhandled button: "+buttonId);
             return;
         }
 

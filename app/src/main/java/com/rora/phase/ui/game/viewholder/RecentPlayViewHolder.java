@@ -23,7 +23,7 @@ public class RecentPlayViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bindData(Game game) {
-        MediaHelper.loadImage(game.getBackground(), bannerImv);
+        MediaHelper.loadImage(bannerImv, game.getBackground());
         gameNameTv.setText(game.getName());
     }
 

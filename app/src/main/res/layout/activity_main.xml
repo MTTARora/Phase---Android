@@ -9,44 +9,109 @@
         android:id="@+id/nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:defaultNavHost="true"
+        android:layout_height="0dp"
         android:layout_above="@id/bottom_nav_view"
+        app:defaultNavHost="true"
+        app:layout_constraintBottom_toTopOf="@id/frame_queue_main"
+        app:layout_constraintTop_toTopOf="parent"
         app:navGraph="@navigation/mobile_navigation" />
+
+    <!--QUEUE-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/frame_queue_main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
+        android:padding="@dimen/medium_space"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/bottom_nav_view">
+
+        <carbon.widget.ImageView
+            android:id="@+id/game_banner_queue_main_imv"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="fitXY"
+            app:carbon_cornerRadius="@dimen/medium_radius"
+            app:layout_constraintBottom_toBottomOf="@id/frame_info_queue_main"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/frame_info_queue_main"
+            app:layout_constraintWidth_percent=".18" />
+
+        <LinearLayout
+            android:id="@+id/frame_info_queue_main"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/medium_space"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toStartOf="@id/end_queue_main_btn"
+            app:layout_constraintStart_toEndOf="@+id/game_banner_queue_main_imv"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/tv_game_name_queue_main"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:lines="2"
+                android:text="PUBG" />
+
+            <TextView
+                android:id="@+id/queue_main_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/in_queue_msg" />
+
+            <ProgressBar
+                android:id="@+id/loading_game_queue_main_pb"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:visibility="gone"/>
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/end_queue_main_btn"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@android:color/transparent"
+            android:src="@android:drawable/presence_offline"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent=".1" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimaryDark"
-        app:layout_constraintBottom_toBottomOf="@id/main_container"
-        app:itemTextColor="@drawable/bottom_tab_selector"
-        app:itemIconTint="@drawable/bottom_tab_selector"
         android:translationZ="0dp"
         app:elevation="0dp"
+        app:itemIconTint="@drawable/bottom_tab_selector"
+        app:itemTextColor="@drawable/bottom_tab_selector"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:menu="@menu/bottom_nav_menu" />
 
     <FrameLayout
         android:id="@+id/main_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
-
-    <FrameLayout
-        android:id="@+id/main_loading_view"
-        android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="@id/main_container"
-        app:layout_constraintBottom_toBottomOf="@id/main_container"
-        android:background="@color/colorAccent"
-        android:visibility="invisible">
-        <androidx.core.widget.ContentLoadingProgressBar
-            android:id="@+id/main_loading_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:theme="@style/ContentLoadingProgress"
-            style="?android:attr/progressBarStyleInverse"
-            android:layout_gravity="center"/>
-    </FrameLayout>
+        app:layout_constraintBottom_toTopOf="@id/frame_queue"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <include
+        android:id="@id/frame_queue"
+        layout="@layout/fragment_play_queue"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/main_loading_view"
+        layout="@layout/loading_view"
+        android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

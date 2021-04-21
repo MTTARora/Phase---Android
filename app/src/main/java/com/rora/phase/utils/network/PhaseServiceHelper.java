@@ -2,7 +2,8 @@ package com.rora.phase.utils.network;
 
 import android.content.Context;
 
-import com.rora.phase.utils.DataResultHelper;
+import com.rora.phase.RoraLog;
+import com.rora.phase.utils.DataResponse;
 import com.rora.phase.utils.SharedPreferencesHelper;
 
 import org.json.JSONObject;
@@ -20,10 +21,10 @@ public class PhaseServiceHelper {
     private Context context;
     private SharedPreferencesHelper sharedPreferencesHelper;
 
-    private static final String basePhaseHttpsUrl = "https://roragame.ga/api/";
-    private static final String basePhaseHttpUrl = "http://roragame.ga/api/";
-//    private static final String basePhaseHttpsUrl = "http://10.0.2.2:53315/api/";
-//    private static final String basePhaseHttpUrl = "http://10.0.2.2:53315/api/";
+    private static final String basePhaseHttpsUrl = "https://roragame.rorasoft.com/api/";
+    private static final String basePhaseHttpUrl = "http://roragame.rorasoft.com/api/";
+    //private static final String basePhaseHttpsUrl = "http://10.0.2.2:53315/api/";
+    //private static final String basePhaseHttpUrl = "http://10.0.2.2:53315/api/";
     private final String userBaseUrl = basePhaseHttpsUrl + "users/";
     private final String userAuthBaseUrl = basePhaseHttpsUrl + "auth/";
     private final String gameBaseUrl = basePhaseHttpUrl + "games/";
@@ -74,7 +75,7 @@ public class PhaseServiceHelper {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.HEADERS);
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         if (auth) {
             httpClient.addInterceptor(chain -> {
@@ -97,19 +98,22 @@ public class PhaseServiceHelper {
         return userPhaseService;
     }
 
-    public static <T> DataResultHelper<T> handleResponse(Response<T> response) {
-        DataResultHelper<T> data = new DataResultHelper<>();
+    public static <T> DataResponse<T> handleResponse(Response<T> response) {
+        DataResponse<T> data = new DataResponse<>();
         if(response.code() == 200) {
             data.setData(response.body());
         } else {
-            String err = "No data to fetch, please try again later!";
+            String err = "Could not get data from server, please try again later!";
             try {
-                JSONObject jObjError = new JSONObject(response.errorBody().string());
-                err = jObjError.getString("message");
+                if (response.errorBody() != null || response.body() != null) {
+                    JSONObject jObjError = new JSONObject(response.errorBody().string());
+                    err = jObjError.getString("message");
+                }
             } catch (Exception e) {
-                err = e.getMessage();
+                RoraLog.warning("api response err - " + e.getMessage());
             }
-            data.setErrMsg(err);
+
+            data.setMsg(err);
         }
         return data;
     }

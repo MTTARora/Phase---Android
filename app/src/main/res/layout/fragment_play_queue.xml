@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/frame_queue"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorAccent"
+    android:padding="@dimen/medium_space"
+    android:visibility="visible"
+    app:layout_constraintBottom_toBottomOf="parent">
+
+    <carbon.widget.ImageView
+        android:id="@+id/game_banner_queue_imv"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/banner_test"
+        app:carbon_cornerRadius="@dimen/medium_radius"
+        app:layout_constraintBottom_toBottomOf="@id/frame_info_queue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/frame_info_queue"
+        app:layout_constraintWidth_percent=".18" />
+
+    <LinearLayout
+        android:id="@+id/frame_info_queue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/medium_space"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toStartOf="@id/end_queue_btn"
+        app:layout_constraintStart_toEndOf="@+id/game_banner_queue_imv"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tv_game_name_queue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="2"
+            android:text="PUBG" />
+
+        <TextView
+            android:id="@+id/queue_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/in_queue_msg" />
+
+        <ProgressBar
+            android:id="@+id/loading_game_queue_pb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:visibility="gone"/>
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/end_queue_btn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@android:color/transparent"
+        android:src="@android:drawable/presence_offline"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent=".1" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,12 +7,8 @@ public class PinConfirmBody {
     @SerializedName("pin")
     @Expose
     private String pin;
-    @SerializedName("hostId")
-    @Expose
-    private String hostId;
 
-    public PinConfirmBody(String pin, String hostId) {
+    public PinConfirmBody(String pin) {
         this.pin = pin;
-        this.hostId = hostId;
     }
 }

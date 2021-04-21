@@ -19,6 +19,7 @@ public class SharedPreferencesHelper {
     private final String USER_TOKEN_KEY = "user_token";
     private final String USER_COMPUTER_KEY = "user_computer";
     private final String USER_PLAY_STATE_KEY = "user_play_state";
+    private final String CURRENT_PLAYING_GAME_KEY = "current_playing_game";
 
     public static SharedPreferencesHelper newInstance(Context context) {
         return new SharedPreferencesHelper(context);
@@ -66,4 +67,11 @@ public class SharedPreferencesHelper {
         return sharedPreferences.getString(USER_COMPUTER_KEY, "");
     }
 
+    public void setCurrentGame(String jsonGame) {
+        saveString(CURRENT_PLAYING_GAME_KEY, jsonGame);
+    }
+
+    public String getCurrentGame() {
+        return sharedPreferences.getString(CURRENT_PLAYING_GAME_KEY, "");
+    }
 }
