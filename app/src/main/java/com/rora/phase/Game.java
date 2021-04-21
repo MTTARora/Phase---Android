@@ -635,6 +635,10 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
 
+        // We can't guarantee the state of modifiers keys which may have
+        // lifted while focus was not on us. Clear the modifier state.
+        this.modifierFlags = 0;
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // Capture is lost when focus is lost, so it must be requested again
             // when focus is regained.
@@ -667,6 +671,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
         // On M, we can explicitly set the optimal display mode
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Display.Mode bestMode = display.getMode();
+            boolean isNativeResolutionStream = PreferenceConfiguration.isNativeResolution(prefConfig.width, prefConfig.height);
             boolean refreshRateIsGood = isRefreshRateGoodMatch(bestMode.getRefreshRate());
             for (Display.Mode candidate : display.getSupportedModes()) {
                 boolean refreshRateReduced = candidate.getRefreshRate() < bestMode.getRefreshRate();
@@ -678,14 +683,15 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
                 RoraLog.info("Examining display mode: "+candidate.getPhysicalWidth()+"x"+
                         candidate.getPhysicalHeight()+"x"+candidate.getRefreshRate());
 
-                if (candidate.getPhysicalWidth() > 4096) {
+                if (candidate.getPhysicalWidth() > 4096 && prefConfig.width <= 4096) {
                     // Avoid resolutions options above 4K to be safe
                     continue;
                 }
 
                 // On non-4K streams, we force the resolution to never change unless it's above
-                // 60 FPS, which may require a resolution reduction due to HDMI bandwidth limitations.
-                if (prefConfig.width < 3840 && prefConfig.fps <= 60) {
+                // 60 FPS, which may require a resolution reduction due to HDMI bandwidth limitations,
+                // or it's a native resolution stream.
+                if (prefConfig.width < 3840 && prefConfig.fps <= 60 && !isNativeResolutionStream) {
                     if (display.getMode().getPhysicalWidth() != candidate.getPhysicalWidth() ||
                             display.getMode().getPhysicalHeight() != candidate.getPhysicalHeight()) {
                         continue;
@@ -1050,8 +1056,14 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
         return false;
     }
 
-    private static byte getModifierState(KeyEvent event) {
-        byte modifier = 0;
+    // We cannot simply use modifierFlags for all key event processing, because
+    // some IMEs will not generate real key events for pressing Shift. Instead
+    // they will simply send key events with isShiftPressed() returning true,
+    // and we will need to send the modifier flag ourselves.
+    private byte getModifierState(KeyEvent event) {
+        // Start with the global modifier state to ensure we cover the case
+        // detailed in https://github.com/moonlight-stream/moonlight-android/issues/840
+        byte modifier = getModifierState();
         if (event.isShiftPressed()) {
             modifier |= KeyboardPacket.MODIFIER_SHIFT;
         }
@@ -1132,7 +1144,6 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
             byte modifiers = getModifierState(event);
             if (KeyboardTranslator.needsShift(event.getKeyCode())) {
                 modifiers |= KeyboardPacket.MODIFIER_SHIFT;
-                conn.sendKeyboardInput((short) 0x8010, KeyboardPacket.KEY_DOWN, modifiers);
             }
             conn.sendKeyboardInput(translated, KeyboardPacket.KEY_DOWN, modifiers);
         }
@@ -1198,9 +1209,6 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
                 modifiers |= KeyboardPacket.MODIFIER_SHIFT;
             }
             conn.sendKeyboardInput(translated, KeyboardPacket.KEY_UP, modifiers);
-            if (KeyboardTranslator.needsShift(event.getKeyCode())) {
-                conn.sendKeyboardInput((short) 0x8010, KeyboardPacket.KEY_UP, getModifierState(event));
-            }
         }
 
         return true;
@@ -1241,6 +1249,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
         {
             // This case is for mice and non-finger touch devices
             if (event.getSource() == InputDevice.SOURCE_MOUSE ||
+                    event.getSource() == InputDevice.SOURCE_TOUCHPAD ||
                     event.getSource() == InputDevice.SOURCE_MOUSE_RELATIVE ||
                     (event.getPointerCount() >= 1 &&
                             (event.getToolType(0) == MotionEvent.TOOL_TYPE_MOUSE ||
@@ -1664,6 +1673,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
                                     break;
 
                                 case MoonBridge.ML_ERROR_UNEXPECTED_EARLY_TERMINATION:
+                                case MoonBridge.ML_ERROR_PROTECTED_CONTENT:
                                     message = getResources().getString(R.string.early_termination_error);
                                     break;
 

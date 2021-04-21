@@ -26,6 +26,7 @@ public class Xbox360Controller extends AbstractXboxController {
             0x0f0d, // Hori
             0x1038, // SteelSeries
             0x11c9, // Nacon
+            0x1209, // Ardwiino
             0x12ab, // Unknown
             0x1430, // RedOctane
             0x146b, // BigBen
@@ -33,8 +34,11 @@ public class Xbox360Controller extends AbstractXboxController {
             0x15e4, // Numark
             0x162e, // Joytech
             0x1689, // Razer Onza
+            0x1949, // Lab126 (Amazon Luna)
             0x1bad, // Harmonix
+            0x20d6, // PowerA
             0x24c6, // PowerA
+            0x2f24, // GameSir
     };
 
     public static boolean canClaimDevice(UsbDevice device) {

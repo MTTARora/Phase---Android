@@ -38,6 +38,7 @@ public class MoonBridge {
     public static final int ML_ERROR_NO_VIDEO_TRAFFIC = -100;
     public static final int ML_ERROR_NO_VIDEO_FRAME = -101;
     public static final int ML_ERROR_UNEXPECTED_EARLY_TERMINATION = -102;
+    public static final int ML_ERROR_PROTECTED_CONTENT = -103;
 
     public static final int ML_PORT_INDEX_TCP_47984 = 0;
     public static final int ML_PORT_INDEX_TCP_47989 = 1;
@@ -150,11 +151,11 @@ public class MoonBridge {
     }
 
     public static int bridgeDrSubmitDecodeUnit(byte[] decodeUnitData, int decodeUnitLength,
-                                               int decodeUnitType,
-                                               int frameNumber, long receiveTimeMs) {
+                                               int decodeUnitType, int frameNumber,
+                                               long receiveTimeMs, long enqueueTimeMs) {
         if (videoRenderer != null) {
             return videoRenderer.submitDecodeUnit(decodeUnitData, decodeUnitLength,
-                    decodeUnitType, frameNumber, receiveTimeMs);
+                    decodeUnitType, frameNumber, receiveTimeMs, enqueueTimeMs);
         }
         else {
             return DR_OK;

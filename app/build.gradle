@@ -1,6 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
+    ndkVersion "22.1.7171670"
+
     compileSdkVersion 30
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -11,8 +13,8 @@ android {
         minSdkVersion 24
         targetSdkVersion 30
 
-        versionName "9.8"
-        versionCode = 251
+        versionName "9.8.6"
+        versionCode = 257
     }
 
     flavorDimensions "root"
