@@ -178,12 +178,11 @@ public class SignInFragment extends Fragment {
     }
 
     private void goNextScreen() {
-        if (getArguments().getBoolean(START_IN_APP_PARAM, true))
-            getActivity().finish();
-        else {
+        if (!getArguments().getBoolean(START_IN_APP_PARAM, true)) {
             Intent intent = new Intent(getActivity(), MainActivity.class);
             startActivity(intent);
-            getActivity().finish();
         }
+
+        getActivity().finish();
     }
 }

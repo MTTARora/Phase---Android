@@ -54,6 +54,9 @@ public class GameDetailFragment extends BaseFragment {
 
     public static final String KEY_GAME = "game";
 
+
+    //----------------------------------- LIFECYCLE ------------------------------------------
+
     public static GameDetailFragment newInstance(Game game) {
         Bundle args = new Bundle();
         args.putParcelable(KEY_GAME, game);
@@ -63,12 +66,11 @@ public class GameDetailFragment extends BaseFragment {
         return fragment;
     }
 
-
-    //----------------------------------- LIFECYCLE ------------------------------------------
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        gameViewModel = new ViewModelProvider(requireActivity()).get(GameViewModel.class);
+
+        gameViewModel = new ViewModelProvider(this).get(GameViewModel.class);
+
         if (getArguments() != null) {
             game = getArguments().getParcelable(KEY_GAME);
         }
@@ -104,7 +106,6 @@ public class GameDetailFragment extends BaseFragment {
         super.onResume();
 
         Game currentPlayingGame = UserRepository.newInstance(getContext()).getCurrentGame();
-        //isPlayingThisGame = currentPlayingGame != null && (currentPlayingGame.getId() == game.getId());
         btnPlay.setImageResource(isPlayingThisGame ? android.R.drawable.ic_lock_power_off : R.drawable.ic_play);
     }
 
