@@ -5,40 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="@dimen/max_space">
 
-    <LinearLayout
-        android:id="@+id/frame_session_info_home_item"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:paddingHorizontal="@dimen/medium_space"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="6dp"
-            android:layout_height="match_parent"
-            android:layout_marginVertical="@dimen/minnn_space"
-            android:layout_marginEnd="@dimen/medium_space"
-            app:cardBackgroundColor="@color/colorPrimary"
-            app:cardCornerRadius="@dimen/normal_radius" />
-
-        <TextView
-            android:id="@+id/session_home_item_tv"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:textSize="@dimen/header_text_size"
-            android:textStyle="bold" />
-
-        <ImageButton
-            android:id="@+id/btn_view_all_home_item"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:src="@android:drawable/ic_dialog_info" />
-
-    </LinearLayout>
+    <include layout="@layout/home_session_title_layout"/>
 
     <!--CATEGORY-->
     <androidx.recyclerview.widget.RecyclerView

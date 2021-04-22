@@ -348,6 +348,8 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
             if (err != null)
                 MainActivity.this.runOnUiThread(() -> Toast.makeText(getApplicationContext(), err, Toast.LENGTH_LONG).show());
 
+            queueMainPb.setVisibility(GONE);
+            queuePb.setVisibility(GONE);
             updateQueueVisibility(GONE, GONE);
             binQueueData(false, 0);
             gameViewModel.setCurrentGame(null);

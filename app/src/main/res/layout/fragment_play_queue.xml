@@ -15,11 +15,11 @@
         android:layout_height="0dp"
         android:scaleType="fitXY"
         android:src="@drawable/banner_test"
+        app:layout_constraintDimensionRatio="1:0.5625"
         app:carbon_cornerRadius="@dimen/medium_radius"
         app:layout_constraintBottom_toBottomOf="@id/frame_info_queue"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/frame_info_queue"
-        app:layout_constraintWidth_percent=".18" />
+        app:layout_constraintTop_toTopOf="@id/frame_info_queue"/>
 
     <LinearLayout
         android:id="@+id/frame_info_queue"
