@@ -264,16 +264,16 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer {
             constrainedHighProfile = MediaCodecHelper.decoderNeedsConstrainedHighProfile(selectedDecoderInfo.getName());
             isExynos4 = MediaCodecHelper.isExynos4Device();
             if (needsSpsBitstreamFixup) {
-                RoraLog.info("Decoder "+selectedDecoderName+" needs SPS bitstream restrictions fixup");
+                RoraLog.info("Decoder "+selectedDecoderInfo.getName()+" needs SPS bitstream restrictions fixup");
             }
             if (needsBaselineSpsHack) {
-                RoraLog.info("Decoder "+selectedDecoderName+" needs baseline SPS hack");
+                RoraLog.info("Decoder "+selectedDecoderInfo.getName()+" needs baseline SPS hack");
             }
             if (constrainedHighProfile) {
-                RoraLog.info("Decoder "+selectedDecoderName+" needs constrained high profile");
+                RoraLog.info("Decoder "+selectedDecoderInfo.getName()+" needs constrained high profile");
             }
             if (isExynos4) {
-                RoraLog.info("Decoder "+selectedDecoderName+" is on Exynos 4");
+                RoraLog.info("Decoder "+selectedDecoderInfo.getName()+" is on Exynos 4");
             }
 
             refFrameInvalidationActive = refFrameInvalidationAvc;
@@ -353,7 +353,7 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer {
                 }, null);
             }
 
-            RoraLog.info("Using codec "+selectedDecoderName+" for hardware decoding "+mimeType);
+            RoraLog.info("Using codec "+selectedDecoderInfo.getName()+" for hardware decoding "+mimeType);
 
             // Start the decoder
             videoDecoder.start();
