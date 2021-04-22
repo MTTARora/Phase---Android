@@ -95,7 +95,8 @@
         app:itemIconTint="@drawable/bottom_tab_selector"
         app:itemTextColor="@drawable/bottom_tab_selector"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:menu="@menu/bottom_nav_menu" />
+        app:menu="@menu/bottom_nav_menu"
+        app:labelVisibilityMode="labeled"/>
 
     <FrameLayout
         android:id="@+id/main_container"

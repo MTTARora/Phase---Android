@@ -66,26 +66,7 @@ public class HomeFragment extends BaseFragment {
         }
     };
 
-    public static HomeFragment newInstance() {
-        Bundle args = new Bundle();
-
-        HomeFragment fragment = new HomeFragment();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     //------------------------ LIFECYCLE --------------------------
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        //NavController navController = Navigation.findNavController(view);
-        //AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
-        //Toolbar toolbar = view.findViewById(R.id.toolbar);
-        //
-        ////NavigationUI.setupWithNavController( toolbar, navController, appBarConfiguration);
-        //toolbar.setTitle(getResources().getString(R.string.app_label));
-        //toolbar.setTitleTextColor(getActivity().getColor(R.color.colorPrimary));
-    }
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         showLoadingScreen();
@@ -137,7 +118,6 @@ public class HomeFragment extends BaseFragment {
             HomeViewModel.GameListType gameListType = HomeViewModel.GameListType.getTypeFromHomeListType(selectedItem.type);
             if (gameListType != null) {
                 if (gameListType == HomeViewModel.GameListType.BY_CATEGORY) {
-                    //if (rclvDiscover.getAdapter().getItemCount() == 0)
                     goToGameListScreen(homeViewModel.getCurrentSelectedItemId(), HomeViewModel.GameListType.BY_CATEGORY, homeViewModel.getCurrentSelectedItemId());
                 } else {
                     goToGameListScreen(selectedItem.getSessionName(getActivity()), gameListType, "");

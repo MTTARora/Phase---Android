@@ -60,7 +60,7 @@ public class ItemHomeVH extends BaseRVViewHolder {
 
         ((GameRVAdapter)rclvList.getAdapter()).bindData(data.gameList);
 
-        if (onItemSelectedListener != null)
+        if (onItemSelectedListener != null && data.gameList != null && data.gameList.size() != 0)
             btnViewAll.setOnClickListener(v -> onItemSelectedListener.onSelected(data));
     }
 

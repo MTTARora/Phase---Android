@@ -155,9 +155,8 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
 
     private void setActionbarVisibility(NavDestination destination) {
         if (destination.getId() == R.id.navigation_home
-                || destination.getId() == R.id.navigation_dashboard
-                || destination.getId() == R.id.navigation_notifications
-                || destination.getId() == R.id.gameDetailFragment) {
+                || destination.getId() == R.id.navigation_search
+                || destination.getId() == R.id.navigation_settings) {
             getSupportActionBar().hide();
         }
         else {
@@ -167,8 +166,8 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
 
     private void setBottomNavVisibility(NavDestination destination) {
         if (destination.getId() == R.id.navigation_home
-                || destination.getId() == R.id.navigation_dashboard
-                || destination.getId() == R.id.navigation_notifications) {
+                || destination.getId() == R.id.navigation_search
+                || destination.getId() == R.id.navigation_settings) {
             setBottomNavigationVisibility(VISIBLE);
         }
         else {
