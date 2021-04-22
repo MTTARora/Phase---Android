@@ -59,4 +59,5 @@
     <dimen name="category_height">35dp</dimen>
     <dimen name="vertical_game_item_height">100dp</dimen>
     <dimen name="normal_width_img">205dp</dimen>
+    <dimen name="small_width_img">171dp</dimen>
 </resources>

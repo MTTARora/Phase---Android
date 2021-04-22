@@ -2,6 +2,7 @@ package com.rora.phase.ui.home;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,7 @@ import com.rora.phase.ui.viewmodel.HomeViewModel;
 import com.rora.phase.utils.callback.OnItemSelectedListener;
 import com.rora.phase.utils.ui.BaseRVAdapter;
 import com.rora.phase.utils.ui.BaseRVViewHolder;
+import com.rora.phase.utils.ui.ViewHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,19 +46,20 @@ public class HomeRVAdapter extends BaseRVAdapter {
     @NonNull
     @Override
     public BaseRVViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         switch (HomeUIData.Type.valueOf(viewType)) {
             case DISCOVER_BY_CATEGORY:
-                ItemHomeWithCategoryVH root = new ItemHomeWithCategoryVH(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_home_with_category, parent, false));
+                ItemHomeWithCategoryVH rootHomeCategory = new ItemHomeWithCategoryVH(inflater.inflate(R.layout.item_home_with_category, parent, false));
 
                 homeViewModel = new ViewModelProvider((MainActivity)activity).get(HomeViewModel.class);
-                homeViewModel.getGameByCategoryList().observe((LifecycleOwner)activity, ((ItemHomeWithCategoryVH) root)::updateGameList);
-                return root;
+                homeViewModel.getGameByCategoryList().observe((LifecycleOwner)activity, ((ItemHomeWithCategoryVH) rootHomeCategory)::updateGameList);
+                return rootHomeCategory;
             case NEW:
             case TRENDING:
             case HOT:
             case EDITOR:
             default:
-                return new ItemHomeVH(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_home, parent, false));
+                return new ItemHomeVH(inflater.inflate(R.layout.item_home, parent, false));
         }
     }
 

@@ -45,8 +45,10 @@ public class ItemHomeVH extends BaseRVViewHolder {
                 viewType = GameRVAdapter.VIEW_TYPE_LANDSCAPE;
                 break;
             case HOT:
-            case NEW:
             case TRENDING:
+                viewType = GameRVAdapter.VIEW_TYPE_SMALL_PORTRAIT;
+                break;
+            case NEW:
             default:
                 viewType = GameRVAdapter.VIEW_TYPE_PORTRAIT;
                 break;

@@ -22,7 +22,7 @@ public class GameRVAdapter extends BaseRVAdapter {
     private int viewType;
     private List<Game> gameList;
 
-    public static final int VIEW_TYPE_PORTRAIT = 0, VIEW_TYPE_LANDSCAPE = 1;
+    public static final int VIEW_TYPE_PORTRAIT = 0, VIEW_TYPE_SMALL_PORTRAIT = 1, VIEW_TYPE_LANDSCAPE = 2;
 
     public GameRVAdapter(int viewType) {
         this.viewType = viewType;
@@ -32,8 +32,10 @@ public class GameRVAdapter extends BaseRVAdapter {
     @NonNull
     @Override
     public BaseRVViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View root = LayoutInflater.from(parent.getContext()).inflate(this.viewType == VIEW_TYPE_PORTRAIT ? R.layout.item_game_portrait : R.layout.item_game_landscape, parent, false);
+        View root = LayoutInflater.from(parent.getContext()).inflate(this.viewType != VIEW_TYPE_LANDSCAPE ? R.layout.item_game_portrait : R.layout.item_game_landscape, parent, false);
 
+        if (this.viewType == VIEW_TYPE_SMALL_PORTRAIT)
+            ViewHelper.setSize(root, (int)parent.getContext().getResources().getDimension(R.dimen.small_width_img), 0);
         return new GameInfoViewHolder(root);
     }
 
