@@ -176,8 +176,8 @@ public class GameDetailFragment extends BaseFragment {
 
         tvGameName.setText(game.getName());
         tvPayType.setText(game.getPayTypeName());
-        tvAgeRating.setText(getResources().getString(R.string.age_rating_title) + " " + game.getPegiAge().toString() + "+");
-        tvRelease.setText(getResources().getString(R.string.release_title) + " " + DateTimeHelper.format(game.getReleaseDate()));
+        tvAgeRating.setText(game.getPegiAge().toString() + "+");
+        tvRelease.setText(DateTimeHelper.format(game.getReleaseDate()));
         tvDesc.setText(game.getDesc());
 
         ((PlatformRecyclerViewAdapter)rclvPlatform.getAdapter()).bindData(game.getPlatforms());

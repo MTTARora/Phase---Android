@@ -235,8 +235,10 @@
     <string name="total_play_time_txt">Total</string>
     <string name="recommended_title">Recommended</string>
     <string name="free_to_play_title">Free to play</string>
-    <string name="age_rating_title">Age rating: </string>
-    <string name="release_title">Release: </string>
+    <string name="age_rating_title">Age rating</string>
+    <string name="release_title">Release</string>
+    <string name="favorite_title">Favorite</string>
+    <string name="un_favorite_title">UnFavorite</string>
     <string name="screenshot_title">Screenshot</string>
     <string name="story_title">Story</string>
     <string name="series_title">Games in the Series</string>
@@ -284,5 +286,7 @@
     <string name="sent_password_reset_link_txt">Your password reset link has been sent to your email address, please check your mailbox.</string>
     <string name="create_account_title">Create \nyour account</string>
     <string name="back_to_sign_in_txt">Back to sign in</string>
+    <string name="genre_title">Genre: </string>
+    <string name="style_title">Style: </string>
 
 </resources>
