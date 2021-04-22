@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/frame_session_info_home_item"
     android:layout_width="match_parent"
@@ -10,28 +10,40 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="6dp"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_marginVertical="@dimen/minnn_space"
         android:layout_marginEnd="@dimen/medium_space"
         app:cardBackgroundColor="@color/colorPrimary"
-        app:cardCornerRadius="@dimen/normal_radius" />
+        app:cardCornerRadius="@dimen/normal_radius"
+        app:layout_constraintTop_toTopOf="@id/session_home_item_tv"
+        app:layout_constraintBottom_toBottomOf="@id/session_home_item_tv"
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <TextView
         android:id="@+id/session_home_item_tv"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
         android:gravity="center_vertical"
         android:text="@string/trending_title"
         android:textColor="@color/colorText"
         android:textSize="@dimen/header_text_size"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_marginStart="@dimen/max_space"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btn_view_all_home_item"
+        app:layout_constraintTop_toTopOf="@id/btn_view_all_home_item"
+        app:layout_constraintBottom_toBottomOf="@id/btn_view_all_home_item"/>
 
     <ImageButton
         android:id="@+id/btn_view_all_home_item"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintWidth_percent=".068"
+        app:layout_constraintDimensionRatio="1:1"
+        android:scaleType="fitXY"
         android:background="@android:color/transparent"
-        android:src="@android:drawable/ic_dialog_info" />
+        android:src="@drawable/ic_viewmore"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
