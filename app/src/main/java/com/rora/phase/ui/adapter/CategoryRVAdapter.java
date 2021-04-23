@@ -53,7 +53,7 @@ public class CategoryRVAdapter extends BaseRVAdapter {
                 ((ViewGroup.MarginLayoutParams) root.getLayoutParams()).setMarginEnd((int) parent.getContext().getResources().getDimension(R.dimen.min_space));
                 break;
             case MEDIUM_SIZE:
-                ViewHelper.setSizePercentageWithScreen(root, .2, 0);
+                ViewHelper.setSizePercentageWithScreenAndItSelf(root, 0.22, 0, 3);
                 break;
             case NORMAL_SIZE:
                 ViewHelper.setSizePercentageWithScreenAndItSelf(root, 0.25, 0, 2);
@@ -120,7 +120,7 @@ class CategoryViewHolder extends BaseRVViewHolder {
         btnCategory.setText(category.getTag());
 
         if (!hasBackground)
-            btnCategory.setBackgroundColor(context.getColor(isSelected ? R.color.colorPrimary : R.color.dim));
+            btnCategory.setBackgroundColor(context.getColor(isSelected ? R.color.colorPrimary : R.color.colorPrimaryDark));
         else
             btnCategory.setBackgroundColor(context.getColor(R.color.colorPrimary));
 
@@ -130,7 +130,7 @@ class CategoryViewHolder extends BaseRVViewHolder {
                 btnCategory.setTextSize(context.getResources().getDimension(R.dimen.minnnn_text_size));
                 break;
             case MEDIUM_SIZE:
-                cvFrame.setRadius(context.getResources().getDimension(R.dimen.maxx_radius));
+                //cvFrame.setRadius(context.getResources().getDimension(R.dimen.maxx_radius));
                 break;
             case NORMAL_SIZE:
                 btnCategory.setTextSize(context.getResources().getDimension(R.dimen.minnn_text_size));

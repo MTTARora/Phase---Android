@@ -11,7 +11,7 @@ public class DateTimeHelper {
 
     public static String format(String data) {
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
-        SimpleDateFormat newFormat = new SimpleDateFormat("MMM dd. yyyy");
+        SimpleDateFormat newFormat = new SimpleDateFormat("MMM dd, yyyy");
         String result = "N/A";
         try {
             Date datetime = format.parse(data);

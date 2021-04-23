@@ -1,27 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/category_frame"
     android:layout_width="wrap_content"
     android:layout_height="@dimen/category_height"
-    app:cardCornerRadius="@dimen/max_radius"
-    android:padding="1dp"
     android:layout_marginStart="@dimen/min_space"
     android:layout_marginEnd="@dimen/medium_space"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-    <TextView
+    app:cardBackgroundColor="@color/gray"
+    app:contentPadding="0.55dp"
+    app:cardCornerRadius="@dimen/medium_radius">
+
+    <carbon.widget.TextView
         android:id="@+id/btn_category"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:paddingVertical="@dimen/min_space"
-        android:paddingHorizontal="@dimen/medium_space"
-        android:text="Action"
-        android:textSize="@dimen/normal_text_size"
-        android:textAllCaps="false"
-        android:maxLines="1"
+        android:ellipsize="end"
         android:gravity="center"
-        android:ellipsize="end"/>
+        android:maxLines="1"
+        android:paddingHorizontal="@dimen/medium_space"
+        android:paddingVertical="@dimen/min_space"
+        android:text="Action"
+        android:textAllCaps="false"
+        android:textSize="@dimen/normal_text_size"
+        android:background="@color/colorPrimaryDark"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:carbon_cornerRadius="@dimen/medium_radius"/>
 </androidx.cardview.widget.CardView>

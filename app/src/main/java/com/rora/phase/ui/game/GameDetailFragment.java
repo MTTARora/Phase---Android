@@ -9,6 +9,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,6 +21,7 @@ import com.rora.phase.R;
 import com.rora.phase.model.Banner;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.Screenshot;
+import com.rora.phase.model.SupportPlayType;
 import com.rora.phase.repository.UserRepository;
 import com.rora.phase.ui.adapter.BannerVPAdapter;
 import com.rora.phase.ui.adapter.CategoryRVAdapter;
@@ -38,7 +40,7 @@ import com.rora.phase.utils.ui.ViewHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.rora.phase.ui.adapter.CategoryRVAdapter.AUTO_SIZE;
+import static com.rora.phase.ui.adapter.CategoryRVAdapter.MEDIUM_SIZE;
 
 public class GameDetailFragment extends BaseFragment {
 
@@ -46,7 +48,7 @@ public class GameDetailFragment extends BaseFragment {
     private ImageView imvBanner;
     private RecyclerView rclvPlatform, rclvCategory, rclvScreenshot, rclvSeries, rclvSimilar;
     private TextView tvGameName, tvPayType, tvAgeRating, tvRelease, tvDesc;
-    private ImageButton btnFavorite, btnPlay;
+    private ImageButton btnFavorite, btnPlay, firstPlayTypeBtn, secondPlayTypeBtn, thirdPlayTypeBtn, lastPlayTypeBtn;
 
     private GameViewModel gameViewModel;
     private Game game;
@@ -95,6 +97,10 @@ public class GameDetailFragment extends BaseFragment {
 
         btnFavorite = root.findViewById(R.id.favorite_btn);
         btnPlay = root.findViewById(R.id.play_btn);
+        firstPlayTypeBtn = root.findViewById(R.id.ic_first_play_type_ib);
+        secondPlayTypeBtn = root.findViewById(R.id.ic_second_play_type_ib);
+        thirdPlayTypeBtn = root.findViewById(R.id.ic_third_play_type_ib);
+        lastPlayTypeBtn = root.findViewById(R.id.ic_last_play_type_ib);
 
         initView(root);
         initData();
@@ -116,7 +122,7 @@ public class GameDetailFragment extends BaseFragment {
         ViewHelper.setSizePercentageWithScreen(imvBanner, 0, 0.35);
 
         setupRecyclerView(rclvPlatform, new PlatformRecyclerViewAdapter(), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL , false));
-        setupRecyclerView(rclvCategory,new CategoryRVAdapter(AUTO_SIZE, false), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL , false));
+        setupRecyclerView(rclvCategory,new CategoryRVAdapter(MEDIUM_SIZE, false), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL , false));
         setupRecyclerView(rclvScreenshot, new BannerVPAdapter(.45), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         setupRecyclerView(rclvSeries, new GameRVAdapter(GameRVAdapter.VIEW_TYPE_LANDSCAPE), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
@@ -189,6 +195,63 @@ public class GameDetailFragment extends BaseFragment {
             banners.add(new Banner(screenshot.getLink()));
         }
         ((BannerVPAdapter)rclvScreenshot.getAdapter()).bindData(banners);
+
+        List<SupportPlayType> playTypeList = game.getSupportPlayTypes();
+        if (playTypeList != null && playTypeList.size() != 0) {
+            int numberOfPlayType = game.getSupportPlayTypes().size();
+            switch (numberOfPlayType) {
+                case 1:
+                    MediaHelper.loadSvg(firstPlayTypeBtn, SupportPlayType.Type.getIconForType(playTypeList.get(0).getId()));
+                    firstPlayTypeBtn.setOnClickListener(v -> Toast.makeText(getContext(), playTypeList.get(0).getPlayType(), Toast.LENGTH_SHORT).show());
+                    secondPlayTypeBtn.setVisibility(View.GONE);
+                    thirdPlayTypeBtn.setVisibility(View.GONE);
+                    lastPlayTypeBtn.setVisibility(View.GONE);
+                    break;
+                case 2:
+                    MediaHelper.loadSvg(secondPlayTypeBtn, SupportPlayType.Type.getIconForType(playTypeList.get(0).getId()));
+                    secondPlayTypeBtn.setOnClickListener(v -> Toast.makeText(getContext(), playTypeList.get(0).getPlayType(), Toast.LENGTH_SHORT).show());
+                    MediaHelper.loadSvg(thirdPlayTypeBtn, SupportPlayType.Type.getIconForType(playTypeList.get(1).getId()));
+                    thirdPlayTypeBtn.setOnClickListener(v -> Toast.makeText(getContext(), playTypeList.get(1).getPlayType(), Toast.LENGTH_SHORT).show());
+                    firstPlayTypeBtn.setVisibility(View.GONE);
+                    lastPlayTypeBtn.setVisibility(View.GONE);
+                    break;
+                case 3:
+                    MediaHelper.loadSvg(firstPlayTypeBtn, SupportPlayType.Type.getIconForType(playTypeList.get(0).getId()));
+                    firstPlayTypeBtn.setOnClickListener(v -> Toast.makeText(getContext(), playTypeList.get(0).getPlayType(), Toast.LENGTH_SHORT).show());
+                    MediaHelper.loadSvg(secondPlayTypeBtn, SupportPlayType.Type.getIconForType(playTypeList.get(1).getId()));
+                    secondPlayTypeBtn.setOnClickListener(v -> Toast.makeText(getContext(), playTypeList.get(1).getPlayType(), Toast.LENGTH_SHORT).show());
+                    MediaHelper.loadSvg(lastPlayTypeBtn, SupportPlayType.Type.getIconForType(playTypeList.get(2).getId()));
+                    lastPlayTypeBtn.setOnClickListener(v -> Toast.makeText(getContext(), playTypeList.get(2).getPlayType(), Toast.LENGTH_SHORT).show());
+
+                    thirdPlayTypeBtn.setVisibility(View.GONE);
+                    break;
+                case 4:
+                    MediaHelper.loadSvg(firstPlayTypeBtn, SupportPlayType.Type.getIconForType(playTypeList.get(0).getId()));
+                    firstPlayTypeBtn.setOnClickListener(v -> Toast.makeText(getContext(), playTypeList.get(0).getPlayType(), Toast.LENGTH_SHORT).show());
+                    MediaHelper.loadSvg(secondPlayTypeBtn, SupportPlayType.Type.getIconForType(playTypeList.get(1).getId()));
+                    secondPlayTypeBtn.setOnClickListener(v -> Toast.makeText(getContext(), playTypeList.get(1).getPlayType(), Toast.LENGTH_SHORT).show());
+                    MediaHelper.loadSvg(lastPlayTypeBtn, SupportPlayType.Type.getIconForType(playTypeList.get(2).getId()));
+                    lastPlayTypeBtn.setOnClickListener(v -> Toast.makeText(getContext(), playTypeList.get(2).getPlayType(), Toast.LENGTH_SHORT).show());
+                    MediaHelper.loadSvg(lastPlayTypeBtn, SupportPlayType.Type.getIconForType(playTypeList.get(3).getId()));
+                    lastPlayTypeBtn.setOnClickListener(v -> Toast.makeText(getContext(), playTypeList.get(3).getPlayType(), Toast.LENGTH_SHORT).show());
+                    break;
+                default:
+                    MediaHelper.loadSvg(firstPlayTypeBtn, SupportPlayType.Type.getIconForType(playTypeList.get(0).getId()));
+                    firstPlayTypeBtn.setOnClickListener(v -> Toast.makeText(getContext(), playTypeList.get(0).getPlayType(), Toast.LENGTH_SHORT).show());
+                    MediaHelper.loadSvg(secondPlayTypeBtn, SupportPlayType.Type.getIconForType(playTypeList.get(1).getId()));
+                    secondPlayTypeBtn.setOnClickListener(v -> Toast.makeText(getContext(), playTypeList.get(1).getPlayType(), Toast.LENGTH_SHORT).show());
+                    MediaHelper.loadSvg(thirdPlayTypeBtn, SupportPlayType.Type.getIconForType(playTypeList.get(2).getId()));
+                    thirdPlayTypeBtn.setOnClickListener(v -> Toast.makeText(getContext(), playTypeList.get(2).getPlayType(), Toast.LENGTH_SHORT).show());
+                    MediaHelper.loadSvg(lastPlayTypeBtn, SupportPlayType.Type.getIconForType(playTypeList.get(4).getId()));
+                    lastPlayTypeBtn.setOnClickListener(v -> Toast.makeText(getContext(), playTypeList.get(4).getPlayType(), Toast.LENGTH_SHORT).show());
+                    break;
+            }
+        } else {
+            firstPlayTypeBtn.setVisibility(View.GONE);
+            secondPlayTypeBtn.setVisibility(View.GONE);
+            thirdPlayTypeBtn.setVisibility(View.GONE);
+            lastPlayTypeBtn.setVisibility(View.GONE);
+        }
 
         //if (game.getSeriesId() == 0) {
             frameSeries.setVisibility(View.GONE);
