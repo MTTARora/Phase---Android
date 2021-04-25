@@ -104,7 +104,7 @@ public class PlayServices extends Service {
         // Lookup or generate this device's UID
         idManager = new IdentityManager(this);
         userRepository = new UserRepository(getApplicationContext());
-        state.postValue(UserPlayingData.PlayingState.IDLE);
+        setCurrentState(UserPlayingData.PlayingState.IDLE);
     }
 
     @Override
@@ -179,7 +179,7 @@ public class PlayServices extends Service {
 
         connectThread = new Thread(() -> {
             RoraLog.info("Play game - STEP 1: Start Connecting");
-            state.postValue(UserPlayingData.PlayingState.IN_PROGRESS);
+            setCurrentState(UserPlayingData.PlayingState.IN_PROGRESS);
             this.currentGame = game;
             userRepository.storeCurrentGame(game);
 
@@ -209,7 +209,7 @@ public class PlayServices extends Service {
                                 //STEP 2.1: Check queue
                                 if (response.queue != null) {
                                     RoraLog.info("Play game: So many players are playing right now, please wait!");
-                                    state.postValue(UserPlayingData.PlayingState.IN_QUEUE);
+                                    setCurrentState(UserPlayingData.PlayingState.IN_QUEUE);
                                     listener.onQueueUpdated(true, response.queue.getTotal(), response.queue.getCurrentPosition());
                                     callBack.onQueueUpdated(true, response.queue.getTotal(), response.queue.getCurrentPosition());
                                     return;
@@ -253,7 +253,7 @@ public class PlayServices extends Service {
                         return;
                     }
 
-                    state.postValue(UserPlayingData.PlayingState.PLAYING);
+                    setCurrentState(UserPlayingData.PlayingState.PLAYING);
                     RoraLog.info("Play game - FINAL: Everything is done, ready to play!");
                     listener.onStartConnect(true);
                     callBack.onStartConnect(true);
@@ -430,7 +430,7 @@ public class PlayServices extends Service {
                     }
                 }
 
-                return pollingTuple.computer.getRemoveApp() == null ?  "Couldn't find necessary app from host!" : null;
+                return pollingTuple.computer.getRemoteApp() == null ?  "Couldn't find necessary app from host!" : null;
             }
             return "Couldn't get app list from nvidia";
         } catch (Exception e) {
@@ -443,8 +443,8 @@ public class PlayServices extends Service {
     /** STEP 5: Start remote connect
      * */
     private String start(Activity activity, PlayServices.ComputerManagerBinder managerBinder) {
-        if (pollingTuple.computer.getRemoveApp() != null) {
-            ServerHelper.doStart(activity, pollingTuple.computer.getRemoveApp(), pollingTuple.computer, managerBinder);
+        if (pollingTuple.computer.getRemoteApp() != null) {
+            ServerHelper.doStart(activity, pollingTuple.computer.getRemoteApp(), pollingTuple.computer, managerBinder);
             return null;
         }
         else
@@ -457,6 +457,26 @@ public class PlayServices extends Service {
 
     }
 
+    public void pauseSession() {
+        if (pollingTuple.computer.getRemoteApp() != null) {
+            setCurrentState(UserPlayingData.PlayingState.PAUSED);
+            listener.onPaused(null);
+        }
+        else {
+            listener.onResumed("Couldn't find necessary app from host!");
+        }
+    }
+
+    public void resumeSession(Activity activity, PlayServices.ComputerManagerBinder managerBinder) {
+        if (pollingTuple.computer.getRemoteApp() != null) {
+            ServerHelper.doStart(activity, pollingTuple.computer.getRemoteApp(), pollingTuple.computer, managerBinder);
+            listener.onResumed(null);
+        }
+        else {
+            listener.onResumed("Couldn't find necessary app from host!");
+        }
+    }
+
     /** Use this method in a thread
      * @return An error msg if failed
      * */
@@ -465,7 +485,7 @@ public class PlayServices extends Service {
             return;
 
         try {
-            state.postValue(UserPlayingData.PlayingState.IN_STOP_PROGRESS);
+            setCurrentState(UserPlayingData.PlayingState.IN_STOP_PROGRESS);
             RoraLog.info("Play game: Stop connecting");
             listener.onStopConnect(false, err);
             if (callBack != null)
@@ -485,12 +505,12 @@ public class PlayServices extends Service {
             connectThread = null;
 
             RoraLog.info("Play game - Stop connect success");
-            state.postValue(UserPlayingData.PlayingState.STOPPED);
+            setCurrentState(UserPlayingData.PlayingState.STOPPED);
             listener.onStopConnect(true, err);
             if (callBack != null)
                 callBack.onStopConnect(true, err);
 
-            state.postValue(UserPlayingData.PlayingState.IDLE);
+            setCurrentState(UserPlayingData.PlayingState.IDLE);
         } catch (Exception ex) {
             listener.onStopConnect(true, ex.getMessage());
             if (callBack != null)
@@ -518,7 +538,13 @@ public class PlayServices extends Service {
     }
 
     private UserPlayingData.PlayingState getCurrentState() {
-        return state.getValue();
+        return isPaused ? UserPlayingData.PlayingState.PAUSED : state.getValue();
+    }
+
+    private boolean isPaused = false;
+    private void setCurrentState(UserPlayingData.PlayingState state) {
+        isPaused = state == UserPlayingData.PlayingState.PAUSED;
+        this.state.postValue(state);
     }
 
 
@@ -530,6 +556,21 @@ public class PlayServices extends Service {
 
         public void startConnectProgress(Activity activity, Game selectedGame, PlayGameProgressCallBack playProgressCallBack) {
             PlayServices.this.startConnectProgress(activity, selectedGame, playProgressCallBack);
+        }
+
+        public void pauseSession() {
+            PlayServices.this.pauseSession();
+        }
+
+        public void resumeSession(Activity activity) {
+            PlayServices.this.resumeSession(activity, this);
+        }
+
+        public void stopOrResumeConnect(Activity activity, PlayGameProgressCallBack playProgressCallBack) {
+            if (getCurrentState() == UserPlayingData.PlayingState.PAUSED)
+                resumeSession(activity);
+            else
+                PlayServices.this.stopConnect(playProgressCallBack, null);
         }
 
         public void stopConnect(PlayGameProgressCallBack playProgressCallBack) {
@@ -585,6 +626,10 @@ public class PlayServices extends Service {
 
         public UserPlayingData.PlayingState getCurrentState() {
             return PlayServices.this.getCurrentState();
+        }
+
+        public void setCurrentState(UserPlayingData.PlayingState state) {
+            PlayServices.this.setCurrentState(state);
         }
 
         public void setListener(PlayGameProgressCallBack callBack) {

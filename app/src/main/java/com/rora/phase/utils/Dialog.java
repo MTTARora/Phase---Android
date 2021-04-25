@@ -37,14 +37,18 @@ public class Dialog implements Runnable {
 
     public static void closeDialogs()
     {
-        synchronized (rundownDialogs) {
-            for (Dialog d : rundownDialogs) {
-                if (d.alert.isShowing()) {
-                    d.alert.dismiss();
+        try {
+            synchronized (rundownDialogs) {
+                for (Dialog d : rundownDialogs) {
+                    if (d.alert.isShowing()) {
+                        d.alert.dismiss();
+                    }
                 }
-            }
 
-            rundownDialogs.clear();
+                rundownDialogs.clear();
+            }
+        }catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -99,7 +103,7 @@ public class Dialog implements Runnable {
 
         alert.setTitle(title);
         alert.setMessage(message);
-        alert.setCancelable(false);
+        alert.setCancelable(true);
         alert.setCanceledOnTouchOutside(false);
  
         alert.setButton(AlertDialog.BUTTON_POSITIVE, positiveBtnTitle == null ? activity.getResources().getText(android.R.string.ok) : positiveBtnTitle, (dialog, which) -> {

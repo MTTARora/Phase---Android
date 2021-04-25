@@ -6,6 +6,7 @@ import android.widget.Toast;
 
 import com.rora.phase.AppView;
 import com.rora.phase.Game;
+import com.rora.phase.MainActivity;
 import com.rora.phase.R;
 import com.rora.phase.ShortcutTrampoline;
 import com.rora.phase.binding.PlatformBinding;
@@ -109,7 +110,8 @@ public class ServerHelper {
         }
 
         parent.startActivity(createStartIntent(parent, app, computer, managerBinder));
-        parent.finish();
+        if (!(parent instanceof MainActivity))
+            parent.finish();
     }
 
     public static void doNetworkTest(final Activity parent) {

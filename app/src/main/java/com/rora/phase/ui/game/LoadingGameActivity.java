@@ -141,7 +141,7 @@ public class LoadingGameActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
-        Dialog.displayDialog(this, getResources().getString(R.string.stop_playing_msg) + "?", null, "Yes", "No", new Runnable() {
+        Dialog.displayDialog(this, getResources().getString(R.string.stop_or_pause_msg) + "?", null, "Yes", "No", new Runnable() {
             @Override
             public void run() {
                 if (managerBinder != null && managerBinder.getCurrentState() != UserPlayingData.PlayingState.IN_QUEUE) {
@@ -256,9 +256,19 @@ public class LoadingGameActivity extends FragmentActivity {
         @Override
         public void onStartConnect(boolean isDone) {
             LoadingGameActivity.this.runOnUiThread(() -> {
-                tvLoadingProgress.setText(getResources().getString(R.string.done_play_msg));
+                tvLoadingProgress.setText(getResources().getString(R.string.done_connection_msg));
                 pbLoadingProgress.setProgress(isDone ? 11 : 12);
             });
+        }
+
+        @Override
+        public void onPaused(String err) {
+
+        }
+
+        @Override
+        public void onResumed(String err) {
+
         }
 
         @Override

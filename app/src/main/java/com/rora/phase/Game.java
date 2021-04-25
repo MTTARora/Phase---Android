@@ -124,6 +124,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
     private boolean connected = false;
     private boolean surfaceCreated = false;
     private boolean attemptedConnection = false;
+    private boolean isPaused = true;
 
     private InputCaptureProvider inputCaptureProvider;
     private int modifierFlags = 0;
@@ -187,6 +188,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
 
     private final Observer<UserPlayingData.PlayingState> playingStateObserver = playingState -> {
         if(playingState == UserPlayingData.PlayingState.IN_STOP_PROGRESS || playingState == UserPlayingData.PlayingState.STOPPED) {
+            isPaused = false;
             Game.this.finish();
         }
     };
@@ -883,11 +885,6 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
     protected void onDestroy() {
         super.onDestroy();
 
-        if (managerBinder != null) {
-            managerBinder.setStateListener().removeObserver(playingStateObserver);
-            managerBinder.stopConnect(null);
-        }
-
         if (controllerHandler != null) {
             InputManager inputManager = (InputManager) getSystemService(Context.INPUT_SERVICE);
             inputManager.unregisterInputDeviceListener(controllerHandler);
@@ -907,6 +904,11 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
 
         // Destroy the capture provider
         inputCaptureProvider.destroy();
+
+        if (managerBinder != null && isPaused) {
+            managerBinder.setStateListener().removeObserver(playingStateObserver);
+            managerBinder.pauseSession();
+        }
     }
 
     @Override
@@ -972,16 +974,17 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
 
     @Override
     public void onBackPressed() {
-        Dialog.displayDialog(this, getResources().getString(R.string.stop_playing_msg) + " ?", null, "Yes", "No", new Runnable() {
-            @Override
-            public void run() {
-                if (managerBinder != null && managerBinder.getCurrentState() != UserPlayingData.PlayingState.IN_QUEUE) {
-                    new Thread(() -> managerBinder.stopConnect(null)).start();
-                    unbindService(serviceConnection);
-                }
-                Game.super.onBackPressed();
+        Dialog.displayDialog(this, getResources().getString(R.string.stop_or_pause_msg) + " ?", null, "Stop", "Pause", () -> {
+            isPaused = false;
+            if (managerBinder != null && managerBinder.getCurrentState() != UserPlayingData.PlayingState.IN_QUEUE) {
+                new Thread(() -> managerBinder.stopConnect(null)).start();
+                unbindService(serviceConnection);
             }
-        }, null);
+            Game.super.onBackPressed();
+        }, () -> {
+            isPaused = true;
+            Game.super.onBackPressed();
+        });
     }
 
     private final Runnable toggleGrab = new Runnable() {

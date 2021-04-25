@@ -265,16 +265,17 @@
     <string name="sign_out_text">Sign out</string>
     <string name="guest_text">Guest</string>
     <string name="forgot_password_text">Forgot password</string>
-    <string name="stop_playing_msg">"Stop playing"</string>
+    <string name="stop_or_pause_msg">"Stop or pause your session"</string>
     <string name="getting_data_from_server_play_msg">Getting data from server...</string>
     <string name="finding_a_host_play_msg">Finding you a host...</string>
     <string name="connecting_to_host_play_msg">Found a host for you, start connecting...</string>
     <string name="getting_necessary_data_play_msg">Getting necessary data...</string>
     <string name="preparing_environment_play_msg">Preparing environment...</string>
-    <string name="done_play_msg">Done!</string>
+    <string name="done_connection_msg">Done!</string>
     <string name="please_wait_msg">Please wait...</string>
     <string name="undetected_error_from_server">Undetected error from server, please try again later!</string>
     <string name="in_queue_msg">You\'re in queue:</string>
+    <string name="in_game_session_msg">You\'re in a game session</string>
     <string name="sign_up_success_msg">Sign up success</string>
     <string name="trouble_signing_in_title">Trouble with sign in ?</string>
     <string name="send_txt">Sent</string>
@@ -288,5 +289,8 @@
     <string name="back_to_sign_in_txt">Back to sign in</string>
     <string name="genre_title">Genre: </string>
     <string name="style_title">Style: </string>
+    <string name="quit_queue_confirmation_text">Do you want to leave your queue?</string>
+    <string name="continue_text">Continue</string>
+    <string name="stop_text">Stop</string>
 
 </resources>

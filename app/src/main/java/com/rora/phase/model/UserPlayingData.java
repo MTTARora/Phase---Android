@@ -14,8 +14,9 @@ public class UserPlayingData {
         IN_PROGRESS("1"),
         IN_QUEUE("2"),
         PLAYING("3"),
-        IN_STOP_PROGRESS("4"),
-        STOPPED("5");
+        PAUSED("4"),
+        IN_STOP_PROGRESS("5"),
+        STOPPED("6");
 
         public final String id;
 

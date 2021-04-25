@@ -93,7 +93,7 @@ public class ComputerDetails implements Serializable {
         this.rawAppList = details.rawAppList;
     }
 
-    public NvApp getRemoveApp() {
+    public NvApp getRemoteApp() {
         return remoteApp;
     }
 

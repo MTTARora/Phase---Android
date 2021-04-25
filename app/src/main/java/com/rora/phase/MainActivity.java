@@ -7,8 +7,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -29,9 +29,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.UserPlayingData;
 import com.rora.phase.ui.game.GameDetailFragment;
-import com.rora.phase.ui.game.GameSettingsDialog;
 import com.rora.phase.ui.settings.auth.AuthActivity;
 import com.rora.phase.ui.viewmodel.GameViewModel;
+import com.rora.phase.utils.Dialog;
 import com.rora.phase.utils.MediaHelper;
 import com.rora.phase.utils.callback.PlayGameProgressCallBack;
 import com.rora.phase.utils.services.PlayServices;
@@ -44,11 +44,13 @@ import static android.view.View.VISIBLE;
 public class MainActivity extends AppCompatActivity implements PlayServicesMessageSender.Sender {
 
     public static BottomNavigationView bottomNavView;
+
     private ConstraintLayout queueViewMain;
     private ConstraintLayout queueView;
     private ImageView imvQueueMain, imvQueue;
     private TextView tvQueueMain, tvQueue, tvGameNameMain, tvGameName;
     private ProgressBar queueMainPb, queuePb;
+    private ImageButton triggerProgressMainBtn, triggerProgressBtn;
 
     private GameViewModel gameViewModel;
     private MenuItem currentBottomTab;
@@ -84,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
 
         gameViewModel = new ViewModelProvider(this).get(GameViewModel.class);
         bottomNavView = findViewById(R.id.bottom_nav_view);
+
         queueViewMain = findViewById(R.id.frame_queue_main);
         queueView = findViewById(R.id.frame_queue);
         imvQueueMain = findViewById(R.id.game_banner_queue_main_imv);
@@ -94,6 +97,8 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
         tvGameName = findViewById(R.id.tv_game_name_queue);
         queueMainPb = findViewById(R.id.loading_game_queue_main_pb);
         queuePb = findViewById(R.id.loading_game_queue_pb);
+        triggerProgressMainBtn = findViewById(R.id.end_queue_main_btn);
+        triggerProgressBtn = findViewById(R.id.end_queue_btn);
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupWithNavController(bottomNavView, navController);
@@ -108,8 +113,8 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
 
         queueViewMain.setOnClickListener(v -> goToGameDetails());
         queueView.setOnClickListener(v -> goToGameDetails());
-        findViewById(R.id.end_queue_main_btn).setOnClickListener(v -> managerBinder.stopConnect(null));
-        findViewById(R.id.end_queue_btn).setOnClickListener(v -> managerBinder.stopConnect(null));
+        triggerProgressMainBtn.setOnClickListener(v -> quitSession());
+        triggerProgressBtn.setOnClickListener(v -> quitSession());
     }
 
     private void goToGameDetails() {
@@ -183,77 +188,125 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
             bottomNavView.setVisibility(visibility);
     }
 
-    //@Override
-    //public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-    //    if (currentBottomTab.getItemId() == item.getItemId()) {
-    //        return false;
-    //    }
-    //
-    //    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-    //    Fragment newFragmentTab;
-    //    switch (item.getItemId()) {
-    //        case R.id.navigation_home:
-    //            newFragmentTab = HomeFragment.newInstance();
-    //            break;
-    //        case R.id.navigation_dashboard:
-    //            newFragmentTab = DashboardFragment.newInstance();
-    //            break;
-    //        default:
-    //            newFragmentTab = SettingsFragment.newInstance();
-    //            break;
-    //    }
-    //
-    //    transaction.replace(R.id.main_container, newFragmentTab);
-    //
-    //    getSupportFragmentManager().popBackStack();
-    //    transaction.commit();
-    //
-    //    currentBottomTab = item;
-    //    return true;
-    //}
+    private void quitSession() {
+        if (managerBinder == null || managerBinder.getCurrentGame() == null)
+            return;
 
+        if(managerBinder.getCurrentState() == UserPlayingData.PlayingState.PAUSED) {
+            Dialog.displayDialog(this, getResources().getString(R.string.quit_queue_confirmation_text), null, getResources().getString(R.string.continue_text), getResources().getString(R.string.stop_text), () -> {
+                managerBinder.resumeSession(MainActivity.this);
+            }, () -> {
+                managerBinder.stopConnect(null);
+            });
+        } else {
+            Dialog.displayDialog(this, getResources().getString(R.string.quit_queue_confirmation_text), null, null, null, () -> {
+                managerBinder.stopConnect(null);
+            }, null);
+        }
+    }
 
     //---------------------------------- PLAY QUEUE ----------------------------------
 
-    private void binQueueData(boolean isFirstInit, int currentPos) {
+    private void initQueueData(int position) {
         if (managerBinder == null || managerBinder.getCurrentGame() == null)
             return;
 
         Game game = managerBinder.getCurrentGame();
         gameViewModel.setCurrentGame(managerBinder.getCurrentGame());
-        this.runOnUiThread(() -> {
-            tvQueueMain.setText(getResources().getString(R.string.in_queue_msg) + " " + currentPos);
-            tvQueue.setText(getResources().getString(R.string.in_queue_msg) + " " + currentPos);
+        MainActivity.this.runOnUiThread(() -> {
+            MediaHelper.loadImage(imvQueueMain, game.getBanner());
+            MediaHelper.loadImage(imvQueue, game.getBanner());
+            tvGameNameMain.setText(game.getName());
+            tvGameName.setText(game.getName());
+            updateQueuePosition(position);
+            updateQueueVisibility(VISIBLE, VISIBLE);
+            MediaHelper.loadSvg(triggerProgressMainBtn, android.R.drawable.presence_offline);
+            MediaHelper.loadSvg(triggerProgressBtn, android.R.drawable.presence_offline);
+        });
+    }
 
-            if (currentPos == 0) {
-                tvQueueMain.setText("--");
-                tvQueue.setText("--");
-                MediaHelper.loadImage(imvQueueMain, null);
-                MediaHelper.loadImage(imvQueue, null);
-                tvGameNameMain.setText("");
-                tvGameName.setText("");
-            }
+    private void initGameSessionData() {
+        if (managerBinder == null || managerBinder.getCurrentGame() == null)
+            return;
 
-            if (isFirstInit) {
-                MediaHelper.loadImage(imvQueueMain, game.getBanner());
-                MediaHelper.loadImage(imvQueue, game.getBanner());
-                tvGameNameMain.setText(game.getName());
-                tvGameName.setText(game.getName());
+        Game game = managerBinder.getCurrentGame();
+        gameViewModel.setCurrentGame(managerBinder.getCurrentGame());
+        MainActivity.this.runOnUiThread(() -> {
+            MediaHelper.loadImage(imvQueueMain, game.getBanner());
+            MediaHelper.loadImage(imvQueue, game.getBanner());
+            tvGameNameMain.setText(game.getName());
+            tvGameName.setText(game.getName());
+            tvQueueMain.setText(getResources().getString(R.string.in_game_session_msg));
+            tvQueue.setText(getResources().getString(R.string.in_game_session_msg));
+            updateQueueVisibility(VISIBLE, VISIBLE);
+            MediaHelper.loadSvg(triggerProgressMainBtn, R.drawable.ic_play);
+            MediaHelper.loadSvg(triggerProgressBtn, R.drawable.ic_play);
+            queueMainPb.setVisibility(GONE);
+            queuePb.setVisibility(GONE);
+        });
+    }
+
+    private void resetQueueData() {
+        MainActivity.this.runOnUiThread(() -> {
+            MediaHelper.loadImage(imvQueueMain, null);
+            MediaHelper.loadImage(imvQueue, null);
+            tvGameNameMain.setText("");
+            tvGameName.setText("");
+            updateQueuePosition(0);
+            updateQueueVisibility(GONE, GONE);
+        });
+    }
+
+    private void updateQueuePosition(int position) {
+        if (managerBinder == null || managerBinder.getCurrentGame() == null)
+            return;
+
+        MainActivity.this.runOnUiThread(() -> {
+            tvQueueMain.setText(position == 0 ? "--" : getResources().getString(R.string.in_queue_msg) + " " + position);
+            tvQueue.setText(position == 0 ? "--" : getResources().getString(R.string.in_queue_msg) + " " + position);
+        });
+    }
+
+    private void updateQueueProgress(String msg, int progress) {
+        if (managerBinder.getCurrentState() != UserPlayingData.PlayingState.IN_QUEUE)
+            return;
+
+        MainActivity.this.runOnUiThread(() -> {
+            tvQueueMain.setText(msg);
+            tvQueue.setText(msg);
+            if (progress == 1) {
+                queueMainPb.setMax(8);
+                queuePb.setMax(8);
+                queueMainPb.setVisibility(VISIBLE);
+                queuePb.setVisibility(VISIBLE);
             }
+            queueMainPb.setProgress(progress);
+            queuePb.setProgress(progress);
         });
     }
 
     public void updateQueueVisibility(int visibilityMainFrame, int visibility) {
-        if (managerBinder == null || (managerBinder.getCurrentState() != UserPlayingData.PlayingState.IN_QUEUE && managerBinder.getCurrentState() != UserPlayingData.PlayingState.STOPPED))
-            return;
+        MainActivity.this.runOnUiThread(() -> {
 
-        this.runOnUiThread(() -> {
+            //if (visibility == GONE) {
+            //    queueViewMain.setVisibility(GONE);
+            //    queueView.setVisibility(GONE);
+            //    return;
+            //}
 
-            queueViewMain.setVisibility(visibilityMainFrame);
+            if (managerBinder == null)
+                return;
 
-            int count = getSupportFragmentManager().getBackStackEntryCount();
+            if (managerBinder.getCurrentState() == UserPlayingData.PlayingState.IN_QUEUE || managerBinder.getCurrentState() == UserPlayingData.PlayingState.STOPPED || managerBinder.getCurrentState() == UserPlayingData.PlayingState.PAUSED) {
+                queueViewMain.setVisibility(visibilityMainFrame);
 
-            queueView.setVisibility((count != 0 && visibility == VISIBLE) ? visibility : GONE);
+                int count = getSupportFragmentManager().getBackStackEntryCount();
+
+                queueView.setVisibility((count != 0 && visibility == VISIBLE) ? visibility : GONE);
+            } else {
+                queueViewMain.setVisibility(GONE);
+                queueView.setVisibility(GONE);
+            }
 
         });
     }
@@ -275,71 +328,51 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
 
         @Override
         public void onQueueUpdated(boolean isFirstInit, int total, int position) {
-            MainActivity.this.runOnUiThread(() -> {
-                binQueueData(isFirstInit, position);
-                updateQueueVisibility(VISIBLE, VISIBLE);
-            });
+            if (isFirstInit) {
+                initQueueData(position);
+            } else {
+                updateQueuePosition(position);
+            }
         }
 
         @Override
         public void onPairPc(boolean isDone) {
-            if (managerBinder.getCurrentState() != UserPlayingData.PlayingState.IN_QUEUE)
-                return;
-
-            MainActivity.this.runOnUiThread(() -> {
-                tvQueueMain.setText(getResources().getString(R.string.connecting_to_host_play_msg));
-                tvQueue.setText(getResources().getString(R.string.connecting_to_host_play_msg));
-                queueMainPb.setVisibility(VISIBLE);
-                queuePb.setVisibility(VISIBLE);
-                queueMainPb.setMax(8);
-                queuePb.setMax(8);
-                queuePb.setProgress(isDone ? 1 : 2);
-                queueMainPb.setProgress(isDone ? 1 : 2);
-                queuePb.setProgress(isDone ? 1 : 2);
-            });
+            updateQueueProgress(getResources().getString(R.string.connecting_to_host_play_msg), isDone ? 1 : 2);
         }
 
         @Override
         public void onGetHostApps(boolean isDone) {
-            if (managerBinder.getCurrentState() != UserPlayingData.PlayingState.IN_QUEUE)
-                return;
-
-            MainActivity.this.runOnUiThread(() -> {
-                tvQueueMain.setText(getResources().getString(R.string.getting_necessary_data_play_msg));
-                tvQueue.setText(getResources().getString(R.string.getting_necessary_data_play_msg));
-                queueMainPb.setProgress(isDone ? 3 : 4);
-                queuePb.setProgress(isDone ? 3 : 4);
-            });
+            updateQueueProgress(getResources().getString(R.string.getting_necessary_data_play_msg), isDone ? 3 : 4);
         }
 
         @Override
         public void onPrepareHost(boolean isDone) {
-            if (managerBinder.getCurrentState() != UserPlayingData.PlayingState.IN_QUEUE)
-                return;
-
-            MainActivity.this.runOnUiThread(() -> {
-                tvQueueMain.setText(getResources().getString(R.string.preparing_environment_play_msg));
-                tvQueue.setText(getResources().getString(R.string.preparing_environment_play_msg));
-                queueMainPb.setProgress(isDone ? 5 : 6);
-                queuePb.setProgress(isDone ? 5 : 6);
-            });
+            updateQueueProgress(getResources().getString(R.string.preparing_environment_play_msg), isDone ? 5 : 6);
         }
 
         @Override
         public void onStartConnect(boolean isDone) {
-            if (managerBinder.getCurrentState() != UserPlayingData.PlayingState.IN_QUEUE)
-                return;
+            updateQueueProgress(getResources().getString(R.string.done_connection_msg), isDone ? 7 : 8);
+            resetQueueData();
+        }
 
-            MainActivity.this.runOnUiThread(() -> {
-                tvQueueMain.setText(getResources().getString(R.string.done_play_msg));
-                tvQueue.setText(getResources().getString(R.string.done_play_msg));
-                queueMainPb.setProgress(isDone ? 7 : 8);
-                queuePb.setProgress(isDone ? 7 : 8);
-                queueMainPb.setVisibility(GONE);
-                queuePb.setVisibility(GONE);
-                updateQueueVisibility(GONE, GONE);
-                binQueueData(false, 0);
-            });
+        @Override
+        public void onPaused(String err) {
+            if (err != null) {
+                MainActivity.this.runOnUiThread(() -> Toast.makeText(getApplicationContext(), err, Toast.LENGTH_LONG).show());
+                return;
+            }
+            initGameSessionData();
+        }
+
+        @Override
+        public void onResumed(String err) {
+            if (err != null) {
+                MainActivity.this.runOnUiThread(() -> Toast.makeText(getApplicationContext(), err, Toast.LENGTH_LONG).show());
+                return;
+            }
+
+            resetQueueData();
         }
 
         @Override
@@ -350,10 +383,7 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
             if (err != null)
                 MainActivity.this.runOnUiThread(() -> Toast.makeText(getApplicationContext(), err, Toast.LENGTH_LONG).show());
 
-            queueMainPb.setVisibility(GONE);
-            queuePb.setVisibility(GONE);
-            updateQueueVisibility(GONE, GONE);
-            binQueueData(false, 0);
+            resetQueueData();
             gameViewModel.setCurrentGame(null);
         }
 
@@ -373,8 +403,13 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
         switch (code) {
             case PLAY:
                 break;
+            case RESUME:
+                //managerBinder.resumeSession(MainActivity.this);
+                quitSession();
+                break;
             case STOP:
-                managerBinder.stopConnect(playGameProgressCallBack);
+                quitSession();
+                //managerBinder.stopOrResumeConnect(MainActivity.this, null);
                 break;
             default:
                 break;

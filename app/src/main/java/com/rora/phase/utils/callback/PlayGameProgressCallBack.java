@@ -8,6 +8,8 @@ public interface PlayGameProgressCallBack {
     void onGetHostApps(boolean isDone);
     void onPrepareHost(boolean isDone);
     void onStartConnect(boolean isDone);
+    void onPaused(String err);
+    void onResumed(String err);
     void onStopConnect(boolean isDone, String err);
     void onError(String err);
 }
