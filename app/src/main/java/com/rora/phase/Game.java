@@ -423,7 +423,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
             // of gamepads removed and replugged at runtime.
             gamepadMask = 1;
         }
-        if (prefConfig.onscreenController) {
+        if (prefConfig.getOnscreenController()) {
             // If we're using OSC, always set at least gamepad 1.
             gamepadMask |= 1;
         }
@@ -534,7 +534,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
             getWindow().setSustainedPerformanceMode(true);
         }
 
-        if (prefConfig.onscreenController) {
+        if (prefConfig.getOnscreenController()) {
             // create virtual onscreen controller
             virtualController = new VirtualController(controllerHandler,
                     (FrameLayout)streamView.getParent(),

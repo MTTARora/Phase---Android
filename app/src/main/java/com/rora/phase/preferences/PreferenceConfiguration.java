@@ -93,7 +93,7 @@ public class PreferenceConfiguration {
     public boolean stretchVideo, enableSops, playHostAudio, disableWarnings;
     public String language;
     public boolean smallIconMode, multiController, usbDriver, flipFaceButtons;
-    public boolean onscreenController;
+    private boolean onscreenController;
     public boolean onlyL3R3;
     public boolean disableFrameDrop;
     public boolean enableHdr;
@@ -182,6 +182,11 @@ public class PreferenceConfiguration {
             case 2160:
                 return RES_4K;
         }
+    }
+
+    public boolean getOnscreenController() {
+        onscreenController = true;
+        return onscreenController;
     }
 
     public static int getDefaultBitrate(String resString, String fpsString) {

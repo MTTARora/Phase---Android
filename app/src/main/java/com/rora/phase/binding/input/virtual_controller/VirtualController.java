@@ -34,7 +34,8 @@ public class VirtualController {
     public enum ControllerMode {
         Active,
         MoveButtons,
-        ResizeButtons
+        ResizeButtons,
+        HideButtons
     }
 
     private static final boolean _PRINT_DEBUG_INFORMATION = false;
@@ -64,6 +65,7 @@ public class VirtualController {
         frame_layout.addView(relative_layout);
 
         buttonConfigure = new Button(context);
+        //buttonConfigure.setId(-2);
         buttonConfigure.setAlpha(0.25f);
         buttonConfigure.setFocusable(false);
         buttonConfigure.setBackgroundResource(R.drawable.ic_settings);
@@ -72,18 +74,27 @@ public class VirtualController {
             public void onClick(View v) {
                 String message;
 
-                if (currentMode == ControllerMode.Active){
-                    currentMode = ControllerMode.MoveButtons;
-                    message = "Entering configuration mode (Move buttons)";
-                } else if (currentMode == ControllerMode.MoveButtons) {
-                    currentMode = ControllerMode.ResizeButtons;
-                    message = "Entering configuration mode (Resize buttons)";
-                } else {
-                    currentMode = ControllerMode.Active;
-                    VirtualControllerConfigurationLoader.saveProfile(VirtualController.this, context);
-                    message = "Exiting configuration mode";
+                switch (currentMode) {
+                    case Active:
+                        currentMode = ControllerMode.MoveButtons;
+                        message = "Entering configuration mode (Move buttons)";
+                        break;
+                    case MoveButtons:
+                        currentMode = ControllerMode.ResizeButtons;
+                        message = "Entering configuration mode (Resize buttons)";
+                        break;
+                    case ResizeButtons:
+                        currentMode = ControllerMode.HideButtons;
+                        message = "Hide controller";
+                        break;
+                    default:
+                        currentMode = ControllerMode.Active;
+                        message = "Exiting configuration mode";
+                        break;
                 }
 
+                setVisibilityAllExceptSettingButton();
+                VirtualControllerConfigurationLoader.saveProfile(VirtualController.this, context);
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
 
                 relative_layout.invalidate();
@@ -94,6 +105,12 @@ public class VirtualController {
             }
         });
 
+    }
+
+    private void setVisibilityAllExceptSettingButton() {
+        for (VirtualControllerElement el : elements) {
+            el.setVisibility(currentMode == ControllerMode.HideButtons ? View.GONE : View.VISIBLE);
+        }
     }
 
     public void hide() {
