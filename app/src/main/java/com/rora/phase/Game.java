@@ -1,45 +1,6 @@
 package com.rora.phase;
 
 
-import com.rora.phase.binding.PlatformBinding;
-import com.rora.phase.binding.input.ControllerHandler;
-import com.rora.phase.binding.input.KeyboardTranslator;
-import com.rora.phase.binding.input.capture.InputCaptureManager;
-import com.rora.phase.binding.input.capture.InputCaptureProvider;
-import com.rora.phase.binding.input.touch.AbsoluteTouchContext;
-import com.rora.phase.binding.input.touch.RelativeTouchContext;
-import com.rora.phase.binding.input.driver.UsbDriverService;
-import com.rora.phase.binding.input.evdev.EvdevListener;
-import com.rora.phase.binding.input.touch.TouchContext;
-import com.rora.phase.binding.input.virtual_controller.VirtualController;
-import com.rora.phase.binding.video.CrashListener;
-import com.rora.phase.binding.video.MediaCodecDecoderRenderer;
-import com.rora.phase.binding.video.MediaCodecHelper;
-import com.rora.phase.binding.video.PerfOverlayListener;
-import com.rora.phase.model.UserPlayingData;
-import com.rora.phase.nvstream.NvConnection;
-import com.rora.phase.nvstream.NvConnectionListener;
-import com.rora.phase.nvstream.StreamConfiguration;
-import com.rora.phase.nvstream.http.ComputerDetails;
-import com.rora.phase.nvstream.http.NvApp;
-import com.rora.phase.nvstream.http.NvHTTP;
-import com.rora.phase.nvstream.input.KeyboardPacket;
-import com.rora.phase.nvstream.input.MouseButtonPacket;
-import com.rora.phase.nvstream.jni.MoonBridge;
-import com.rora.phase.preferences.GlPreferences;
-import com.rora.phase.preferences.PreferenceConfiguration;
-import com.rora.phase.ui.GameGestures;
-import com.rora.phase.ui.StreamView;
-import com.rora.phase.ui.game.LoadingGameActivity;
-import com.rora.phase.ui.viewmodel.GameViewModel;
-import com.rora.phase.utils.Dialog;
-import com.rora.phase.utils.NetHelper;
-import com.rora.phase.utils.ServerHelper;
-import com.rora.phase.utils.ShortcutHelper;
-import com.rora.phase.utils.SpinnerDialog;
-import com.rora.phase.utils.UiHelper;
-import com.rora.phase.utils.services.PlayServices;
-
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.PictureInPictureParams;
@@ -76,14 +37,51 @@ import android.view.View.OnSystemUiVisibilityChangeListener;
 import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
+
+import com.rora.phase.binding.PlatformBinding;
+import com.rora.phase.binding.input.ControllerHandler;
+import com.rora.phase.binding.input.KeyboardTranslator;
+import com.rora.phase.binding.input.capture.InputCaptureManager;
+import com.rora.phase.binding.input.capture.InputCaptureProvider;
+import com.rora.phase.binding.input.driver.UsbDriverService;
+import com.rora.phase.binding.input.evdev.EvdevListener;
+import com.rora.phase.binding.input.touch.AbsoluteTouchContext;
+import com.rora.phase.binding.input.touch.RelativeTouchContext;
+import com.rora.phase.binding.input.touch.TouchContext;
+import com.rora.phase.binding.input.virtual_controller.VirtualController;
+import com.rora.phase.binding.video.CrashListener;
+import com.rora.phase.binding.video.MediaCodecDecoderRenderer;
+import com.rora.phase.binding.video.MediaCodecHelper;
+import com.rora.phase.binding.video.PerfOverlayListener;
+import com.rora.phase.model.UserPlayingData;
+import com.rora.phase.nvstream.NvConnection;
+import com.rora.phase.nvstream.NvConnectionListener;
+import com.rora.phase.nvstream.StreamConfiguration;
+import com.rora.phase.nvstream.http.ComputerDetails;
+import com.rora.phase.nvstream.http.NvApp;
+import com.rora.phase.nvstream.http.NvHTTP;
+import com.rora.phase.nvstream.input.KeyboardPacket;
+import com.rora.phase.nvstream.input.MouseButtonPacket;
+import com.rora.phase.nvstream.jni.MoonBridge;
+import com.rora.phase.preferences.GlPreferences;
+import com.rora.phase.preferences.PreferenceConfiguration;
+import com.rora.phase.ui.GameGestures;
+import com.rora.phase.ui.StreamView;
+import com.rora.phase.ui.game.GameSettingsDialog;
+import com.rora.phase.utils.Dialog;
+import com.rora.phase.utils.NetHelper;
+import com.rora.phase.utils.ServerHelper;
+import com.rora.phase.utils.ShortcutHelper;
+import com.rora.phase.utils.SpinnerDialog;
+import com.rora.phase.utils.UiHelper;
+import com.rora.phase.utils.services.PlayServices;
 
 import java.io.ByteArrayInputStream;
 import java.security.cert.CertificateException;
@@ -93,10 +91,9 @@ import java.util.Locale;
 
 
 public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
-    OnGenericMotionListener, OnTouchListener, NvConnectionListener, EvdevListener,
-    OnSystemUiVisibilityChangeListener, GameGestures, StreamView.InputCallbacks,
-    PerfOverlayListener
-{
+        OnGenericMotionListener, OnTouchListener, NvConnectionListener, EvdevListener,
+        OnSystemUiVisibilityChangeListener, GameGestures, StreamView.InputCallbacks,
+        PerfOverlayListener{
     private int lastButtonState = 0;
 
     // Only 2 touches are supported
@@ -194,6 +191,8 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
         }
     };
 
+    private GameSettingsDialog settingsDialog;
+
     public static final String EXTRA_HOST = "Host";
     public static final String EXTRA_APP_NAME = "AppName";
     public static final String EXTRA_APP_ID = "AppId";
@@ -239,6 +238,10 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
 
         // Inflate the content
         setContentView(R.layout.activity_game);
+
+        settingsDialog = new GameSettingsDialog(this);
+        settingsDialog.setOnControllerOptionChangedListener(mode -> virtualController.updateControllerMode(mode));
+        findViewById(R.id.settings_game_fab).setOnClickListener(v -> settingsDialog.show());
 
         // Start the spinner
         spinner = SpinnerDialog.displayDialog(this, getResources().getString(R.string.conn_establishing_title),

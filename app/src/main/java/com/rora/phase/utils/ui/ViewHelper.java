@@ -1,6 +1,7 @@
 package com.rora.phase.utils.ui;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -31,6 +32,25 @@ public class ViewHelper {
         int width = ((AppCompatActivity)view.getContext()).getWindowManager().getDefaultDisplay().getWidth();
         int height = ((AppCompatActivity)view.getContext()).getWindowManager().getDefaultDisplay().getHeight();
         ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+        if (layoutParams == null) {
+            layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+
+        if (widthPercentage != 0)
+            layoutParams.width = (int) (width * widthPercentage);
+        if (heightPercentage != 0)
+            layoutParams.height = (int) (height * heightPercentage);
+
+        view.setLayoutParams(layoutParams);
+    }
+
+    public static void setSizePercentageWithScreen(Context context, View view, @Nullable double widthPercentage, @Nullable double heightPercentage) {
+        int width = ((AppCompatActivity)context).getWindowManager().getDefaultDisplay().getWidth();
+        int height = ((AppCompatActivity)context).getWindowManager().getDefaultDisplay().getHeight();
+        ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+        if (layoutParams == null) {
+            layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
 
         if (widthPercentage != 0)
             layoutParams.width = (int) (width * widthPercentage);
@@ -44,6 +64,9 @@ public class ViewHelper {
         int width = ((AppCompatActivity)view.getContext()).getWindowManager().getDefaultDisplay().getWidth();
         int height = ((AppCompatActivity)view.getContext()).getWindowManager().getDefaultDisplay().getHeight();
         ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+        if (layoutParams == null) {
+            layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
 
         if (widthPercentage != 0) {
             layoutParams.width = (int) (width * widthPercentage);

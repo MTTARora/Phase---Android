@@ -51,7 +51,7 @@ public class VirtualController {
     ControllerMode currentMode = ControllerMode.Active;
     ControllerInputContext inputContext = new ControllerInputContext();
 
-    private Button buttonConfigure = null;
+    //private Button buttonConfigure = null;
 
     private List<VirtualControllerElement> elements = new ArrayList<>();
 
@@ -64,46 +64,16 @@ public class VirtualController {
 
         frame_layout.addView(relative_layout);
 
-        buttonConfigure = new Button(context);
-        //buttonConfigure.setId(-2);
-        buttonConfigure.setAlpha(0.25f);
-        buttonConfigure.setFocusable(false);
-        buttonConfigure.setBackgroundResource(R.drawable.ic_settings);
-        buttonConfigure.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String message;
-
-                switch (currentMode) {
-                    case Active:
-                        currentMode = ControllerMode.MoveButtons;
-                        message = "Entering configuration mode (Move buttons)";
-                        break;
-                    case MoveButtons:
-                        currentMode = ControllerMode.ResizeButtons;
-                        message = "Entering configuration mode (Resize buttons)";
-                        break;
-                    case ResizeButtons:
-                        currentMode = ControllerMode.HideButtons;
-                        message = "Hide controller";
-                        break;
-                    default:
-                        currentMode = ControllerMode.Active;
-                        message = "Exiting configuration mode";
-                        break;
-                }
-
-                setVisibilityAllExceptSettingButton();
-                VirtualControllerConfigurationLoader.saveProfile(VirtualController.this, context);
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-
-                relative_layout.invalidate();
-
-                for (VirtualControllerElement element : elements) {
-                    element.invalidate();
-                }
-            }
-        });
+        //buttonConfigure = new Button(context);
+        //buttonConfigure.setAlpha(0.25f);
+        //buttonConfigure.setFocusable(false);
+        //buttonConfigure.setBackgroundResource(R.drawable.ic_settings);
+        //buttonConfigure.setOnClickListener(new View.OnClickListener() {
+        //    @Override
+        //    public void onClick(View v) {
+        //        updateControllerMode(currentMode);
+        //    }
+        //});
 
     }
 
@@ -178,7 +148,7 @@ public class VirtualController {
         params.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
         params.leftMargin = 15;
         params.topMargin = 15;
-        relative_layout.addView(buttonConfigure, params);
+        //relative_layout.addView(buttonConfigure, params);
 
         // Start with the default layout
         VirtualControllerConfigurationLoader.createDefaultLayout(this, context);
@@ -212,6 +182,41 @@ public class VirtualController {
                     inputContext.leftTrigger,
                     inputContext.rightTrigger
             );
+        }
+    }
+
+    public void updateControllerMode(ControllerMode mode) {
+        currentMode = mode;
+
+        String message;
+
+        //switch (currentMode) {
+        //    case Active:
+        //        currentMode = ControllerMode.MoveButtons;
+        //        message = "Entering configuration mode (Move buttons)";
+        //        break;
+        //    case MoveButtons:
+        //        currentMode = ControllerMode.ResizeButtons;
+        //        message = "Entering configuration mode (Resize buttons)";
+        //        break;
+        //    case ResizeButtons:
+        //        currentMode = ControllerMode.HideButtons;
+        //        message = "Hide controller";
+        //        break;
+        //    default:
+        //        currentMode = ControllerMode.Active;
+        //        message = "Exiting configuration mode";
+        //        break;
+        //}
+
+        setVisibilityAllExceptSettingButton();
+        VirtualControllerConfigurationLoader.saveProfile(VirtualController.this, context);
+        //Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+
+        relative_layout.invalidate();
+
+        for (VirtualControllerElement element : elements) {
+            element.invalidate();
         }
     }
 }

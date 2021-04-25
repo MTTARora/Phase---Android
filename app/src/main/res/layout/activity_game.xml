@@ -36,4 +36,11 @@
         android:background="#80000000"
         android:visibility="gone" />
 
+    <com.rora.phase.utils.ui.MovableFAB
+        android:id="@+id/settings_game_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_settings"
+        android:backgroundTint="@color/dim_primary_dark"/>
+
 </merge>

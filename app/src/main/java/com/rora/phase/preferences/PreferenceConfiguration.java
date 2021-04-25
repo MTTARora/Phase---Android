@@ -189,6 +189,10 @@ public class PreferenceConfiguration {
         return onscreenController;
     }
 
+    public void setOnscreenController(boolean onscreenController) {
+        this.onscreenController = onscreenController;
+    }
+
     public static int getDefaultBitrate(String resString, String fpsString) {
         int width = getWidthFromResolutionString(resString);
         int height = getHeightFromResolutionString(resString);
