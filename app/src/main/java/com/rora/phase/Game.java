@@ -539,14 +539,14 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
             getWindow().setSustainedPerformanceMode(true);
         }
 
-        //if (prefConfig.getOnscreenController()) {
+        if (prefConfig.getOnscreenController()) {
             // create virtual onscreen controller
             virtualController = new VirtualController(controllerHandler,
                     (FrameLayout)streamView.getParent(),
                     this);
             virtualController.refreshLayout();
             virtualController.show();
-        //}
+        }
 
         if (prefConfig.usbDriver) {
             // Start the USB driver

@@ -14,11 +14,15 @@ import android.widget.Toast;
 
 import com.rora.phase.R;
 import com.rora.phase.binding.input.ControllerHandler;
+import com.rora.phase.preferences.PreferenceConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
 public class VirtualController {
     public static class ControllerInputContext {
@@ -59,6 +63,10 @@ public class VirtualController {
         this.controllerHandler = controllerHandler;
         this.frame_layout = layout;
         this.context = context;
+
+
+        PreferenceConfiguration configuration = PreferenceConfiguration.readPreferences(context);
+        currentMode = configuration.getOnscreenController() ? ControllerMode.Active : ControllerMode.HideButtons;
 
         relative_layout = new RelativeLayout(context);
 
@@ -102,6 +110,7 @@ public class VirtualController {
                 sendControllerInputContext();
             }
         }, 100, 100);
+        setVisibilityAllExceptSettingButton();
     }
 
     public void removeElements() {
@@ -140,14 +149,14 @@ public class VirtualController {
         relative_layout.removeAllViews();
         removeElements();
 
-        DisplayMetrics screen = context.getResources().getDisplayMetrics();
+        //DisplayMetrics screen = context.getResources().getDisplayMetrics();
 
-        int buttonSize = (int)(screen.heightPixels*0.06f);
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(buttonSize, buttonSize);
-        params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
-        params.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
-        params.leftMargin = 15;
-        params.topMargin = 15;
+        //int buttonSize = (int)(screen.heightPixels*0.06f);
+        //RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(buttonSize, buttonSize);
+        //params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+        //params.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
+        //params.leftMargin = 15;
+        //params.topMargin = 15;
         //relative_layout.addView(buttonConfigure, params);
 
         // Start with the default layout

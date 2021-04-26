@@ -186,13 +186,15 @@ public class PreferenceConfiguration {
     }
 
     public boolean getOnscreenController() {
-        return onscreenController;
+        return true;
     }
 
     public void setOnscreenController(Context context, boolean onscreenController) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         this.onscreenController = onscreenController;
-        prefs.edit().putBoolean(ONSCREEN_CONTROLLER_PREF_STRING, onscreenController).apply();
+
+        //Temporary always trigger OSC
+        prefs.edit().putBoolean(ONSCREEN_CONTROLLER_PREF_STRING, true).apply();
     }
 
     public static int getDefaultBitrate(String resString, String fpsString) {

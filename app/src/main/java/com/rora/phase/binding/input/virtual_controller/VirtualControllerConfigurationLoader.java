@@ -358,7 +358,6 @@ public class VirtualControllerConfigurationLoader {
 
     public static void loadFromPreferences(final VirtualController controller, final Context context) {
         SharedPreferences pref = context.getSharedPreferences(OSC_PREFERENCE, Activity.MODE_PRIVATE);
-        PreferenceConfiguration configuration = PreferenceConfiguration.readPreferences(context);
 
         for (VirtualControllerElement element : controller.getElements()) {
             String prefKey = ""+element.elementId;
@@ -367,7 +366,6 @@ public class VirtualControllerConfigurationLoader {
             if (jsonConfig != null) {
                 try {
                     element.loadConfiguration(new JSONObject(jsonConfig));
-                    element.setVisibility(configuration.getOnscreenController() ? VISIBLE : GONE);
                 } catch (JSONException e) {
                     e.printStackTrace();
 
