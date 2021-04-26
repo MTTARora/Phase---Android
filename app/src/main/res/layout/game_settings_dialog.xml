@@ -7,11 +7,49 @@
     android:background="@color/dim"
     android:padding="@dimen/maxxxx_space">
 
-    <!--CONTROLLER-->
+    <!--CURSOR-->
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/frame_track_pad_setting_dialog"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Touchscreen as a trackpad"
+            android:textColor="@color/colorText"
+            android:textSize="@dimen/title_text_size"
+            app:layout_constraintEnd_toStartOf="@id/track_pad_game_settings_switch"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/track_pad_game_settings_desc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/summary_checkbox_touchscreen_trackpad"
+            app:layout_constraintEnd_toStartOf="@id/track_pad_game_settings_switch"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/track_pad_game_settings_switch" />
+
+        <Switch
+            android:id="@+id/track_pad_game_settings_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:backgroundTint="@color/colorPrimary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!--CONTROLLER-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/frame_controller_setting_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/max_space"
+        app:layout_constraintTop_toBottomOf="@id/frame_track_pad_setting_dialog">
 
         <TextView
             android:layout_width="0dp"
@@ -22,6 +60,15 @@
             app:layout_constraintEnd_toStartOf="@id/controller_game_settings_switch"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/controller_game_settings_desc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Show virtual controller on your screen"
+            app:layout_constraintEnd_toStartOf="@id/controller_game_settings_switch"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/controller_game_settings_switch" />
 
         <Switch
             android:id="@+id/controller_game_settings_switch"
@@ -38,7 +85,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/max_space"
             android:visibility="visible"
-            app:layout_constraintTop_toBottomOf="@id/controller_game_settings_switch">
+            app:layout_constraintTop_toBottomOf="@id/controller_game_settings_desc">
 
             <!--POSITION-->
             <LinearLayout

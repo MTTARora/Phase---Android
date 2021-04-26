@@ -107,7 +107,7 @@ public class PreferenceConfiguration {
     public boolean unlockFps;
     public boolean vibrateOsc;
     public boolean vibrateFallbackToDevice;
-    public boolean touchscreenTrackpad;
+    private boolean touchscreenTrackpad;
     public MoonBridge.AudioConfiguration audioConfiguration;
 
     public static boolean isNativeResolution(int width, int height) {
@@ -190,11 +190,22 @@ public class PreferenceConfiguration {
     }
 
     public void setOnscreenController(Context context, boolean onscreenController) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         this.onscreenController = onscreenController;
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         //Temporary always trigger OSC
         prefs.edit().putBoolean(ONSCREEN_CONTROLLER_PREF_STRING, true).apply();
+    }
+
+    public boolean isTouchscreenTrackpad() {
+        return touchscreenTrackpad;
+    }
+
+    public void setTouchscreenTrackpad(Context context, boolean touchscreenTrackpad) {
+        this.touchscreenTrackpad = touchscreenTrackpad;
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().putBoolean(TOUCHSCREEN_TRACKPAD_PREF_STRING, touchscreenTrackpad).apply();
     }
 
     public static int getDefaultBitrate(String resString, String fpsString) {

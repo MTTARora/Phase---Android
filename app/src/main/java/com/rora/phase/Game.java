@@ -242,7 +242,27 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
         setContentView(R.layout.activity_game);
 
         settingsDialog = new GameSettingsDialog(this);
-        settingsDialog.setOnControllerOptionChangedListener(mode -> virtualController.updateControllerMode(mode));
+        settingsDialog.setOnControllerOptionChangedListener(new GameSettingsDialog.OnGameSettingsChanged() {
+            @Override
+            public void onTouchScreenMethodChanged(boolean enableTrackPad) {
+                prefConfig.setTouchscreenTrackpad(Game.this, enableTrackPad);
+                for (int i = 0; i < touchContextMap.length; i++) {
+                    if (!prefConfig.isTouchscreenTrackpad()) {
+                        touchContextMap[i] = new AbsoluteTouchContext(conn, i, streamView);
+                    }
+                    else {
+                        touchContextMap[i] = new RelativeTouchContext(conn, i,
+                                REFERENCE_HORIZ_RES, REFERENCE_VERT_RES,
+                                streamView);
+                    }
+                }
+            }
+
+            @Override
+            public void onControllerModeChanged(VirtualController.ControllerMode mode) {
+                virtualController.updateControllerMode(mode);
+            }
+        });
         findViewById(R.id.settings_game_fab).setOnClickListener(v -> settingsDialog.show());
 
         // Start the spinner
@@ -523,7 +543,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
 
         // Initialize touch contexts
         for (int i = 0; i < touchContextMap.length; i++) {
-            if (!prefConfig.touchscreenTrackpad) {
+            if (!prefConfig.isTouchscreenTrackpad()) {
                 touchContextMap[i] = new AbsoluteTouchContext(conn, i, streamView);
             }
             else {
@@ -1393,7 +1413,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
                     return true;
                 }
 
-                if (view == null && !prefConfig.touchscreenTrackpad) {
+                if (view == null && !prefConfig.isTouchscreenTrackpad()) {
                     // Absolute touch events should be dropped outside our view.
                     return true;
                 }
