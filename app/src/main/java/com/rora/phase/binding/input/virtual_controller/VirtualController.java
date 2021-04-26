@@ -188,31 +188,17 @@ public class VirtualController {
     public void updateControllerMode(ControllerMode mode) {
         currentMode = mode;
 
-        String message;
-
-        //switch (currentMode) {
-        //    case Active:
-        //        currentMode = ControllerMode.MoveButtons;
-        //        message = "Entering configuration mode (Move buttons)";
-        //        break;
-        //    case MoveButtons:
-        //        currentMode = ControllerMode.ResizeButtons;
-        //        message = "Entering configuration mode (Resize buttons)";
-        //        break;
-        //    case ResizeButtons:
-        //        currentMode = ControllerMode.HideButtons;
-        //        message = "Hide controller";
-        //        break;
-        //    default:
-        //        currentMode = ControllerMode.Active;
-        //        message = "Exiting configuration mode";
-        //        break;
-        //}
-
+        switch (mode) {
+            case MoveButtons:
+            case ResizeButtons:
+                VirtualControllerConfigurationLoader.saveProfile(VirtualController.this, context);
+                break;
+            case Active:
+            case HideButtons:
+                VirtualControllerConfigurationLoader.saveControllerOnOff(mode == ControllerMode.Active, context);
+                break;
+        }
         setVisibilityAllExceptSettingButton();
-        VirtualControllerConfigurationLoader.saveProfile(VirtualController.this, context);
-        //Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-
         relative_layout.invalidate();
 
         for (VirtualControllerElement element : elements) {

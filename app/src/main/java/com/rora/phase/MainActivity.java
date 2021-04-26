@@ -404,12 +404,8 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
             case PLAY:
                 break;
             case RESUME:
-                //managerBinder.resumeSession(MainActivity.this);
-                quitSession();
-                break;
             case STOP:
                 quitSession();
-                //managerBinder.stopOrResumeConnect(MainActivity.this, null);
                 break;
             default:
                 break;

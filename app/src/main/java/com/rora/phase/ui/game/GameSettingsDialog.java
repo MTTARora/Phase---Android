@@ -17,6 +17,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.rora.phase.R;
 import com.rora.phase.binding.input.virtual_controller.VirtualController;
+import com.rora.phase.preferences.PreferenceConfiguration;
 import com.rora.phase.utils.MediaHelper;
 import com.rora.phase.utils.ui.ViewHelper;
 
@@ -45,10 +46,14 @@ public class GameSettingsDialog extends Dialog {
         frameControllerOptions = findViewById(R.id.frame_controller_options_setting_dialog);
 
         setupControllers();
-
     }
 
     private void setupControllers() {
+        PreferenceConfiguration preferenceConfiguration = PreferenceConfiguration.readPreferences(getContext());
+
+        controllerSwitch.setChecked(preferenceConfiguration.getOnscreenController());
+        frameControllerOptions.setVisibility(preferenceConfiguration.getOnscreenController() ? View.VISIBLE : View.GONE);
+
         controllerSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             frameControllerOptions.setVisibility(isChecked ? View.VISIBLE : View.GONE);
             onControllerModeChangedListener.onChanged(isChecked ? Active : HideButtons);

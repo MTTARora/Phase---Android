@@ -15,6 +15,9 @@ import com.rora.phase.preferences.PreferenceConfiguration;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 public class VirtualControllerConfigurationLoader {
     public static final String OSC_PREFERENCE = "OSC";
 
@@ -332,6 +335,11 @@ public class VirtualControllerConfigurationLoader {
         controller.setOpacity(config.oscOpacity);
     }
 
+    public static void saveControllerOnOff(boolean isEnable, final Context context) {
+        PreferenceConfiguration configuration = new PreferenceConfiguration();
+        configuration.setOnscreenController(context, isEnable);
+    }
+
     public static void saveProfile(final VirtualController controller,
                                    final Context context) {
         SharedPreferences.Editor prefEditor = context.getSharedPreferences(OSC_PREFERENCE, Activity.MODE_PRIVATE).edit();
@@ -350,6 +358,7 @@ public class VirtualControllerConfigurationLoader {
 
     public static void loadFromPreferences(final VirtualController controller, final Context context) {
         SharedPreferences pref = context.getSharedPreferences(OSC_PREFERENCE, Activity.MODE_PRIVATE);
+        PreferenceConfiguration configuration = PreferenceConfiguration.readPreferences(context);
 
         for (VirtualControllerElement element : controller.getElements()) {
             String prefKey = ""+element.elementId;
@@ -358,6 +367,7 @@ public class VirtualControllerConfigurationLoader {
             if (jsonConfig != null) {
                 try {
                     element.loadConfiguration(new JSONObject(jsonConfig));
+                    element.setVisibility(configuration.getOnscreenController() ? VISIBLE : GONE);
                 } catch (JSONException e) {
                     e.printStackTrace();
 

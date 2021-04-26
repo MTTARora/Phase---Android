@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 
 import com.rora.phase.nvstream.jni.MoonBridge;
@@ -185,12 +186,13 @@ public class PreferenceConfiguration {
     }
 
     public boolean getOnscreenController() {
-        onscreenController = true;
         return onscreenController;
     }
 
-    public void setOnscreenController(boolean onscreenController) {
+    public void setOnscreenController(Context context, boolean onscreenController) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         this.onscreenController = onscreenController;
+        prefs.edit().putBoolean(ONSCREEN_CONTROLLER_PREF_STRING, onscreenController).apply();
     }
 
     public static int getDefaultBitrate(String resString, String fpsString) {
@@ -429,4 +431,5 @@ public class PreferenceConfiguration {
 
         return config;
     }
+
 }

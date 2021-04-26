@@ -104,7 +104,7 @@ public class Dialog implements Runnable {
         alert.setTitle(title);
         alert.setMessage(message);
         alert.setCancelable(true);
-        alert.setCanceledOnTouchOutside(false);
+        alert.setCanceledOnTouchOutside(true);
  
         alert.setButton(AlertDialog.BUTTON_POSITIVE, positiveBtnTitle == null ? activity.getResources().getText(android.R.string.ok) : positiveBtnTitle, (dialog, which) -> {
             synchronized (rundownDialogs) {
