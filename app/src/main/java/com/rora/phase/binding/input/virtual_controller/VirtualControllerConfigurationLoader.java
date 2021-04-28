@@ -335,11 +335,6 @@ public class VirtualControllerConfigurationLoader {
         controller.setOpacity(config.oscOpacity);
     }
 
-    public static void saveControllerOnOff(boolean isEnable, final Context context) {
-        PreferenceConfiguration configuration = new PreferenceConfiguration();
-        configuration.setOnscreenController(context, isEnable);
-    }
-
     public static void saveProfile(final VirtualController controller,
                                    final Context context) {
         SharedPreferences.Editor prefEditor = context.getSharedPreferences(OSC_PREFERENCE, Activity.MODE_PRIVATE).edit();

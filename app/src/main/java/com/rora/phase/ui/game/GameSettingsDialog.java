@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Switch;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.rora.phase.R;
@@ -21,72 +22,85 @@ import static com.rora.phase.binding.input.virtual_controller.VirtualController.
 
 public class GameSettingsDialog extends Dialog {
     public interface OnGameSettingsChanged {
+        void onStretchVideoChanged(boolean isEnable);
         void onTouchScreenMethodChanged(boolean enableTrackPad);
         void onControllerModeChanged(VirtualController.ControllerMode mode);
     }
 
-    private Switch controllerSwitch, touchScreenSwitch;
+    private PreferenceConfiguration prefConfig;
+
+    private SwitchCompat controllerSwitch, touchScreenSwitch, stretchVideoSwitch;
     private ConstraintLayout frameControllerOptions;
     private VirtualController.ControllerMode controllerMode;
 
-    private OnGameSettingsChanged onGameSettingsChangedListener;
+    private OnGameSettingsChanged onSettingsChangedListener;
 
     public GameSettingsDialog(@NonNull Context context) {
         super(context);
         setContentView(R.layout.game_settings_dialog);
         ViewHelper.setSizePercentageWithScreen(context, findViewById(R.id.frame_game_settings_dialog), 0.6, 0);
 
+        stretchVideoSwitch = findViewById(R.id.stretch_video_game_settings_switch);
         touchScreenSwitch = findViewById(R.id.track_pad_game_settings_switch);
         controllerSwitch = findViewById(R.id.controller_game_settings_switch);
         frameControllerOptions = findViewById(R.id.frame_controller_options_setting_dialog);
 
+        prefConfig = PreferenceConfiguration.readPreferences(context);
+
+        setupStretchVideo();
         setupTouchScreenMethod();
         setupControllers();
     }
 
-    private void setupTouchScreenMethod() {
-        PreferenceConfiguration preferenceConfiguration = PreferenceConfiguration.readPreferences(getContext());
+    private void setupStretchVideo() {
+        stretchVideoSwitch.setChecked(prefConfig.getStretchVideo());
+        stretchVideoSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            prefConfig.setStretchVideo(isChecked);
+            onSettingsChangedListener.onStretchVideoChanged(isChecked);
+        });
+    }
 
-        touchScreenSwitch.setChecked(preferenceConfiguration.isTouchscreenTrackpad());
+    private void setupTouchScreenMethod() {
+        touchScreenSwitch.setChecked(prefConfig.getTouchscreenTrackpad());
         touchScreenSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            onGameSettingsChangedListener.onTouchScreenMethodChanged(isChecked);
+            prefConfig.setTouchscreenTrackpad(isChecked);
+            onSettingsChangedListener.onTouchScreenMethodChanged(isChecked);
         });
     }
 
     private void setupControllers() {
-        PreferenceConfiguration preferenceConfiguration = PreferenceConfiguration.readPreferences(getContext());
-
-        controllerSwitch.setChecked(preferenceConfiguration.getOnscreenController());
-        frameControllerOptions.setVisibility(preferenceConfiguration.getOnscreenController() ? View.VISIBLE : View.GONE);
+        controllerSwitch.setChecked(prefConfig.getOnscreenController());
+        frameControllerOptions.setVisibility(prefConfig.getOnscreenController() ? View.VISIBLE : View.GONE);
 
         controllerSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            prefConfig.setOnscreenController(isChecked);
             frameControllerOptions.setVisibility(isChecked ? View.VISIBLE : View.GONE);
-            onGameSettingsChangedListener.onControllerModeChanged(isChecked ? Active : HideButtons);
+            onSettingsChangedListener.onControllerModeChanged(isChecked ? Active : HideButtons);
         });
 
         findViewById(R.id.edit_controller_position_setting_btn).setOnClickListener(v -> {
             if (controllerMode == MoveButtons) {
                 controllerMode = Active;
-                onGameSettingsChangedListener.onControllerModeChanged(Active);
+                onSettingsChangedListener.onControllerModeChanged(Active);
             } else {
                 controllerMode = MoveButtons;
-                onGameSettingsChangedListener.onControllerModeChanged(MoveButtons);
+                onSettingsChangedListener.onControllerModeChanged(MoveButtons);
             }
         });
 
         findViewById(R.id.resize_controller_setting_btn).setOnClickListener(v -> {
             if (controllerMode == ResizeButtons) {
                 controllerMode = Active;
-                onGameSettingsChangedListener.onControllerModeChanged(Active);
+                onSettingsChangedListener.onControllerModeChanged(Active);
             } else {
                 controllerMode = ResizeButtons;
-                onGameSettingsChangedListener.onControllerModeChanged(ResizeButtons);
+                onSettingsChangedListener.onControllerModeChanged(ResizeButtons);
             }
         });
     }
 
-    public void setOnControllerOptionChangedListener(OnGameSettingsChanged onControllerOptionChangedListener) {
-        onGameSettingsChangedListener = onControllerOptionChangedListener;
+    public void setOnSettingsChangedListener(OnGameSettingsChanged onSettingsChangedListener) {
+        this.onSettingsChangedListener = onSettingsChangedListener;
     }
 
 }

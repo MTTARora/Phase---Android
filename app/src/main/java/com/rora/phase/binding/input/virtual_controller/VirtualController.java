@@ -204,7 +204,6 @@ public class VirtualController {
                 break;
             case Active:
             case HideButtons:
-                VirtualControllerConfigurationLoader.saveControllerOnOff(mode == ControllerMode.Active, context);
                 break;
         }
         setVisibilityAllExceptSettingButton();

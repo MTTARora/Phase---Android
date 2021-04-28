@@ -86,12 +86,14 @@ public class PreferenceConfiguration {
     public static final String RES_4K = "3840x2160";
     public static final String RES_NATIVE = "Native";
 
+    private Context context;
     public int width, height, fps;
     public int bitrate;
     public int videoFormat;
     public int deadzonePercentage;
     public int oscOpacity;
-    public boolean stretchVideo, enableSops, playHostAudio, disableWarnings;
+    private boolean stretchVideo;
+    public boolean enableSops, playHostAudio, disableWarnings;
     public String language;
     public boolean smallIconMode, multiController, usbDriver, flipFaceButtons;
     private boolean onscreenController;
@@ -109,6 +111,13 @@ public class PreferenceConfiguration {
     public boolean vibrateFallbackToDevice;
     private boolean touchscreenTrackpad;
     public MoonBridge.AudioConfiguration audioConfiguration;
+
+    public PreferenceConfiguration() {
+    }
+
+    public PreferenceConfiguration(Context context) {
+        this.context = context;
+    }
 
     public static boolean isNativeResolution(int width, int height) {
         // It's not a native resolution if it matches an existing resolution option
@@ -185,25 +194,34 @@ public class PreferenceConfiguration {
         }
     }
 
+    public boolean getStretchVideo() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        stretchVideo = prefs.getBoolean(STRETCH_PREF_STRING, DEFAULT_STRETCH);
+        return stretchVideo;
+    }
+
+    public void setStretchVideo(boolean stretchVideo) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().putBoolean(STRETCH_PREF_STRING, stretchVideo).apply();
+    }
+
     public boolean getOnscreenController() {
         return true;
     }
 
-    public void setOnscreenController(Context context, boolean onscreenController) {
-        this.onscreenController = onscreenController;
-
+    public void setOnscreenController(boolean onscreenController) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         //Temporary always trigger OSC
         prefs.edit().putBoolean(ONSCREEN_CONTROLLER_PREF_STRING, true).apply();
     }
 
-    public boolean isTouchscreenTrackpad() {
+    public boolean getTouchscreenTrackpad() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        touchscreenTrackpad = prefs.getBoolean(TOUCHSCREEN_TRACKPAD_PREF_STRING, DEFAULT_TOUCHSCREEN_TRACKPAD);
         return touchscreenTrackpad;
     }
 
-    public void setTouchscreenTrackpad(Context context, boolean touchscreenTrackpad) {
-        this.touchscreenTrackpad = touchscreenTrackpad;
-
+    public void setTouchscreenTrackpad(boolean touchscreenTrackpad) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         prefs.edit().putBoolean(TOUCHSCREEN_TRACKPAD_PREF_STRING, touchscreenTrackpad).apply();
     }
@@ -305,7 +323,7 @@ public class PreferenceConfiguration {
 
     public static PreferenceConfiguration readPreferences(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        PreferenceConfiguration config = new PreferenceConfiguration();
+        PreferenceConfiguration config = new PreferenceConfiguration(context);
 
         // Migrate legacy preferences to the new locations
         if (prefs.contains(LEGACY_ENABLE_51_SURROUND_PREF_STRING)) {
