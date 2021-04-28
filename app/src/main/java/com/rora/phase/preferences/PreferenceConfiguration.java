@@ -107,8 +107,8 @@ public class PreferenceConfiguration {
     public boolean mouseEmulation;
     public boolean mouseNavButtons;
     public boolean unlockFps;
-    public boolean vibrateOsc;
-    public boolean vibrateFallbackToDevice;
+    private boolean vibrateOsc;
+    private boolean vibrateFallbackToDevice;
     private boolean touchscreenTrackpad;
     public MoonBridge.AudioConfiguration audioConfiguration;
 
@@ -224,6 +224,28 @@ public class PreferenceConfiguration {
     public void setTouchscreenTrackpad(boolean touchscreenTrackpad) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         prefs.edit().putBoolean(TOUCHSCREEN_TRACKPAD_PREF_STRING, touchscreenTrackpad).apply();
+    }
+
+    public boolean getVibrateOsc() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        vibrateOsc = prefs.getBoolean(VIBRATE_OSC_PREF_STRING, DEFAULT_VIBRATE_OSC);
+        return vibrateOsc;
+    }
+
+    public void setVibrateOsc(boolean vibrateOsc) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().putBoolean(VIBRATE_OSC_PREF_STRING, vibrateOsc).apply();
+    }
+
+    public boolean getVibrateFallbackToDevice() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        vibrateFallbackToDevice = prefs.getBoolean(VIBRATE_FALLBACK_PREF_STRING, DEFAULT_VIBRATE_FALLBACK);
+        return vibrateFallbackToDevice;
+    }
+
+    public void setVibrateFallbackToDevice(boolean vibrateFallbackToDevice) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().putBoolean(VIBRATE_FALLBACK_PREF_STRING, vibrateFallbackToDevice).apply();
     }
 
     public static int getDefaultBitrate(String resString, String fpsString) {

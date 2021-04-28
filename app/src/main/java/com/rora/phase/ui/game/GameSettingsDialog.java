@@ -29,7 +29,7 @@ public class GameSettingsDialog extends Dialog {
 
     private PreferenceConfiguration prefConfig;
 
-    private SwitchCompat controllerSwitch, touchScreenSwitch, stretchVideoSwitch;
+    private SwitchCompat controllerSwitch, touchScreenSwitch, stretchVideoSwitch, rumbleSwitch, rumbleEmulationSwitch;
     private ConstraintLayout frameControllerOptions;
     private VirtualController.ControllerMode controllerMode;
 
@@ -43,6 +43,9 @@ public class GameSettingsDialog extends Dialog {
         stretchVideoSwitch = findViewById(R.id.stretch_video_game_settings_switch);
         touchScreenSwitch = findViewById(R.id.track_pad_game_settings_switch);
         controllerSwitch = findViewById(R.id.controller_game_settings_switch);
+        rumbleSwitch = findViewById(R.id.rumble_game_settings_switch);
+        rumbleEmulationSwitch = findViewById(R.id.rumble_emulation_game_settings_switch);
+
         frameControllerOptions = findViewById(R.id.frame_controller_options_setting_dialog);
 
         prefConfig = PreferenceConfiguration.readPreferences(context);
@@ -50,6 +53,7 @@ public class GameSettingsDialog extends Dialog {
         setupStretchVideo();
         setupTouchScreenMethod();
         setupControllers();
+        setupRumble();
     }
 
     private void setupStretchVideo() {
@@ -98,6 +102,19 @@ public class GameSettingsDialog extends Dialog {
             }
         });
     }
+
+    private void setupRumble() {
+        rumbleSwitch.setChecked(prefConfig.getVibrateOsc());
+        rumbleSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            prefConfig.setVibrateOsc(isChecked);
+        });
+
+        rumbleEmulationSwitch.setChecked(prefConfig.getVibrateFallbackToDevice());
+        rumbleEmulationSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            prefConfig.setVibrateFallbackToDevice(isChecked);
+        });
+    }
+
 
     public void setOnSettingsChangedListener(OnGameSettingsChanged onSettingsChangedListener) {
         this.onSettingsChangedListener = onSettingsChangedListener;

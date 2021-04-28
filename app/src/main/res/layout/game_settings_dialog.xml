@@ -175,6 +175,72 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <!-- RUMBLE -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/frame_rumble_setting_dialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/max_space"
+            app:layout_constraintTop_toBottomOf="@id/frame_controller_setting_dialog">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/title_checkbox_vibrate_osc"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/title_text_size"
+                app:layout_constraintEnd_toStartOf="@id/rumble_game_settings_switch"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/rumble_game_settings_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:backgroundTint="@color/colorPrimary"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- RUMBLE -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/frame_rumble_emulation_setting_dialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/max_space"
+            app:layout_constraintTop_toBottomOf="@id/frame_rumble_setting_dialog">
+
+            <TextView
+                android:id="@+id/rumble_emulation_settings_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/title_checkbox_vibrate_fallback"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/title_text_size"
+                app:layout_constraintEnd_toStartOf="@id/rumble_emulation_game_settings_switch"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/rumble_emulation_settings_desc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/summary_checkbox_vibrate_fallback"
+                app:layout_constraintEnd_toStartOf="@id/rumble_emulation_game_settings_switch"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/rumble_emulation_settings_title" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/rumble_emulation_game_settings_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:backgroundTint="@color/colorPrimary"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.core.widget.NestedScrollView>

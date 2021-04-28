@@ -1360,13 +1360,34 @@ public class ControllerHandler implements InputManager.InputDeviceListener, UsbD
             // If we didn't find a matching device, it must be the on-screen
             // controls that triggered the rumble. Vibrate the device if
             // the user has requested that behavior.
-            if (!foundMatchingDevice && prefConfig.getOnscreenController() && !prefConfig.onlyL3R3 && prefConfig.vibrateOsc) {
-                rumbleVibrator(deviceVibrator, lowFreqMotor, highFreqMotor);
-            }
-            else if (foundMatchingDevice && !vibrated && prefConfig.vibrateFallbackToDevice) {
-                // We found a device to vibrate but it didn't have rumble support. The user
-                // has requested us to vibrate the device in this case.
-                rumbleVibrator(deviceVibrator, lowFreqMotor, highFreqMotor);
+            //if (!foundMatchingDevice && prefConfig.getOnscreenController() && !prefConfig.onlyL3R3 && prefConfig.getVibrateOsc()) {
+            //    rumbleVibrator(deviceVibrator, lowFreqMotor, highFreqMotor);
+            //}
+            //else if (foundMatchingDevice && !vibrated && prefConfig.getVibrateFallbackToDevice()) {
+            //    // We found a device to vibrate but it didn't have rumble support. The user
+            //    // has requested us to vibrate the device in this case.
+            //    rumbleVibrator(deviceVibrator, lowFreqMotor, highFreqMotor);
+            //}
+
+            if (prefConfig.getVibrateOsc()) {
+                if(!foundMatchingDevice && prefConfig.getOnscreenController() && !prefConfig.onlyL3R3) {
+                    // If we didn't find a matching device, it must be the on-screen
+                    // controls that triggered the rumble. Vibrate the device if
+                    // the user has requested that behavior.
+                    rumbleVibrator(deviceVibrator, lowFreqMotor, highFreqMotor);
+                } if (prefConfig.getVibrateFallbackToDevice()){
+                    if(foundMatchingDevice && !vibrated) {
+                        // We found a device to vibrate but it didn't have rumble support. The user
+                        // has requested us to vibrate the device in this case.
+                        rumbleVibrator(deviceVibrator, lowFreqMotor, highFreqMotor);
+                    }
+                }
+            } else if (prefConfig.getVibrateFallbackToDevice()){
+                if(foundMatchingDevice && !vibrated) {
+                    // We found a device to vibrate but it didn't have rumble support. The user
+                    // has requested us to vibrate the device in this case.
+                    rumbleVibrator(deviceVibrator, lowFreqMotor, highFreqMotor);
+                }
             }
         }
     }
