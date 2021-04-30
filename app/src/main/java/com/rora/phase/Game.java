@@ -327,7 +327,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
                     // than crashing.
                     enterPictureInPictureMode(
                             new PictureInPictureParams.Builder()
-                                    .setAspectRatio(new Rational(prefConfig.width, prefConfig.height))
+                                    .setAspectRatio(new Rational(prefConfig.getWidth(), prefConfig.getHeight()))
                                     .setSourceRectHint(new Rect(
                                             streamView.getLeft(), streamView.getTop(),
                                             streamView.getRight(), streamView.getBottom()))
@@ -367,8 +367,8 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
     }
 
     private boolean isRefreshRateGoodMatch(float refreshRate) {
-        return refreshRate >= prefConfig.fps &&
-                Math.round(refreshRate) % prefConfig.fps <= 3;
+        return refreshRate >= prefConfig.getFps() &&
+                Math.round(refreshRate) % prefConfig.getFps() <= 3;
     }
 
     private float prepareDisplayForRendering() {
@@ -379,19 +379,19 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
         // On M, we can explicitly set the optimal display mode
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Display.Mode bestMode = display.getMode();
-            boolean isNativeResolutionStream = PreferenceConfiguration.isNativeResolution(prefConfig.width, prefConfig.height);
+            boolean isNativeResolutionStream = PreferenceConfiguration.isNativeResolution(prefConfig.getWidth(), prefConfig.getHeight());
             boolean refreshRateIsGood = isRefreshRateGoodMatch(bestMode.getRefreshRate());
             for (Display.Mode candidate : display.getSupportedModes()) {
                 boolean refreshRateReduced = candidate.getRefreshRate() < bestMode.getRefreshRate();
                 boolean resolutionReduced = candidate.getPhysicalWidth() < bestMode.getPhysicalWidth() ||
                         candidate.getPhysicalHeight() < bestMode.getPhysicalHeight();
-                boolean resolutionFitsStream = candidate.getPhysicalWidth() >= prefConfig.width &&
-                        candidate.getPhysicalHeight() >= prefConfig.height;
+                boolean resolutionFitsStream = candidate.getPhysicalWidth() >= prefConfig.getWidth() &&
+                        candidate.getPhysicalHeight() >= prefConfig.getHeight();
 
                 RoraLog.info("Examining display mode: "+candidate.getPhysicalWidth()+"x"+
                         candidate.getPhysicalHeight()+"x"+candidate.getRefreshRate());
 
-                if (candidate.getPhysicalWidth() > 4096 && prefConfig.width <= 4096) {
+                if (candidate.getPhysicalWidth() > 4096 && prefConfig.getWidth() <= 4096) {
                     // Avoid resolutions options above 4K to be safe
                     continue;
                 }
@@ -399,7 +399,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
                 // On non-4K streams, we force the resolution to never change unless it's above
                 // 60 FPS, which may require a resolution reduction due to HDMI bandwidth limitations,
                 // or it's a native resolution stream.
-                if (prefConfig.width < 3840 && prefConfig.fps <= 60 && !isNativeResolutionStream) {
+                if (prefConfig.getWidth() < 3840 && prefConfig.getFps() <= 60 && !isNativeResolutionStream) {
                     if (display.getMode().getPhysicalWidth() != candidate.getPhysicalWidth() ||
                             display.getMode().getPhysicalHeight() != candidate.getPhysicalHeight()) {
                         continue;
@@ -408,7 +408,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
 
                 // Make sure the resolution doesn't regress unless if it's over 60 FPS
                 // where we may need to reduce resolution to achieve the desired refresh rate.
-                if (resolutionReduced && !(prefConfig.fps > 60 && resolutionFitsStream)) {
+                if (resolutionReduced && !(prefConfig.getFps() > 60 && resolutionFitsStream)) {
                     continue;
                 }
 
@@ -448,7 +448,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
 
                 if (candidate > bestRefreshRate) {
                     // Ensure the frame rate stays around 60 Hz for <= 60 FPS streams
-                    if (prefConfig.fps <= 60) {
+                    if (prefConfig.getFps() <= 60) {
                         if (candidate >= 63) {
                             continue;
                         }
@@ -490,7 +490,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
             display.getSize(screenSize);
 
             double screenAspectRatio = ((double)screenSize.y) / screenSize.x;
-            double streamAspectRatio = ((double)prefConfig.height) / prefConfig.width;
+            double streamAspectRatio = ((double)prefConfig.getHeight()) / prefConfig.getWidth();
             if (Math.abs(screenAspectRatio - streamAspectRatio) < 0.001) {
                 RoraLog.info("Stream has compatible aspect ratio with output display");
                 aspectRatioMatch = true;
@@ -499,11 +499,11 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
 
         if (prefConfig.getStretchVideo() || aspectRatioMatch) {
             // Set the surface to the size of the video
-            streamView.getHolder().setFixedSize(prefConfig.width, prefConfig.height);
+            streamView.getHolder().setFixedSize(prefConfig.getWidth(), prefConfig.getHeight());
         }
         else {
             // Set the surface to scale based on the aspect ratio of the stream
-            streamView.setDesiredAspectRatio((double)prefConfig.width / (double)prefConfig.height);
+            streamView.setDesiredAspectRatio((double)prefConfig.getWidth() / (double)prefConfig.getHeight());
         }
 
         if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_TELEVISION) ||
@@ -961,18 +961,18 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
         // Hopefully, we can get rid of this once someone comes up with a better way
         // to track the state of the pipeline and time frames.
         int roundedRefreshRate = Math.round(displayRefreshRate);
-        int chosenFrameRate = prefConfig.fps;
+        int chosenFrameRate = prefConfig.getFps();
         if (!prefConfig.disableFrameDrop || prefConfig.unlockFps) {
             if (Build.DEVICE.equals("coral") || Build.DEVICE.equals("flame")) {
                 // HACK: Pixel 4 (XL) ignores the preferred display mode and lowers refresh rate,
                 // causing frame pacing issues. See https://issuetracker.google.com/issues/143401475
                 // To work around this, use frame drop mode if we want to stream at >= 60 FPS.
-                if (prefConfig.fps >= 60) {
+                if (prefConfig.getFps() >= 60) {
                     RoraLog.info("Using Pixel 4 rendering hack");
                     decoderRenderer.enableLegacyFrameDropRendering();
                 }
             }
-            else if (prefConfig.fps >= roundedRefreshRate) {
+            else if (prefConfig.getFps() >= roundedRefreshRate) {
                 if (prefConfig.unlockFps) {
                     // Use frame drops when rendering above the screen frame rate
                     decoderRenderer.enableLegacyFrameDropRendering();
@@ -1024,11 +1024,11 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
         }
 
         StreamConfiguration config = new StreamConfiguration.Builder()
-                .setResolution(prefConfig.width, prefConfig.height)
-                .setLaunchRefreshRate(prefConfig.fps)
+                .setResolution(prefConfig.getWidth(), prefConfig.getHeight())
+                .setLaunchRefreshRate(prefConfig.getFps())
                 .setRefreshRate(chosenFrameRate)
                 .setApp(new NvApp(necessaryData.appName != null ? necessaryData.appName : "app", necessaryData.appId, necessaryData.willStreamHdr))
-                .setBitrate(prefConfig.bitrate)
+                .setBitrate(prefConfig.getBitrate())
                 .setEnableSops(prefConfig.enableSops)
                 .enableLocalAudioPlayback(prefConfig.playHostAudio)
                 .setMaxPacketSize(vpnActive ? 1024 : 1392) // Lower MTU on VPN
@@ -1040,7 +1040,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
                 .setEnableHdr(necessaryData.willStreamHdr)
                 .setAttachedGamepadMask(gamepadMask)
                 .setClientRefreshRateX100((int)(displayRefreshRate * 100))
-                .setAudioConfiguration(prefConfig.audioConfiguration)
+                .setAudioConfiguration(prefConfig.getAudioConfiguration())
                 .build();
 
         // Initialize the connection
@@ -1834,7 +1834,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
                 }
 
                 if (connectionStatus == MoonBridge.CONN_STATUS_POOR) {
-                    if (prefConfig.bitrate > 5000) {
+                    if (prefConfig.getBitrate() > 5000) {
                         notificationOverlayView.setText(getResources().getString(R.string.slow_connection_msg));
                     }
                     else {
@@ -1937,7 +1937,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             // Tell the OS about our frame rate to allow it to adapt the display refresh rate appropriately
-            holder.getSurface().setFrameRate(prefConfig.fps, Surface.FRAME_RATE_COMPATIBILITY_FIXED_SOURCE);
+            holder.getSurface().setFrameRate(prefConfig.getFps(), Surface.FRAME_RATE_COMPATIBILITY_FIXED_SOURCE);
         }
     }
 

@@ -114,7 +114,7 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer {
                 // HDR implies HEVC forced on, since HEVCMain10HDR10 is required for HDR.
                 // > 4K streaming also requires HEVC, so force it on there too.
                 if (prefs.videoFormat == PreferenceConfiguration.FORCE_H265_ON || requestedHdr ||
-                        prefs.width > 4096 || prefs.height > 4096) {
+                        prefs.getWidth() > 4096 || prefs.getHeight() > 4096) {
                     RoraLog.info("Forcing H265 enabled despite non-whitelisted decoder");
                 }
                 else {
@@ -170,7 +170,7 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer {
         // shared between AVC and HEVC decoders on the same device.
         if (avcDecoder != null) {
             directSubmit = MediaCodecHelper.decoderCanDirectSubmit(avcDecoder.getName());
-            refFrameInvalidationAvc = MediaCodecHelper.decoderSupportsRefFrameInvalidationAvc(avcDecoder.getName(), prefs.height);
+            refFrameInvalidationAvc = MediaCodecHelper.decoderSupportsRefFrameInvalidationAvc(avcDecoder.getName(), prefs.getHeight());
             refFrameInvalidationHevc = MediaCodecHelper.decoderSupportsRefFrameInvalidationHevc(avcDecoder.getName());
 
             if (consecutiveCrashCount % 2 == 1) {
@@ -313,7 +313,7 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer {
             // We use prefs.fps instead of redrawRate here because the low latency hack in Game.java
             // may leave us with an odd redrawRate value like 59 or 49 which might cause the decoder
             // to puke. To be safe, we'll use the unmodified value.
-            videoFormat.setInteger(MediaFormat.KEY_FRAME_RATE, prefs.fps);
+            videoFormat.setInteger(MediaFormat.KEY_FRAME_RATE, prefs.getFps());
         }
 
         // Adaptive playback can also be enabled by the whitelist on pre-KitKat devices
@@ -1112,7 +1112,7 @@ public class MediaCodecDecoderRenderer extends VideoDecoderRenderer {
             str += "Using modern SPS patching: "+(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)+"\n";
             str += "Video dimensions: "+renderer.initialWidth+"x"+renderer.initialHeight+"\n";
             str += "FPS target: "+renderer.refreshRate+"\n";
-            str += "Bitrate: "+renderer.prefs.bitrate+" Kbps \n";
+            str += "Bitrate: "+renderer.prefs.getBitrate()+" Kbps \n";
             str += "CSD stats: "+renderer.numVpsIn+", "+renderer.numSpsIn+", "+renderer.numPpsIn+"\n";
             str += "Frames in-out: "+renderer.numFramesIn+", "+renderer.numFramesOut+"\n";
             str += "Total frames received: "+renderer.globalVideoStats.totalFramesReceived+"\n";

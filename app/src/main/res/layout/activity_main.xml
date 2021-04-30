@@ -16,6 +16,14 @@
         app:layout_constraintTop_toTopOf="parent"
         app:navGraph="@navigation/mobile_navigation" />
 
+    <com.rora.phase.utils.ui.MovableFAB
+        android:id="@+id/settings_game_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_settings"
+        android:backgroundTint="@color/dim_primary_dark"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
     <!--QUEUE-->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/frame_queue_main"

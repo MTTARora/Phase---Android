@@ -1,23 +1,262 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/frame_game_settings_dialog"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/dim">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:padding="@dimen/maxxxx_space">
-        <!-- STRETCH VIDEO -->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/frame_stretch_video_setting_dialog"
+
+        <!--BASIC SETTINGS-->
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="@string/category_basic_settings"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/title_text_size"
+            android:textStyle="bold" />
+
+        <!--RESOLUTION-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/frame_resolution_game_settings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/max_space">
+
+            <TextView
+                android:id="@+id/resolution_settings_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/title_resolution_list"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/title_text_size"
+                app:layout_constraintEnd_toStartOf="@id/current_resolution_game_settings_tv"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/current_resolution_game_settings_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingHorizontal="@dimen/medium_space"
+                android:text="720p"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/title_text_size"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/resolution_settings_desc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/summary_resolution_list"
+                app:layout_constraintEnd_toStartOf="@id/current_resolution_game_settings_tv"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/resolution_settings_title" />
+
+            <!--OPTIONS-->
+            <RadioGroup
+                android:id="@+id/frame_resolution_options_setting_dialog"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/min_space"
+                android:orientation="vertical"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/resolution_settings_desc">
+
+                <RadioButton
+                    android:id="@+id/resolution_360p_rb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?android:selectableItemBackground"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:button="@null"
+                    android:drawableEnd="?android:attr/listChoiceIndicatorSingle"
+                    android:text="360p"
+                    android:textColor="@color/colorText"
+                    android:textSize="@dimen/title_text_size"/>
+
+                <RadioButton
+                    android:id="@+id/resolution_480p_rb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?android:selectableItemBackground"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:button="@null"
+                    android:drawableEnd="?android:attr/listChoiceIndicatorSingle"
+                    android:text="480p"
+                    android:textColor="@color/colorText"
+                    android:textSize="@dimen/title_text_size"/>
+
+                <RadioButton
+                    android:id="@+id/resolution_720p_rb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?android:selectableItemBackground"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:button="@null"
+                    android:drawableEnd="?android:attr/listChoiceIndicatorSingle"
+                    android:text="720p"
+                    android:textColor="@color/colorText"
+                    android:textSize="@dimen/title_text_size"/>
+
+                <RadioButton
+                    android:id="@+id/resolution_1080p_rb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?android:selectableItemBackground"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:button="@null"
+                    android:drawableEnd="?android:attr/listChoiceIndicatorSingle"
+                    android:text="1080p"
+                    android:textColor="@color/colorText"
+                    android:textSize="@dimen/title_text_size"/>
+
+                <RadioButton
+                    android:id="@+id/resolution_1440p_rb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?android:selectableItemBackground"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:button="@null"
+                    android:drawableEnd="?android:attr/listChoiceIndicatorSingle"
+                    android:text="1440p"
+                    android:textColor="@color/colorText"
+                    android:textSize="@dimen/title_text_size"/>
+
+                <RadioButton
+                    android:id="@+id/resolution_4k_rb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?android:selectableItemBackground"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:button="@null"
+                    android:drawableEnd="?android:attr/listChoiceIndicatorSingle"
+                    android:text="4k"
+                    android:textColor="@color/colorText"
+                    android:textSize="@dimen/title_text_size"/>
+
+            </RadioGroup>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!--FRAME RATE-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/frame_fps_game_settings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/max_space">
+
+            <TextView
+                android:id="@+id/fps_settings_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/title_fps_list"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/title_text_size"
+                app:layout_constraintEnd_toStartOf="@id/current_fps_game_settings_tv"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/current_fps_game_settings_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingHorizontal="@dimen/medium_space"
+                android:text="30 FPS"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/title_text_size"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/fps_settings_desc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/summary_fps_list"
+                app:layout_constraintEnd_toStartOf="@id/current_fps_game_settings_tv"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/fps_settings_title" />
+
+            <!--OPTIONS-->
+            <RadioGroup
+                android:id="@+id/frame_fps_options_setting_dialog"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/min_space"
+                android:orientation="vertical"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/fps_settings_desc">
+
+                <RadioButton
+                    android:id="@+id/fps_30_rb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?android:selectableItemBackground"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:button="@null"
+                    android:drawableEnd="?android:attr/listChoiceIndicatorSingle"
+                    android:text="30 FPS"
+                    android:textColor="@color/colorText"
+                    android:textSize="@dimen/title_text_size" />
+
+                <RadioButton
+                    android:id="@+id/fps_60_rb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?android:selectableItemBackground"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:button="@null"
+                    android:drawableEnd="?android:attr/listChoiceIndicatorSingle"
+                    android:text="60 FPS"
+                    android:textColor="@color/colorText"
+                    android:textSize="@dimen/title_text_size" />
+
+                <RadioButton
+                    android:id="@+id/fps_90_rb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?android:selectableItemBackground"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:button="@null"
+                    android:drawableEnd="?android:attr/listChoiceIndicatorSingle"
+                    android:text="90 FPS"
+                    android:textColor="@color/colorText"
+                    android:textSize="@dimen/title_text_size" />
+
+                <RadioButton
+                    android:id="@+id/fps_120_rb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?android:selectableItemBackground"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:button="@null"
+                    android:drawableEnd="?android:attr/listChoiceIndicatorSingle"
+                    android:text="120 FPS"
+                    android:textColor="@color/colorText"
+                    android:textSize="@dimen/title_text_size" />
+
+            </RadioGroup>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!--VIDEO BITRATE - not implement yet-->
+
+        <!--STRETCH VIDEO-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/max_space"
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
+                android:id="@+id/stretch_video_settings_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/title_checkbox_stretch_video"
@@ -35,17 +274,139 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.8dp"
+                android:layout_marginTop="@dimen/max_space"
+                android:background="@color/gray"
+                app:layout_constraintTop_toBottomOf="@id/stretch_video_settings_title" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- CURSOR -->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/frame_track_pad_setting_dialog"
+
+        <!--AUDIO SETTINGS-->
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/max_space"
-            app:layout_constraintTop_toBottomOf="@id/frame_stretch_video_setting_dialog">
+            android:text="@string/category_audio_settings"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/title_text_size"
+            android:textStyle="bold" />
+
+        <!--SURROUND SOUND-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/frame_sound_game_settings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/max_space">
 
             <TextView
+                android:id="@+id/sound_settings_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/sound_configs_title"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/title_text_size"
+                app:layout_constraintEnd_toStartOf="@id/current_sound_game_settings_tv"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/current_sound_game_settings_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingHorizontal="@dimen/medium_space"
+                android:text="Stereo"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/title_text_size"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/sound_settings_desc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/summary_audio_config_list"
+                app:layout_constraintEnd_toStartOf="@id/current_sound_game_settings_tv"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/sound_settings_title" />
+
+            <!--OPTIONS-->
+            <RadioGroup
+                android:id="@+id/frame_sound_options_setting_dialog"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/sound_settings_desc">
+
+                <RadioButton
+                    android:id="@+id/stereo_sound_rb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?android:selectableItemBackground"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:button="@null"
+                    android:drawableEnd="?android:attr/listChoiceIndicatorSingle"
+                    android:text="Stereo"
+                    android:textColor="@color/colorText"
+                    android:textSize="@dimen/title_text_size" />
+
+                <RadioButton
+                    android:id="@+id/surround_5.1_rb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?android:selectableItemBackground"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:button="@null"
+                    android:drawableEnd="?android:attr/listChoiceIndicatorSingle"
+                    android:text="5.1 Surround Sound"
+                    android:textColor="@color/colorText"
+                    android:textSize="@dimen/title_text_size" />
+
+                <RadioButton
+                    android:id="@+id/surround_7.1_rb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?android:selectableItemBackground"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:button="@null"
+                    android:drawableEnd="?android:attr/listChoiceIndicatorSingle"
+                    android:text="7.1 Surround Sound"
+                    android:textColor="@color/colorText"
+                    android:textSize="@dimen/title_text_size" />
+
+            </RadioGroup>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.8dp"
+                android:layout_marginTop="@dimen/max_space"
+                android:background="@color/gray"
+                app:layout_constraintTop_toBottomOf="@id/frame_sound_options_setting_dialog" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <!--INPUT SETTINGS-->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/max_space"
+            android:text="@string/category_input_settings"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/title_text_size"
+            android:textStyle="bold" />
+
+        <!--TRACK PAD-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/max_space">
+
+            <TextView
+                android:id="@+id/track_pad_settings_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Touchscreen as a trackpad"
@@ -62,7 +423,7 @@
                 android:text="@string/summary_checkbox_touchscreen_trackpad"
                 app:layout_constraintEnd_toStartOf="@id/track_pad_game_settings_switch"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/track_pad_game_settings_switch" />
+                app:layout_constraintTop_toBottomOf="@id/track_pad_settings_title" />
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/track_pad_game_settings_switch"
@@ -74,13 +435,107 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- CONTROLLER -->
+        <!--GAMEPAD PRESENCE DETECTION - not implement yet-->
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/frame_controller_setting_dialog"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/max_space"
-            app:layout_constraintTop_toBottomOf="@id/frame_track_pad_setting_dialog">
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/gamepad_detection_settings_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/title_checkbox_multi_controller"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/title_text_size"
+                app:layout_constraintEnd_toStartOf="@id/gamepad_detection_settings_switch"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/gamepad_detection_settings_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:backgroundTint="@color/colorPrimary"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/gamepad_detection_settings_desc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/summary_checkbox_multi_controller"
+                app:layout_constraintEnd_toStartOf="@id/gamepad_detection_settings_switch"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/gamepad_detection_settings_title" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.8dp"
+                android:layout_marginTop="@dimen/max_space"
+                android:background="@color/gray"
+                app:layout_constraintTop_toBottomOf="@id/gamepad_detection_settings_desc" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <!--BACK AND FORWARD MOUSE BUTTONS - not implement yet-->
+        <!--XBOX 360/ONE USB GAMEPAD DRIVER - not implement yet-->
+        <!--OVERRIDE NATIVE XBOX - not implement yet-->
+        <!--MOUSE EMULATION VIA GAMEPAD - not implement yet-->
+
+        <!-- RUMBLE TO USER'S DEVICE -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/max_space">
+
+            <TextView
+                android:id="@+id/rumble_emulation_settings_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/title_checkbox_vibrate_fallback"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/title_text_size"
+                app:layout_constraintEnd_toStartOf="@id/rumble_emulation_game_settings_switch"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/rumble_emulation_settings_desc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/summary_checkbox_vibrate_fallback"
+                app:layout_constraintEnd_toStartOf="@id/rumble_emulation_game_settings_switch"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/rumble_emulation_settings_title" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/rumble_emulation_game_settings_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:backgroundTint="@color/colorPrimary"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <!--FLIP FACE BUTTONS - not implement yet-->
+
+
+        <!--ON-SCREEN CONTROLS (OSC) SETTINGS-->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/max_space"
+            android:text="@string/controls_settings_title"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/title_text_size"
+            android:textStyle="bold" />
+
+        <!--CONTROLLER-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/max_space">
 
             <TextView
                 android:layout_width="0dp"
@@ -128,7 +583,7 @@
                     app:layout_constraintDimensionRatio="1:1.1"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintWidth_percent=".13">
+                    app:layout_constraintWidth_percent=".205">
 
                     <ImageView
                         android:layout_width="match_parent"
@@ -154,7 +609,7 @@
                     android:orientation="vertical"
                     app:layout_constraintBottom_toBottomOf="@id/edit_controller_position_setting_btn"
                     app:layout_constraintDimensionRatio="1:1"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/reset_controller_setting_btn"
                     app:layout_constraintStart_toEndOf="@id/edit_controller_position_setting_btn"
                     app:layout_constraintTop_toTopOf="@id/edit_controller_position_setting_btn">
 
@@ -172,75 +627,73 @@
 
                 </LinearLayout>
 
+                <!--RESET-->
+                <LinearLayout
+                    android:id="@+id/reset_controller_setting_btn"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:orientation="vertical"
+                    android:paddingStart="@dimen/max_space"
+                    app:layout_constraintBottom_toBottomOf="@id/edit_controller_position_setting_btn"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/edit_controller_position_setting_btn">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:src="@android:drawable/ic_popup_sync" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/reset_text" />
+
+                </LinearLayout>
+
+                <!-- RUMBLE -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/max_space"
+                    app:layout_constraintTop_toBottomOf="@id/edit_controller_position_setting_btn">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/title_checkbox_vibrate_osc"
+                        android:textColor="@color/colorText"
+                        android:textSize="@dimen/title_text_size"
+                        app:layout_constraintEnd_toStartOf="@id/rumble_game_settings_switch"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/rumble_game_settings_switch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:backgroundTint="@color/colorPrimary"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <!--ONLY SHOW R3L3 - not implement yet-->
+                <!--OPACITY - not implement yet-->
+
             </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- RUMBLE -->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/frame_rumble_setting_dialog"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/max_space"
-            app:layout_constraintTop_toBottomOf="@id/frame_controller_setting_dialog">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="@string/title_checkbox_vibrate_osc"
-                android:textColor="@color/colorText"
-                android:textSize="@dimen/title_text_size"
-                app:layout_constraintEnd_toStartOf="@id/rumble_game_settings_switch"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/rumble_game_settings_switch"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:backgroundTint="@color/colorPrimary"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.8dp"
+                android:layout_marginTop="@dimen/max_space"
+                android:background="@color/gray"
+                app:layout_constraintTop_toBottomOf="@id/frame_controller_options_setting_dialog" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- RUMBLE -->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/frame_rumble_emulation_setting_dialog"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/max_space"
-            app:layout_constraintTop_toBottomOf="@id/frame_rumble_setting_dialog">
-
-            <TextView
-                android:id="@+id/rumble_emulation_settings_title"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="@string/title_checkbox_vibrate_fallback"
-                android:textColor="@color/colorText"
-                android:textSize="@dimen/title_text_size"
-                app:layout_constraintEnd_toStartOf="@id/rumble_emulation_game_settings_switch"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/rumble_emulation_settings_desc"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="@string/summary_checkbox_vibrate_fallback"
-                app:layout_constraintEnd_toStartOf="@id/rumble_emulation_game_settings_switch"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/rumble_emulation_settings_title" />
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/rumble_emulation_game_settings_switch"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:backgroundTint="@color/colorPrimary"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
 </androidx.core.widget.NestedScrollView>

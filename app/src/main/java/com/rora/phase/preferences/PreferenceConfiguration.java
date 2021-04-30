@@ -9,6 +9,9 @@ import android.preference.PreferenceManager;
 
 import com.rora.phase.nvstream.jni.MoonBridge;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PreferenceConfiguration {
     private static final String LEGACY_RES_FPS_PREF_STRING = "list_resolution_fps";
     private static final String LEGACY_ENABLE_51_SURROUND_PREF_STRING = "checkbox_51_surround";
@@ -87,15 +90,15 @@ public class PreferenceConfiguration {
     public static final String RES_NATIVE = "Native";
 
     private Context context;
-    public int width, height, fps;
-    public int bitrate;
+    private int width, height, fps;
+    private int bitrate;
     public int videoFormat;
     public int deadzonePercentage;
     public int oscOpacity;
     private boolean stretchVideo;
     public boolean enableSops, playHostAudio, disableWarnings;
     public String language;
-    public boolean smallIconMode, multiController, usbDriver, flipFaceButtons;
+    private boolean smallIconMode, multiController, usbDriver, flipFaceButtons;
     private boolean onscreenController;
     public boolean onlyL3R3;
     public boolean disableFrameDrop;
@@ -110,13 +113,27 @@ public class PreferenceConfiguration {
     private boolean vibrateOsc;
     private boolean vibrateFallbackToDevice;
     private boolean touchscreenTrackpad;
-    public MoonBridge.AudioConfiguration audioConfiguration;
+    private MoonBridge.AudioConfiguration audioConfiguration;
+
+    private CharSequence[] resolutionList = new CharSequence[6];
 
     public PreferenceConfiguration() {
+        resolutionList[0] = RES_360P;
+        resolutionList[1] = RES_480P;
+        resolutionList[2] = RES_720P;
+        resolutionList[3] = RES_1080P;
+        resolutionList[4] = RES_1440P;
+        resolutionList[5] = RES_4K;
     }
 
     public PreferenceConfiguration(Context context) {
         this.context = context;
+        resolutionList[0] = RES_360P;
+        resolutionList[1] = RES_480P;
+        resolutionList[2] = RES_720P;
+        resolutionList[3] = RES_1080P;
+        resolutionList[4] = RES_1440P;
+        resolutionList[5] = RES_4K;
     }
 
     public static boolean isNativeResolution(int width, int height) {
@@ -194,6 +211,91 @@ public class PreferenceConfiguration {
         }
     }
 
+    public String getResolution() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getString(RESOLUTION_PREF_STRING, DEFAULT_RESOLUTION);
+    }
+
+    public CharSequence[] getDefaultResolutionList() {
+        return resolutionList;
+    }
+
+    public void addResolution(CharSequence[] resolutions) {
+        resolutionList = resolutions;
+    }
+
+    public String getResolutionPixelString() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        switch (prefs.getString(RESOLUTION_PREF_STRING, DEFAULT_RESOLUTION)) {
+            case RES_360P:
+                return "360p";
+            case RES_480P:
+                return "480p";
+            default:
+            case RES_720P:
+                return "720p";
+            case RES_1080P:
+                return "1080p";
+            case RES_1440P:
+                return "1440p";
+            case RES_4K:
+                return "4k";
+        }
+    }
+
+    public void setResolution (String resolution) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().putString(RESOLUTION_PREF_STRING, resolution).apply();
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public int getFps() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return fps = Integer.parseInt(prefs.getString(FPS_PREF_STRING, PreferenceConfiguration.DEFAULT_FPS));
+    }
+
+    public void setFps(int fps) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().putString(FPS_PREF_STRING, "" + fps).apply();
+    }
+
+    public MoonBridge.AudioConfiguration getAudioConfiguration() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+        String audioConfig = prefs.getString(AUDIO_CONFIG_PREF_STRING, DEFAULT_AUDIO_CONFIG);
+        if (audioConfig.equals("71")) {
+            audioConfiguration = MoonBridge.AUDIO_CONFIGURATION_71_SURROUND;
+        }
+        else if (audioConfig.equals("51")) {
+            audioConfiguration = MoonBridge.AUDIO_CONFIGURATION_51_SURROUND;
+        }
+        else /* if (audioConfig.equals("2")) */ {
+            audioConfiguration = MoonBridge.AUDIO_CONFIGURATION_STEREO;
+        }
+
+        return audioConfiguration;
+    }
+
+    public void setAudioConfiguration(String value) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().putString(AUDIO_CONFIG_PREF_STRING, value).apply();
+    }
+
     public boolean getStretchVideo() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         stretchVideo = prefs.getBoolean(STRETCH_PREF_STRING, DEFAULT_STRETCH);
@@ -248,6 +350,40 @@ public class PreferenceConfiguration {
         prefs.edit().putBoolean(VIBRATE_FALLBACK_PREF_STRING, vibrateFallbackToDevice).apply();
     }
 
+    public boolean getMultiControllerDetection() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return multiController = prefs.getBoolean(MULTI_CONTROLLER_PREF_STRING, DEFAULT_MULTI_CONTROLLER);
+    }
+
+    public void setMultiController(boolean enableMultiController) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().putBoolean(MULTI_CONTROLLER_PREF_STRING, enableMultiController).apply();
+    }
+
+    public boolean isSmallIconMode() {
+        return smallIconMode;
+    }
+
+    public void setSmallIconMode(boolean smallIconMode) {
+        this.smallIconMode = smallIconMode;
+    }
+
+    public boolean getUsbDriver() {
+        return usbDriver;
+    }
+
+    public void setUsbDriver(boolean usbDriver) {
+        this.usbDriver = usbDriver;
+    }
+
+    public boolean getFlipFaceButtons() {
+        return flipFaceButtons;
+    }
+
+    public void setFlipFaceButtons(boolean flipFaceButtons) {
+        this.flipFaceButtons = flipFaceButtons;
+    }
+
     public static int getDefaultBitrate(String resString, String fpsString) {
         int width = getWidthFromResolutionString(resString);
         int height = getHeightFromResolutionString(resString);
@@ -280,6 +416,26 @@ public class PreferenceConfiguration {
         else /* if (width * height <= 3840 * 2160) */ {
             return (int)(40000 * (fps / 30.0));
         }
+    }
+
+    public int getBitrate() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return bitrate = prefs.getInt(BITRATE_PREF_STRING, getDefaultBitrate(prefs.getString(PreferenceConfiguration.RESOLUTION_PREF_STRING, PreferenceConfiguration.DEFAULT_RESOLUTION), prefs.getString(PreferenceConfiguration.FPS_PREF_STRING, PreferenceConfiguration.DEFAULT_FPS)));
+    }
+
+    public void setBitrate(String res, String fps) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+        if (res == null) {
+            res = prefs.getString(PreferenceConfiguration.RESOLUTION_PREF_STRING, PreferenceConfiguration.DEFAULT_RESOLUTION);
+        }
+        if (fps == null) {
+            fps = prefs.getString(PreferenceConfiguration.FPS_PREF_STRING, PreferenceConfiguration.DEFAULT_FPS);
+        }
+
+        this.bitrate = PreferenceConfiguration.getDefaultBitrate(res, fps);
+
+        prefs.edit().putInt(PreferenceConfiguration.BITRATE_PREF_STRING, bitrate).apply();
     }
 
     public static boolean getDefaultSmallMode(Context context) {

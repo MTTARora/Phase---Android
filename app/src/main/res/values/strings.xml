@@ -293,4 +293,9 @@
     <string name="continue_text">Continue</string>
     <string name="stop_text">Stop</string>
 
+    <!-- SETTING -->
+    <string name="sound_configs_title">Sound configuration</string>
+    <string name="controls_settings_title">Controls Settings</string>
+    <string name="reset_text">Reset</string>
+
 </resources>

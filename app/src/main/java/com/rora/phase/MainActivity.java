@@ -26,9 +26,13 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.rora.phase.binding.input.touch.AbsoluteTouchContext;
+import com.rora.phase.binding.input.touch.RelativeTouchContext;
+import com.rora.phase.binding.input.virtual_controller.VirtualController;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.UserPlayingData;
 import com.rora.phase.ui.game.GameDetailFragment;
+import com.rora.phase.ui.game.GameSettingsDialog;
 import com.rora.phase.ui.settings.auth.AuthActivity;
 import com.rora.phase.ui.viewmodel.GameViewModel;
 import com.rora.phase.utils.Dialog;
@@ -115,6 +119,29 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
         queueView.setOnClickListener(v -> goToGameDetails());
         triggerProgressMainBtn.setOnClickListener(v -> quitSession());
         triggerProgressBtn.setOnClickListener(v -> quitSession());
+        setupSettingDialog();
+    }
+
+    private void setupSettingDialog() {
+        GameSettingsDialog settingsDialog = new GameSettingsDialog(this);
+        settingsDialog.setOnSettingsChangedListener(new GameSettingsDialog.OnGameSettingsChanged() {
+            @Override
+            public void onStretchVideoChanged(boolean isEnable) {
+                //Restart this activity to apply new configs
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
+            }
+
+            @Override
+            public void onTouchScreenMethodChanged(boolean enableTrackPad) {
+            }
+
+            @Override
+            public void onControllerModeChanged(VirtualController.ControllerMode mode) {
+            }
+        });
+        findViewById(R.id.settings_game_fab).setOnClickListener(v -> settingsDialog.show());
     }
 
     private void goToGameDetails() {

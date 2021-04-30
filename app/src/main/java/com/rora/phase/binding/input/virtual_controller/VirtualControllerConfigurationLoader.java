@@ -208,7 +208,7 @@ public class VirtualControllerConfigurationLoader {
 
             controller.addElement(createDigitalButton(
                     VirtualControllerElement.EID_A,
-                    !config.flipFaceButtons ? ControllerPacket.A_FLAG : ControllerPacket.B_FLAG, 0, 1,
+                    !config.getFlipFaceButtons() ? ControllerPacket.A_FLAG : ControllerPacket.B_FLAG, 0, 1,
                     !config.flipFaceButtons ? "A" : "B", -1, controller, context),
                     screenScale(BUTTON_BASE_X, height) + rightDisplacement,
                     screenScale(BUTTON_BASE_Y + 2 * BUTTON_SIZE, height),
