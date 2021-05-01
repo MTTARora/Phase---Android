@@ -39,7 +39,8 @@ public class VirtualController {
         Active,
         MoveButtons,
         ResizeButtons,
-        HideButtons
+        HideButtons,
+        RESET
     }
 
     private static final boolean _PRINT_DEBUG_INFORMATION = false;
@@ -206,6 +207,7 @@ public class VirtualController {
             case HideButtons:
                 break;
         }
+
         setVisibilityAllExceptSettingButton();
         relative_layout.invalidate();
 

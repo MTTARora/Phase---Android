@@ -245,6 +245,12 @@
     <string name="require_login_msg">Sign in now to play</string>
     <string name="err">Error</string>
     <string name="similar_game_title">Similar games</string>
+    <string name="h256_if_available">Use H.265 only if stable</string>
+    <string name="h256_if_available_short">Stable</string>
+    <string name="h256_always">Always use H.265 (may crash)</string>
+    <string name="h256_always_short">Always</string>
+    <string name="h256_never">Never use H.265</string>
+    <string name="h256_never_short">Nerver</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

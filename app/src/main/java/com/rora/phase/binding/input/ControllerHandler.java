@@ -241,7 +241,7 @@ public class ControllerHandler implements InputManager.InputDeviceListener, UsbD
         }
 
         // Count all USB devices that match our drivers
-        if (PreferenceConfiguration.readPreferences(context).usbDriver) {
+        if (PreferenceConfiguration.readPreferences(context).getUsbDriver()) {
             UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
             for (UsbDevice dev : usbManager.getDeviceList().values()) {
                 // We explicitly check not to claim devices that appear as InputDevices
@@ -297,7 +297,7 @@ public class ControllerHandler implements InputManager.InputDeviceListener, UsbD
                 RoraLog.info("Built-in buttons hardcoded as controller 0");
                 context.controllerNumber = 0;
             }
-            else if (prefConfig.multiController && devContext.hasJoystickAxes) {
+            else if (prefConfig.getMultiControllerDetection() && devContext.hasJoystickAxes) {
                 context.controllerNumber = 0;
 
                 RoraLog.info("Reserving the next available controller number");
@@ -321,7 +321,7 @@ public class ControllerHandler implements InputManager.InputDeviceListener, UsbD
             }
         }
         else {
-            if (prefConfig.multiController) {
+            if (prefConfig.getMultiControllerDetection()) {
                 context.controllerNumber = 0;
 
                 RoraLog.info("Reserving the next available controller number");
@@ -770,7 +770,7 @@ public class ControllerHandler implements InputManager.InputDeviceListener, UsbD
     }
 
     private short getActiveControllerMask() {
-        if (prefConfig.multiController) {
+        if (prefConfig.getMultiControllerDetection()) {
             return (short)(currentControllers | initialControllers | (prefConfig.getOnscreenController() ? 1 : 0));
         }
         else {
@@ -1370,7 +1370,7 @@ public class ControllerHandler implements InputManager.InputDeviceListener, UsbD
             //}
 
             if (prefConfig.getVibrateOsc()) {
-                if(!foundMatchingDevice && prefConfig.getOnscreenController() && !prefConfig.onlyL3R3) {
+                if(!foundMatchingDevice && prefConfig.getOnscreenController() && !prefConfig.getOnlyL3R3()) {
                     // If we didn't find a matching device, it must be the on-screen
                     // controls that triggered the rumble. Vibrate the device if
                     // the user has requested that behavior.
@@ -1400,7 +1400,7 @@ public class ControllerHandler implements InputManager.InputDeviceListener, UsbD
 
         int keyCode = handleRemapping(context, event);
 
-        if (prefConfig.flipFaceButtons) {
+        if (prefConfig.getFlipFaceButtons()) {
             keyCode = handleFlipFaceButtons(keyCode);
         }
 
@@ -1431,7 +1431,7 @@ public class ControllerHandler implements InputManager.InputDeviceListener, UsbD
             // any action.
             if ((context.inputMap & ControllerPacket.PLAY_FLAG) != 0 &&
                     SystemClock.uptimeMillis() - context.startDownTime > ControllerHandler.START_DOWN_TIME_MOUSE_MODE_MS &&
-                    prefConfig.mouseEmulation) {
+                    prefConfig.getMouseEmulation()) {
                 toggleMouseEmulation(context);
             }
             context.inputMap &= ~ControllerPacket.PLAY_FLAG;
@@ -1566,7 +1566,7 @@ public class ControllerHandler implements InputManager.InputDeviceListener, UsbD
 
         int keyCode = handleRemapping(context, event);
 
-        if (prefConfig.flipFaceButtons) {
+        if (prefConfig.getFlipFaceButtons()) {
             keyCode = handleFlipFaceButtons(keyCode);
         }
 

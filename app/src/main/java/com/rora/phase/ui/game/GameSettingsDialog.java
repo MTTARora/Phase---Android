@@ -10,7 +10,6 @@ import android.os.Vibrator;
 import android.util.Range;
 import android.view.Display;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -33,7 +32,11 @@ import static android.view.View.GONE;
 import static com.rora.phase.binding.input.virtual_controller.VirtualController.ControllerMode.Active;
 import static com.rora.phase.binding.input.virtual_controller.VirtualController.ControllerMode.HideButtons;
 import static com.rora.phase.binding.input.virtual_controller.VirtualController.ControllerMode.MoveButtons;
+import static com.rora.phase.binding.input.virtual_controller.VirtualController.ControllerMode.RESET;
 import static com.rora.phase.binding.input.virtual_controller.VirtualController.ControllerMode.ResizeButtons;
+import static com.rora.phase.preferences.PreferenceConfiguration.AUTOSELECT_H265;
+import static com.rora.phase.preferences.PreferenceConfiguration.FORCE_H265_OFF;
+import static com.rora.phase.preferences.PreferenceConfiguration.FORCE_H265_ON;
 import static com.rora.phase.preferences.PreferenceConfiguration.RES_1080P;
 import static com.rora.phase.preferences.PreferenceConfiguration.RES_1440P;
 import static com.rora.phase.preferences.PreferenceConfiguration.RES_360P;
@@ -53,11 +56,13 @@ public class GameSettingsDialog extends Dialog {
     private Activity activity;
     private PreferenceConfiguration prefConfig;
 
-    private SwitchCompat controllerSwitch, touchScreenSwitch, stretchVideoSwitch, rumbleSwitch, rumbleEmulationSwitch, gamePadDetectionSwitch;
-    private TextView currentResolutionTv, currentFpsTv, currentSoundTv;
-    private ConstraintLayout frameResolution, frameFps, frameSound;
+    private SwitchCompat controllerSwitch, touchScreenSwitch, stretchVideoSwitch, rumbleSwitch, rumbleEmulationSwitch;
+    private SwitchCompat gamePadDetectionSwitch, mouseNavBtnsSwitch, xb1UsbDriverSwitch, phaseUsbDriverSwitch, mouseEmulationSwitch, flipFaceBtnsSwitch;
+    private SwitchCompat l3r3Switch, pipSwitch, neverDropFramesSwitch;
+    private TextView currentResolutionTv, currentFpsTv, currentSoundTv, currentVideoFormatTv;
+    private ConstraintLayout frameResolution, frameFps, frameSound, frameVideoFormat;
     private ConstraintLayout frameControllerOptions;
-    private RadioGroup frameResolutionOptions, frameFpsOptions, frameSoundOptions;
+    private RadioGroup frameResolutionOptions, frameFpsOptions, frameSoundOptions, frameVideoFormatOptions;
     private VirtualController.ControllerMode controllerMode;
 
     private int nativeResolutionStartIndex = Integer.MAX_VALUE;
@@ -72,6 +77,7 @@ public class GameSettingsDialog extends Dialog {
         frameResolution = findViewById(R.id.frame_resolution_game_settings);
         frameFps = findViewById(R.id.frame_fps_game_settings);
         frameSound = findViewById(R.id.frame_sound_game_settings);
+        frameVideoFormat = findViewById(R.id.frame_video_format_settings);
 
         stretchVideoSwitch = findViewById(R.id.stretch_video_game_settings_switch);
         touchScreenSwitch = findViewById(R.id.track_pad_game_settings_switch);
@@ -79,14 +85,25 @@ public class GameSettingsDialog extends Dialog {
         rumbleSwitch = findViewById(R.id.rumble_game_settings_switch);
         rumbleEmulationSwitch = findViewById(R.id.rumble_emulation_game_settings_switch);
         gamePadDetectionSwitch = findViewById(R.id.gamepad_detection_settings_switch);
+        mouseNavBtnsSwitch = findViewById(R.id.mouse_nav_buttons_settings_switch);
+        xb1UsbDriverSwitch = findViewById(R.id.xb1_usb_driver_settings_switch);
+        phaseUsbDriverSwitch = findViewById(R.id.over_drive_native_xbox_settings_switch);
+        mouseEmulationSwitch = findViewById(R.id.mouse_emulation_settings_switch);
+        flipFaceBtnsSwitch = findViewById(R.id.flip_face_btns_settings_switch);
+        l3r3Switch = findViewById(R.id.only_r3_l3_settings_switch);
+        pipSwitch = findViewById(R.id.pip_settings_switch);
+        neverDropFramesSwitch = findViewById(R.id.never_drop_frames_settings_switch);
+
         currentResolutionTv = findViewById(R.id.current_resolution_game_settings_tv);
         currentFpsTv = findViewById(R.id.current_fps_game_settings_tv);
         currentSoundTv = findViewById(R.id.current_sound_game_settings_tv);
+        currentVideoFormatTv = findViewById(R.id.current_video_format_settings_tv);
 
         frameControllerOptions = findViewById(R.id.frame_controller_options_setting_dialog);
         frameResolutionOptions = findViewById(R.id.frame_resolution_options_setting_dialog);
         frameFpsOptions = findViewById(R.id.frame_fps_options_setting_dialog);
         frameSoundOptions = findViewById(R.id.frame_sound_options_setting_dialog);
+        frameVideoFormatOptions = findViewById(R.id.frame_video_format_options_seting_dialog);
 
         this.activity = activity;
         prefConfig = PreferenceConfiguration.readPreferences(activity);
@@ -395,8 +412,12 @@ public class GameSettingsDialog extends Dialog {
     private void configInputSettings() {
         setupTouchScreenMethod();
         setupGamePadDetection();
-
+        setupMouseNavButtons();
+        setupXb1UsbGamePadDriver();
+        setupUsbUsingPhaseDriver();
+        setupMouseEmulation();
         setupRumbleEmulation();
+        setupFlipFaceBtns();
     }
 
     private void setupTouchScreenMethod() {
@@ -418,16 +439,24 @@ public class GameSettingsDialog extends Dialog {
         gamePadDetectionSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> prefConfig.setMultiController(isChecked));
     }
 
-    private void setupMouseButtons() {
-
+    private void setupMouseNavButtons() {
+        mouseNavBtnsSwitch.setChecked(prefConfig.getMouseNavButtons());
+        mouseNavBtnsSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> prefConfig.setMouseNavButtons(isChecked));
     }
 
-    private void setupUsbGamePadDriver() {
+    private void setupXb1UsbGamePadDriver() {
+        xb1UsbDriverSwitch.setChecked(prefConfig.getUsbDriver());
+        xb1UsbDriverSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> prefConfig.setUsbDriver(isChecked));
+    }
 
+    private void setupUsbUsingPhaseDriver() {
+        phaseUsbDriverSwitch.setChecked(prefConfig.getBindAllUsb());
+        phaseUsbDriverSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> prefConfig.setBindAllUsb(isChecked));
     }
 
     private void setupMouseEmulation() {
-
+        mouseEmulationSwitch.setChecked(prefConfig.getMouseEmulation());
+        mouseEmulationSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> prefConfig.setMouseEmulation(isChecked));
     }
 
     private void setupRumbleEmulation() {
@@ -442,12 +471,18 @@ public class GameSettingsDialog extends Dialog {
         });
     }
 
+    private void setupFlipFaceBtns() {
+        flipFaceBtnsSwitch.setChecked(prefConfig.getMouseEmulation());
+        flipFaceBtnsSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> prefConfig.setMouseEmulation(isChecked));
+    }
+
 
     //------------------- ON-SCREEN CONTROLS (OSC) SETTINGS -----------------
 
     private void configOSCSettings() {
         setupOSC();
         setupRumble();
+        setupL3R3();
     }
 
     private void setupOSC() {
@@ -486,6 +521,11 @@ public class GameSettingsDialog extends Dialog {
                 onSettingsChangedListener.onControllerModeChanged(ResizeButtons);
             }
         });
+
+        findViewById(R.id.reset_controller_setting_btn).setOnClickListener(v -> {
+            prefConfig.resetOSCDisplaySetting();
+            onSettingsChangedListener.onControllerModeChanged(RESET);
+        });
     }
 
     private void setupRumble() {
@@ -495,9 +535,12 @@ public class GameSettingsDialog extends Dialog {
         }
 
         rumbleSwitch.setChecked(prefConfig.getVibrateOsc());
-        rumbleSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            prefConfig.setVibrateOsc(isChecked);
-        });
+        rumbleSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> prefConfig.setVibrateOsc(isChecked));
+    }
+
+    private void setupL3R3() {
+        l3r3Switch.setChecked(prefConfig.getOnlyL3R3());
+        l3r3Switch.setOnCheckedChangeListener((buttonView, isChecked) -> prefConfig.setOnlyL3R3(isChecked));
     }
 
 
@@ -522,17 +565,59 @@ public class GameSettingsDialog extends Dialog {
                 getContext().getPackageManager().hasSystemFeature("com.amazon.software.fireos")) {
             //PreferenceCategory category = (PreferenceCategory) findPreference("category_ui_settings");
             //category.removePreference(findPreference("checkbox_enable_pip"));
+            pipSwitch.setClickable(false);
         }
+
+        pipSwitch.setChecked(prefConfig.getPiP());
+        pipSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> prefConfig.setEnablePip(isChecked));
     }
 
 
     //------------------- ADVANCED SETTINGS ----------------------
 
     private void configAdvancedSettings() {
-
+        setupVideoFormat();
+        setupNeverDropFrames();
     }
 
-    private void setupFrameRates() {
+    private void setupVideoFormat() {
+        switch (prefConfig.getVideoFormatValue(activity)) {
+            case AUTOSELECT_H265:
+                currentVideoFormatTv.setText(activity.getResources().getString(R.string.h256_if_available_short));
+                frameVideoFormatOptions.check(R.id.h265_if_stable_rb);
+                break;
+            case FORCE_H265_ON:
+                currentVideoFormatTv.setText(activity.getResources().getString(R.string.h256_always_short));
+                frameVideoFormatOptions.check(R.id.h265_always_rb);
+                break;
+            case FORCE_H265_OFF:
+                currentVideoFormatTv.setText(activity.getResources().getString(R.string.h256_never_short));
+                frameVideoFormatOptions.check(R.id.h265_never_rb);
+                break;
+        }
+
+        frameVideoFormat.setOnClickListener(v -> frameVideoFormatOptions.setVisibility(frameVideoFormatOptions.getVisibility() == GONE ? View.VISIBLE : GONE));
+
+        frameVideoFormatOptions.setOnCheckedChangeListener((group, checkedId) -> {
+            switch (checkedId) {
+                case R.id.h265_if_stable_rb:
+                    currentVideoFormatTv.setText(activity.getResources().getString(R.string.h256_if_available_short));
+                    prefConfig.setVideoFormat("auto");
+                    break;
+                case R.id.h265_always_rb:
+                    currentVideoFormatTv.setText(activity.getResources().getString(R.string.h256_always_short));
+                    prefConfig.setVideoFormat("forceh265");
+                    break;
+                case R.id.h265_never_rb:
+                    currentVideoFormatTv.setText(activity.getResources().getString(R.string.h256_never_short));
+                    prefConfig.setVideoFormat("neverh265");
+                    break;
+            }
+        });
+    }
+
+    //NOT IMPLEMENT YET
+    private void setupHDR() {
         Display display = activity.getWindowManager().getDefaultDisplay();
         Display.HdrCapabilities hdrCaps = display.getHdrCapabilities();
 
@@ -551,6 +636,11 @@ public class GameSettingsDialog extends Dialog {
             //RoraLog.info("Excluding HDR toggle based on display capabilities");
             //Remove hdr option here
         }
+    }
+
+    private void setupNeverDropFrames() {
+        neverDropFramesSwitch.setChecked(!prefConfig.getFrameDrop());
+        neverDropFramesSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> prefConfig.setDisableFrameDrop(!isChecked));
     }
 
 

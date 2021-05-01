@@ -12,6 +12,8 @@ import com.rora.phase.nvstream.jni.MoonBridge;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.rora.phase.binding.input.virtual_controller.VirtualControllerConfigurationLoader.OSC_PREFERENCE;
+
 public class PreferenceConfiguration {
     private static final String LEGACY_RES_FPS_PREF_STRING = "list_resolution_fps";
     private static final String LEGACY_ENABLE_51_SURROUND_PREF_STRING = "checkbox_51_surround";
@@ -100,15 +102,15 @@ public class PreferenceConfiguration {
     public String language;
     private boolean smallIconMode, multiController, usbDriver, flipFaceButtons;
     private boolean onscreenController;
-    public boolean onlyL3R3;
-    public boolean disableFrameDrop;
+    private boolean onlyL3R3;
+    private boolean disableFrameDrop;
     public boolean enableHdr;
-    public boolean enablePip;
+    private boolean enablePip;
     public boolean enablePerfOverlay;
     public boolean enableLatencyToast;
-    public boolean bindAllUsb;
-    public boolean mouseEmulation;
-    public boolean mouseNavButtons;
+    private boolean bindAllUsb;
+    private boolean mouseEmulation;
+    private boolean mouseNavButtons;
     public boolean unlockFps;
     private boolean vibrateOsc;
     private boolean vibrateFallbackToDevice;
@@ -317,10 +319,13 @@ public class PreferenceConfiguration {
         prefs.edit().putBoolean(ONSCREEN_CONTROLLER_PREF_STRING, true).apply();
     }
 
+    public void resetOSCDisplaySetting() {
+        context.getSharedPreferences(OSC_PREFERENCE, Context.MODE_PRIVATE).edit().clear().apply();
+    }
+
     public boolean getTouchscreenTrackpad() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        touchscreenTrackpad = prefs.getBoolean(TOUCHSCREEN_TRACKPAD_PREF_STRING, DEFAULT_TOUCHSCREEN_TRACKPAD);
-        return touchscreenTrackpad;
+        return touchscreenTrackpad = prefs.getBoolean(TOUCHSCREEN_TRACKPAD_PREF_STRING, DEFAULT_TOUCHSCREEN_TRACKPAD);
     }
 
     public void setTouchscreenTrackpad(boolean touchscreenTrackpad) {
@@ -330,8 +335,7 @@ public class PreferenceConfiguration {
 
     public boolean getVibrateOsc() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        vibrateOsc = prefs.getBoolean(VIBRATE_OSC_PREF_STRING, DEFAULT_VIBRATE_OSC);
-        return vibrateOsc;
+        return vibrateOsc = prefs.getBoolean(VIBRATE_OSC_PREF_STRING, DEFAULT_VIBRATE_OSC);
     }
 
     public void setVibrateOsc(boolean vibrateOsc) {
@@ -341,8 +345,7 @@ public class PreferenceConfiguration {
 
     public boolean getVibrateFallbackToDevice() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        vibrateFallbackToDevice = prefs.getBoolean(VIBRATE_FALLBACK_PREF_STRING, DEFAULT_VIBRATE_FALLBACK);
-        return vibrateFallbackToDevice;
+        return vibrateFallbackToDevice = prefs.getBoolean(VIBRATE_FALLBACK_PREF_STRING, DEFAULT_VIBRATE_FALLBACK);
     }
 
     public void setVibrateFallbackToDevice(boolean vibrateFallbackToDevice) {
@@ -360,28 +363,94 @@ public class PreferenceConfiguration {
         prefs.edit().putBoolean(MULTI_CONTROLLER_PREF_STRING, enableMultiController).apply();
     }
 
-    public boolean isSmallIconMode() {
-        return smallIconMode;
+    public boolean getSmallIconMode() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return smallIconMode = prefs.getBoolean(SMALL_ICONS_PREF_STRING, getDefaultSmallMode(context));
     }
 
-    public void setSmallIconMode(boolean smallIconMode) {
-        this.smallIconMode = smallIconMode;
+    public void setSmallIconMode(boolean enableSmallIconMode) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().putBoolean(SMALL_ICONS_PREF_STRING, enableSmallIconMode).apply();
     }
 
     public boolean getUsbDriver() {
-        return usbDriver;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return usbDriver = prefs.getBoolean(USB_DRIVER_PREF_SRING, DEFAULT_USB_DRIVER);
     }
 
-    public void setUsbDriver(boolean usbDriver) {
-        this.usbDriver = usbDriver;
+    public void setUsbDriver(boolean enableUsbDriver) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().putBoolean(USB_DRIVER_PREF_SRING, enableUsbDriver).apply();
+    }
+
+    public boolean getMouseNavButtons() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return mouseNavButtons = prefs.getBoolean(MOUSE_NAV_BUTTONS_STRING, DEFAULT_MOUSE_NAV_BUTTONS);
+    }
+
+    public void setMouseNavButtons(boolean enableMouseNavButtons) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().putBoolean(MOUSE_NAV_BUTTONS_STRING, enableMouseNavButtons).apply();
+    }
+
+    public boolean getBindAllUsb() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return bindAllUsb = prefs.getBoolean(BIND_ALL_USB_STRING, DEFAULT_BIND_ALL_USB);
+    }
+
+    public void setBindAllUsb(boolean enableBindAllUsb) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().putBoolean(BIND_ALL_USB_STRING, enableBindAllUsb).apply();
+    }
+
+    public boolean getMouseEmulation() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return mouseEmulation = prefs.getBoolean(MOUSE_EMULATION_STRING, DEFAULT_MOUSE_EMULATION);
+    }
+
+    public void setMouseEmulation(boolean enableMouseEmulation) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().putBoolean(MOUSE_EMULATION_STRING, enableMouseEmulation).apply();
     }
 
     public boolean getFlipFaceButtons() {
-        return flipFaceButtons;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return flipFaceButtons = prefs.getBoolean(FLIP_FACE_BUTTONS_PREF_STRING, DEFAULT_FLIP_FACE_BUTTONS);
     }
 
-    public void setFlipFaceButtons(boolean flipFaceButtons) {
-        this.flipFaceButtons = flipFaceButtons;
+    public void setFlipFaceButtons(boolean enableFlipFaceButtons) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().putBoolean(FLIP_FACE_BUTTONS_PREF_STRING, enableFlipFaceButtons).apply();
+    }
+
+    public boolean getOnlyL3R3() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return onlyL3R3 = prefs.getBoolean(ONLY_L3_R3_PREF_STRING, ONLY_L3_R3_DEFAULT);
+    }
+
+    public void setOnlyL3R3(boolean enableL3R3) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().putBoolean(ONLY_L3_R3_PREF_STRING, enableL3R3).apply();
+    }
+
+    public boolean getPiP() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return enablePip = prefs.getBoolean(ENABLE_PIP_PREF_STRING, DEFAULT_ENABLE_PIP);
+    }
+
+    public void setEnablePip(boolean enablePiP) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().putBoolean(ENABLE_PIP_PREF_STRING, enablePiP).apply();
+    }
+
+    public boolean getFrameDrop() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return disableFrameDrop = prefs.getBoolean(DISABLE_FRAME_DROP_PREF_STRING, DEFAULT_DISABLE_FRAME_DROP);
+    }
+
+    public void setDisableFrameDrop(boolean disableFrameDrop) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().putBoolean(DISABLE_FRAME_DROP_PREF_STRING, disableFrameDrop).apply();
     }
 
     public static int getDefaultBitrate(String resString, String fpsString) {
@@ -465,7 +534,7 @@ public class PreferenceConfiguration {
                 prefs.getString(FPS_PREF_STRING, DEFAULT_FPS));
     }
 
-    private static int getVideoFormatValue(Context context) {
+    public static int getVideoFormatValue(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         String str = prefs.getString(VIDEO_FORMAT_PREF_STRING, DEFAULT_VIDEO_FORMAT);
@@ -482,6 +551,11 @@ public class PreferenceConfiguration {
             // Should never get here
             return AUTOSELECT_H265;
         }
+    }
+
+    public void setVideoFormat(String format) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().putString(VIDEO_FORMAT_PREF_STRING, format).apply();
     }
 
     public static void resetStreamingSettings(Context context) {

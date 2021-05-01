@@ -74,7 +74,7 @@ public class AppGridAdapter extends GenericGridAdapter<AppView.AppObject> {
     }
 
     private static int getLayoutIdForPreferences(PreferenceConfiguration prefs) {
-        if (prefs.smallIconMode) {
+        if (prefs.getSmallIconMode()) {
             return R.layout.app_grid_item_small;
         }
         else {
@@ -86,7 +86,7 @@ public class AppGridAdapter extends GenericGridAdapter<AppView.AppObject> {
         int dpi = context.getResources().getDisplayMetrics().densityDpi;
         int dp;
 
-        if (prefs.smallIconMode) {
+        if (prefs.getSmallIconMode()) {
             dp = SMALL_WIDTH_DP;
         }
         else {

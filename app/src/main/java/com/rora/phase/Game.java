@@ -320,7 +320,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
         super.onUserLeaveHint();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (prefConfig.enablePip && connected) {
+            if (prefConfig.getPiP() && connected) {
                 try {
                     // This has thrown all sorts of weird exceptions on Samsung devices
                     // running Oreo. Just eat them and close gracefully on leave, rather
@@ -962,7 +962,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
         // to track the state of the pipeline and time frames.
         int roundedRefreshRate = Math.round(displayRefreshRate);
         int chosenFrameRate = prefConfig.getFps();
-        if (!prefConfig.disableFrameDrop || prefConfig.unlockFps) {
+        if (!prefConfig.getFrameDrop() || prefConfig.unlockFps) {
             if (Build.DEVICE.equals("coral") || Build.DEVICE.equals("flame")) {
                 // HACK: Pixel 4 (XL) ignores the preferred display mode and lowers refresh rate,
                 // causing frame pacing issues. See https://issuetracker.google.com/issues/143401475
@@ -1012,7 +1012,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
         }
 
         int gamepadMask = ControllerHandler.getAttachedControllerMask(this);
-        if (!prefConfig.multiController) {
+        if (!prefConfig.getMultiControllerDetection()) {
             // Always set gamepad 1 present for when multi-controller is
             // disabled for games that don't properly support detection
             // of gamepads removed and replugged at runtime.
@@ -1081,7 +1081,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
     }
 
     private void setupUsbDriver() {
-        if (prefConfig.usbDriver) {
+        if (prefConfig.getUsbDriver()) {
             // Start the USB driver
             bindService(new Intent(this, UsbDriverService.class), usbDriverServiceConnection, Service.BIND_AUTO_CREATE);
         }
@@ -1226,7 +1226,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
             // Send the right mouse button event if mouse back and forward
             // are disabled. If they are enabled, handleMotionEvent() will take
             // care of this.
-            if (!prefConfig.mouseNavButtons) {
+            if (!prefConfig.getMouseNavButtons()) {
                 conn.sendMouseButtonDown(MouseButtonPacket.BUTTON_RIGHT);
             }
 
@@ -1296,7 +1296,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
             // Send the right mouse button event if mouse back and forward
             // are disabled. If they are enabled, handleMotionEvent() will take
             // care of this.
-            if (!prefConfig.mouseNavButtons) {
+            if (!prefConfig.getMouseNavButtons()) {
                 conn.sendMouseButtonUp(MouseButtonPacket.BUTTON_RIGHT);
             }
 
@@ -1441,7 +1441,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
                     }
                 }
 
-                if (prefConfig.mouseNavButtons) {
+                if (prefConfig.getMouseNavButtons()) {
                     if ((changedButtons & MotionEvent.BUTTON_BACK) != 0) {
                         if ((event.getButtonState() & MotionEvent.BUTTON_BACK) != 0) {
                             conn.sendMouseButtonDown(MouseButtonPacket.BUTTON_X1);
