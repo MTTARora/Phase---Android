@@ -46,11 +46,21 @@ import static com.rora.phase.preferences.PreferenceConfiguration.RES_720P;
 
 public class GameSettingsDialog extends Dialog {
     public interface OnGameSettingsChanged {
+        void onResolutionChanged();
+        void onFpsChanged();
         void onStretchVideoChanged(boolean isEnable);
-
+        void onAudioChanged();
         void onTouchScreenMethodChanged(boolean enableTrackPad);
+        void onMultiControllersChanged();
+        void onUsbDriverChanged();
+        void onUsbPhaseDriverChanged();
+        void onMouseEmulationChanged();
+        void onFlipFaceBtnsChanged();
+        void onOnlyL3R3Changed();
 
         void onControllerModeChanged(VirtualController.ControllerMode mode);
+        void onVideoFormatChanged();
+        void onDropFramesChanged();
     }
 
     private Activity activity;
@@ -331,6 +341,8 @@ public class GameSettingsDialog extends Dialog {
             }
 
             resetBitrateToDefault(selectedRes, null);
+
+            onSettingsChangedListener.onResolutionChanged();
         });
     }
 
@@ -360,6 +372,7 @@ public class GameSettingsDialog extends Dialog {
             // Write the new bitrate value
             resetBitrateToDefault(null, String.valueOf(selectedFps));
             currentFpsTv.setText(prefConfig.getFps() + " FPS");
+            onSettingsChangedListener.onFpsChanged();
         });
     }
 
@@ -403,6 +416,8 @@ public class GameSettingsDialog extends Dialog {
                     prefConfig.setAudioConfiguration("71");
                     break;
             }
+
+            onSettingsChangedListener.onAudioChanged();
         });
     }
 
@@ -436,7 +451,10 @@ public class GameSettingsDialog extends Dialog {
 
     private void setupGamePadDetection() {
         gamePadDetectionSwitch.setChecked(prefConfig.getMultiControllerDetection());
-        gamePadDetectionSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> prefConfig.setMultiController(isChecked));
+        gamePadDetectionSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            prefConfig.setMultiController(isChecked);
+            onSettingsChangedListener.onMultiControllersChanged();
+        });
     }
 
     private void setupMouseNavButtons() {
@@ -446,17 +464,26 @@ public class GameSettingsDialog extends Dialog {
 
     private void setupXb1UsbGamePadDriver() {
         xb1UsbDriverSwitch.setChecked(prefConfig.getUsbDriver());
-        xb1UsbDriverSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> prefConfig.setUsbDriver(isChecked));
+        xb1UsbDriverSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            prefConfig.setUsbDriver(isChecked);
+            onSettingsChangedListener.onUsbDriverChanged();
+        });
     }
 
     private void setupUsbUsingPhaseDriver() {
         phaseUsbDriverSwitch.setChecked(prefConfig.getBindAllUsb());
-        phaseUsbDriverSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> prefConfig.setBindAllUsb(isChecked));
+        phaseUsbDriverSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            prefConfig.setBindAllUsb(isChecked);
+            onSettingsChangedListener.onUsbPhaseDriverChanged();
+        });
     }
 
     private void setupMouseEmulation() {
         mouseEmulationSwitch.setChecked(prefConfig.getMouseEmulation());
-        mouseEmulationSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> prefConfig.setMouseEmulation(isChecked));
+        mouseEmulationSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            prefConfig.setMouseEmulation(isChecked);
+            onSettingsChangedListener.onMouseEmulationChanged();
+        });
     }
 
     private void setupRumbleEmulation() {
@@ -472,8 +499,11 @@ public class GameSettingsDialog extends Dialog {
     }
 
     private void setupFlipFaceBtns() {
-        flipFaceBtnsSwitch.setChecked(prefConfig.getMouseEmulation());
-        flipFaceBtnsSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> prefConfig.setMouseEmulation(isChecked));
+        flipFaceBtnsSwitch.setChecked(prefConfig.getFlipFaceButtons());
+        flipFaceBtnsSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            prefConfig.setFlipFaceButtons(isChecked);
+            onSettingsChangedListener.onFlipFaceBtnsChanged();
+        });
     }
 
 
@@ -503,23 +533,13 @@ public class GameSettingsDialog extends Dialog {
         });
 
         findViewById(R.id.edit_controller_position_setting_btn).setOnClickListener(v -> {
-            if (controllerMode == MoveButtons) {
-                controllerMode = Active;
-                onSettingsChangedListener.onControllerModeChanged(Active);
-            } else {
-                controllerMode = MoveButtons;
-                onSettingsChangedListener.onControllerModeChanged(MoveButtons);
-            }
+            controllerMode = controllerMode == MoveButtons ? Active : MoveButtons;
+            onSettingsChangedListener.onControllerModeChanged(controllerMode);
         });
 
         findViewById(R.id.resize_controller_setting_btn).setOnClickListener(v -> {
-            if (controllerMode == ResizeButtons) {
-                controllerMode = Active;
-                onSettingsChangedListener.onControllerModeChanged(Active);
-            } else {
-                controllerMode = ResizeButtons;
-                onSettingsChangedListener.onControllerModeChanged(ResizeButtons);
-            }
+            controllerMode = controllerMode == ResizeButtons ? Active : ResizeButtons;
+            onSettingsChangedListener.onControllerModeChanged(controllerMode);
         });
 
         findViewById(R.id.reset_controller_setting_btn).setOnClickListener(v -> {
@@ -540,7 +560,10 @@ public class GameSettingsDialog extends Dialog {
 
     private void setupL3R3() {
         l3r3Switch.setChecked(prefConfig.getOnlyL3R3());
-        l3r3Switch.setOnCheckedChangeListener((buttonView, isChecked) -> prefConfig.setOnlyL3R3(isChecked));
+        l3r3Switch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            prefConfig.setOnlyL3R3(isChecked);
+            onSettingsChangedListener.onOnlyL3R3Changed();
+        });
     }
 
 
@@ -613,6 +636,8 @@ public class GameSettingsDialog extends Dialog {
                     prefConfig.setVideoFormat("neverh265");
                     break;
             }
+
+            onSettingsChangedListener.onVideoFormatChanged();
         });
     }
 
@@ -640,7 +665,10 @@ public class GameSettingsDialog extends Dialog {
 
     private void setupNeverDropFrames() {
         neverDropFramesSwitch.setChecked(!prefConfig.getFrameDrop());
-        neverDropFramesSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> prefConfig.setDisableFrameDrop(!isChecked));
+        neverDropFramesSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            prefConfig.setDisableFrameDrop(!isChecked);
+            onSettingsChangedListener.onDropFramesChanged();
+        });
     }
 
 

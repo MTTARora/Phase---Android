@@ -119,30 +119,30 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
         queueView.setOnClickListener(v -> goToGameDetails());
         triggerProgressMainBtn.setOnClickListener(v -> quitSession());
         triggerProgressBtn.setOnClickListener(v -> quitSession());
-        setupSettingDialog();
+        //setupSettingDialog();
     }
 
-    private void setupSettingDialog() {
-        GameSettingsDialog settingsDialog = new GameSettingsDialog(this);
-        settingsDialog.setOnSettingsChangedListener(new GameSettingsDialog.OnGameSettingsChanged() {
-            @Override
-            public void onStretchVideoChanged(boolean isEnable) {
-                //Restart this activity to apply new configs
-                Intent intent = getIntent();
-                finish();
-                startActivity(intent);
-            }
-
-            @Override
-            public void onTouchScreenMethodChanged(boolean enableTrackPad) {
-            }
-
-            @Override
-            public void onControllerModeChanged(VirtualController.ControllerMode mode) {
-            }
-        });
-        findViewById(R.id.settings_game_fab).setOnClickListener(v -> settingsDialog.show());
-    }
+    //private void setupSettingDialog() {
+    //    GameSettingsDialog settingsDialog = new GameSettingsDialog(this);
+    //    settingsDialog.setOnSettingsChangedListener(new GameSettingsDialog.OnGameSettingsChanged() {
+    //        @Override
+    //        public void onStretchVideoChanged(boolean isEnable) {
+    //            //Restart this activity to apply new configs
+    //            Intent intent = getIntent();
+    //            finish();
+    //            startActivity(intent);
+    //        }
+    //
+    //        @Override
+    //        public void onTouchScreenMethodChanged(boolean enableTrackPad) {
+    //        }
+    //
+    //        @Override
+    //        public void onControllerModeChanged(VirtualController.ControllerMode mode) {
+    //        }
+    //    });
+    //    findViewById(R.id.settings_game_fab).setOnClickListener(v -> settingsDialog.show());
+    //}
 
     private void goToGameDetails() {
         Fragment currentDisplayScreen = FragmentManagerHelper.getCurrentFrag(getSupportFragmentManager(), R.id.main_container);

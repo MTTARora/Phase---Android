@@ -104,9 +104,9 @@ public class PreferenceConfiguration {
     private boolean onscreenController;
     private boolean onlyL3R3;
     private boolean disableFrameDrop;
-    public boolean enableHdr;
+    private boolean enableHdr;
     private boolean enablePip;
-    public boolean enablePerfOverlay;
+    private boolean enablePerfOverlay;
     public boolean enableLatencyToast;
     private boolean bindAllUsb;
     private boolean mouseEmulation;
@@ -393,6 +393,17 @@ public class PreferenceConfiguration {
         prefs.edit().putBoolean(MOUSE_NAV_BUTTONS_STRING, enableMouseNavButtons).apply();
     }
 
+    public boolean getEnablePerfOverlay() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        mouseNavButtons = prefs.getBoolean(ENABLE_PERF_OVERLAY_STRING, DEFAULT_ENABLE_PERF_OVERLAY);
+        return false;
+    }
+
+    public void setEnablePerfOverlay(boolean enablePerfOverlay) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().putBoolean(ENABLE_PERF_OVERLAY_STRING, enablePerfOverlay).apply();
+    }
+
     public boolean getBindAllUsb() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return bindAllUsb = prefs.getBoolean(BIND_ALL_USB_STRING, DEFAULT_BIND_ALL_USB);
@@ -431,6 +442,17 @@ public class PreferenceConfiguration {
     public void setOnlyL3R3(boolean enableL3R3) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         prefs.edit().putBoolean(ONLY_L3_R3_PREF_STRING, enableL3R3).apply();
+    }
+
+    public boolean isEnableHdr() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        enableHdr = prefs.getBoolean(ENABLE_HDR_PREF_STRING, DEFAULT_ENABLE_HDR);
+        return false;
+    }
+
+    public void setEnableHdr(boolean enableHdr) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().putBoolean(ENABLE_HDR_PREF_STRING, enableHdr).apply();
     }
 
     public boolean getPiP() {
