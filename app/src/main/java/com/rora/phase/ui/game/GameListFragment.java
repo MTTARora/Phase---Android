@@ -53,7 +53,7 @@ public class GameListFragment extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+        homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         if (getArguments() != null) {
             screenTitle = getArguments().getString(SCREEN_TITLE_PARAM);
             filterParam = getArguments().getString(KEY_FILTER_PARAM);
@@ -71,13 +71,11 @@ public class GameListFragment extends BaseFragment {
     }
 
     private void initView() {
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL , false);
-        rclvGameList.setLayoutManager(linearLayoutManager);
-        GameVerticalRVAdapter adapter = new GameVerticalRVAdapter(rclvGameList);
-        rclvGameList.setAdapter(adapter);
-        adapter.setOnItemSelectedListener(selectedItem -> moveTo(GameDetailFragment.newInstance((Game) selectedItem), GameDetailFragment.class.getSimpleName()));
+        rclvGameList.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL , false));
+        rclvGameList.setAdapter(new GameVerticalRVAdapter(rclvGameList));
 
-        adapter.setLoadMore(() -> homeViewModel.loadMore(listType, filterParam));
+        ((GameVerticalRVAdapter)rclvGameList.getAdapter()).setOnItemSelectedListener(selectedItem -> moveTo(GameDetailFragment.newInstance((Game) selectedItem), GameDetailFragment.class.getSimpleName()));
+        ((GameVerticalRVAdapter)rclvGameList.getAdapter()).setLoadMore(() -> homeViewModel.loadMore(listType, filterParam));
     }
 
     private void bindData(View root) {
@@ -94,7 +92,6 @@ public class GameListFragment extends BaseFragment {
                 ((GameVerticalRVAdapter) Objects.requireNonNull(rclvGameList.getAdapter())).bindData(games);
                 hideLoadingScreen();
             });
-
         }
 
         updateData();

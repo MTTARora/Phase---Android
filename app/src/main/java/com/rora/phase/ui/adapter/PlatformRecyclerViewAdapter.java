@@ -10,8 +10,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rora.phase.R;
+import com.rora.phase.RoraLog;
 import com.rora.phase.model.Platform;
 import com.rora.phase.utils.MediaHelper;
+import com.rora.phase.utils.UiHelper;
+import com.rora.phase.utils.ui.ViewHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +31,7 @@ public class PlatformRecyclerViewAdapter extends RecyclerView.Adapter<PlatformVi
     @Override
     public PlatformViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View root = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_platform, parent, false);
-
+        ViewHelper.setSizePercentageWithScreen(root, 0.035, 0);
         return new PlatformViewHolder(root);
     }
 
@@ -50,17 +53,12 @@ public class PlatformRecyclerViewAdapter extends RecyclerView.Adapter<PlatformVi
 }
 
 class PlatformViewHolder extends RecyclerView.ViewHolder {
-
-    private Context context;
-
     private ImageView imvPlatform;
 
     public PlatformViewHolder(@NonNull View itemView) {
         super(itemView);
 
         imvPlatform = itemView.findViewById(R.id.ic_platform_imv);
-
-        this.context = itemView.getContext();
     }
 
     public void bindData(Platform platform) {
@@ -94,5 +92,4 @@ class PlatformViewHolder extends RecyclerView.ViewHolder {
 
         MediaHelper.loadSvg(imvPlatform, srcId);
     }
-
 }

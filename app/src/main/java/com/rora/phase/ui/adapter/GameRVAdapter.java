@@ -44,7 +44,7 @@ public class GameRVAdapter extends BaseRVAdapter {
 
         ((GameInfoViewHolder) holder).bindData(gameList.get(position));
 
-        ((GameInfoViewHolder) holder).setOnItemSelectedListener(selectedItemId -> {
+        holder.setOnItemSelectedListener(selectedItemId -> {
             if(onItemSelectedListener != null)
                 onItemSelectedListener.onSelected(selectedItemId);
         });

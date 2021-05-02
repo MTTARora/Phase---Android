@@ -55,11 +55,11 @@ public class ItemHomeVH extends BaseRVViewHolder {
         }
 
         if (rclvList.getAdapter() == null) {
-            setupGameRecyclerView(rclvList,
-                    new GameRVAdapter(viewType),
-                    new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
         }
 
+        setupGameRecyclerView(rclvList,
+                new GameRVAdapter(viewType),
+                new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
         ((GameRVAdapter)rclvList.getAdapter()).bindData(data.gameList);
 
         if (onItemSelectedListener != null && data.gameList != null && data.gameList.size() != 0)
@@ -67,14 +67,12 @@ public class ItemHomeVH extends BaseRVViewHolder {
     }
 
     private void setupGameRecyclerView(RecyclerView view, BaseRVAdapter adapter, RecyclerView.LayoutManager layoutManager) {
-        view.setAdapter(adapter);
         view.setLayoutManager(layoutManager);
-        view.setHasFixedSize(true);
+        view.setAdapter(adapter);
+        //view.setHasFixedSize(true);
 
         if (onChildItemClickListener != null)
-            adapter.setOnItemSelectedListener(selectedItem -> {
-                onChildItemClickListener.onSelected((Game)selectedItem);
-            });
+            adapter.setOnItemSelectedListener(selectedItem -> onChildItemClickListener.onSelected(selectedItem));
     }
 
 }
