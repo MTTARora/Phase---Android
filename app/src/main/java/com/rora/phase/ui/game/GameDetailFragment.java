@@ -49,7 +49,7 @@ public class GameDetailFragment extends BaseFragment {
     private LinearLayout frameSeries;
     private ImageView imvBanner;
     private RecyclerView rclvPlatform, rclvCategory, rclvScreenshot, rclvSeries, rclvSimilar;
-    private TextView tvGameName, tvPayType, tvAgeRating, tvRelease, tvDesc;
+    private TextView tvGameName, tvPayType, tvPayTypeDesc, tvAgeRating, tvRelease, tvDesc;
     private LinearLayout frameFirstPlayType, frameLastPlayType;
     private ImageButton btnFavorite, btnPlay, firstPlayTypeBtn, secondPlayTypeBtn, thirdPlayTypeBtn, lastPlayTypeBtn;
     private VideoView trailerVv;
@@ -98,6 +98,7 @@ public class GameDetailFragment extends BaseFragment {
 
         tvGameName = root.findViewById(R.id.game_name_tv);
         tvPayType = root.findViewById(R.id.pay_type_tv);
+        tvPayTypeDesc = root.findViewById(R.id.pay_type_desc_tv);
         tvAgeRating = root.findViewById(R.id.age_rating_tv);
         tvRelease = root.findViewById(R.id.release_tv);
         tvDesc = root.findViewById(R.id.game_desc_tv);
@@ -138,8 +139,7 @@ public class GameDetailFragment extends BaseFragment {
         setupRecyclerView(rclvSeries, new GameRVAdapter(GameRVAdapter.VIEW_TYPE_LANDSCAPE), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
         rclvSimilar.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL , false));
-        GameVerticalRVAdapter adapter = new GameVerticalRVAdapter(rclvSimilar);
-        rclvSimilar.setAdapter(adapter);
+        rclvSimilar.setAdapter(new GameVerticalRVAdapter(rclvSimilar));
 
         root.findViewById(R.id.back_btn).setOnClickListener(v -> getActivity().onBackPressed());
         btnPlay.setOnClickListener(v -> {
@@ -206,6 +206,7 @@ public class GameDetailFragment extends BaseFragment {
 
         tvGameName.setText(game.getName());
         tvPayType.setText(game.getPayTypeName());
+        tvPayTypeDesc.setText(game.getPayTypeDesc());
         tvAgeRating.setText(game.getPegiAge().toString() + "+");
         tvRelease.setText(DateTimeHelper.format(game.getReleaseDate()));
         tvDesc.setText(game.getDesc());

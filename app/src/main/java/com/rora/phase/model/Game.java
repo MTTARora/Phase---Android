@@ -64,6 +64,9 @@ public class Game implements Parcelable {
     @SerializedName("payTypeName")
     @Expose
     private String payTypeName;
+    @SerializedName("payTypeDesc")
+    @Expose
+    private String payTypeDesc;
     @SerializedName("userName")
     @Expose
     private String userName;
@@ -252,6 +255,15 @@ public class Game implements Parcelable {
 
     public void setPayTypeName(String payTypeName) {
         this.payTypeName = payTypeName;
+    }
+
+    public String getPayTypeDesc() {
+        payTypeDesc = "Free games for Members \nClick and play, no account needed";
+        return payTypeDesc;
+    }
+
+    public void setPayTypeDesc(String payTypeDesc) {
+        this.payTypeDesc = payTypeDesc;
     }
 
     public String getBanner() {

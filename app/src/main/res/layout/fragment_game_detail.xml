@@ -121,9 +121,9 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:scaleType="fitXY"
-                android:src="@android:drawable/ic_dialog_email"
+                android:src="?attr/actionModePasteDrawable"
                 app:layout_constraintBottom_toBottomOf="@id/frame_pay_type_info"
-                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintDimensionRatio="1:1.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/frame_pay_type_info" />
 
@@ -131,7 +131,7 @@
                 android:id="@+id/frame_pay_type_info"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/max_space"
+                android:layout_marginStart="@dimen/min_space"
                 android:orientation="vertical"
                 android:paddingVertical="@dimen/min_space"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -152,7 +152,7 @@
                     android:ellipsize="end"
                     android:lines="2"
                     android:maxLines="2"
-                    android:text="Free with your account njkjbkhg jkhg jkgjkhgjkgj adsfas dfasd fas df"
+                    android:text="Free with your account"
                     android:textSize="@dimen/normal_text_size"
                     android:textStyle="italic" />
             </LinearLayout>
@@ -194,7 +194,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/age_rating_title" />
+                        android:text="@string/age_rating_title"
+                        android:textSize="@dimen/normal_text_size"/>
 
                 </LinearLayout>
 
@@ -220,7 +221,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="@string/release_title" />
+                        android:text="@string/release_title"
+                        android:textSize="@dimen/normal_text_size" />
 
                 </LinearLayout>
 
@@ -242,7 +244,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/favorite_title" />
+                        android:text="@string/favorite_title"
+                        android:textSize="@dimen/normal_text_size"/>
 
                 </LinearLayout>
             </LinearLayout>
@@ -291,7 +294,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/age_rating_title"
-                        android:visibility="invisible" />
+                        android:visibility="invisible"
+                        android:textSize="@dimen/normal_text_size"/>
                 </LinearLayout>
 
                 <ImageButton
@@ -340,7 +344,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/favorite_title"
-                        android:visibility="invisible" />
+                        android:visibility="invisible"
+                        android:textSize="@dimen/normal_text_size" />
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 

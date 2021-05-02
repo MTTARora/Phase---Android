@@ -217,14 +217,6 @@ public class HomeFragment extends BaseFragment {
         vpOtherGames.setLayoutParams(layoutParams);
     }
 
-    private void setupGameRecyclerView(RecyclerView view, BaseRVAdapter adapter, RecyclerView.LayoutManager layoutManager) {
-        view.setAdapter(adapter);
-        view.setLayoutManager(layoutManager);
-        view.setHasFixedSize(true);
-
-        adapter.setOnItemSelectedListener(selectedItem -> moveTo(GameDetailFragment.newInstance((Game) selectedItem), GameDetailFragment.class.getSimpleName()));
-    }
-
     private void setupRecyclerView(RecyclerView view, RecyclerView.Adapter adapter, RecyclerView.LayoutManager layoutManager) {
         view.setAdapter(adapter);
         view.setLayoutManager(layoutManager);
