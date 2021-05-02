@@ -41,6 +41,13 @@
             app:showYouTubeButton="false"
             android:visibility="gone"/>
 
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@drawable/shape_dim_primary_dark_fader_corner_rectangle"
+            app:layout_constraintBottom_toBottomOf="@id/game_banner_imv"
+            app:layout_constraintHeight_percent=".05" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/platform_rclv"
             android:layout_width="wrap_content"
@@ -50,13 +57,6 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <!--Info-->
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:background="@drawable/shape_dim_primary_dark_fader_corner_rectangle"
-            app:layout_constraintBottom_toBottomOf="@id/game_banner_imv"
-            app:layout_constraintHeight_percent=".04" />
 
         <ImageButton
             android:id="@+id/back_btn"

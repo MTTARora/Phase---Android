@@ -190,7 +190,7 @@ public class GameDetailFragment extends BaseFragment {
 
         this.game = game;
         game.setTrailer("https://steamcdn-a.akamaihd.net/steam/apps/256679772/movie_max.mp4");
-        //game.setTrailer("https://www.youtube.com/watch?v=s4gBChg6AII");
+        //game.setTrailer("https://youtu.be/h7Xs642lALk");
         if (game.getTrailer() != null && !game.getTrailer().isEmpty()) {
             if (MediaHelper.isYoutubeUrl(game.getTrailer())) {
                 trailerYvv.setVisibility(View.VISIBLE);

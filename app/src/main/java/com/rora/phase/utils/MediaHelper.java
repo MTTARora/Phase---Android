@@ -14,14 +14,22 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTube
 import com.rora.phase.R;
 import com.squareup.picasso.Picasso;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class MediaHelper {
 
-    public static void loadYoutubeVideo(Lifecycle lifeCycle, YouTubePlayerView v, String videoId) {
+    public static void loadYoutubeVideo(Lifecycle lifeCycle, YouTubePlayerView v, String url) {
         lifeCycle.addObserver(v);
+        Pattern pattern = Pattern.compile("(?<=youtu.be/|watch\\?v=|/videos/|embed\\/)[^#\\&\\?]*", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(url);
+
         v.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
             @Override
             public void onReady(@NonNull YouTubePlayer youTubePlayer) {
-                youTubePlayer.loadVideo(videoId, 0);
+                if (matcher.find()) {
+                    youTubePlayer.loadVideo(matcher.group(), 0);
+                }
             }
         });
     }
@@ -35,18 +43,8 @@ public class MediaHelper {
 
     public static boolean isYoutubeUrl(String youTubeURl)
     {
-        boolean success;
         String pattern = "^(http(s)?:\\/\\/)?((w){3}.)?youtu(be|.be)?(\\.com)?\\/.+";
-        if (!youTubeURl.isEmpty() && youTubeURl.matches(pattern))
-        {
-            success = true;
-        }
-        else
-        {
-            // Not Valid youtube URL
-            success = false;
-        }
-        return success;
+        return !youTubeURl.isEmpty() && youTubeURl.matches(pattern);
     }
 
     /**
