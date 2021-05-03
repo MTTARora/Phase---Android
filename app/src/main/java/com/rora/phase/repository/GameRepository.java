@@ -17,7 +17,7 @@ public class GameRepository {
     private PhaseService gameServices;
     private PhaseService tagServices;
 
-    private MutableLiveData<List<Game>> newGameList, recentPlayList, editorsChoiceList, hotGameList, trendingList, gameByCategoryList, gamesByPayTypeList;
+    private MutableLiveData<List<Game>> newGameList, recentPlayList, editorsChoiceList, hotGameList, trendingList, gameByCategoryList, gamesByPayTypeList, similarGameList;
     private MutableLiveData<List<Tag>> categoryList;
     private MutableLiveData<Game> selectedGame;
 
@@ -33,6 +33,7 @@ public class GameRepository {
         gameByCategoryList = new MutableLiveData<>();
         gamesByPayTypeList = new MutableLiveData<>();
         selectedGame = new MutableLiveData<>();
+        similarGameList = new MutableLiveData<>();
 
         errMsg = new MutableLiveData<>();
 
@@ -80,6 +81,10 @@ public class GameRepository {
         return selectedGame;
     }
 
+    public MutableLiveData<List<Game>> getSimilarGameList() {
+        return similarGameList;
+    }
+
     //----------------------------
 
     public void reset() {
@@ -92,6 +97,7 @@ public class GameRepository {
         gameByCategoryList = new MutableLiveData<>();
         gamesByPayTypeList = new MutableLiveData<>();
         selectedGame = new MutableLiveData<>();
+        similarGameList = new MutableLiveData<>();
     }
 
     public void getNewGameListData(int page, int pageSize) {
@@ -181,6 +187,21 @@ public class GameRepository {
                 List<Game> listGame = data;
                 listGame = listGame == null ? new ArrayList<>() : listGame;
                 gameByCategoryList.postValue(listGame);
+            }
+        });
+    }
+
+    public void getSimilarGameListData(String gameId, int page, int pageSize) {
+        APIServicesHelper<List<Game>> apiHelper = new APIServicesHelper<>();
+
+        apiHelper.request(gameServices.getSimilarGameList(gameId, page, pageSize), (err, data) -> {
+            if (err != null) {
+                similarGameList.postValue(new ArrayList<>());
+                errMsg.postValue(err);
+            } else {
+                List<Game> listGame = data;
+                listGame = listGame == null ? new ArrayList<>() : listGame;
+                similarGameList.postValue(listGame);
             }
         });
     }

@@ -47,6 +47,9 @@ public interface PhaseService {
     @GET("./")
     Call<BaseResponse<List<Game>>> getGameByPayType(@Query("pay_type") String payType, @Query("page") int page, @Query("page_size") int pageSize);
 
+    @GET("./")
+    Call<BaseResponse<List<Game>>> getSimilarGameList(@Query("gameId") String gameId, @Query("page") int page, @Query("page_size") int pageSize);
+
     //--------------------------------------------------
 
 
