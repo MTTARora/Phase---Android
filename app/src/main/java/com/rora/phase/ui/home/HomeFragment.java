@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -192,23 +193,14 @@ public class HomeFragment extends BaseFragment {
         vpBanner.setPageTransformer(new CustomViewPagerTransformer());
         vpBanner.addItemDecoration(new HorizontalMarginItemDecoration());
 
-        List<Bundle> params = new ArrayList<>();
-        if (homeViewModel.isUserLogged()) {
-            Bundle bundleTab1 = new Bundle();
-            bundleTab1.putString(TabPagerAdapter.TAB_TITLE, getResources().getString(R.string.recommended_title));
-            bundleTab1.putSerializable(GameListFragment.LIST_TYPE_PARAM, HomeViewModel.GameListType.RECOMMENDED);
-            params.add(bundleTab1);
-        }
+        otherGamesAdapter = new TabPagerAdapter(this);
+        otherGamesAdapter.addPage(getResources().getString(R.string.free_to_play_title), GameListFragment.newInstance(null, HomeViewModel.GameListType.BY_PAY_TYPE, PayTypeEnum.FREE.toString()));
+        if (homeViewModel.isUserLogged())
+            otherGamesAdapter.addPage(getResources().getString(R.string.recommended_title), GameListFragment.newInstance(null, HomeViewModel.GameListType.RECOMMENDED, null));
 
-        Bundle bundleTab2 = new Bundle();
-        bundleTab2.putString(TabPagerAdapter.TAB_TITLE, getResources().getString(R.string.free_to_play_title));
-        bundleTab2.putSerializable(GameListFragment.LIST_TYPE_PARAM, HomeViewModel.GameListType.BY_PAY_TYPE);
-        bundleTab2.putString(GameListFragment.KEY_FILTER_PARAM, PayTypeEnum.FREE.toString());
-        params.add(bundleTab2);
-        otherGamesAdapter = new TabPagerAdapter(this, params);
         vpOtherGames.setAdapter(otherGamesAdapter);
 
-        new TabLayoutMediator(tbOtherGames, vpOtherGames, ((tab, position) -> tab.setText(params.get(position).getString(TabPagerAdapter.TAB_TITLE)))).attach();
+        new TabLayoutMediator(tbOtherGames, vpOtherGames, ((tab, position) -> tab.setText(otherGamesAdapter.getTitle(position)))).attach();
         ViewGroup.LayoutParams layoutParams = vpOtherGames.getLayoutParams();
 
         //Calculate size

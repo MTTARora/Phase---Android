@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.rora.phase.R;
 import com.rora.phase.model.Game;
@@ -23,6 +24,7 @@ import java.util.Objects;
 public class GameListFragment extends BaseFragment {
 
     private RecyclerView rclvGameList;
+    private ImageView errImv;
 
     private HomeViewModel homeViewModel;
     private HomeViewModel.GameListType listType;
@@ -63,6 +65,7 @@ public class GameListFragment extends BaseFragment {
         View root = inflater.inflate(R.layout.fragment_game_list, container, false);
 
         rclvGameList = root.findViewById(R.id.game_list_vertical_rclv);
+        errImv = root.findViewById(R.id.error_imv);
 
         initView();
         bindData(root);
@@ -81,6 +84,8 @@ public class GameListFragment extends BaseFragment {
     private void bindData(View root) {
         if (screenTitle == null) {
             homeViewModel.getGamesByPayTypeList().observe(getViewLifecycleOwner(), games -> {
+                errImv.setVisibility(games != null && games.size() != 0 ? View.GONE : View.VISIBLE);
+
                 ((GameVerticalRVAdapter) Objects.requireNonNull(rclvGameList.getAdapter())).bindData(games);
             });
             hideActionbar(root);
@@ -89,6 +94,8 @@ public class GameListFragment extends BaseFragment {
             setScreenTitle(root, screenTitle);
 
             homeViewModel.getGamesByListType(listType).observe(getViewLifecycleOwner(), games -> {
+                errImv.setVisibility(games != null && games.size() != 0 ? View.GONE : View.VISIBLE);
+
                 ((GameVerticalRVAdapter) Objects.requireNonNull(rclvGameList.getAdapter())).bindData(games);
                 hideLoadingScreen();
             });
