@@ -31,7 +31,6 @@ public class HomeRVAdapter extends BaseRVAdapter {
     private List<HomeUIData> dataList;
     private OnItemSelectedListener<HomeUIData> onViewAllClickListener;
     private OnItemSelectedListener<String> onCategoryClickListener;
-    private OnItemSelectedListener<Game> onChildItemClickListener;
 
     public HomeRVAdapter(Activity activity) {
         this.activity = activity;
@@ -68,7 +67,7 @@ public class HomeRVAdapter extends BaseRVAdapter {
         if (onViewAllClickListener != null)
             holder.setOnItemSelectedListener(selectedItem -> onViewAllClickListener.onSelected((HomeUIData)selectedItem));
         if(onChildItemClickListener != null)
-            holder.setOnChildItemClickListener(selectedItem -> onChildItemClickListener.onSelected((Game)selectedItem));
+            holder.setOnChildItemClickListener(selectedItem -> onChildItemClickListener.onSelected(selectedItem));
 
         if (holder instanceof ItemHomeVH) {
             ((ItemHomeVH)holder).bindData(activity, dataList.get(position));
@@ -76,7 +75,7 @@ public class HomeRVAdapter extends BaseRVAdapter {
             ((ItemHomeWithCategoryVH)holder).bindData(activity, dataList.get(position));
 
             if (onCategoryClickListener != null)
-                ((ItemHomeWithCategoryVH)holder).setOnCategoryClickListener(selectedItem -> onCategoryClickListener.onSelected((String)selectedItem));
+                ((ItemHomeWithCategoryVH)holder).setOnCategoryClickListener(selectedItem -> onCategoryClickListener.onSelected(selectedItem));
         }
 
         //holder.bindData(context, dataList.get(position));
@@ -118,9 +117,5 @@ public class HomeRVAdapter extends BaseRVAdapter {
 
     public void setOnCategoryClickListener(OnItemSelectedListener<String> onCategoryClickListener) {
         this.onCategoryClickListener = onCategoryClickListener;
-    }
-
-    public void setOnChildItemClickListener(OnItemSelectedListener<Game> onChildItemClickListener) {
-        this.onChildItemClickListener = onChildItemClickListener;
     }
 }

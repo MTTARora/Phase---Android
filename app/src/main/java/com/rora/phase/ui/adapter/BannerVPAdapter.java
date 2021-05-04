@@ -16,7 +16,7 @@ import com.rora.phase.utils.ui.ViewHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BannerVPAdapter  extends RecyclerView.Adapter<BannerViewHolder> {
+public class BannerVPAdapter extends RecyclerView.Adapter<BannerViewHolder> {
 
     private List<Banner> bannerList;
     private double widthPercent = 0;

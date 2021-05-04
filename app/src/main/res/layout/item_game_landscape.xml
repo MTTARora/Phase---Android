@@ -169,7 +169,7 @@
         android:ellipsize="end"
         android:lines="2"
         android:paddingHorizontal="@dimen/min_space"
-        android:paddingVertical="@dimen/min_space"
+        android:layout_marginTop="@dimen/min_space"
         android:textColor="@color/colorText"
         android:textSize="@dimen/normal_text_size"
         android:textStyle="bold"

@@ -109,6 +109,9 @@ public class Game implements Parcelable {
     @SerializedName("platforms")
     @Expose
     private List<Platform> platforms;
+    @SerializedName("isFavorited")
+    @Expose
+    private boolean isFavorited;
 
     public Game() {
     }
@@ -376,6 +379,10 @@ public class Game implements Parcelable {
 
     public void setNumberOfPlayers(List<NumberOfPlayer> numberOfPlayers) {
         this.numberOfPlayers = numberOfPlayers;
+    }
+
+    public boolean isFavorited() {
+        return isFavorited;
     }
 
 

@@ -1,7 +1,12 @@
 package com.rora.phase.utils;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
+import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.VideoView;
 
@@ -11,13 +16,13 @@ import androidx.lifecycle.Lifecycle;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
-import com.rora.phase.R;
-import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import jp.wasabeef.picasso.transformations.BlurTransformation;
 
 public class MediaHelper {
 
@@ -57,8 +62,31 @@ public class MediaHelper {
         Picasso.get().load(url).into(intoView);
     }
 
-    public static void loadImage(ImageView intoView, String url, int placeHolder) {
+    public static void loadImage(Context context, ImageView intoView, String url, int placeHolder) {
         Picasso.get().load(url).placeholder(placeHolder).into(intoView);
+    }
+
+    public static void loadImageAsBackground(Context context, View view, String url) {
+        Picasso.get().load(url).transform(new BlurTransformation(context, 15, 1)).into(new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                view.setBackground(new BitmapDrawable(context.getResources(), bitmap));
+            }
+
+            @Override
+            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+
+            }
+
+            @Override
+            public void onPrepareLoad(final Drawable placeHolderDrawable) {
+                Log.d("TAG", "Prepare Load");
+            }
+        });
+    }
+
+    public static void loadImageWithBlur() {
+        //Blurry.with(context).radius(25).sampling(2).onto(rootView)
     }
 
     /**
@@ -76,6 +104,10 @@ public class MediaHelper {
     public static void loadSvg(ImageView intoView, int url) {
         intoView.setImageResource(url);
         //Picasso.get().load(url).memoryPolicy(MemoryPolicy.NO_CACHE).memoryPolicy(MemoryPolicy.NO_STORE).networkPolicy(NetworkPolicy.NO_CACHE).into(intoView);
+    }
+
+    public static void loadImageWithBlurEffect(Context context, ImageView intoView, String url) {
+        Picasso.get().load(url).transform(new BlurTransformation(context, 85, 1)).into(intoView);
     }
 
 }

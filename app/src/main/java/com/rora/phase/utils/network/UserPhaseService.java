@@ -53,7 +53,8 @@ public interface UserPhaseService {
     @DELETE("/favorite")
     Call<BaseResponse> removeFavorite(@Field("game_id") String gameId);
 
-    @GET("/recent_play")
+    //@GET("/recent_play")
+    @GET("./new")
     Call<BaseResponse<List<Game>>> getRecentPlay(@Query("page") int page, @Query("page_size") int pageSize);
 
     @GET("/recommended")

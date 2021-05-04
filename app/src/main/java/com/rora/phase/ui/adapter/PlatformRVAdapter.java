@@ -19,11 +19,11 @@ import com.rora.phase.utils.ui.ViewHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlatformRecyclerViewAdapter extends RecyclerView.Adapter<PlatformViewHolder> {
+public class PlatformRVAdapter extends RecyclerView.Adapter<PlatformViewHolder> {
 
     private List<Platform> platformList;
 
-    public PlatformRecyclerViewAdapter() {
+    public PlatformRVAdapter() {
         this.platformList = new ArrayList<>();
     }
 

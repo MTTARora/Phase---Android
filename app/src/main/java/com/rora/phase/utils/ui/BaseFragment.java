@@ -65,7 +65,8 @@ public abstract class BaseFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @androidx.annotation.Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        view.findViewById(R.id.back_btn).setOnClickListener(v -> onBackPressed());
+        if (view.findViewById(R.id.back_btn) != null)
+            view.findViewById(R.id.back_btn).setOnClickListener(v -> onBackPressed());
     }
 
     @Override
@@ -87,7 +88,9 @@ public abstract class BaseFragment extends Fragment {
             setNavsVisibility(null);
             ((MainActivity)getActivity()).updateQueueVisibility(VISIBLE, GONE);
         }
-        fm.popBackStack();
+
+        if (currentFragment != null)
+            fm.popBackStack(fm.getBackStackEntryAt(fm.getBackStackEntryCount()-1).getName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 
     private void initData() {

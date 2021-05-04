@@ -1,23 +1,17 @@
 package com.rora.phase.ui.game.viewholder;
 
-import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rora.phase.R;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.Platform;
-import com.rora.phase.ui.adapter.PlatformRecyclerViewAdapter;
 import com.rora.phase.utils.MediaHelper;
-import com.rora.phase.utils.callback.OnItemSelectedListener;
 import com.rora.phase.utils.ui.BaseRVViewHolder;
-
-import java.util.Objects;
 
 public class GameInfoViewHolder extends BaseRVViewHolder {
 

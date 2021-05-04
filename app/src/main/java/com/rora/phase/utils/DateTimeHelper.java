@@ -14,6 +14,8 @@ public class DateTimeHelper {
         SimpleDateFormat newFormat = new SimpleDateFormat("MMM dd, yyyy");
         String result = "N/A";
         try {
+            if (data == null)
+                return result;
             Date datetime = format.parse(data);
             result = newFormat.format(datetime);
         } catch (ParseException e) {

@@ -27,6 +27,16 @@
                 android:layout_marginBottom="@dimen/maxx_space"
                 android:paddingTop="@dimen/normal_space" />
 
+            <ImageView
+                android:id="@+id/error_banner_home_imv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="center"
+                android:src="?android:attr/alertDialogIcon"
+                android:visibility="visible"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginBottom="@dimen/maxx_space"/>
+
             <!--CATEGORY-->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/category_rclv"
@@ -58,7 +68,7 @@
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/other_games_vp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
 

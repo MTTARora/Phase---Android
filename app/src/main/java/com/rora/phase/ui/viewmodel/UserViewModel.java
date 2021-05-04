@@ -5,6 +5,7 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.rora.phase.model.Game;
 import com.rora.phase.model.User;
@@ -25,6 +26,7 @@ public class UserViewModel extends AndroidViewModel {
     private LiveData<DataResponse> signUpResult;
     private LiveData<DataResponse> forgotPasswordResult;
     private LiveData<DataResponse> emailVerificationResult;
+    private MutableLiveData<Game> currentRecentPlay;
 
     public UserViewModel(@NonNull Application application) {
         super(application);
@@ -37,6 +39,7 @@ public class UserViewModel extends AndroidViewModel {
         signUpResult = userRepository.getSignUpResult();
         forgotPasswordResult = userRepository.getForgotPasswordResult();
         emailVerificationResult = userRepository.getEmailVerificationResult();
+        currentRecentPlay = new MutableLiveData<>();
     }
 
     //-------------------GET/SET--------------------
@@ -67,6 +70,10 @@ public class UserViewModel extends AndroidViewModel {
 
     public LiveData<DataResponse> getEmailVerificationResult() {
         return emailVerificationResult;
+    }
+
+    public LiveData<Game> getCurrentRecentPlay() {
+        return currentRecentPlay;
     }
 
     //----------------------------------------------
@@ -121,4 +128,7 @@ public class UserViewModel extends AndroidViewModel {
         userRepository.verifyEmail(email);
     }
 
+    public void setCurrentRecentPlay(Game game) {
+        currentRecentPlay.postValue(game);
+    }
 }

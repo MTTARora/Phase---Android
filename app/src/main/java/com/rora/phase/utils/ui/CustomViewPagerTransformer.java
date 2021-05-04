@@ -16,7 +16,7 @@ public class CustomViewPagerTransformer implements ViewPager2.PageTransformer {
     @Override
     public void transformPage(@NonNull View page, float position) {
 
-        int nextItemVisiblePx  = 44;
+        int nextItemVisiblePx = 44;
         int currentItemHorizontalMarginPx = 62;
         int margin = nextItemVisiblePx + currentItemHorizontalMarginPx;
 

@@ -2,6 +2,7 @@ package com.rora.phase.ui.game;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,13 +30,12 @@ import com.rora.phase.ui.adapter.BannerVPAdapter;
 import com.rora.phase.ui.adapter.CategoryRVAdapter;
 import com.rora.phase.ui.adapter.GameRVAdapter;
 import com.rora.phase.ui.adapter.GameVerticalRVAdapter;
-import com.rora.phase.ui.adapter.PlatformRecyclerViewAdapter;
+import com.rora.phase.ui.adapter.PlatformRVAdapter;
 import com.rora.phase.ui.settings.auth.AuthActivity;
 import com.rora.phase.ui.viewmodel.GameViewModel;
 import com.rora.phase.utils.DateTimeHelper;
 import com.rora.phase.utils.Dialog;
 import com.rora.phase.utils.MediaHelper;
-import com.rora.phase.utils.callback.OnItemSelectedListener;
 import com.rora.phase.utils.services.PlayServicesMessageSender;
 import com.rora.phase.utils.ui.BaseFragment;
 import com.rora.phase.utils.ui.ViewHelper;
@@ -137,7 +137,7 @@ public class GameDetailFragment extends BaseFragment {
     private void initView(View root) {
         ViewHelper.setSizePercentageWithScreen(imvBanner, 0, 0.35);
 
-        setupRecyclerView(rclvPlatform, new PlatformRecyclerViewAdapter(), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL , false));
+        setupRecyclerView(rclvPlatform, new PlatformRVAdapter(), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL , false));
         setupRecyclerView(rclvCategory,new CategoryRVAdapter(MEDIUM_SIZE, false), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL , false));
         setupRecyclerView(rclvScreenshot, new BannerVPAdapter(.45), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         setupRecyclerView(rclvSeries, new GameRVAdapter(GameRVAdapter.VIEW_TYPE_LANDSCAPE), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
@@ -236,9 +236,9 @@ public class GameDetailFragment extends BaseFragment {
         tvPayTypeDesc.setText(game.getPayTypeDesc());
         tvAgeRating.setText(game.getPegiAge().toString() + "+");
         tvRelease.setText(DateTimeHelper.format(game.getReleaseDate()));
-        tvDesc.setText(game.getDesc());
+        tvDesc.setText(Html.fromHtml(game.getDesc(), Html.FROM_HTML_MODE_COMPACT));
 
-        ((PlatformRecyclerViewAdapter)rclvPlatform.getAdapter()).bindData(game.getPlatforms());
+        ((PlatformRVAdapter)rclvPlatform.getAdapter()).bindData(game.getPlatforms());
         ((CategoryRVAdapter)rclvCategory.getAdapter()).bindData(game.getTags());
 
         List<Banner> banners = new ArrayList<>();

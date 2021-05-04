@@ -1,6 +1,6 @@
 package com.rora.phase.ui.adapter;
 
-import android.content.Context;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +17,6 @@ import com.rora.phase.model.Tag;
 import com.rora.phase.ui.game.viewholder.LoadingVH;
 import com.rora.phase.utils.MediaHelper;
 import com.rora.phase.utils.callback.ILoadMore;
-import com.rora.phase.utils.callback.OnItemSelectedListener;
 import com.rora.phase.utils.ui.BaseRVAdapter;
 import com.rora.phase.utils.ui.BaseRVViewHolder;
 
@@ -139,7 +138,7 @@ class VerticalGameItemVH extends BaseRVViewHolder {
         tvDesc = itemView.findViewById(R.id.game_desc_vertical_item_tv);
         rclvPlatform = itemView.findViewById(R.id.platform_rclv);
 
-        rclvPlatform.setAdapter(new PlatformRecyclerViewAdapter());
+        rclvPlatform.setAdapter(new PlatformRVAdapter());
         rclvPlatform.setLayoutManager(new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.HORIZONTAL , false));
         rclvPlatform.setHasFixedSize(true);
     }
@@ -148,13 +147,13 @@ class VerticalGameItemVH extends BaseRVViewHolder {
         MediaHelper.loadImage(imvBanner, game.getBackground());
         tvGameName.setText(game.getName());
         tvPayType.setText(game.getPayTypeName());
-        tvDesc.setText(game.getDesc());
+        tvDesc.setText(Html.fromHtml(game.getDesc(), Html.FROM_HTML_MODE_COMPACT));
         tvTag.setText("");
         for (Tag tag : game.getTags()) {
             tvTag.setText(tvTag.getText() + "#" + tag.getTag() + " ");
         }
 
-        ((PlatformRecyclerViewAdapter) Objects.requireNonNull(rclvPlatform.getAdapter())).bindData(game.getPlatforms());
+        ((PlatformRVAdapter) Objects.requireNonNull(rclvPlatform.getAdapter())).bindData(game.getPlatforms());
 
         itemView.setOnClickListener(v -> {
             if (onItemSelectedListener != null)

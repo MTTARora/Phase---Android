@@ -21,9 +21,11 @@ import com.rora.phase.utils.SharedPreferencesHelper;
 import com.rora.phase.utils.callback.OnResultCallBack;
 import com.rora.phase.utils.network.APIServicesHelper;
 import com.rora.phase.utils.network.BaseResponse;
+import com.rora.phase.utils.network.PhaseService;
 import com.rora.phase.utils.network.PhaseServiceHelper;
 import com.rora.phase.utils.network.UserPhaseService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -34,6 +36,7 @@ public class UserRepository {
 
     private UserPhaseService userAuthenticatedServices;
     private UserPhaseService userServices;
+    private PhaseService gameServices;
     private SharedPreferencesHelper dbSharedPref;
 
     private MutableLiveData<User> user;
@@ -51,6 +54,7 @@ public class UserRepository {
         PhaseServiceHelper phaseServiceHelper = new PhaseServiceHelper(context);
         userAuthenticatedServices = phaseServiceHelper.getUserPhaseService(true);
         userServices = phaseServiceHelper.getUserPhaseService(false);
+        gameServices = phaseServiceHelper.getGamePhaseService();
         dbSharedPref = new SharedPreferencesHelper(context);
 
         user = new MutableLiveData<>();
@@ -211,7 +215,18 @@ public class UserRepository {
     }
 
     public void getRecentPlayData() {
+        APIServicesHelper<List<Game>> apiHelper = new APIServicesHelper<>();
 
+        //userAuthenticatedServices
+        //apiHelper.request(userAuthenticatedServices.getRecentPlay(1, 20), (err, data) -> {
+        apiHelper.request(gameServices.getNewGames(1, 20), (err, data) -> {
+            if (err != null) {
+                recentPlayList.postValue(new ArrayList<>());
+            } else {
+                List<Game> listGame = data == null ? new ArrayList<>() : data;
+                recentPlayList.postValue(listGame);
+            }
+        });
     }
 
     public void getComputerData(OnResultCallBack<FindingHostResponse> callBack) {

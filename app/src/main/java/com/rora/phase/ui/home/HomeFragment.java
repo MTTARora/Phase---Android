@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -40,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static android.view.View.GONE;
 import static com.rora.phase.ui.adapter.CategoryRVAdapter.MEDIUM_SIZE;
 import static com.rora.phase.ui.adapter.CategoryRVAdapter.NORMAL_SIZE;
 
@@ -53,6 +55,7 @@ public class HomeFragment extends BaseFragment {
     private HomeViewModel homeViewModel;
     private BannerVPAdapter bannerAdapter;
     private TabPagerAdapter otherGamesAdapter;
+    private ImageView bannerErrImv;
     private boolean isSlidingBanner = false;
 
     private Handler bannerRunnableHandler = new Handler();
@@ -79,6 +82,7 @@ public class HomeFragment extends BaseFragment {
         vpBanner = root.findViewById(R.id.banner_vp);
         vpOtherGames = root.findViewById(R.id.other_games_vp);
         tbOtherGames = root.findViewById(R.id.other_games_tab_layout);
+        bannerErrImv = root.findViewById(R.id.error_banner_home_imv);
 
         rclMain = root.findViewById(R.id.main_rclv_home_screen);
         rclvCategory = root.findViewById(R.id.category_rclv);
@@ -141,8 +145,13 @@ public class HomeFragment extends BaseFragment {
 
             bannerRunnableHandler.removeCallbacks(bannerAutoSlideRunnable);
             isSlidingBanner = false;
-            if (banners.size() != 0)
-                bannerRunnableHandler.postDelayed(bannerAutoSlideRunnable, autoScrollBannerTime);
+            if (banners.size() == 0) {
+                bannerErrImv.setVisibility(View.VISIBLE);
+                return;
+            }
+
+            bannerErrImv.setVisibility(GONE);
+            bannerRunnableHandler.postDelayed(bannerAutoSlideRunnable, autoScrollBannerTime);
         });
 
         homeViewModel.getNewGameList().observe(getViewLifecycleOwner(), games -> {
