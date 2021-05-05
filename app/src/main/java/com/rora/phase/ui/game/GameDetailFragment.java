@@ -244,6 +244,7 @@ public class GameDetailFragment extends BaseFragment {
         tvAgeRating.setText(game.getPegiAge().toString() + "+");
         tvRelease.setText(DateTimeHelper.format(game.getReleaseDate()));
         tvDesc.setText(Html.fromHtml(game.getDesc(), Html.FROM_HTML_MODE_COMPACT));
+        btnFavorite.setImageResource(game.isFavorited() ? R.drawable.ic_favorite : R.drawable.ic_unfavorite);
 
         ((PlatformRVAdapter)rclvPlatform.getAdapter()).bindData(game.getPlatforms());
         ((CategoryRVAdapter)rclvCategory.getAdapter()).bindData(game.getTags());

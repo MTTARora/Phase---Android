@@ -49,7 +49,7 @@ public class RecentPlayFragment extends BaseFragment {
         tvPayType = root.findViewById(R.id.pay_type_tv);
         tvAge = root.findViewById(R.id.age_rating_tv);
         tvReleasedDate = root.findViewById(R.id.release_tv);
-        imbFavorite = root.findViewById(R.id.favorite_btn);
+        imbFavorite = root.findViewById(R.id.favorite_recent_play_btn);
         rclvCategory = root.findViewById(R.id.category_recent_play_rclv);
 
         initData();
@@ -86,9 +86,9 @@ public class RecentPlayFragment extends BaseFragment {
                 tvPayType.setText(game.getPayTypeName());
                 tvAge.setText(game.getPegiAge() + "+");
                 tvReleasedDate.setText(DateTimeHelper.format(game.getReleaseDate()));
-                MediaHelper.loadSvg(imbFavorite, game.isFavorited() ? R.drawable.ic_unfavorite : R.drawable.ic_favorite);
                 ((CategoryRVAdapter)rclvCategory.getAdapter()).bindData(game.getTags());
                 userViewModel.setCurrentRecentPlay(game);
+                imbFavorite.setImageResource(game.isFavorited() ? R.drawable.ic_favorite : R.drawable.ic_unfavorite);
             }
 
             @Override
