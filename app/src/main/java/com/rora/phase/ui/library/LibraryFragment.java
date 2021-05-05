@@ -1,31 +1,34 @@
 package com.rora.phase.ui.library;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.rora.phase.MainActivity;
 import com.rora.phase.R;
 import com.rora.phase.ui.adapter.TabPagerAdapter;
+import com.rora.phase.ui.settings.auth.AuthActivity;
 import com.rora.phase.ui.viewmodel.UserViewModel;
 import com.rora.phase.utils.MediaHelper;
 import com.rora.phase.utils.ui.BaseFragment;
+import com.rora.phase.utils.ui.ErrorView;
 
 public class LibraryFragment extends BaseFragment {
 
     private TabLayout libraryTabLayout;
     private ViewPager2 libraryVp;
     private ImageView backgroundLl;
+    private ErrorView frameError;
 
     private UserViewModel userViewModel;
 
@@ -37,6 +40,7 @@ public class LibraryFragment extends BaseFragment {
         backgroundLl = root.findViewById(R.id.bg_recent_play);
         libraryTabLayout = root.findViewById(R.id.library_tab_layout);
         libraryVp = root.findViewById(R.id.library_vp);
+        frameError = root.findViewById(R.id.error_view);
 
         setupViews();
         initData();
@@ -44,8 +48,9 @@ public class LibraryFragment extends BaseFragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void onResume() {
+        super.onResume();
+        setupViews();
     }
 
     private void initData() {
@@ -53,6 +58,18 @@ public class LibraryFragment extends BaseFragment {
     }
 
     private void setupViews() {
+        if (!userViewModel.isUserLogged()) {
+            frameError.setVisibility(View.VISIBLE);
+            frameError.setMsg(getResources().getString(R.string.require_login_msg));
+            frameError.setAction(getResources().getString(R.string.login_title), v -> {
+                Intent intent = new Intent(getActivity(), AuthActivity.class);
+                intent.putExtra(AuthActivity.START_IN_APP_PARAM, true);
+                startActivity(intent);
+            });
+            return;
+        }
+        frameError.setVisibility(View.GONE);
+
         TabPagerAdapter adapter = new TabPagerAdapter(this);
         adapter.addPage(getResources().getString(R.string.recent_play_title), new RecentPlayFragment());
         adapter.addPage(getResources().getString(R.string.favorite_title), new FavoriteFragment());
