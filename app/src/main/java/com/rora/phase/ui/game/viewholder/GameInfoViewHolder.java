@@ -17,26 +17,18 @@ public class GameInfoViewHolder extends BaseRVViewHolder {
 
     private ImageView imvBanner;
     private TextView tvName, tvPayType;
-    private RecyclerView rclvPlatform;
 
     public GameInfoViewHolder(@NonNull View itemView) {
         super(itemView);
         imvBanner = itemView.findViewById(R.id.banner_game_info_imv);
         tvName = itemView.findViewById(R.id.game_name_item_game_info_tv);
         tvPayType = itemView.findViewById(R.id.pay_type_item_game_info_tv);
-        //rclvPlatform = itemView.findViewById(R.id.platform_item_game_info_rclv);
-        //
-        //rclvPlatform.setLayoutManager(new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.HORIZONTAL, false));
-        //rclvPlatform.setAdapter(new PlatformRecyclerViewAdapter());
-        //rclvPlatform.setHasFixedSize(true);
     }
 
-    public void bindData(Game game) {
-        MediaHelper.loadImage(imvBanner, game.getBackground());
+    public void bindData(Game game, boolean isPortrait) {
+        MediaHelper.loadImage(imvBanner, isPortrait ? game.getTile() : game.getBackground());
         tvName.setText(game.getName());
         tvPayType.setText(game.getPayTypeName());
-        //((PlatformRecyclerViewAdapter) Objects.requireNonNull(rclvPlatform.getAdapter())).bindData(game.getPlatforms());
-        //rclvPlatform.invalidate();
         itemView.findViewById(R.id.ic_steam_imv).setVisibility(View.GONE);
         itemView.findViewById(R.id.ic_battle_net_imv).setVisibility(View.GONE);
         itemView.findViewById(R.id.ic_epic_imv).setVisibility(View.GONE);

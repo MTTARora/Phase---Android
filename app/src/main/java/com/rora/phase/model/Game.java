@@ -79,6 +79,9 @@ public class Game implements Parcelable {
     @SerializedName("background")
     @Expose
     private String background;
+    @SerializedName("tile")
+    @Expose
+    private String tile;
     @SerializedName("banner")
     @Expose
     private String banner;
@@ -109,7 +112,7 @@ public class Game implements Parcelable {
     @SerializedName("platforms")
     @Expose
     private List<Platform> platforms;
-    @SerializedName("isFavorited")
+    @SerializedName("favorited")
     @Expose
     private boolean isFavorited;
 
@@ -275,6 +278,14 @@ public class Game implements Parcelable {
 
     public void setBanner(String banner) {
         this.banner = banner;
+    }
+
+    public String getTile() {
+        return tile;
+    }
+
+    public void setTile(String tile) {
+        this.tile = tile;
     }
 
     public int getSeriesId() {

@@ -81,7 +81,7 @@ class RecentPlayVH extends BaseRVViewHolder {
         if (game == null)
             return;
 
-        MediaHelper.loadImage(imvBanner, game.getBackground());
+        MediaHelper.loadImage(imvBanner, game.getTile());
         ((PlatformRVAdapter)rclvPlatform.getAdapter()).bindData(game.getPlatforms());
 
         itemView.findViewById(R.id.play_item_recent_play_btn).setOnClickListener(v -> {

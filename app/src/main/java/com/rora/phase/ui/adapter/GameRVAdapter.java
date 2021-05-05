@@ -42,7 +42,7 @@ public class GameRVAdapter extends BaseRVAdapter {
     @Override
     public void onBindViewHolder(@NonNull BaseRVViewHolder holder, int position) {
 
-        ((GameInfoViewHolder) holder).bindData(gameList.get(position));
+        ((GameInfoViewHolder) holder).bindData(gameList.get(position), this.viewType != VIEW_TYPE_LANDSCAPE );
 
         holder.setOnItemSelectedListener(selectedItemId -> {
             if(onItemSelectedListener != null)

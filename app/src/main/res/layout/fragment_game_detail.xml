@@ -378,7 +378,7 @@
             android:paddingHorizontal="@dimen/normal_space"
             app:layout_constraintTop_toBottomOf="@id/frame_play_type_game_details">
 
-            <TextView
+            <com.rora.phase.utils.ui.ExpandableTextView
                 android:id="@+id/game_desc_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

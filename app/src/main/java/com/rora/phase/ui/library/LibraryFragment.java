@@ -49,7 +49,7 @@ public class LibraryFragment extends BaseFragment {
     }
 
     private void initData() {
-        userViewModel.getCurrentRecentPlay().observe(getViewLifecycleOwner(), game -> MediaHelper.loadImageWithBlurEffect(getContext(), backgroundLl, game.getBackground()));
+        userViewModel.getCurrentRecentPlay().observe(getViewLifecycleOwner(), game -> MediaHelper.loadImageWithBlurEffect(getContext(), backgroundLl, game.getTile()));
     }
 
     private void setupViews() {
