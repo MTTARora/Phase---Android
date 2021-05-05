@@ -43,9 +43,6 @@ public class Game implements Parcelable {
     @SerializedName("creditRequired")
     @Expose
     private Integer creditRequired;
-    @SerializedName("fileName")
-    @Expose
-    private String fileName;
     @SerializedName("extensionPackages")
     @Expose
     private String extensionPackages;
@@ -67,9 +64,6 @@ public class Game implements Parcelable {
     @SerializedName("payTypeDesc")
     @Expose
     private String payTypeDesc;
-    @SerializedName("userName")
-    @Expose
-    private String userName;
     @SerializedName("expiredDate")
     @Expose
     private String expiredDate;
@@ -207,14 +201,6 @@ public class Game implements Parcelable {
         this.creditRequired = creditRequired;
     }
 
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
     public String getExtensionPackages() {
         return extensionPackages;
     }
@@ -312,14 +298,6 @@ public class Game implements Parcelable {
         this.platforms = platforms;
     }
 
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
     public String getExpiredDate() {
         return expiredDate;
     }
@@ -396,6 +374,9 @@ public class Game implements Parcelable {
         return isFavorited;
     }
 
+    public void setFavorited(boolean favorited) {
+        isFavorited = favorited;
+    }
 
     //---------- PARCELABLE FUNCTION ----------
 

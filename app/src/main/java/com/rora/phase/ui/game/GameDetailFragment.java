@@ -85,7 +85,6 @@ public class GameDetailFragment extends BaseFragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         gameViewModel = new ViewModelProvider(requireActivity()).get(GameViewModel.class);
 
         if (getArguments() != null) {
@@ -249,12 +248,12 @@ public class GameDetailFragment extends BaseFragment {
         ((PlatformRVAdapter)rclvPlatform.getAdapter()).bindData(game.getPlatforms());
         ((CategoryRVAdapter)rclvCategory.getAdapter()).bindData(game.getTags());
 
-        List<Banner> banners = new ArrayList<>();
-        banners.add(new Banner(game.getBanner()));
+        List<Banner> screenshots = new ArrayList<>();
+        screenshots.add(new Banner(game.getBanner()));
         for (Screenshot screenshot : game.getScreenshots()) {
-            banners.add(new Banner(screenshot.getLink()));
+            screenshots.add(new Banner(screenshot.get_200x112()));
         }
-        ((BannerVPAdapter)rclvScreenshot.getAdapter()).bindData(banners);
+        ((BannerVPAdapter)rclvScreenshot.getAdapter()).bindData(screenshots);
 
         List<SupportPlayType> playTypeList = game.getSupportPlayTypes();
         if (playTypeList != null && playTypeList.size() != 0) {
