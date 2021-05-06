@@ -89,8 +89,10 @@ public abstract class BaseFragment extends Fragment {
             ((MainActivity)getActivity()).updateQueueVisibility(VISIBLE, GONE);
         }
 
-        if (currentFragment != null)
+        if (currentFragment != null) {
             fm.popBackStack(fm.getBackStackEntryAt(fm.getBackStackEntryCount()-1).getName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            hideLoadingScreen();
+        }
     }
 
     private void initData() {

@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.rora.phase.R;
@@ -31,6 +32,7 @@ import static com.rora.phase.ui.adapter.CategoryRVAdapter.MEDIUM_SIZE;
 
 public class RecentPlayFragment extends BaseFragment {
 
+    private SwipeRefreshLayout swipeRefreshLayout;
     private ViewPager2 vpGameList;
     private TextView tvName, tvPayType, tvAge, tvReleasedDate;
     private ImageButton imbFavorite;
@@ -44,6 +46,7 @@ public class RecentPlayFragment extends BaseFragment {
         userViewModel = new ViewModelProvider(getActivity()).get(UserViewModel.class);
 
         View root = inflater.inflate(R.layout.fragment_recent_play, container, false);
+        swipeRefreshLayout = root.findViewById(R.id.refresh_recent_play_layout);
         vpGameList = root.findViewById(R.id.recent_play_vp);
         tvName = root.findViewById(R.id.game_name_tv);
         tvPayType = root.findViewById(R.id.pay_type_tv);
@@ -63,6 +66,10 @@ public class RecentPlayFragment extends BaseFragment {
     }
 
     private void setupViews() {
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            userViewModel.getRecentPlayData();
+            swipeRefreshLayout.setRefreshing(false);
+        });
         RecentPlayVPAdapter recentPlayAdapter = new RecentPlayVPAdapter();
         vpGameList.setAdapter(recentPlayAdapter);
         vpGameList.setOffscreenPageLimit(2);
@@ -106,7 +113,13 @@ public class RecentPlayFragment extends BaseFragment {
     }
 
     private void initData() {
-        userViewModel.getRecentPlayList().observe(getViewLifecycleOwner(), games -> ((RecentPlayVPAdapter)vpGameList.getAdapter()).bindData(games));
+        userViewModel.getRecentPlayList().observe(getViewLifecycleOwner(), games -> {
+            if (games == null || games.size() == 0) {
+                userViewModel.setCurrentRecentPlay(null);
+                return;
+            }
+            ((RecentPlayVPAdapter)vpGameList.getAdapter()).bindData(games);
+        });
         userViewModel.getRecentPlayData();
     }
 

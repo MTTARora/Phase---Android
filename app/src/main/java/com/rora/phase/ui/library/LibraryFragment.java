@@ -42,7 +42,7 @@ public class LibraryFragment extends BaseFragment {
         libraryVp = root.findViewById(R.id.library_vp);
         frameError = root.findViewById(R.id.error_view);
 
-        setupViews();
+        //setupViews();
         initData();
         return root;
     }
@@ -54,11 +54,16 @@ public class LibraryFragment extends BaseFragment {
     }
 
     private void initData() {
-        userViewModel.getCurrentRecentPlay().observe(getViewLifecycleOwner(), game -> MediaHelper.loadImageWithBlurEffect(getContext(), backgroundLl, game.getTile()));
+        userViewModel.getCurrentRecentPlay().observe(getViewLifecycleOwner(), game -> {
+            MediaHelper.loadImageWithBlurEffect(getContext(), backgroundLl, game == null ? null : game.getTile());
+            hideLoadingScreen();
+        });
     }
 
     private void setupViews() {
+        showLoadingScreen();
         if (!userViewModel.isUserLogged()) {
+            userViewModel.setCurrentRecentPlay(null);
             frameError.setVisibility(View.VISIBLE);
             frameError.setMsg(getResources().getString(R.string.require_login_msg));
             frameError.setAction(getResources().getString(R.string.login_title), v -> {
