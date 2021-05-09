@@ -65,12 +65,12 @@ public class ItemHomeWithCategoryVH extends BaseRVViewHolder {
         ((CategoryRVAdapter) rclvCategoryList.getAdapter()).bindData(data.tagList);
 
         if (onItemSelectedListener != null)
-            btnViewAll.setOnClickListener(v -> onItemSelectedListener.onSelected(data));
+            btnViewAll.setOnClickListener(v -> onItemSelectedListener.onSelected(getLayoutPosition(), data));
     }
 
     public void setOnCategoryClickListener(OnItemSelectedListener<String> onCategoryClickListener) {
         if(onCategoryClickListener != null)
-            ((CategoryRVAdapter) rclvCategoryList.getAdapter()).setOnItemSelectedListener(selectedItem -> onCategoryClickListener.onSelected((String)selectedItem));
+            ((CategoryRVAdapter) rclvCategoryList.getAdapter()).setOnItemSelectedListener((position, selectedItem) -> onCategoryClickListener.onSelected(position, (String)selectedItem));
     }
 
     private void setupGameRecyclerView(RecyclerView view, BaseRVAdapter adapter, RecyclerView.LayoutManager layoutManager) {
@@ -78,9 +78,9 @@ public class ItemHomeWithCategoryVH extends BaseRVViewHolder {
         view.setLayoutManager(layoutManager);
         view.setHasFixedSize(true);
 
-        adapter.setOnItemSelectedListener(selectedItem -> {
+        adapter.setOnItemSelectedListener((position, selectedItem) -> {
             if (onChildItemClickListener != null)
-                onChildItemClickListener.onSelected((Game)selectedItem);
+                onChildItemClickListener.onSelected(position, (Game)selectedItem);
         });
     }
 

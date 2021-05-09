@@ -28,6 +28,9 @@ import com.rora.phase.utils.ui.BaseFragment;
 import com.rora.phase.utils.ui.CustomViewPagerTransformer;
 import com.rora.phase.utils.ui.HorizontalMarginItemDecoration;
 
+import java.util.List;
+
+import static carbon.beta.BottomSheetLayout.Style.List;
 import static com.rora.phase.ui.adapter.CategoryRVAdapter.MEDIUM_SIZE;
 
 public class RecentPlayFragment extends BaseFragment {
@@ -72,7 +75,7 @@ public class RecentPlayFragment extends BaseFragment {
         });
         RecentPlayVPAdapter recentPlayAdapter = new RecentPlayVPAdapter();
         vpGameList.setAdapter(recentPlayAdapter);
-        vpGameList.setOffscreenPageLimit(2);
+        vpGameList.setOffscreenPageLimit(20);
         vpGameList.setPageTransformer(new CustomViewPagerTransformer());
         vpGameList.addItemDecoration(new HorizontalMarginItemDecoration());
         vpGameList.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
@@ -108,8 +111,8 @@ public class RecentPlayFragment extends BaseFragment {
         rclvCategory.setAdapter(new CategoryRVAdapter(MEDIUM_SIZE, false));
         rclvCategory.setHasFixedSize(true);
 
-        recentPlayAdapter.setOnItemSelectedListener(selectedItem -> moveTo(GameDetailFragment.newInstance((Game) selectedItem), GameDetailFragment.class.getSimpleName()));
-        recentPlayAdapter.setOnChildItemClickListener(selectedItem -> Toast.makeText(getContext(), "Coming soon", Toast.LENGTH_SHORT).show());
+        recentPlayAdapter.setOnItemSelectedListener((position, selectedItem) -> moveTo(GameDetailFragment.newInstance((Game) selectedItem), GameDetailFragment.class.getSimpleName(), true));
+        recentPlayAdapter.setOnChildItemClickListener((position, selectedItem) -> Toast.makeText(getContext(), "Coming soon", Toast.LENGTH_SHORT).show());
     }
 
     private void initData() {

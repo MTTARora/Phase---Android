@@ -24,4 +24,8 @@ public abstract class BaseRVViewHolder extends RecyclerView.ViewHolder {
         this.onChildItemClickListener = onChildItemClickListener;
     }
 
+    public <T> void bindData(T data) {
+
+    }
+
 }

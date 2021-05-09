@@ -26,7 +26,7 @@ public class GameInfoViewHolder extends BaseRVViewHolder {
     }
 
     public void bindData(Game game, boolean isPortrait) {
-        MediaHelper.loadImage(imvBanner, isPortrait ? game.getTile() : game.getBackground());
+        MediaHelper.loadImage(imvBanner, isPortrait ? game.getTile() : game.getBackground().get_640x360());
         tvName.setText(game.getName());
         tvPayType.setText(game.getPayTypeName());
         itemView.findViewById(R.id.ic_steam_imv).setVisibility(View.GONE);
@@ -67,7 +67,7 @@ public class GameInfoViewHolder extends BaseRVViewHolder {
 
         itemView.setOnClickListener(v -> {
             if (onItemSelectedListener != null)
-                onItemSelectedListener.onSelected(game);
+                onItemSelectedListener.onSelected(getLayoutPosition(), game);
         });
     }
 

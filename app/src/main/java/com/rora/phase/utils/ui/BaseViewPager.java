@@ -1,22 +1,19 @@
-package com.rora.phase.ui.adapter;
+package com.rora.phase.utils.ui;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.rora.phase.R;
-import com.rora.phase.model.enums.PayTypeEnum;
-import com.rora.phase.ui.game.GameListFragment;
-import com.rora.phase.ui.viewmodel.HomeViewModel;
+import com.rora.phase.ui.adapter.TabPagerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TabPagerAdapter extends FragmentStateAdapter {
+public class BaseViewPager extends FragmentStateAdapter {
 
     private List<Page> pageList;
 
-    public TabPagerAdapter(@NonNull Fragment fragment) {
+    public BaseViewPager(@NonNull Fragment fragment) {
         super(fragment);
 
         pageList = new ArrayList<>();
@@ -35,7 +32,7 @@ public class TabPagerAdapter extends FragmentStateAdapter {
     }
 
     public void addPage(String title, Fragment view) {
-        TabPagerAdapter.Page page = new TabPagerAdapter.Page(title, view);
+        Page page = new Page(title, view);
 
         pageList.add(page);
     }
@@ -59,5 +56,4 @@ public class TabPagerAdapter extends FragmentStateAdapter {
             this.page = page;
         }
     }
-
 }

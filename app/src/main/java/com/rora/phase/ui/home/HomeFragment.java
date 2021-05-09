@@ -105,7 +105,7 @@ public class HomeFragment extends BaseFragment {
 
     private void initView(View root) {
         showActionbar(root, getResources().getString(R.string.app_label), false);
-        setActionbarStyle(root, getResources().getDimension(R.dimen.logo_text_size), ContextCompat.getColor(getContext(), R.color.colorPrimary));
+        setActionbarStyle(getResources().getDimension(R.dimen.logo_text_size), ContextCompat.getColor(getContext(), R.color.colorPrimary));
 
         refreshLayout.setOnRefreshListener(() -> {
             updateData();
@@ -119,7 +119,7 @@ public class HomeFragment extends BaseFragment {
         rclMain.setAdapter(homeAdapter);
         rclMain.setHasFixedSize(true);
 
-        homeAdapter.setOnViewAllClickListener(selectedItem -> {
+        homeAdapter.setOnViewAllClickListener((position, selectedItem) -> {
             HomeViewModel.GameListType gameListType = HomeViewModel.GameListType.getTypeFromHomeListType(selectedItem.type);
             if (gameListType != null) {
                 if (gameListType == HomeViewModel.GameListType.BY_CATEGORY) {
@@ -130,13 +130,13 @@ public class HomeFragment extends BaseFragment {
             }
 
         });
-        homeAdapter.setOnChildItemClickListener(selectedItem -> moveTo(GameDetailFragment.newInstance((Game) selectedItem), GameDetailFragment.class.getSimpleName()));
+        homeAdapter.setOnChildItemClickListener((position, selectedItem) -> moveTo(GameDetailFragment.newInstance((Game) selectedItem), GameDetailFragment.class.getSimpleName(), true));
 
-        homeAdapter.setOnCategoryClickListener(selectedItemId -> homeViewModel.getGamesDataByType(HomeViewModel.GameListType.BY_CATEGORY, (String) selectedItemId));
+        homeAdapter.setOnCategoryClickListener((position, selectedItemId) -> homeViewModel.getGamesDataByType(HomeViewModel.GameListType.BY_CATEGORY, (String) selectedItemId));
 
         CategoryRVAdapter categoryAdapter =  new CategoryRVAdapter(NORMAL_SIZE, true);
         setupRecyclerView(rclvCategory, categoryAdapter, new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-        categoryAdapter.setOnItemSelectedListener(selectedItemId -> goToGameListScreen((String)selectedItemId, HomeViewModel.GameListType.BY_CATEGORY, (String)selectedItemId));
+        categoryAdapter.setOnItemSelectedListener((position, selectedItemId) -> goToGameListScreen((String)selectedItemId, HomeViewModel.GameListType.BY_CATEGORY, (String)selectedItemId));
     }
 
     private void bindData() {
@@ -228,7 +228,7 @@ public class HomeFragment extends BaseFragment {
         homeViewModel.refresh(null);
 
         stopUpDateHomeScreen = true;
-        moveTo(GameListFragment.newInstance(title, type, filterParam), GameListFragment.class.getSimpleName());
+        moveTo(GameListFragment.newInstance(title, type, filterParam), GameListFragment.class.getSimpleName(), true);
     }
 
     //----------------- EVENT ---------------

@@ -63,7 +63,7 @@ public class ItemHomeVH extends BaseRVViewHolder {
         ((GameRVAdapter)rclvList.getAdapter()).bindData(data.gameList);
 
         if (onItemSelectedListener != null && data.gameList != null && data.gameList.size() != 0)
-            btnViewAll.setOnClickListener(v -> onItemSelectedListener.onSelected(data));
+            btnViewAll.setOnClickListener(v -> onItemSelectedListener.onSelected(getLayoutPosition(), data));
     }
 
     private void setupGameRecyclerView(RecyclerView view, BaseRVAdapter adapter, RecyclerView.LayoutManager layoutManager) {
@@ -72,7 +72,7 @@ public class ItemHomeVH extends BaseRVViewHolder {
         //view.setHasFixedSize(true);
 
         if (onChildItemClickListener != null)
-            adapter.setOnItemSelectedListener(selectedItem -> onChildItemClickListener.onSelected(selectedItem));
+            adapter.setOnItemSelectedListener((position, selectedItem) -> onChildItemClickListener.onSelected(getLayoutPosition(), selectedItem));
     }
 
 }

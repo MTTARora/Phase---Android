@@ -38,14 +38,14 @@ public class RecentPlayVPAdapter extends BaseRVAdapter {
     @Override
     public void onBindViewHolder(@NonNull BaseRVViewHolder holder, int position) {
         ((RecentPlayVH)holder).bindData(gameList.get(position));
-        holder.setOnItemSelectedListener(selectedItem -> {
+        holder.setOnItemSelectedListener((pos, selectedItem) -> {
             if( onItemSelectedListener != null)
-                onItemSelectedListener.onSelected(selectedItem);
+                onItemSelectedListener.onSelected(position, selectedItem);
         });
 
-        holder.setOnChildItemClickListener(selectedItem -> {
+        holder.setOnChildItemClickListener((pos, selectedItem) -> {
             if (onChildItemClickListener != null)
-                onChildItemClickListener.onSelected(selectedItem);
+                onChildItemClickListener.onSelected(position, selectedItem);
         });
     }
 
@@ -54,11 +54,16 @@ public class RecentPlayVPAdapter extends BaseRVAdapter {
         return gameList.size();
     }
 
-    public void bindData(List<Game> gameList) {
-        this.gameList = gameList == null ? new ArrayList<>() : gameList;
+    //public void bindData(List<Game> gameList) {
+    //    this.gameList = gameList == null ? new ArrayList<>() : gameList;
+    //    notifyDataSetChanged();
+    //}
+
+    @Override
+    public <T> void bindData(T data) {
+        this.gameList = data == null ? new ArrayList<>() : (List<Game>) data;
         notifyDataSetChanged();
     }
-
 }
 
 class RecentPlayVH extends BaseRVViewHolder {
@@ -86,12 +91,12 @@ class RecentPlayVH extends BaseRVViewHolder {
 
         itemView.findViewById(R.id.play_item_recent_play_btn).setOnClickListener(v -> {
             if (onChildItemClickListener != null)
-                onChildItemClickListener.onSelected(game);
+                onChildItemClickListener.onSelected(getLayoutPosition(), game);
         });
 
         itemView.setOnClickListener(v -> {
             if (onItemSelectedListener != null)
-                onItemSelectedListener.onSelected(game);
+                onItemSelectedListener.onSelected(getLayoutPosition(), game);
         });
     }
 

@@ -77,7 +77,7 @@ public class GameListFragment extends BaseFragment {
         rclvGameList.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL , false));
         rclvGameList.setAdapter(new GameVerticalRVAdapter(rclvGameList));
 
-        ((GameVerticalRVAdapter)rclvGameList.getAdapter()).setOnItemSelectedListener(selectedItem -> moveTo(GameDetailFragment.newInstance((Game) selectedItem), GameDetailFragment.class.getSimpleName()));
+        ((GameVerticalRVAdapter)rclvGameList.getAdapter()).setOnItemSelectedListener((position, selectedItem) -> moveTo(GameDetailFragment.newInstance((Game) selectedItem), GameDetailFragment.class.getSimpleName(), true));
         ((GameVerticalRVAdapter)rclvGameList.getAdapter()).setLoadMore(() -> homeViewModel.loadMore(listType, filterParam));
     }
 

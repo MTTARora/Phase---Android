@@ -27,7 +27,7 @@ import static android.view.View.VISIBLE;
 
 public abstract class BaseFragment extends Fragment {
 
-    private LinearLayout customActionBar;
+    private CustomToolbar customActionBar;
 
     public boolean stopUpDateHomeScreen = false;
     private FragmentManager fm;
@@ -59,14 +59,6 @@ public abstract class BaseFragment extends Fragment {
 
         initData();
         setNavsVisibility(this);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @androidx.annotation.Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        if (view.findViewById(R.id.back_btn) != null)
-            view.findViewById(R.id.back_btn).setOnClickListener(v -> onBackPressed());
     }
 
     @Override
@@ -104,8 +96,9 @@ public abstract class BaseFragment extends Fragment {
         currentFragment = fm.findFragmentByTag(currentFragTag);
     }
 
-    public void moveTo(Fragment newFragment, @Nullable String backStackName) {
-        showLoadingScreen();
+    public void moveTo(Fragment newFragment, @Nullable String backStackName, boolean showLoading) {
+        if (showLoading)
+            showLoadingScreen();
 
         currentFragment = newFragment;
         FragmentManagerHelper.replace(fm, R.id.main_container, newFragment, backStackName);
@@ -125,16 +118,13 @@ public abstract class BaseFragment extends Fragment {
     //----------------------------- ACTIONBAR --------------------------------
 
     public void showActionbar(View root, String title, boolean enableBackBtn) {
-        customActionBar = root.findViewById(R.id.custom_toolbar);
-        customActionBar.setVisibility(VISIBLE);
-        enableBackButton(root, enableBackBtn);
-        setScreenTitle(root, title);
+        customActionBar = root.findViewById(R.id.toolbar);
+        customActionBar.showActionbar(title, enableBackBtn);
     }
 
     public void hideActionbar(View root) {
-        customActionBar = root.findViewById(R.id.custom_toolbar);
-        customActionBar.setVisibility(GONE);
-        enableBackButton(root, false);
+        customActionBar = root.findViewById(R.id.toolbar);
+        customActionBar.hideActionbar();
     }
 
     public LinearLayout getActionBar() {
@@ -142,25 +132,12 @@ public abstract class BaseFragment extends Fragment {
     }
 
     public void setScreenTitle(View root, String title) {
-        ((TextView)root.findViewById(R.id.title_custom_toolbar)).setText(title);
+        customActionBar = root.findViewById(R.id.toolbar);
+        customActionBar.setScreenTitle(title);
     }
 
-    public void setActionbarStyle(View root, float size, int color) {
-        if (size != 0)
-            ((TextView)root.findViewById(R.id.title_custom_toolbar)).setTextSize(size);
-        if (color != 0)
-            ((TextView)root.findViewById(R.id.title_custom_toolbar)).setTextColor(color);
-    }
-
-    private void enableBackButton(View root, boolean enable) {
-        ImageButton backBtn = root.findViewById(R.id.back_btn);
-        if (enable) {
-            backBtn.setVisibility(VISIBLE);
-            backBtn.setOnClickListener(v -> onBackPressed());
-        } else {
-            backBtn.setVisibility(GONE);
-            ViewHelper.setMargins(root.findViewById(R.id.custom_toolbar), (int) getResources().getDimension(R.dimen.normal_space), 0, (int) getResources().getDimension(R.dimen.normal_space), 0);
-        }
+    public void setActionbarStyle(float size, int color) {
+        customActionBar.setActionbarStyle(size, color);
     }
 
     //------------------------------------------------------------------------------------
@@ -171,12 +148,15 @@ public abstract class BaseFragment extends Fragment {
     }
 
     public void hideLoadingScreen() {
-        try {
-            Thread.sleep(500);
+        if ((getActivity().findViewById(R.id.main_loading_view)).getVisibility() == GONE)
+            return;
+
+        //try {
+            //Thread.sleep(500);
             (getActivity().findViewById(R.id.main_loading_view)).setVisibility(GONE);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        //} catch (InterruptedException e) {
+        //    e.printStackTrace();
+        //}
     }
 
     private void setNavsVisibility(Fragment newFragment) {

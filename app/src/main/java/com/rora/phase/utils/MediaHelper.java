@@ -42,16 +42,22 @@ public class MediaHelper {
     }
 
     public static void loadVideo(VideoView v, String url, boolean enableRepeatWhenDone) {
+        if (url == null || url.isEmpty())
+            return;
+
         v.setVideoPath(url);
         v.start();
         if (enableRepeatWhenDone)
             v.setOnCompletionListener(MediaPlayer::start);
     }
 
-    public static boolean isYoutubeUrl(String youTubeURl)
+    public static boolean isYoutubeUrl(String url)
     {
+        if (url == null || url.isEmpty())
+            return false;
+
         String pattern = "^(http(s)?:\\/\\/)?((w){3}.)?youtu(be|.be)?(\\.com)?\\/.+";
-        return !youTubeURl.isEmpty() && youTubeURl.matches(pattern);
+        return url.matches(pattern);
     }
 
     /**
@@ -59,14 +65,23 @@ public class MediaHelper {
      * */
 
     public static void loadImage(ImageView intoView, String url) {
+        if (url == null || url.isEmpty())
+            return;
+
         Picasso.get().load(url).into(intoView);
     }
 
     public static void loadImage(Context context, ImageView intoView, String url, int placeHolder) {
+        if (url == null || url.isEmpty())
+            return;
+
         Picasso.get().load(url).placeholder(placeHolder).into(intoView);
     }
 
     public static void loadImageAsBackground(Context context, View view, String url) {
+        if (url == null || url.isEmpty())
+            return;
+
         Picasso.get().load(url).transform(new BlurTransformation(context, 15, 1)).into(new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
@@ -107,7 +122,9 @@ public class MediaHelper {
     }
 
     public static void loadImageWithBlurEffect(Context context, ImageView intoView, String url) {
-        Picasso.get().load(url).transform(new BlurTransformation(context, 85, 1)).into(intoView);
+        if (url == null || url.isEmpty())
+            return;
+        Picasso.get().load(url).transform(new BlurTransformation(context, 25, 1)).into(intoView);
     }
 
 }

@@ -72,13 +72,13 @@ public class Game implements Parcelable {
     private String url;
     @SerializedName("background")
     @Expose
-    private String background;
+    private MediaImage background;
     @SerializedName("tile")
     @Expose
     private String tile;
     @SerializedName("banner")
     @Expose
-    private String banner;
+    private MediaImage banner;
     @SerializedName("seriesId")
     @Expose
     private int seriesId;
@@ -130,7 +130,7 @@ public class Game implements Parcelable {
     }
 
     public String getDesc() {
-        return desc;
+        return desc == null ? "" : desc;
     }
 
     public void setDesc(String desc) {
@@ -258,11 +258,11 @@ public class Game implements Parcelable {
         this.payTypeDesc = payTypeDesc;
     }
 
-    public String getBanner() {
+    public MediaImage getBanner() {
         return banner;
     }
 
-    public void setBanner(String banner) {
+    public void setBanner(MediaImage banner) {
         this.banner = banner;
     }
 
@@ -314,11 +314,11 @@ public class Game implements Parcelable {
         this.url = url;
     }
 
-    public String getBackground() {
-        return background;
+    public MediaImage getBackground() {
+        return background == null ? new MediaImage() : background;
     }
 
-    public void setBackground(String background) {
+    public void setBackground(MediaImage background) {
         this.background = background;
     }
 

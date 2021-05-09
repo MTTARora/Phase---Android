@@ -65,9 +65,9 @@ public class HomeRVAdapter extends BaseRVAdapter {
     @Override
     public void onBindViewHolder(@NonNull BaseRVViewHolder holder, int position) {
         if (onViewAllClickListener != null)
-            holder.setOnItemSelectedListener(selectedItem -> onViewAllClickListener.onSelected((HomeUIData)selectedItem));
+            holder.setOnItemSelectedListener((pos, selectedItem) -> onViewAllClickListener.onSelected(position, (HomeUIData)selectedItem));
         if(onChildItemClickListener != null)
-            holder.setOnChildItemClickListener(selectedItem -> onChildItemClickListener.onSelected(selectedItem));
+            holder.setOnChildItemClickListener((pos, selectedItem) -> onChildItemClickListener.onSelected(position, selectedItem));
 
         if (holder instanceof ItemHomeVH) {
             ((ItemHomeVH)holder).bindData(activity, dataList.get(position));
@@ -75,7 +75,7 @@ public class HomeRVAdapter extends BaseRVAdapter {
             ((ItemHomeWithCategoryVH)holder).bindData(activity, dataList.get(position));
 
             if (onCategoryClickListener != null)
-                ((ItemHomeWithCategoryVH)holder).setOnCategoryClickListener(selectedItem -> onCategoryClickListener.onSelected(selectedItem));
+                ((ItemHomeWithCategoryVH)holder).setOnCategoryClickListener((pos, selectedItem) -> onCategoryClickListener.onSelected(position, selectedItem));
         }
 
         //holder.bindData(context, dataList.get(position));

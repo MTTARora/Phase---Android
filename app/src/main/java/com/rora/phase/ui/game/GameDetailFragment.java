@@ -3,12 +3,6 @@ package com.rora.phase.ui.game;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.TextPaint;
-import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,15 +21,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 import com.rora.phase.R;
-import com.rora.phase.model.Banner;
 import com.rora.phase.model.Game;
+import com.rora.phase.model.MediaImage;
 import com.rora.phase.model.Screenshot;
 import com.rora.phase.model.SupportPlayType;
 import com.rora.phase.repository.UserRepository;
-import com.rora.phase.ui.adapter.BannerVPAdapter;
 import com.rora.phase.ui.adapter.CategoryRVAdapter;
 import com.rora.phase.ui.adapter.GameRVAdapter;
 import com.rora.phase.ui.adapter.GameVerticalRVAdapter;
+import com.rora.phase.ui.adapter.MediaViewerAdapter;
 import com.rora.phase.ui.adapter.PlatformRVAdapter;
 import com.rora.phase.ui.settings.auth.AuthActivity;
 import com.rora.phase.ui.viewmodel.GameViewModel;
@@ -52,6 +46,9 @@ import java.util.List;
 
 import static android.view.View.GONE;
 import static com.rora.phase.ui.adapter.CategoryRVAdapter.MEDIUM_SIZE;
+import static com.rora.phase.ui.game.MediaViewerActivity.MEDIA_LIST_PARAM;
+import static com.rora.phase.ui.game.MediaViewerActivity.POSITION_PARAM;
+import static com.rora.phase.ui.game.MediaViewerActivity.SCREEN_TITLE_PARAM;
 
 public class GameDetailFragment extends BaseFragment {
 
@@ -146,12 +143,12 @@ public class GameDetailFragment extends BaseFragment {
 
         setupRecyclerView(rclvPlatform, new PlatformRVAdapter(), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL , false));
         setupRecyclerView(rclvCategory,new CategoryRVAdapter(MEDIUM_SIZE, false), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL , false));
-        setupRecyclerView(rclvScreenshot, new BannerVPAdapter(.45), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        setupRecyclerView(rclvScreenshot, new MediaViewerAdapter(null), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         setupRecyclerView(rclvSeries, new GameRVAdapter(GameRVAdapter.VIEW_TYPE_LANDSCAPE), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
         rclvSimilar.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL , false));
         rclvSimilar.setAdapter(new GameVerticalRVAdapter(rclvSimilar));
-        ((GameVerticalRVAdapter) rclvSimilar.getAdapter()).setOnItemSelectedListener(selectedItem -> moveTo(GameDetailFragment.newInstance((Game) selectedItem), GameDetailFragment.class.getSimpleName()));
+        ((GameVerticalRVAdapter) rclvSimilar.getAdapter()).setOnItemSelectedListener((position, selectedItem) -> moveTo(GameDetailFragment.newInstance((Game) selectedItem), GameDetailFragment.class.getSimpleName(), true));
 
         root.findViewById(R.id.back_btn).setOnClickListener(v -> getActivity().onBackPressed());
         btnPlay.setOnClickListener(v -> {
@@ -236,7 +233,7 @@ public class GameDetailFragment extends BaseFragment {
             }
         }
 
-        MediaHelper.loadImage(imvBanner, game.getBanner());
+        MediaHelper.loadImage(imvBanner, game.getBanner().get_640x360());
 
         tvGameName.setText(game.getName());
         tvPayType.setText(game.getPayTypeName());
@@ -249,12 +246,23 @@ public class GameDetailFragment extends BaseFragment {
         ((PlatformRVAdapter)rclvPlatform.getAdapter()).bindData(game.getPlatforms());
         ((CategoryRVAdapter)rclvCategory.getAdapter()).bindData(game.getTags());
 
-        List<Banner> screenshots = new ArrayList<>();
-        screenshots.add(new Banner(game.getBanner()));
+        ArrayList<MediaImage> screenshots = new ArrayList<>();
+        screenshots.add(new MediaImage(game.getBanner()));
         for (Screenshot screenshot : game.getScreenshots()) {
-            screenshots.add(new Banner(screenshot.get_200x112()));
+            screenshots.add(new MediaImage(screenshot));
         }
-        ((BannerVPAdapter)rclvScreenshot.getAdapter()).bindData(screenshots);
+        ((MediaViewerAdapter)rclvScreenshot.getAdapter()).bindData(screenshots);
+        ((MediaViewerAdapter)rclvScreenshot.getAdapter()).setOnItemSelectedListener((position, selectedItem) -> {
+            Intent mediaIntent = new Intent(getActivity(), MediaViewerActivity.class);
+
+            Bundle mediaBundle = new Bundle();
+            mediaBundle.putString(SCREEN_TITLE_PARAM, getResources().getString(R.string.screenshot_title));
+            mediaBundle.putSerializable(MEDIA_LIST_PARAM, screenshots);
+            mediaBundle.putInt(POSITION_PARAM, position);
+            mediaIntent.putExtras(mediaBundle);
+
+            startActivity(mediaIntent);
+        });
 
         List<SupportPlayType> playTypeList = game.getSupportPlayTypes();
         if (playTypeList != null && playTypeList.size() != 0) {

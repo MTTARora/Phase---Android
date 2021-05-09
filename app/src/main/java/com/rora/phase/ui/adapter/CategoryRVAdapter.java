@@ -69,7 +69,7 @@ public class CategoryRVAdapter extends BaseRVAdapter {
 
         if (onItemSelectedListener != null)
             ((CategoryViewHolder)holder).btnCategory.setOnClickListener(v -> {
-                onItemSelectedListener.onSelected(categoryList.get(position).getTag());
+                onItemSelectedListener.onSelected(position, categoryList.get(position).getTag());
 
                 for (int i = 0; i < categorySelectedState.size(); i++) {
                     categorySelectedState.set(i, i == position);
@@ -83,10 +83,11 @@ public class CategoryRVAdapter extends BaseRVAdapter {
         return categoryList.size();
     }
 
-    public void bindData(List<Tag> categoryList) {
-        this.categoryList = categoryList != null ? categoryList : new ArrayList<>();
+    @Override
+    public <T> void bindData(T categoryList) {
+        this.categoryList = categoryList != null ? (List<Tag>) categoryList : new ArrayList<>();
 
-        for (int i = 0; i < categoryList.size(); i++) {
+        for (int i = 0; i < ((List<Tag>) categoryList).size(); i++) {
             if (onItemSelectedListener == null) {
                 categorySelectedState.add(false);
             } else {

@@ -33,9 +33,9 @@
             app:layout_constraintStart_toEndOf="@id/back_btn"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.8dp"
-        android:background="@color/colorPrimary"/>
+    <!--<View-->
+    <!--    android:layout_width="match_parent"-->
+    <!--    android:layout_height="0.8dp"-->
+    <!--    android:background="@color/colorPrimary"/>-->
 
 </LinearLayout>

@@ -241,8 +241,8 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
         Game game = managerBinder.getCurrentGame();
         gameViewModel.setCurrentGame(managerBinder.getCurrentGame());
         MainActivity.this.runOnUiThread(() -> {
-            MediaHelper.loadImage(imvQueueMain, game.getBanner());
-            MediaHelper.loadImage(imvQueue, game.getBanner());
+            MediaHelper.loadImage(imvQueueMain, game.getBanner().get_640x360());
+            MediaHelper.loadImage(imvQueue, game.getBanner().get_640x360());
             tvGameNameMain.setText(game.getName());
             tvGameName.setText(game.getName());
             updateQueuePosition(position);
@@ -259,8 +259,8 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
         Game game = managerBinder.getCurrentGame();
         gameViewModel.setCurrentGame(managerBinder.getCurrentGame());
         MainActivity.this.runOnUiThread(() -> {
-            MediaHelper.loadImage(imvQueueMain, game.getBanner());
-            MediaHelper.loadImage(imvQueue, game.getBanner());
+            MediaHelper.loadImage(imvQueueMain, game.getBanner().get_640x360());
+            MediaHelper.loadImage(imvQueue, game.getBanner().get_640x360());
             tvGameNameMain.setText(game.getName());
             tvGameName.setText(game.getName());
             tvQueueMain.setText(getResources().getString(R.string.in_game_session_msg));

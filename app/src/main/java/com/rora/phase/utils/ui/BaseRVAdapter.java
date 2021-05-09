@@ -17,4 +17,8 @@ public abstract class BaseRVAdapter extends RecyclerView.Adapter<BaseRVViewHolde
         this.onChildItemClickListener = onChildItemClickListener;
     }
 
+    public <T> void bindData(T data) {
+
+    }
+
 }

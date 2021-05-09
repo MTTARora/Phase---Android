@@ -81,9 +81,9 @@ public class GameVerticalRVAdapter extends BaseRVAdapter {
         if(holder instanceof VerticalGameItemVH)
         {
             ((VerticalGameItemVH) holder).bindData(gameList.get(position));
-            ((VerticalGameItemVH) holder).setOnItemSelectedListener(selectedItemId -> {
+            ((VerticalGameItemVH) holder).setOnItemSelectedListener((pos, selectedItemId) -> {
                 if(onItemSelectedListener != null)
-                    onItemSelectedListener.onSelected(selectedItemId);
+                    onItemSelectedListener.onSelected(position, selectedItemId);
             });
         }
         else if(holder instanceof LoadingVH)
@@ -144,7 +144,7 @@ class VerticalGameItemVH extends BaseRVViewHolder {
     }
 
     public void bindData(Game game) {
-        MediaHelper.loadImage(imvBanner, game.getBackground());
+        MediaHelper.loadImage(imvBanner, game.getBackground().get_640x360());
         tvGameName.setText(game.getName());
         tvPayType.setText(game.getPayTypeName());
         tvDesc.setText(Html.fromHtml(game.getDesc(), Html.FROM_HTML_MODE_COMPACT));
@@ -157,7 +157,7 @@ class VerticalGameItemVH extends BaseRVViewHolder {
 
         itemView.setOnClickListener(v -> {
             if (onItemSelectedListener != null)
-                onItemSelectedListener.onSelected(game);
+                onItemSelectedListener.onSelected(getLayoutPosition(), game);
         });
     }
 

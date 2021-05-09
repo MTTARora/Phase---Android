@@ -3,7 +3,7 @@ package com.rora.phase.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Banner {
+public class Banner extends MediaImage {
     @SerializedName("bannerId")
     @Expose
     private String id;

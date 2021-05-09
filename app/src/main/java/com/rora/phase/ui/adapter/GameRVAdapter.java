@@ -44,9 +44,9 @@ public class GameRVAdapter extends BaseRVAdapter {
 
         ((GameInfoViewHolder) holder).bindData(gameList.get(position), this.viewType != VIEW_TYPE_LANDSCAPE );
 
-        holder.setOnItemSelectedListener(selectedItemId -> {
+        holder.setOnItemSelectedListener((pos, selectedItemId) -> {
             if(onItemSelectedListener != null)
-                onItemSelectedListener.onSelected(selectedItemId);
+                onItemSelectedListener.onSelected(position, selectedItemId);
         });
 
     }
