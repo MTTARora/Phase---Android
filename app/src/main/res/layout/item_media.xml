@@ -39,11 +39,13 @@
         app:layout_constraintDimensionRatio="1:0.5625"
         app:layout_constraintTop_toTopOf="parent"/>
 
-    <ProgressBar
+    <androidx.core.widget.ContentLoadingProgressBar
         android:id="@+id/video_pb"
+        style="?android:attr/progressBarStyleInverse"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
+        android:theme="@style/ContentLoadingProgress"
         app:layout_constraintTop_toTopOf="@id/video_media_vv"
         app:layout_constraintBottom_toBottomOf="@id/video_media_vv"/>
 

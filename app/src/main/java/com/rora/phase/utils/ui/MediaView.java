@@ -10,6 +10,7 @@ import android.widget.VideoView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.widget.ContentLoadingProgressBar;
 import androidx.lifecycle.Lifecycle;
 
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
@@ -22,9 +23,10 @@ public class MediaView extends ConstraintLayout {
     private ErrorView errView;
     private VideoView videoView;
     private YouTubePlayerView youTubePlayerView;
-    private ProgressBar videoPb;
+    private ContentLoadingProgressBar videoPb;
 
     private boolean isPlayingVideo = false;
+    private boolean isPaused = false;
     private int pausedMilliSec = 0;
 
     public MediaView(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -41,16 +43,18 @@ public class MediaView extends ConstraintLayout {
     @Override
     public void onVisibilityAggregated(boolean isVisible) {
         // Optimize later
-        //if (isPlayingVideo) {
-        //    if (isVisible) {
-        //        //videoView.start();
-        //        videoView.seekTo(pausedMilliSec);
-        //    }
-        //    else {
-        //        pausedMilliSec = videoView.getCurrentPosition();
-        //        videoView.pause();
-        //    }
-        //}
+        if (isPlayingVideo) {
+            if (isVisible) {
+                isPaused = true;
+                videoPb.setVisibility(VISIBLE);
+                //videoView.start();
+                //videoView.seekTo(pausedMilliSec);
+            }
+            //else {
+            //    pausedMilliSec = videoView.getCurrentPosition();
+            //    videoView.pause();
+            //}
+        }
 
         super.onVisibilityAggregated(isVisible);
     }
@@ -84,9 +88,11 @@ public class MediaView extends ConstraintLayout {
         videoView.setVisibility(VISIBLE);
         MediaHelper.loadVideo(videoView, url, true);
         videoView.setOnPreparedListener(mp -> {
-            //if (pausedMilliSec != 0)
-            //    mp.seekTo(pausedMilliSec);
-            //mp.start();
+            if (isPaused) {
+                //mp.seekTo(pausedMilliSec);
+                mp.start();
+                isPaused = !isPaused;
+            }
             videoPb.setVisibility(GONE);
         });
     }
