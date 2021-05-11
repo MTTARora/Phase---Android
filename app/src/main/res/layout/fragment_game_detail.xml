@@ -41,9 +41,9 @@
             android:layout_height="@dimen/ic_touchable_size"
             android:background="@android:color/transparent"
             android:src="@drawable/abc_vector_test"
+            android:layout_marginStart="@dimen/maxx_space"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent=".15" />
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <ImageButton
             android:id="@+id/play_btn"

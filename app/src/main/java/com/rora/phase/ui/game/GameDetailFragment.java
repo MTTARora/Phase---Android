@@ -14,6 +14,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.view.OnApplyWindowInsetsListener;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -39,11 +43,14 @@ import com.rora.phase.utils.services.PlayServicesMessageSender;
 import com.rora.phase.utils.ui.BaseFragment;
 import com.rora.phase.utils.ui.ExpandableTextView;
 import com.rora.phase.utils.ui.MediaView;
+import com.rora.phase.utils.ui.ViewHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static android.view.View.GONE;
+import static android.view.View.SYSTEM_UI_FLAG_FULLSCREEN;
+import static android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
 import static com.rora.phase.ui.adapter.CategoryRVAdapter.MEDIUM_SIZE;
 import static com.rora.phase.ui.game.MediaViewerActivity.MEDIA_LIST_PARAM;
 import static com.rora.phase.ui.game.MediaViewerActivity.POSITION_PARAM;
@@ -58,7 +65,7 @@ public class GameDetailFragment extends BaseFragment {
     private TextView tvGameName, tvPayType, tvPayTypeDesc, tvAgeRating, tvRelease;
     private ExpandableTextView tvDesc;
     private LinearLayout frameFirstPlayType, frameLastPlayType;
-    private ImageButton btnFavorite, btnPlay, firstPlayTypeBtn, secondPlayTypeBtn, thirdPlayTypeBtn, lastPlayTypeBtn;
+    private ImageButton btnBack, btnFavorite, btnPlay, firstPlayTypeBtn, secondPlayTypeBtn, thirdPlayTypeBtn, lastPlayTypeBtn;
 
     private GameViewModel gameViewModel;
     private Game game;
@@ -109,6 +116,7 @@ public class GameDetailFragment extends BaseFragment {
 
         btnFavorite = root.findViewById(R.id.favorite_btn);
         btnPlay = root.findViewById(R.id.play_btn);
+        btnBack = root.findViewById(R.id.back_btn);
 
         frameFirstPlayType = root.findViewById(R.id.frame_ic_first_play_type);
         frameLastPlayType = root.findViewById(R.id.frame_ic_last_play_type);
@@ -118,7 +126,7 @@ public class GameDetailFragment extends BaseFragment {
         thirdPlayTypeBtn = root.findViewById(R.id.ic_third_play_type_ib);
         lastPlayTypeBtn = root.findViewById(R.id.ic_last_play_type_ib);
 
-        initView(root);
+        initView();
         initData();
         return root;
     }
@@ -140,7 +148,17 @@ public class GameDetailFragment extends BaseFragment {
     //---------------------------------------------------------------------------------------
 
 
-    private void initView(View root) {
+    private void initView() {
+        int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+        getActivity().getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+
+        ViewCompat.setOnApplyWindowInsetsListener(btnBack, (v, insets) -> {
+            // Move toolbar below status bar
+            btnBack.setPadding(0, insets.getSystemWindowInsetTop() + (int)getResources().getDimension(R.dimen.medium_space), 0, 0);
+            return insets;
+        });
+
         setupRecyclerView(rclvPlatform, new PlatformRVAdapter(), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL , false));
         setupRecyclerView(rclvCategory,new CategoryRVAdapter(MEDIUM_SIZE, false), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL , false));
         setupRecyclerView(rclvScreenshot, new MediaAdapter(0.47), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
@@ -150,7 +168,7 @@ public class GameDetailFragment extends BaseFragment {
         rclvSimilar.setAdapter(new GameVerticalRVAdapter(rclvSimilar));
         ((GameVerticalRVAdapter) rclvSimilar.getAdapter()).setOnItemSelectedListener((position, selectedItem) -> moveTo(GameDetailFragment.newInstance((Game) selectedItem), GameDetailFragment.class.getSimpleName(), true));
 
-        root.findViewById(R.id.back_btn).setOnClickListener(v -> getActivity().onBackPressed());
+        btnBack.setOnClickListener(v -> getActivity().onBackPressed());
         btnPlay.setOnClickListener(v -> {
             if (isPlayingThisGame) {
                 playServicesMsgSenderCallback.sendMessage(PlayServicesMessageSender.MsgCode.STOP);

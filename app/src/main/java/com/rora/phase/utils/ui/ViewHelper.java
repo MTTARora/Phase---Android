@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
@@ -81,15 +82,29 @@ public class ViewHelper {
     }
 
     public static void setMargins(View v, @Nullable int left, @Nullable int top, @Nullable int right, @Nullable int bottom) {
-        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) v.getLayoutParams();
 
-        left = left == 0 ? layoutParams.leftMargin : left;
-        top = top == 0 ? layoutParams.topMargin : top;
-        right = right == 0 ? layoutParams.rightMargin : right;
-        bottom = bottom == 0 ? layoutParams.bottomMargin : bottom;
+        if (v.getLayoutParams() instanceof LinearLayout.LayoutParams) {
+            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) v.getLayoutParams();
 
-        layoutParams.setMargins(left, top, right, bottom); // left, top, right, bottom
-        v.setLayoutParams(layoutParams);
+            left = left == 0 ? layoutParams.leftMargin : left;
+            top = top == 0 ? layoutParams.topMargin : top;
+            right = right == 0 ? layoutParams.rightMargin : right;
+            bottom = bottom == 0 ? layoutParams.bottomMargin : bottom;
+
+            layoutParams.setMargins(left, top, right, bottom); // left, top, right, bottom
+            v.setLayoutParams(layoutParams);
+        } else if (v.getLayoutParams() instanceof FrameLayout.LayoutParams){
+            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) v.getLayoutParams();
+
+            left = left == 0 ? layoutParams.leftMargin : left;
+            top = top == 0 ? layoutParams.topMargin : top;
+            right = right == 0 ? layoutParams.rightMargin : right;
+            bottom = bottom == 0 ? layoutParams.bottomMargin : bottom;
+
+            layoutParams.setMargins(left, top, right, bottom); // left, top, right, bottom
+            v.setLayoutParams(layoutParams);
+        }
+
     }
 
     public static LinearLayoutManager getLayoutManager(Activity activity, double widthPercentage, @Nullable double heightPercentage) {

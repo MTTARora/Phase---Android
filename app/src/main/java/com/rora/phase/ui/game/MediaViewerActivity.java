@@ -2,12 +2,15 @@ package com.rora.phase.ui.game;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.rora.phase.R;
@@ -58,6 +61,12 @@ public class MediaViewerActivity extends AppCompatActivity {
 
     private void setupViews() {
         hideSystemUI();
+        ViewCompat.setOnApplyWindowInsetsListener(toolbar, (v, insets) -> {
+            // Move toolbar below status bar
+            toolbar.setPadding(0, insets.getSystemWindowInsetTop() + (int)getResources().getDimension(R.dimen.min_space), 0, 0);
+            return insets;
+        });
+
         toolbar.showActionbar(title, true);
         mediaViewerVp.setAdapter(new MediaViewerAdapter(mediaImageList, 0));
         mediaViewerVp.setOffscreenPageLimit(mediaImageList.size());
@@ -70,7 +79,7 @@ public class MediaViewerActivity extends AppCompatActivity {
                 currentPosition = position;
             }
         });
-
+        
         decorView.setOnSystemUiVisibilityChangeListener(visibility -> {
             if (isShowingSystemBars) {
                 new Handler().postDelayed(this::hideSystemUI, 1000);
@@ -87,8 +96,8 @@ public class MediaViewerActivity extends AppCompatActivity {
                                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                                         // Hide the nav bar and status bar
-                                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                                        //| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                                        //| View.SYSTEM_UI_FLAG_FULLSCREEN
         );
     }
 
