@@ -11,52 +11,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <carbon.widget.ImageView
-            android:id="@+id/game_banner_imv"
+        <com.rora.phase.utils.ui.MediaView
+            android:id="@+id/top_media_game_details"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scaleType="fitXY"
-            android:src="@drawable/banner_test"
+            android:layout_height="0dp"
             app:layout_constraintDimensionRatio="1:0.5625"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/error_banner_imv"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:scaleType="center"
-            android:src="?android:attr/alertDialogIcon"
-            android:visibility="visible"
-            app:layout_constraintStart_toStartOf="@id/game_banner_imv"
-            app:layout_constraintBottom_toBottomOf="@id/game_banner_imv"
             app:layout_constraintTop_toTopOf="parent"/>
-
-        <VideoView
-            android:id="@+id/trailer_game_vv"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="@id/game_banner_imv"
-            app:layout_constraintTop_toTopOf="@id/game_banner_imv"
-            android:visibility="gone"/>
-
-        <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
-            android:id="@+id/trailer_game_yvv"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="@id/game_banner_imv"
-            app:layout_constraintTop_toTopOf="@id/game_banner_imv"
-            app:showFullScreenButton="false"
-            app:showSeekBar="false"
-            app:showVideoCurrentTime="false"
-            app:showVideoDuration="false"
-            app:showYouTubeButton="false"
-            android:visibility="gone"/>
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:background="@drawable/shape_dim_primary_dark_fader_corner_rectangle"
-            app:layout_constraintBottom_toBottomOf="@id/game_banner_imv"
+            app:layout_constraintBottom_toBottomOf="@id/top_media_game_details"
             app:layout_constraintHeight_percent=".05" />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -64,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/ic_min_size"
             android:layout_margin="@dimen/max_space"
-            app:layout_constraintBottom_toBottomOf="@id/game_banner_imv"
+            app:layout_constraintBottom_toBottomOf="@id/top_media_game_details"
             app:layout_constraintStart_toStartOf="parent" />
 
         <!--Info-->
@@ -88,9 +54,9 @@
             android:background="@android:color/transparent"
             android:scaleType="fitXY"
             android:src="@drawable/ic_play"
-            app:layout_constraintBottom_toBottomOf="@id/game_banner_imv"
+            app:layout_constraintBottom_toBottomOf="@id/top_media_game_details"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/game_banner_imv" />
+            app:layout_constraintTop_toBottomOf="@id/top_media_game_details" />
 
         <TextView
             android:id="@+id/game_name_tv"
@@ -104,7 +70,7 @@
             android:textColor="@color/colorText"
             android:textSize="@dimen/header_text_size"
             android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@id/game_banner_imv" />
+            app:layout_constraintTop_toBottomOf="@id/top_media_game_details" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/category_game_rclv"

@@ -11,6 +11,7 @@ import com.rora.phase.nvstream.http.ComputerDetails;
 import com.rora.phase.repository.GameRepository;
 import com.rora.phase.repository.UserRepository;
 import com.rora.phase.utils.SharedPreferencesHelper;
+import com.rora.phase.utils.callback.OnResultCallBack;
 
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class GameViewModel extends AndroidViewModel {
         super(application);
         gameRepository = new GameRepository();
 
-        game = gameRepository.getSelectedGame();
+        game = new MutableLiveData<>();
         similarGameList = gameRepository.getSimilarGameList();
         newGameList = gameRepository.getNewGameList();
         currentGame = new MutableLiveData<>();
@@ -52,7 +53,14 @@ public class GameViewModel extends AndroidViewModel {
     }
 
     public void getGame(String gameId) {
-        gameRepository.getGameData(gameId);
+        game.postValue(null);
+        gameRepository.getGameData(gameId, (OnResultCallBack<Game>) (errMsg, data) -> {
+            if (errMsg != null) {
+                return;
+            }
+
+            game.postValue(data);
+        });
     }
 
     public boolean isUserLogged() {

@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rora.phase.R;
+import com.rora.phase.model.Banner;
 import com.rora.phase.model.MediaImage;
 import com.rora.phase.utils.MediaHelper;
 import com.rora.phase.utils.ui.BaseRVAdapter;
@@ -18,21 +19,20 @@ import com.rora.phase.utils.ui.ViewHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MediaViewerAdapter extends BaseRVAdapter {
+public class MediaAdapter extends BaseRVAdapter {
 
     private List<MediaImage> mediaList;
-    private double widthPercent;
+    private double widthPercent = 0;
 
-    public MediaViewerAdapter(List<MediaImage> mediaList, double customWidth) {
-        this.mediaList = mediaList == null ? new ArrayList<>() : mediaList;
-        widthPercent = customWidth;
+    public MediaAdapter(double customWidthPercent) {
+        this.mediaList = new ArrayList<>();
+        this.widthPercent = customWidthPercent;
     }
 
     @NonNull
     @Override
     public BaseRVViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View root = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_media_viewer_fullscreen, parent, false);
-
+        View root = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_media, parent, false);
         if (widthPercent != 0) {
             //ViewHelper.setSizePercentageWithScreenAndItSelf(root, widthPercent, 0, 1.5);
             ViewHelper.setSizePercentageWithScreen(root, widthPercent, 0);
@@ -42,8 +42,7 @@ public class MediaViewerAdapter extends BaseRVAdapter {
             layoutParams.setMargins(0, 0, (int) parent.getContext().getResources().getDimension(R.dimen.medium_space), 0); // left, top, right, bottom
             root.setLayoutParams(layoutParams);
         }
-
-        return new MediaViewerVH(root);
+        return new MediaVH(root);
     }
 
     @Override
@@ -58,27 +57,35 @@ public class MediaViewerAdapter extends BaseRVAdapter {
         return mediaList.size();
     }
 
-    @Override
-    public <T> void bindData(T data) {
-        mediaList = data == null ? new ArrayList<>() : (List<MediaImage>) data;
+    public void bindData(List<MediaImage> mediaList) {
+        this.mediaList = mediaList == null ? new ArrayList<>() : mediaList;
         notifyDataSetChanged();
     }
 
+    @Override
+    public <T> void bindData(T mediaList) {
+        this.mediaList = mediaList == null ? new ArrayList<>() : (List<MediaImage>) mediaList;
+        notifyDataSetChanged();
+    }
 }
 
-class MediaViewerVH extends BaseRVViewHolder {
+class MediaVH extends BaseRVViewHolder {
 
-    private ImageView imageView;
+    private ImageView imageImv;
 
-    public MediaViewerVH(@NonNull View itemView) {
+    public MediaVH(@NonNull View itemView) {
         super(itemView);
 
-        imageView = itemView.findViewById(R.id.image_media_viewer_imv);
+        imageImv = itemView.findViewById(R.id.image_media_imv);
     }
 
     @Override
     public <T> void bindData(T data) {
-        MediaHelper.loadImage(imageView, ((MediaImage)data).getAvailableLink());
+        if (data == null || ((MediaImage)data).getAvailableLink() == null || ((MediaImage)data).getAvailableLink().isEmpty())
+            return;
+
+        itemView.findViewById(R.id.media_error).setVisibility(View.GONE);
+        MediaHelper.loadImage(imageImv, ((MediaImage)data).getAvailableLink());
     }
 
 }

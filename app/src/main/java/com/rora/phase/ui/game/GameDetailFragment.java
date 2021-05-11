@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,7 +18,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 import com.rora.phase.R;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.MediaImage;
@@ -29,7 +27,7 @@ import com.rora.phase.repository.UserRepository;
 import com.rora.phase.ui.adapter.CategoryRVAdapter;
 import com.rora.phase.ui.adapter.GameRVAdapter;
 import com.rora.phase.ui.adapter.GameVerticalRVAdapter;
-import com.rora.phase.ui.adapter.MediaViewerAdapter;
+import com.rora.phase.ui.adapter.MediaAdapter;
 import com.rora.phase.ui.adapter.PlatformRVAdapter;
 import com.rora.phase.ui.settings.auth.AuthActivity;
 import com.rora.phase.ui.viewmodel.GameViewModel;
@@ -39,7 +37,7 @@ import com.rora.phase.utils.MediaHelper;
 import com.rora.phase.utils.services.PlayServicesMessageSender;
 import com.rora.phase.utils.ui.BaseFragment;
 import com.rora.phase.utils.ui.ExpandableTextView;
-import com.rora.phase.utils.ui.ViewHelper;
+import com.rora.phase.utils.ui.MediaView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,14 +51,13 @@ import static com.rora.phase.ui.game.MediaViewerActivity.SCREEN_TITLE_PARAM;
 public class GameDetailFragment extends BaseFragment {
 
     private LinearLayout frameSeries;
-    private ImageView imvBanner, imvBannerErr, imvSimilarGamesErr;
+    private MediaView topMediaView;
+    private ImageView imvSimilarGamesErr;
     private RecyclerView rclvPlatform, rclvCategory, rclvScreenshot, rclvSeries, rclvSimilar;
     private TextView tvGameName, tvPayType, tvPayTypeDesc, tvAgeRating, tvRelease;
     private ExpandableTextView tvDesc;
     private LinearLayout frameFirstPlayType, frameLastPlayType;
     private ImageButton btnFavorite, btnPlay, firstPlayTypeBtn, secondPlayTypeBtn, thirdPlayTypeBtn, lastPlayTypeBtn;
-    private VideoView trailerVv;
-    private YouTubePlayerView trailerYvv;
 
     private GameViewModel gameViewModel;
     private Game game;
@@ -92,10 +89,7 @@ public class GameDetailFragment extends BaseFragment {
 
         frameSeries = root.findViewById(R.id.frame_series);
 
-        trailerVv = root.findViewById(R.id.trailer_game_vv);
-        trailerYvv = root.findViewById(R.id.trailer_game_yvv);
-        imvBanner = root.findViewById(R.id.game_banner_imv);
-        imvBannerErr = root.findViewById(R.id.error_banner_imv);
+        topMediaView = root.findViewById(R.id.top_media_game_details);
         imvSimilarGamesErr = root.findViewById(R.id.error_similar_imv);
 
         rclvPlatform = root.findViewById(R.id.platform_rclv);
@@ -139,11 +133,9 @@ public class GameDetailFragment extends BaseFragment {
 
 
     private void initView(View root) {
-        ViewHelper.setSizePercentageWithScreen(imvBanner, 0, 0.35);
-
         setupRecyclerView(rclvPlatform, new PlatformRVAdapter(), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL , false));
         setupRecyclerView(rclvCategory,new CategoryRVAdapter(MEDIUM_SIZE, false), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL , false));
-        setupRecyclerView(rclvScreenshot, new MediaViewerAdapter(null), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        setupRecyclerView(rclvScreenshot, new MediaAdapter(0.47), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         setupRecyclerView(rclvSeries, new GameRVAdapter(GameRVAdapter.VIEW_TYPE_LANDSCAPE), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
         rclvSimilar.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL , false));
@@ -200,16 +192,6 @@ public class GameDetailFragment extends BaseFragment {
         if (game != null) {
             gameViewModel.getGame(game.getId().toString());
             gameViewModel.getSimilarGameList(game.getId().toString());
-            //gameViewModel.getNewGameListData(1, 5);
-
-            imvBannerErr.setVisibility(GONE);
-            trailerVv.setVisibility(View.VISIBLE);
-            trailerYvv.setVisibility(View.VISIBLE);
-        } else {
-            imvBannerErr.setVisibility(View.VISIBLE);
-            imvBanner.setVisibility(View.INVISIBLE);
-            trailerVv.setVisibility(GONE);
-            trailerYvv.setVisibility(GONE);
         }
         //if (game != null)
         //    bindData(game);
@@ -220,20 +202,12 @@ public class GameDetailFragment extends BaseFragment {
             return;
 
         this.game = game;
-        game.setTrailer("https://steamcdn-a.akamaihd.net/steam/apps/256679772/movie_max.mp4");
-        //game.setTrailer("https://youtu.be/h7Xs642lALk");
-        if (game.getTrailer() != null && !game.getTrailer().isEmpty()) {
-            if (MediaHelper.isYoutubeUrl(game.getTrailer())) {
-                trailerYvv.setVisibility(View.VISIBLE);
-                MediaHelper.loadYoutubeVideo(getLifecycle(), trailerYvv, game.getTrailer());
-            }
-            else {
-                trailerVv.setVisibility(View.VISIBLE);
-                MediaHelper.loadVideo(trailerVv, game.getTrailer(), true);
-            }
-        }
 
-        MediaHelper.loadImage(imvBanner, game.getBanner().get_640x360());
+        //game.setTrailers("https://steamcdn-a.akamaihd.net/steam/apps/256679772/movie_max.mp4");
+        if (!game.getTrailers().isEmpty() && !game.getTrailers().get(0).getAvailableLink().isEmpty())
+            topMediaView.loadVideo(getLifecycle(), game.getTrailers().get(0).getAvailableLink());
+        else
+            topMediaView.loadImage(game.getBanner().getAvailableLink());
 
         tvGameName.setText(game.getName());
         tvPayType.setText(game.getPayTypeName());
@@ -251,8 +225,8 @@ public class GameDetailFragment extends BaseFragment {
         for (Screenshot screenshot : game.getScreenshots()) {
             screenshots.add(new MediaImage(screenshot));
         }
-        ((MediaViewerAdapter)rclvScreenshot.getAdapter()).bindData(screenshots);
-        ((MediaViewerAdapter)rclvScreenshot.getAdapter()).setOnItemSelectedListener((position, selectedItem) -> {
+        ((MediaAdapter)rclvScreenshot.getAdapter()).bindData(screenshots);
+        ((MediaAdapter)rclvScreenshot.getAdapter()).setOnItemSelectedListener((position, selectedItem) -> {
             Intent mediaIntent = new Intent(getActivity(), MediaViewerActivity.class);
 
             Bundle mediaBundle = new Bundle();

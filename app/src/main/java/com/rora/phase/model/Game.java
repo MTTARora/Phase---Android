@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Game implements Parcelable {
@@ -19,9 +20,9 @@ public class Game implements Parcelable {
     @SerializedName("desc")
     @Expose
     private String desc;
-    @SerializedName("trailer")
+    @SerializedName("trailers")
     @Expose
-    private String trailer;
+    private List<MediaVideo> trailers;
     @SerializedName("releaseDate")
     @Expose
     private String releaseDate;
@@ -137,12 +138,15 @@ public class Game implements Parcelable {
         this.desc = desc;
     }
 
-    public String getTrailer() {
-        return trailer;
+    public List<MediaVideo> getTrailers() {
+        if (trailers == null)
+            new ArrayList<>();
+
+        return trailers;
     }
 
-    public void setTrailer(String trailer) {
-        this.trailer = trailer;
+    public void setTrailers(List<MediaVideo> trailers) {
+        this.trailers = trailers;
     }
 
     public String getReleaseDate() {

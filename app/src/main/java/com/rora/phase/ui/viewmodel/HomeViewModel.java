@@ -27,7 +27,6 @@ public class HomeViewModel extends AndroidViewModel {
     private LiveData<List<Banner>> bannerList;
     private LiveData<List<Game>> newGameList, editorsChoiceList, hotGameList, trendingList, gameByCategoryList, gameByPayTypeList;
     private LiveData<List<Tag>> categoryList;
-    private LiveData<Game> selectedGame;
     private PageManager pager, newGamePager, editorPager, hotGamePager, trendingPager, gameByCategoryPager;
     private String currentSelectedItemId;
 
@@ -71,7 +70,6 @@ public class HomeViewModel extends AndroidViewModel {
         categoryList = gameRepository.getCategoryList();
         gameByCategoryList = gameRepository.getGameByCategoryList();
         gameByPayTypeList = gameRepository.getGamesByPayTypeList();
-        selectedGame = gameRepository.getSelectedGame();
 
         pager = new PageManager();
         newGamePager = new PageManager();
@@ -144,10 +142,6 @@ public class HomeViewModel extends AndroidViewModel {
         return currentSelectedItemId;
     }
 
-    public LiveData<Game> getSelectedGame() {
-        return selectedGame;
-    }
-
     //----------------------------
 
     public void getBannerListData() {
@@ -182,10 +176,6 @@ public class HomeViewModel extends AndroidViewModel {
     private void getGameByPayTypeListData(String payType, int page, int pageSize) {
         currentSelectedItemId = payType;
         gameRepository.getGamesByPayTypeData(payType, page, pageSize);
-    }
-
-    public void getGame(String game) {
-        gameRepository.getGameData(game);
     }
 
     /** This method will always get the first page with default page size

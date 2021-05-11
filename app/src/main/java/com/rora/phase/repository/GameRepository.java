@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.rora.phase.model.Game;
 import com.rora.phase.model.Tag;
+import com.rora.phase.utils.callback.OnResultCallBack;
 import com.rora.phase.utils.network.APIServicesHelper;
 import com.rora.phase.utils.network.PhaseService;
 import com.rora.phase.utils.network.PhaseServiceHelper;
@@ -19,7 +20,6 @@ public class GameRepository {
 
     private MutableLiveData<List<Game>> newGameList, recentPlayList, editorsChoiceList, hotGameList, trendingList, gameByCategoryList, gamesByPayTypeList, similarGameList;
     private MutableLiveData<List<Tag>> categoryList;
-    private MutableLiveData<Game> selectedGame;
 
     private MutableLiveData<String> errMsg;
 
@@ -32,7 +32,6 @@ public class GameRepository {
         categoryList = new MutableLiveData<>();
         gameByCategoryList = new MutableLiveData<>();
         gamesByPayTypeList = new MutableLiveData<>();
-        selectedGame = new MutableLiveData<>();
         similarGameList = new MutableLiveData<>();
 
         errMsg = new MutableLiveData<>();
@@ -77,10 +76,6 @@ public class GameRepository {
         return gamesByPayTypeList;
     }
 
-    public MutableLiveData<Game> getSelectedGame() {
-        return selectedGame;
-    }
-
     public MutableLiveData<List<Game>> getSimilarGameList() {
         return similarGameList;
     }
@@ -96,7 +91,6 @@ public class GameRepository {
         categoryList = new MutableLiveData<>();
         gameByCategoryList = new MutableLiveData<>();
         gamesByPayTypeList = new MutableLiveData<>();
-        selectedGame = new MutableLiveData<>();
         similarGameList = new MutableLiveData<>();
     }
 
@@ -221,18 +215,16 @@ public class GameRepository {
         });
     }
 
-    public void getGameData(String gameId) {
-
+    public void getGameData(String gameId, OnResultCallBack onResultCallBack) {
         APIServicesHelper<Game> apiHelper = new APIServicesHelper<>();
 
         apiHelper.request(gameServices.getGame(gameId), (err, data) -> {
             if (err != null) {
-                selectedGame.postValue(new Game());
-                errMsg.postValue(err);
+                onResultCallBack.onResult(err, null);
             } else {
                 Game game = data;
                 game = game == null ? new Game() : game;
-                selectedGame.postValue(game);
+                onResultCallBack.onResult(null, game);
             }
         });
     }

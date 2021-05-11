@@ -28,6 +28,8 @@ public class MediaImage extends Media {
     }
 
     public MediaImage(MediaImage mediaImage) {
+        if (mediaImage == null)
+            return;
         this._200x112 = mediaImage.get_200x112();
         this._420x236 = mediaImage.get_420x236();
         this._640x360 = mediaImage.get_640x360();
@@ -86,14 +88,18 @@ public class MediaImage extends Media {
 
     @Override
     public String getAvailableLink() {
-        if (this._1920x1080 != null && !this._1920x1080.isEmpty())
-            return get_1920x1080();
+
+        if (this.availableLink != null && !this.availableLink.isEmpty())
+            return availableLink;
 
         if (this._1280x720 != null && !this._1280x720.isEmpty())
             return get_1280x720();
 
         if (this._640x360 != null && !this._640x360.isEmpty())
             return get_640x360();
+
+        if (this._1920x1080 != null && !this._1920x1080.isEmpty())
+            return get_1920x1080();
 
         if (this._2560x1440 != null && !this._2560x1440.isEmpty())
             return get_2560x1440();
@@ -105,5 +111,6 @@ public class MediaImage extends Media {
             return get_200x112();
 
         return null;
+
     }
 }

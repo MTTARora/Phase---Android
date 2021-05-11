@@ -7,6 +7,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.view.View;
 
 import com.rora.phase.R;
 import com.rora.phase.model.MediaImage;
@@ -31,6 +32,7 @@ public class MediaViewerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_media_viewer);
+
         toolbar = findViewById(R.id.toolbar);
         mediaViewerVp = findViewById(R.id.media_viewer_vp);
 
@@ -46,13 +48,14 @@ public class MediaViewerActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        mediaViewerVp.setAdapter(new MediaViewerAdapter(mediaImageList));
+        mediaViewerVp.setAdapter(new MediaViewerAdapter(mediaImageList, 0));
         mediaViewerVp.setCurrentItem(currentPosition);
     }
 
     private void setupViews() {
+        hideSystemUI();
         toolbar.showActionbar(title, true);
-        mediaViewerVp.setAdapter(new MediaViewerAdapter(mediaImageList));
+        mediaViewerVp.setAdapter(new MediaViewerAdapter(mediaImageList, 0));
         mediaViewerVp.setOffscreenPageLimit(mediaImageList.size());
         mediaViewerVp.setCurrentItem(currentPosition, false);
 
@@ -63,6 +66,22 @@ public class MediaViewerActivity extends AppCompatActivity {
                 currentPosition = position;
             }
         });
+    }
+
+    private void hideSystemUI() {
+        // Enables regular immersive mode.
+        // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
+        // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                // Set the content to appear under the system bars so that the
+                // content doesn't resize when the system bars hide and show.
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        // Hide the nav bar and status bar
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
     }
 
 }
