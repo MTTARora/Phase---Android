@@ -2,6 +2,7 @@ package com.rora.phase.ui.game;
 
 import android.os.Bundle;
 
+import androidx.core.view.ViewCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -67,6 +68,11 @@ public class GameListFragment extends BaseFragment {
         rclvGameList = root.findViewById(R.id.game_list_vertical_rclv);
         errImv = root.findViewById(R.id.error_imv);
 
+        ViewCompat.setOnApplyWindowInsetsListener(root.findViewById(R.id.toolbar), (v, insets) -> {
+            // Move toolbar below status bar
+            root.findViewById(R.id.toolbar).setPadding(0, insets.getSystemWindowInsetTop() + (int)getResources().getDimension(R.dimen.minnn_space), 0, 0);
+            return insets;
+        });
         initView();
         bindData(root);
 
@@ -74,6 +80,7 @@ public class GameListFragment extends BaseFragment {
     }
 
     private void initView() {
+
         rclvGameList.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL , false));
         rclvGameList.setAdapter(new GameVerticalRVAdapter(rclvGameList));
 
