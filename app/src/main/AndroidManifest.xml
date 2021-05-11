@@ -45,8 +45,7 @@
         <activity
             android:name=".ui.game.MediaViewerActivity"
             android:configChanges="orientation"
-            android:screenOrientation="sensor"
-            android:theme="@style/FullScreenTheme"/>
+            android:screenOrientation="sensor"/>
 
         <provider
             android:name=".PosterContentProvider"

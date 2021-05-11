@@ -7,6 +7,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 
 import com.rora.phase.R;
@@ -18,11 +19,14 @@ import java.util.List;
 
 public class MediaViewerActivity extends AppCompatActivity {
 
+    private View decorView;
     private CustomToolbar toolbar;
     private ViewPager2 mediaViewerVp;
+
     private String title;
     private List<MediaImage> mediaImageList;
     private int currentPosition;
+    private boolean isShowingSystemBars = false;
 
     public static String SCREEN_TITLE_PARAM = "title_param";
     public static String MEDIA_LIST_PARAM = "medias_param";
@@ -66,22 +70,26 @@ public class MediaViewerActivity extends AppCompatActivity {
                 currentPosition = position;
             }
         });
+
+        decorView.setOnSystemUiVisibilityChangeListener(visibility -> {
+            if (isShowingSystemBars) {
+                new Handler().postDelayed(this::hideSystemUI, 1000);
+                isShowingSystemBars = false;
+            } else {
+                isShowingSystemBars = true;
+            }
+        });
     }
 
     private void hideSystemUI() {
-        // Enables regular immersive mode.
-        // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
-        // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-                // Set the content to appear under the system bars so that the
-                // content doesn't resize when the system bars hide and show.
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        // Hide the nav bar and status bar
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
+        decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                        // Hide the nav bar and status bar
+                                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+        );
     }
 
 }
