@@ -36,6 +36,10 @@ public class GameViewModel extends AndroidViewModel {
         return game;
     }
 
+    public void resetGameData() {
+        game.postValue(null);
+    }
+
     public MutableLiveData<Game> getCurrentGame() {
         return currentGame;
     }
@@ -53,9 +57,9 @@ public class GameViewModel extends AndroidViewModel {
     }
 
     public void getGame(String gameId) {
-        game.postValue(null);
         gameRepository.getGameData(gameId, (OnResultCallBack<Game>) (errMsg, data) -> {
             if (errMsg != null) {
+                game.postValue(null);
                 return;
             }
 
@@ -74,5 +78,4 @@ public class GameViewModel extends AndroidViewModel {
     public void getSimilarGameList(String gameId) {
         gameRepository.getSimilarGameListData(gameId, 0, 0);
     }
-
 }

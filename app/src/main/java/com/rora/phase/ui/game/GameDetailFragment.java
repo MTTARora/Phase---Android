@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -62,6 +63,7 @@ public class GameDetailFragment extends BaseFragment {
     private GameViewModel gameViewModel;
     private Game game;
     private boolean isPlayingThisGame;
+    private boolean isFirstInit = true;
 
     public static final String KEY_GAME = "game";
 
@@ -129,6 +131,12 @@ public class GameDetailFragment extends BaseFragment {
         btnPlay.setImageResource(isPlayingThisGame ? android.R.drawable.ic_lock_power_off : R.drawable.ic_play);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        gameViewModel.resetGameData();
+    }
+
     //---------------------------------------------------------------------------------------
 
 
@@ -172,7 +180,7 @@ public class GameDetailFragment extends BaseFragment {
     }
 
     private void initData() {
-        gameViewModel.getGameData().observe(getViewLifecycleOwner(), this::bindData);
+        gameViewModel.getGameData().observe(getViewLifecycleOwner(), game -> bindData(game));
         gameViewModel.getCurrentGame().observe(getViewLifecycleOwner(), game -> {
             isPlayingThisGame = game != null;
 
@@ -198,8 +206,14 @@ public class GameDetailFragment extends BaseFragment {
     }
 
     private void bindData(Game game) {
-        if (game == null || this.game.getId() != game.getId()) //Handle stupid err - duplicate response from live data
+        if (game == null || this.game.getId() != game.getId()) {
+            //Handle stupid err - duplicate response from live data
+            if(!isFirstInit) {
+                hideLoadingScreen();
+            }
+            isFirstInit = false;
             return;
+        }
 
         this.game = game;
 

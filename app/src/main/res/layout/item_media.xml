@@ -19,7 +19,6 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:scaleType="fitXY"
-        app:carbon_cornerRadius="@dimen/max_radius"
         app:layout_constraintDimensionRatio="1:0.5625"
         app:layout_constraintTop_toTopOf="parent" />
 
