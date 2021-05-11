@@ -9,6 +9,7 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.ViewCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -61,6 +62,12 @@ public class LibraryFragment extends BaseFragment {
     }
 
     private void setupViews() {
+        ViewCompat.setOnApplyWindowInsetsListener(libraryTabLayout, (v, insets) -> {
+            // Move toolbar below status bar
+            libraryTabLayout.setPadding(0, insets.getSystemWindowInsetTop() + (int)getResources().getDimension(R.dimen.minnn_space), 0, 0);
+            return insets;
+        });
+
         showLoadingScreen();
         if (!userViewModel.isUserLogged()) {
             userViewModel.setCurrentRecentPlay(null);

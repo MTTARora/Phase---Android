@@ -79,7 +79,7 @@ public class MediaViewerActivity extends AppCompatActivity {
                 currentPosition = position;
             }
         });
-        
+
         decorView.setOnSystemUiVisibilityChangeListener(visibility -> {
             if (isShowingSystemBars) {
                 new Handler().postDelayed(this::hideSystemUI, 1000);

@@ -143,19 +143,16 @@ public class GameDetailFragment extends BaseFragment {
     public void onDestroy() {
         super.onDestroy();
         gameViewModel.resetGameData();
+        //getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
     }
 
     //---------------------------------------------------------------------------------------
 
 
     private void initView() {
-        int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-        getActivity().getWindow().getDecorView().setSystemUiVisibility(uiOptions);
-
         ViewCompat.setOnApplyWindowInsetsListener(btnBack, (v, insets) -> {
             // Move toolbar below status bar
-            btnBack.setPadding(0, insets.getSystemWindowInsetTop() + (int)getResources().getDimension(R.dimen.medium_space), 0, 0);
+            btnBack.setPadding(0, insets.getSystemWindowInsetTop() + (int)getResources().getDimension(R.dimen.minnn_space), 0, 0);
             return insets;
         });
 

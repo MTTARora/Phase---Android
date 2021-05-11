@@ -11,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -47,6 +49,7 @@ import static com.rora.phase.ui.adapter.CategoryRVAdapter.NORMAL_SIZE;
 
 public class HomeFragment extends BaseFragment {
 
+    private NestedScrollView nestedScrollView;
     private RecyclerView rclMain, rclvCategory;
     private SwipeRefreshLayout refreshLayout;
     private ViewPager2 vpBanner, vpOtherGames;
@@ -79,6 +82,7 @@ public class HomeFragment extends BaseFragment {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 
         refreshLayout = root.findViewById(R.id.refresh_layout_home_screen);
+        nestedScrollView = root.findViewById(R.id.frame_home);
         vpBanner = root.findViewById(R.id.banner_vp);
         vpOtherGames = root.findViewById(R.id.other_games_vp);
         tbOtherGames = root.findViewById(R.id.other_games_tab_layout);
@@ -104,6 +108,12 @@ public class HomeFragment extends BaseFragment {
 
 
     private void initView(View root) {
+        ViewCompat.setOnApplyWindowInsetsListener(nestedScrollView, (v, insets) -> {
+            // Move toolbar below status bar
+            nestedScrollView.setPadding(0, insets.getSystemWindowInsetTop() + (int)getResources().getDimension(R.dimen.minnn_space), 0, 0);
+            return insets;
+        });
+
         showActionbar(root, getResources().getString(R.string.app_label), false);
         setActionbarStyle(getResources().getDimension(R.dimen.logo_text_size), ContextCompat.getColor(getContext(), R.color.colorPrimary));
 
