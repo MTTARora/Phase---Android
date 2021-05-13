@@ -21,6 +21,7 @@ public class GameViewModel extends AndroidViewModel {
     private MutableLiveData<Game> game;
     private MutableLiveData<Game> currentGame;
     private LiveData<List<Game>> similarGameList, newGameList;
+    private MutableLiveData<List<Game>> searchList;
 
     public GameViewModel(Application application) {
         super(application);
@@ -30,6 +31,7 @@ public class GameViewModel extends AndroidViewModel {
         similarGameList = gameRepository.getSimilarGameList();
         newGameList = gameRepository.getNewGameList();
         currentGame = new MutableLiveData<>();
+        searchList = new MutableLiveData<>();
     }
 
     public LiveData<Game> getGameData() {
@@ -50,6 +52,10 @@ public class GameViewModel extends AndroidViewModel {
 
     public LiveData<List<Game>> getSimilarGames() {
         return similarGameList;
+    }
+
+    public LiveData<List<Game>> getSearchResult() {
+        return searchList;
     }
 
     public void setCurrentGame(Game game) {
@@ -77,5 +83,16 @@ public class GameViewModel extends AndroidViewModel {
 
     public void getSimilarGameList(String gameId) {
         gameRepository.getSimilarGameListData(gameId, 0, 0);
+    }
+
+    public void searchGame(String keySearch) {
+        gameRepository.searchGame(keySearch, (errMsg, data) -> {
+            if (errMsg != null) {
+                searchList.setValue(null);
+                return;
+            }
+
+            searchList.setValue(data);
+        });
     }
 }

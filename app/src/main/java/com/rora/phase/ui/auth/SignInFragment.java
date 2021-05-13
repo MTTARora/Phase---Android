@@ -1,4 +1,4 @@
-package com.rora.phase.ui.settings.auth;
+package com.rora.phase.ui.auth;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,7 +26,7 @@ import com.rora.phase.utils.DataResponse;
 import com.rora.phase.utils.ui.FragmentManagerHelper;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
-import static com.rora.phase.ui.settings.auth.AuthActivity.START_IN_APP_PARAM;
+import static com.rora.phase.ui.auth.AuthActivity.START_IN_APP_PARAM;
 
 public class SignInFragment extends Fragment {
 

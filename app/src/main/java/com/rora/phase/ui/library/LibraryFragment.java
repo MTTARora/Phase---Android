@@ -7,18 +7,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
-import com.rora.phase.MainActivity;
 import com.rora.phase.R;
 import com.rora.phase.ui.adapter.TabPagerAdapter;
-import com.rora.phase.ui.settings.auth.AuthActivity;
+import com.rora.phase.ui.auth.AuthActivity;
 import com.rora.phase.ui.viewmodel.UserViewModel;
 import com.rora.phase.utils.MediaHelper;
 import com.rora.phase.utils.ui.BaseFragment;

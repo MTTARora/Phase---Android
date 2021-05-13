@@ -142,6 +142,10 @@ public class HomeViewModel extends AndroidViewModel {
         return currentSelectedItemId;
     }
 
+    public void setCurrentSelectedItemId(String id) {
+        currentSelectedItemId = id;
+    }
+
     //----------------------------
 
     public void getBannerListData() {

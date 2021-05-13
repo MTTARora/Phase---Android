@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.rora.phase.R;
-import com.rora.phase.ui.settings.auth.AuthActivity;
+import com.rora.phase.ui.auth.AuthActivity;
 
 import carbon.widget.Button;
 

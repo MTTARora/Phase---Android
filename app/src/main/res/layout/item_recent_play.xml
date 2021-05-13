@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/transparent"
-    app:cardCornerRadius="@dimen/maxx_radius"
-    tools:context=".ui.home.viewholder.BannerViewHolder">
+    app:cardCornerRadius="@dimen/maxx_radius">
 
     <carbon.widget.ImageView
         android:id="@+id/banner_item_recent_play"
@@ -19,8 +18,7 @@
         app:carbon_cornerRadius="@dimen/max_radius"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <carbon.widget.RecyclerView
         android:id="@+id/platform_item_recent_play_rclv"
@@ -40,10 +38,11 @@
     <ImageButton
         android:id="@+id/play_item_recent_play_btn"
         android:layout_width="@dimen/ic_medium_size"
-        android:layout_height="@dimen/ic_medium_size"
+        android:layout_height="0dp"
         android:background="@android:color/transparent"
         android:scaleType="fitXY"
         android:src="@drawable/ic_play"
+        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintBottom_toBottomOf="@id/banner_item_recent_play"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

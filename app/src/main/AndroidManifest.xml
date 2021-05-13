@@ -79,9 +79,10 @@
         <activity
             android:name=".MainActivity"
             android:configChanges="mcc|mnc|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
+            android:windowSoftInputMode="adjustPan"
             android:resizeableActivity="true"></activity>
         <activity
-            android:name=".ui.settings.auth.AuthActivity"
+            android:name=".ui.auth.AuthActivity"
             android:label="Sign in"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustPan"></activity>

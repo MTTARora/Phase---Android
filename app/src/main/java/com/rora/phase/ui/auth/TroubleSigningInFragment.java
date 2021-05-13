@@ -1,17 +1,13 @@
-package com.rora.phase.ui.settings.auth;
+package com.rora.phase.ui.auth;
 
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.CountDownTimer;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -21,7 +17,6 @@ import android.widget.TextView;
 
 import com.rora.phase.R;
 import com.rora.phase.ui.viewmodel.UserViewModel;
-import com.rora.phase.utils.DataResponse;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
 import static android.view.View.GONE;

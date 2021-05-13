@@ -22,11 +22,12 @@
         <item name="android:windowNoTitle">true</item>
 
         <!--<item name="android:windowBackground">@color/colorPrimary</item>-->
-        <!--<item name="android:colorBackground">@color/colorPrimaryDark</item>-->
-        <!--<item name="android:colorAccent">@color/green</item>-->
+        <item name="android:colorBackground">@color/colorPrimaryDark</item>
+        <item name="android:colorAccent">@color/green</item>
         <!--<item name="android:textColor">@color/dim</item>-->
         <!--<item name="cardViewStyle">@color/dim</item>-->
         <!--<item name="tabStyle">@color/dim</item>-->
+        <item name="autoCompleteTextViewStyle">@style/cursorColor</item>
     </style>
 
     <style name="StreamBaseTheme" parent="AppBaseTheme">
@@ -57,5 +58,8 @@
     </style>
     <style name="ContentLoadingProgress">
         <item name="colorAccent">@color/colorPrimary</item>
+    </style>
+    <style name="cursorColor" parent="Widget.AppCompat.AutoCompleteTextView">
+        <item name="android:textCursorDrawable">@drawable/cursor</item>
     </style>
 </resources>

@@ -188,6 +188,7 @@ public class HomeFragment extends BaseFragment {
             if (!stopUpDateHomeScreen) {
                 ((HomeRVAdapter)rclMain.getAdapter()).bindDataWithCategoryData(new HomeUIData(HomeUIData.Type.DISCOVER_BY_CATEGORY, null, tags));
                 ((CategoryRVAdapter) Objects.requireNonNull(rclvCategory.getAdapter())).bindData(tags);
+                homeViewModel.setCurrentSelectedItemId(tags.get(0) != null ? tags.get(0).getTag() : "");
             }
             hideLoadingScreen();
         });

@@ -215,7 +215,7 @@ public class GameRepository {
         });
     }
 
-    public void getGameData(String gameId, OnResultCallBack onResultCallBack) {
+    public void getGameData(String gameId, OnResultCallBack<Game> onResultCallBack) {
         APIServicesHelper<Game> apiHelper = new APIServicesHelper<>();
 
         apiHelper.request(gameServices.getGame(gameId), (err, data) -> {
@@ -226,6 +226,18 @@ public class GameRepository {
                 game = game == null ? new Game() : game;
                 onResultCallBack.onResult(null, game);
             }
+        });
+    }
+
+    public void searchGame(String keySearch, OnResultCallBack<List<Game>> onResultCallBack) {
+        APIServicesHelper<List<Game>> apiHelper = new APIServicesHelper<>();
+
+        apiHelper.request(gameServices.search(keySearch), (err, data) -> {
+            if (err != null)
+                onResultCallBack.onResult(err, null);
+            else
+                onResultCallBack.onResult(null, data);
+
         });
     }
 }

@@ -23,17 +23,17 @@ public interface PhaseService {
     //------------------- GAME -----------------------
 
     @GET("./new")
-    Call<BaseResponse<List<Game>>> getNewGames(@Query("page") int page,@Query("page_size") int pageSize);
+    Call<BaseResponse<List<Game>>> getNewGames(@Query("page") int page, @Query("page_size") int pageSize);
 
-    //@GET("./editor_choice")
-    @GET("./")
-    Call<BaseResponse<List<Game>>> getEditorsChoice(@Query("page") int page,@Query("page_size") int pageSize);
+    @GET("./editor_choice")
+    //@GET("./")
+    Call<BaseResponse<List<Game>>> getEditorsChoice(@Query("page") int page, @Query("page_size") int pageSize);
 
     @GET("./hot")
-    Call<BaseResponse<List<Game>>> getHotGames(@Query("page") int page,@Query("page_size") int pageSize);
+    Call<BaseResponse<List<Game>>> getHotGames(@Query("page") int page, @Query("page_size") int pageSize);
 
     @GET("./trending")
-    Call<BaseResponse<List<Game>>> getTrending(@Query("page") int page,@Query("page_size") int pageSize);
+    Call<BaseResponse<List<Game>>> getTrending(@Query("page") int page, @Query("page_size") int pageSize);
 
     @GET("{game}")
     Call<BaseResponse<Game>> getGame(@Path("game") String gameId);
@@ -49,6 +49,9 @@ public interface PhaseService {
 
     @GET("./")
     Call<BaseResponse<List<Game>>> getSimilarGameList(@Query("gameId") String gameId, @Query("page") int page, @Query("page_size") int pageSize);
+
+    @GET("./search")
+    Call<BaseResponse<List<Game>>> search(@Query("name") String keySearch);
 
     //--------------------------------------------------
 

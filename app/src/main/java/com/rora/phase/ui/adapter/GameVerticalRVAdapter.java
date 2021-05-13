@@ -144,7 +144,7 @@ class VerticalGameItemVH extends BaseRVViewHolder {
     }
 
     public void bindData(Game game) {
-        MediaHelper.loadImage(imvBanner, game.getBackground().get_640x360());
+        MediaHelper.loadImage(imvBanner, game.getBanner().getAvailableLink());
         tvGameName.setText(game.getName());
         tvPayType.setText(game.getPayTypeName());
         tvDesc.setText(Html.fromHtml(game.getDesc(), Html.FROM_HTML_MODE_COMPACT));

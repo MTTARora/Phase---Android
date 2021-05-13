@@ -65,22 +65,28 @@ public class MediaHelper {
      * */
 
     public static void loadImage(ImageView intoView, String url) {
-        if (url == null || url.isEmpty())
+        if (url == null || url.isEmpty()) {
+            intoView.setImageResource(0);
             return;
+        }
 
         Picasso.get().load(url).into(intoView);
     }
 
     public static void loadImage(Context context, ImageView intoView, String url, int placeHolder) {
-        if (url == null || url.isEmpty())
+        if (url == null || url.isEmpty()) {
+            intoView.setImageResource(0);
             return;
+        }
 
         Picasso.get().load(url).placeholder(placeHolder).into(intoView);
     }
 
     public static void loadImageAsBackground(Context context, View view, String url) {
-        if (url == null || url.isEmpty())
+        if (url == null || url.isEmpty()) {
+            view.setBackground(null);
             return;
+        }
 
         Picasso.get().load(url).transform(new BlurTransformation(context, 15, 1)).into(new Target() {
             @Override
@@ -122,9 +128,12 @@ public class MediaHelper {
     }
 
     public static void loadImageWithBlurEffect(Context context, ImageView intoView, String url) {
-        if (url == null || url.isEmpty())
+        if (url == null || url.isEmpty()) {
+            intoView.setImageResource(0);
             return;
-        Picasso.get().load(url).transform(new BlurTransformation(context, 25, 1)).into(intoView);
+        }
+
+        Picasso.get().load(url).transform(new BlurTransformation(context, 50, 1)).into(intoView);
     }
 
 }

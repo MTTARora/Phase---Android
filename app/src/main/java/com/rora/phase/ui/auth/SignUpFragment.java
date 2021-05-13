@@ -1,9 +1,8 @@
-package com.rora.phase.ui.settings.auth;
+package com.rora.phase.ui.auth;
 
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.view.KeyEvent;
@@ -17,11 +16,9 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.rora.phase.R;
 import com.rora.phase.ui.viewmodel.UserViewModel;
-import com.rora.phase.utils.DataResponse;
 import com.rora.phase.utils.Dialog;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;

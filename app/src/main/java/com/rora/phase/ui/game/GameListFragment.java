@@ -69,10 +69,10 @@ public class GameListFragment extends BaseFragment {
         errImv = root.findViewById(R.id.error_imv);
 
         ViewCompat.setOnApplyWindowInsetsListener(root.findViewById(R.id.toolbar), (v, insets) -> {
-            // Move toolbar below status bar
             root.findViewById(R.id.toolbar).setPadding(0, insets.getSystemWindowInsetTop() + (int)getResources().getDimension(R.dimen.minnn_space), 0, 0);
             return insets;
         });
+
         initView();
         bindData(root);
 
@@ -80,7 +80,6 @@ public class GameListFragment extends BaseFragment {
     }
 
     private void initView() {
-
         rclvGameList.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL , false));
         rclvGameList.setAdapter(new GameVerticalRVAdapter(rclvGameList));
 
