@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.rora.phase.model.api.SearchSuggestion;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,6 +113,13 @@ public class Game implements Parcelable {
     private boolean isFavorited;
 
     public Game() {
+    }
+
+    public static Game init(SearchSuggestion selectedItem) {
+        Game game = new Game();
+        game.setId(selectedItem.getId());
+
+        return game;
     }
 
     public Integer getId() {

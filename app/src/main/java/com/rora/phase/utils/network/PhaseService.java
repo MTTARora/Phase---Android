@@ -5,6 +5,7 @@ import com.rora.phase.model.Game;
 import com.rora.phase.model.Host;
 import com.rora.phase.model.Tag;
 import com.rora.phase.model.User;
+import com.rora.phase.model.api.SearchSuggestion;
 
 import java.util.List;
 
@@ -52,6 +53,9 @@ public interface PhaseService {
 
     @GET("./search")
     Call<BaseResponse<List<Game>>> search(@Query("name") String keySearch);
+
+    @GET("./suggest-search")
+    Call<BaseResponse<List<SearchSuggestion>>> suggestSearch(@Query("name") String keySearch);
 
     //--------------------------------------------------
 

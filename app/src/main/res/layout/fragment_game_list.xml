@@ -17,7 +17,8 @@
         android:layout_height="wrap_content"
         android:clipChildren="false"
         android:clipToPadding="false"
-        android:paddingTop="@dimen/medium_space">
+        android:paddingTop="@dimen/medium_space"
+        android:paddingHorizontal="@dimen/medium_space">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/game_list_vertical_rclv"

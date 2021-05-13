@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.rora.phase.model.Game;
 import com.rora.phase.model.Tag;
+import com.rora.phase.model.api.SearchSuggestion;
 import com.rora.phase.utils.callback.OnResultCallBack;
 import com.rora.phase.utils.network.APIServicesHelper;
 import com.rora.phase.utils.network.PhaseService;
@@ -238,6 +239,17 @@ public class GameRepository {
             else
                 onResultCallBack.onResult(null, data);
 
+        });
+    }
+
+    public void suggestSearch(String keySearch, OnResultCallBack<List<SearchSuggestion>> onResultCallBack) {
+        APIServicesHelper<List<SearchSuggestion>> apiHelper = new APIServicesHelper<>();
+
+        apiHelper.request(gameServices.suggestSearch(keySearch), (err, data) -> {
+            if (err != null)
+                onResultCallBack.onResult(err, null);
+            else
+                onResultCallBack.onResult(null, data);
         });
     }
 }

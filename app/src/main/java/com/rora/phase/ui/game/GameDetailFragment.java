@@ -205,7 +205,7 @@ public class GameDetailFragment extends BaseFragment {
             }
         });
 
-        if (game != null) {
+        if (game != null || game.getId() != null) {
             gameViewModel.getGame(game.getId().toString());
             gameViewModel.getSimilarGameList(game.getId().toString());
         }

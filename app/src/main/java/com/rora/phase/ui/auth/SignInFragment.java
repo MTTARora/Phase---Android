@@ -92,9 +92,6 @@ public class SignInFragment extends Fragment {
         progressBar = root.findViewById(R.id.sign_in_pb);
         signInBtn = root.findViewById(R.id.sign_in_btn);
 
-        signInBtn.setOnClickListener(v -> signIn());
-        root.findViewById(R.id.guest_btn).setOnClickListener(v -> userViewModel.signInAsGuest());
-
         usernameTv.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_FLAG_NO_ENTER_ACTION || actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT || (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
                 passwordTv.requestFocus();
@@ -116,6 +113,10 @@ public class SignInFragment extends Fragment {
             hideSoftKeyboard();
             return true;
         });
+
+        signInBtn.setOnClickListener(v -> signIn());
+
+        root.findViewById(R.id.guest_btn).setOnClickListener(v -> userViewModel.signInAsGuest());
 
         root.findViewById(R.id.sign_in_trouble_btn).setOnClickListener(v ->  {
             errTv.setText("");

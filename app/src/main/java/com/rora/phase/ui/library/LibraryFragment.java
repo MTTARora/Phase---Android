@@ -1,5 +1,6 @@
 package com.rora.phase.ui.library;
 
+import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
@@ -27,6 +30,7 @@ public class LibraryFragment extends BaseFragment {
     private ViewPager2 libraryVp;
     private ImageView backgroundLl;
     private ErrorView frameError;
+    private boolean needReload = true;
 
     private UserViewModel userViewModel;
 
@@ -48,7 +52,10 @@ public class LibraryFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        setupViews();
+        if (needReload) {
+            setupViews();
+            needReload = false;
+        }
     }
 
     private void initData() {
@@ -74,6 +81,7 @@ public class LibraryFragment extends BaseFragment {
                 Intent intent = new Intent(getActivity(), AuthActivity.class);
                 intent.putExtra(AuthActivity.START_IN_APP_PARAM, true);
                 startActivity(intent);
+                needReload = true;
             });
             return;
         }

@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:gravity="center"
     android:orientation="horizontal"
-    android:paddingHorizontal="@dimen/medium_space">
+    android:paddingHorizontal="@dimen/normal_space">
 
     <androidx.cardview.widget.CardView
         android:layout_width="6dp"

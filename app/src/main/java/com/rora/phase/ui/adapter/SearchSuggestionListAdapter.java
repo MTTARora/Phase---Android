@@ -12,16 +12,20 @@ import androidx.annotation.NonNull;
 
 import com.rora.phase.R;
 import com.rora.phase.model.Game;
+import com.rora.phase.model.api.SearchSuggestion;
 import com.rora.phase.utils.MediaHelper;
+import com.rora.phase.utils.callback.OnItemSelectedListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchSuggestionListAdapter extends ArrayAdapter<Game> {
+public class SearchSuggestionListAdapter extends ArrayAdapter<SearchSuggestion> {
 
-    private List<Game> gameList;
+    private List<SearchSuggestion> gameList;
 
-    public SearchSuggestionListAdapter(@NonNull Context context, List<Game> games) {
+    private OnItemSelectedListener onItemSelectedListener;
+
+    public SearchSuggestionListAdapter(@NonNull Context context, List<SearchSuggestion> games) {
         super(context, 0, games);
 
         gameList = games;
@@ -33,7 +37,7 @@ public class SearchSuggestionListAdapter extends ArrayAdapter<Game> {
     }
 
     @Override
-    public Game getItem(int position) {
+    public SearchSuggestion getItem(int position) {
         return gameList.get(position);
     }
 
@@ -48,15 +52,23 @@ public class SearchSuggestionListAdapter extends ArrayAdapter<Game> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_search_suggestion, parent, false);
         }
 
-        MediaHelper.loadImage(convertView.findViewById(R.id.ic_suggestion), getItem(position).getBanner().getAvailableLink());
+        MediaHelper.loadImage(convertView.findViewById(R.id.ic_suggestion), getItem(position).getLogo());
         ((TextView) convertView.findViewById(R.id.suggestion_game_name)).setText(getItem(position).getName());
 
+        convertView.setOnClickListener(v -> {
+            if (onItemSelectedListener != null)
+                onItemSelectedListener.onSelected(position, getItem(position));
+        });
         return convertView;
     }
 
-    public void bindData(List<Game> games) {
+    public void bindData(List<SearchSuggestion> games) {
         this.gameList = games == null ? new ArrayList<>() : games;
         notifyDataSetChanged();
+    }
+
+    public void setOnItemSelectedListener(OnItemSelectedListener<SearchSuggestion> onItemSelectedListener) {
+        this.onItemSelectedListener = onItemSelectedListener;
     }
 
 }

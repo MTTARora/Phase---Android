@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.rora.phase.model.Game;
+import com.rora.phase.model.api.SearchSuggestion;
 import com.rora.phase.nvstream.http.ComputerDetails;
 import com.rora.phase.repository.GameRepository;
 import com.rora.phase.repository.UserRepository;
@@ -20,8 +21,9 @@ public class GameViewModel extends AndroidViewModel {
     private GameRepository gameRepository;
     private MutableLiveData<Game> game;
     private MutableLiveData<Game> currentGame;
-    private LiveData<List<Game>> similarGameList, newGameList;
+    private LiveData<List<Game>> similarGameList, newGameList, hotGameList;
     private MutableLiveData<List<Game>> searchList;
+    private MutableLiveData<List<SearchSuggestion>> suggestionList;
 
     public GameViewModel(Application application) {
         super(application);
@@ -30,8 +32,10 @@ public class GameViewModel extends AndroidViewModel {
         game = new MutableLiveData<>();
         similarGameList = gameRepository.getSimilarGameList();
         newGameList = gameRepository.getNewGameList();
+        hotGameList = gameRepository.getHotGameList();
         currentGame = new MutableLiveData<>();
         searchList = new MutableLiveData<>();
+        suggestionList = new MutableLiveData<>();
     }
 
     public LiveData<Game> getGameData() {
@@ -50,12 +54,20 @@ public class GameViewModel extends AndroidViewModel {
         return newGameList;
     }
 
+    public LiveData<List<Game>> getHotGameList() {
+        return hotGameList;
+    }
+
     public LiveData<List<Game>> getSimilarGames() {
         return similarGameList;
     }
 
     public LiveData<List<Game>> getSearchResult() {
         return searchList;
+    }
+
+    public LiveData<List<SearchSuggestion>> getSuggestionList() {
+        return suggestionList;
     }
 
     public void setCurrentGame(Game game) {
@@ -85,6 +97,10 @@ public class GameViewModel extends AndroidViewModel {
         gameRepository.getSimilarGameListData(gameId, 0, 0);
     }
 
+    public void getHotGameListData(int page, int pageSize) {
+        gameRepository.getHotGameListData(page, pageSize);
+    }
+
     public void searchGame(String keySearch) {
         gameRepository.searchGame(keySearch, (errMsg, data) -> {
             if (errMsg != null) {
@@ -93,6 +109,17 @@ public class GameViewModel extends AndroidViewModel {
             }
 
             searchList.setValue(data);
+        });
+    }
+
+    public void suggestSearch(String keySearch) {
+        gameRepository.suggestSearch(keySearch, (err, data) -> {
+            if (err != null) {
+                suggestionList.setValue(null);
+                return;
+            }
+
+            suggestionList.setValue(data);
         });
     }
 }

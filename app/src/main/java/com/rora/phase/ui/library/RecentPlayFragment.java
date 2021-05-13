@@ -94,7 +94,7 @@ public class RecentPlayFragment extends BaseFragment {
 
                 tvName.setText(game.getName());
                 tvPayType.setText(game.getPayTypeName());
-                tvAge.setText(game.getPegiAge() + "+");
+                tvAge.setText(game.getPegiAge() == null ? "N/A" : game.getPegiAge() + "+");
                 tvReleasedDate.setText(DateTimeHelper.format(game.getReleaseDate()));
                 ((CategoryRVAdapter)rclvCategory.getAdapter()).bindData(game.getTags());
                 userViewModel.setCurrentRecentPlay(game);
