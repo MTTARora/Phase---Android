@@ -14,6 +14,8 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+
 import com.rora.phase.R;
 
 @SuppressLint("AppCompatCustomView")
@@ -70,7 +72,7 @@ public class ExpandableTextView extends TextView {
             @Override
             public void updateDrawState(TextPaint ds) {
                 super.updateDrawState(ds);
-                ds.setColor(getContext().getResources().getColor(R.color.colorPrimary));
+                ds.setColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
                 ds.setUnderlineText(false);
             }
         };
@@ -95,7 +97,7 @@ public class ExpandableTextView extends TextView {
             @Override
             public void updateDrawState(TextPaint ds) {
                 super.updateDrawState(ds);
-                ds.setColor(getContext().getResources().getColor(R.color.colorPrimary));
+                ds.setColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
                 ds.setUnderlineText(false);
             }
         };

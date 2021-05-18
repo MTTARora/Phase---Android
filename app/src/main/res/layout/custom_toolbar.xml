@@ -32,6 +32,7 @@
             android:layout_marginStart="@dimen/max_space"
             android:gravity="center|start"
             app:layout_constraintStart_toEndOf="@id/back_btn" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!--<View-->

@@ -29,6 +29,7 @@ public class SupportPlayType {
     }
 
     public enum Type {
+        ALL(0),
         MOUSE_KEYBOARD(1),
         CONTROLLER(2),
         JOYSTICK(3),

@@ -20,7 +20,7 @@ import com.rora.phase.utils.MediaHelper;
 public class MediaView extends ConstraintLayout {
 
     private ImageView imageView;
-    private ErrorView errView;
+    //private ErrorView errView;
     private VideoView videoView;
     private YouTubePlayerView youTubePlayerView;
     private ContentLoadingProgressBar videoPb;
@@ -36,7 +36,7 @@ public class MediaView extends ConstraintLayout {
         imageView = findViewById(R.id.image_media_imv);
         videoView = findViewById(R.id.video_media_vv);
         youTubePlayerView = findViewById(R.id.yt_video_media);
-        errView = findViewById(R.id.media_error);
+        //errView = findViewById(R.id.media_error);
         videoPb = findViewById(R.id.video_pb);
     }
 
@@ -61,11 +61,11 @@ public class MediaView extends ConstraintLayout {
 
     public void loadImage(String url) {
         if (url == null || url.isEmpty()) {
-            errView.setVisibility(VISIBLE);
+            //errView.setVisibility(VISIBLE);
             return;
         }
 
-        errView.setVisibility(GONE);
+        //errView.setVisibility(GONE);
         MediaHelper.loadImage(imageView, url);
     }
 
@@ -73,7 +73,7 @@ public class MediaView extends ConstraintLayout {
         imageView.setVisibility(GONE);
 
         if (url == null || url.isEmpty()) {
-            errView.setVisibility(VISIBLE);
+            //errView.setVisibility(VISIBLE);
             return;
         }
 

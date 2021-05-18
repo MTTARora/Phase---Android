@@ -10,9 +10,8 @@
         android:id="@+id/search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/normal_space"
+        android:layout_marginHorizontal="@dimen/normal_space"
         android:layout_marginTop="@dimen/max_space"
-        android:layout_marginEnd="@dimen/normal_space"
         android:background="@drawable/shape_bg_search"
         android:translationZ="@dimen/medium_space"
         app:iconifiedByDefault="false"
@@ -20,12 +19,14 @@
         app:queryBackground="@null"
         app:submitBackground="@null" />
 
+    <!--Suggestion-->
     <carbon.widget.FrameLayout
         android:id="@+id/frame_suggestion_search"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/medium_radius"
         android:background="@color/white"
+        android:visibility="gone"
         android:translationZ="@dimen/min_space"
         app:carbon_cornerRadiusBottomEnd="@dimen/medium_radius"
         app:carbon_cornerRadiusBottomStart="@dimen/medium_radius"
@@ -49,14 +50,46 @@
 
     </carbon.widget.FrameLayout>
 
+    <!--Filters-->
+    <com.rora.phase.ui.search.FilterLayout
+        android:id="@+id/filters_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/medium_space"
+        app:layout_constraintTop_toBottomOf="@id/search"/>
+
+    <!--History-->
+    <LinearLayout
+        android:id="@+id/frame_history_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:layout_marginTop="@dimen/maxx_space"
+        android:layout_marginHorizontal="@dimen/normal_space"
+        app:layout_constraintTop_toBottomOf="@id/filters_search">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/history_title"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/search_history_rclv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/min_space"/>
+    </LinearLayout>
+
+    <!--Hot-->
     <include
         android:id="@+id/frame_hot_games_search"
         layout="@layout/item_home"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/maxx_space"
-        app:layout_constraintTop_toBottomOf="@id/search" />
+        app:layout_constraintTop_toBottomOf="@id/frame_history_search" />
 
+    <!--Result-->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/search_result_rclv"
         android:layout_width="match_parent"

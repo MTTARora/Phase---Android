@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
 
 import com.rora.phase.R;
 
@@ -28,6 +29,10 @@ public class CustomToolbar extends LinearLayout {
     }
 
     public void showActionbar(String title, boolean enableBackBtn) {
+        ViewCompat.setOnApplyWindowInsetsListener(this, (v, insets) -> {
+            this.setPadding(0, insets.getSystemWindowInsetTop() + (int) getResources().getDimension(R.dimen.minnn_space), 0, 0);
+            return insets;
+        });
         setVisibility(VISIBLE);
         enableBackButton(enableBackBtn);
         setScreenTitle(title);

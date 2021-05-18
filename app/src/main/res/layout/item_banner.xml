@@ -8,12 +8,20 @@
     app:carbon_cornerRadius="@dimen/maxx_radius"
     tools:context=".ui.home.viewholder.BannerViewHolder">
 
+    <com.rora.phase.utils.ui.ErrorView
+        android:id="@+id/media_error"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="center"
+        app:carbon_cornerRadius="@dimen/max_radius"
+        app:layout_constraintDimensionRatio="1:0.5625"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <carbon.widget.ImageView
         android:id="@+id/banner_home"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:scaleType="fitXY"
-        android:src="@drawable/banner_test"
         app:carbon_cornerRadius="@dimen/max_radius"
         app:layout_constraintDimensionRatio="1:0.5625"
         app:layout_constraintTop_toTopOf="parent" />

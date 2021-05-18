@@ -35,4 +35,18 @@ public class FragmentManagerHelper {
         transaction.commit();
     }
 
+    public static void add(FragmentManager fm, int containerViewId, Fragment destFrag, @Nullable String backStackName) {
+        FragmentTransaction transaction = fm.beginTransaction();
+
+        //transaction.setCustomAnimations(
+        //        R.anim.screen_fadein,  // enter
+        //        R.anim.screen_fadeout,  // exit
+        //        R.anim.screen_popup_show,   // popEnter
+        //        R.anim.screen_popup_hide  // popExit
+        //);
+        transaction.add(containerViewId, destFrag, destFrag.getClass().getSimpleName());
+        transaction.addToBackStack(backStackName);
+        transaction.commit();
+    }
+
 }

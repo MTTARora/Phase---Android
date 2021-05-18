@@ -22,8 +22,6 @@ public class GameViewModel extends AndroidViewModel {
     private MutableLiveData<Game> game;
     private MutableLiveData<Game> currentGame;
     private LiveData<List<Game>> similarGameList, newGameList, hotGameList;
-    private MutableLiveData<List<Game>> searchList;
-    private MutableLiveData<List<SearchSuggestion>> suggestionList;
 
     public GameViewModel(Application application) {
         super(application);
@@ -34,8 +32,6 @@ public class GameViewModel extends AndroidViewModel {
         newGameList = gameRepository.getNewGameList();
         hotGameList = gameRepository.getHotGameList();
         currentGame = new MutableLiveData<>();
-        searchList = new MutableLiveData<>();
-        suggestionList = new MutableLiveData<>();
     }
 
     public LiveData<Game> getGameData() {
@@ -62,20 +58,12 @@ public class GameViewModel extends AndroidViewModel {
         return similarGameList;
     }
 
-    public LiveData<List<Game>> getSearchResult() {
-        return searchList;
-    }
-
-    public LiveData<List<SearchSuggestion>> getSuggestionList() {
-        return suggestionList;
-    }
-
     public void setCurrentGame(Game game) {
         currentGame.postValue(game);
     }
 
     public void getGame(String gameId) {
-        gameRepository.getGameData(gameId, (OnResultCallBack<Game>) (errMsg, data) -> {
+        gameRepository.getGameData(gameId, (errMsg, data) -> {
             if (errMsg != null) {
                 game.postValue(null);
                 return;
@@ -99,27 +87,5 @@ public class GameViewModel extends AndroidViewModel {
 
     public void getHotGameListData(int page, int pageSize) {
         gameRepository.getHotGameListData(page, pageSize);
-    }
-
-    public void searchGame(String keySearch) {
-        gameRepository.searchGame(keySearch, (errMsg, data) -> {
-            if (errMsg != null) {
-                searchList.setValue(null);
-                return;
-            }
-
-            searchList.setValue(data);
-        });
-    }
-
-    public void suggestSearch(String keySearch) {
-        gameRepository.suggestSearch(keySearch, (err, data) -> {
-            if (err != null) {
-                suggestionList.setValue(null);
-                return;
-            }
-
-            suggestionList.setValue(data);
-        });
     }
 }

@@ -114,6 +114,14 @@ public abstract class BaseFragment extends Fragment {
         //transaction.commit();
     }
 
+    public void popupScreen(Fragment screen, @Nullable String stackName, boolean showLoading) {
+        if (showLoading)
+            showLoadingScreen();
+
+        currentFragment = screen;
+        FragmentManagerHelper.add(fm, R.id.main_container, screen, stackName);
+    }
+
 
     //----------------------------- ACTIONBAR --------------------------------
 

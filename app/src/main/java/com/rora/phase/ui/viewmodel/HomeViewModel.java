@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData;
 import com.rora.phase.model.Banner;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.Tag;
+import com.rora.phase.model.enums.GameListType;
 import com.rora.phase.model.ui.HomeUIData;
 import com.rora.phase.repository.BannerRepository;
 import com.rora.phase.repository.GameRepository;
@@ -29,33 +30,6 @@ public class HomeViewModel extends AndroidViewModel {
     private LiveData<List<Tag>> categoryList;
     private PageManager pager, newGamePager, editorPager, hotGamePager, trendingPager, gameByCategoryPager;
     private String currentSelectedItemId;
-
-    public enum GameListType {
-        NEW,
-        HOT,
-        EDITOR,
-        TRENDING,
-        BY_CATEGORY,
-        BY_PAY_TYPE,
-        RECOMMENDED;
-
-        public static GameListType getTypeFromHomeListType(HomeUIData.Type homeType) {
-            switch (homeType) {
-                case HOT:
-                    return HOT;
-                case EDITOR:
-                    return EDITOR;
-                case TRENDING:
-                    return TRENDING;
-                case NEW:
-                    return NEW;
-                case DISCOVER_BY_CATEGORY:
-                    return BY_CATEGORY;
-                default:
-                    return null;
-            }
-        }
-    }
 
     public HomeViewModel(Application application) {
         super(application);

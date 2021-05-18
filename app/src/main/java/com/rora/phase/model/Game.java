@@ -271,7 +271,7 @@ public class Game implements Parcelable {
     }
 
     public MediaImage getBanner() {
-        return banner;
+        return banner == null ? new Banner() : banner;
     }
 
     public void setBanner(MediaImage banner) {

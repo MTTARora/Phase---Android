@@ -24,6 +24,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.rora.phase.R;
 import com.rora.phase.model.Game;
+import com.rora.phase.model.enums.GameListType;
 import com.rora.phase.model.enums.PayTypeEnum;
 import com.rora.phase.model.ui.HomeUIData;
 import com.rora.phase.ui.adapter.BannerVPAdapter;
@@ -130,10 +131,10 @@ public class HomeFragment extends BaseFragment {
         rclMain.setHasFixedSize(true);
 
         homeAdapter.setOnViewAllClickListener((position, selectedItem) -> {
-            HomeViewModel.GameListType gameListType = HomeViewModel.GameListType.getTypeFromHomeListType(selectedItem.type);
+            GameListType gameListType = GameListType.getTypeFromHomeListType(selectedItem.type);
             if (gameListType != null) {
-                if (gameListType == HomeViewModel.GameListType.BY_CATEGORY) {
-                    goToGameListScreen(homeViewModel.getCurrentSelectedItemId(), HomeViewModel.GameListType.BY_CATEGORY, homeViewModel.getCurrentSelectedItemId());
+                if (gameListType == GameListType.BY_CATEGORY) {
+                    goToGameListScreen(homeViewModel.getCurrentSelectedItemId(), GameListType.BY_CATEGORY, homeViewModel.getCurrentSelectedItemId());
                 } else {
                     goToGameListScreen(selectedItem.getSessionName(getActivity()), gameListType, "");
                 }
@@ -142,11 +143,11 @@ public class HomeFragment extends BaseFragment {
         });
         homeAdapter.setOnChildItemClickListener((position, selectedItem) -> moveTo(GameDetailFragment.newInstance((Game) selectedItem), GameDetailFragment.class.getSimpleName(), true));
 
-        homeAdapter.setOnCategoryClickListener((position, selectedItemId) -> homeViewModel.getGamesDataByType(HomeViewModel.GameListType.BY_CATEGORY, (String) selectedItemId));
+        homeAdapter.setOnCategoryClickListener((position, selectedItemId) -> homeViewModel.getGamesDataByType(GameListType.BY_CATEGORY, (String) selectedItemId));
 
         CategoryRVAdapter categoryAdapter =  new CategoryRVAdapter(NORMAL_SIZE, true);
         setupRecyclerView(rclvCategory, categoryAdapter, new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-        categoryAdapter.setOnItemSelectedListener((position, selectedItemId) -> goToGameListScreen((String)selectedItemId, HomeViewModel.GameListType.BY_CATEGORY, (String)selectedItemId));
+        categoryAdapter.setOnItemSelectedListener((position, selectedItemId) -> goToGameListScreen((String)selectedItemId, GameListType.BY_CATEGORY, (String)selectedItemId));
     }
 
     private void bindData() {
@@ -199,10 +200,10 @@ public class HomeFragment extends BaseFragment {
     private void updateData() {
         stopUpDateHomeScreen = false;
         homeViewModel.getBannerListData();
-        homeViewModel.getGamesDataByType(HomeViewModel.GameListType.TRENDING, null);
-        homeViewModel.getGamesDataByType(HomeViewModel.GameListType.HOT, null);
-        homeViewModel.getGamesDataByType(HomeViewModel.GameListType.EDITOR, null);
-        homeViewModel.getGamesDataByType(HomeViewModel.GameListType.NEW, null);
+        homeViewModel.getGamesDataByType(GameListType.TRENDING, null);
+        homeViewModel.getGamesDataByType(GameListType.HOT, null);
+        homeViewModel.getGamesDataByType(GameListType.EDITOR, null);
+        homeViewModel.getGamesDataByType(GameListType.NEW, null);
         homeViewModel.getCategoryListData();
     }
 
@@ -214,9 +215,9 @@ public class HomeFragment extends BaseFragment {
         vpBanner.addItemDecoration(new HorizontalMarginItemDecoration());
 
         otherGamesAdapter = new TabPagerAdapter(this);
-        otherGamesAdapter.addPage(getResources().getString(R.string.free_to_play_title), GameListFragment.newInstance(null, HomeViewModel.GameListType.BY_PAY_TYPE, PayTypeEnum.FREE.toString()));
+        otherGamesAdapter.addPage(getResources().getString(R.string.free_to_play_title), GameListFragment.newInstance(null, GameListType.BY_PAY_TYPE, PayTypeEnum.FREE.toString()));
         if (homeViewModel.isUserLogged())
-            otherGamesAdapter.addPage(getResources().getString(R.string.recommended_title), GameListFragment.newInstance(null, HomeViewModel.GameListType.RECOMMENDED, null));
+            otherGamesAdapter.addPage(getResources().getString(R.string.recommended_title), GameListFragment.newInstance(null, GameListType.RECOMMENDED, null));
 
         vpOtherGames.setAdapter(otherGamesAdapter);
 
@@ -235,7 +236,7 @@ public class HomeFragment extends BaseFragment {
         view.setHasFixedSize(true);
     }
 
-    private void goToGameListScreen(String title, HomeViewModel.GameListType type, String filterParam) {
+    private void goToGameListScreen(String title, GameListType type, String filterParam) {
         homeViewModel.refresh(null);
 
         stopUpDateHomeScreen = true;

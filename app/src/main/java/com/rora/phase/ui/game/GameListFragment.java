@@ -14,6 +14,7 @@ import android.widget.ImageView;
 
 import com.rora.phase.R;
 import com.rora.phase.model.Game;
+import com.rora.phase.model.enums.GameListType;
 import com.rora.phase.repository.UserRepository;
 import com.rora.phase.ui.adapter.GameVerticalRVAdapter;
 import com.rora.phase.ui.viewmodel.HomeViewModel;
@@ -28,7 +29,7 @@ public class GameListFragment extends BaseFragment {
     private ImageView errImv;
 
     private HomeViewModel homeViewModel;
-    private HomeViewModel.GameListType listType;
+    private GameListType listType;
     private String screenTitle;
     private String filterParam = "";
 
@@ -38,7 +39,7 @@ public class GameListFragment extends BaseFragment {
 
     public GameListFragment() {}
 
-    public static GameListFragment newInstance(String screenTitle, HomeViewModel.GameListType type, String filterParam) {
+    public static GameListFragment newInstance(String screenTitle, GameListType type, String filterParam) {
         GameListFragment fragment = new GameListFragment();
         Bundle bundle = new Bundle();
         bundle.putString(SCREEN_TITLE_PARAM, screenTitle);
@@ -60,7 +61,7 @@ public class GameListFragment extends BaseFragment {
         if (getArguments() != null) {
             screenTitle = getArguments().getString(SCREEN_TITLE_PARAM);
             filterParam = getArguments().getString(KEY_FILTER_PARAM);
-            listType = (HomeViewModel.GameListType) getArguments().getSerializable(LIST_TYPE_PARAM);
+            listType = (GameListType) getArguments().getSerializable(LIST_TYPE_PARAM);
         }
 
         View root = inflater.inflate(R.layout.fragment_game_list, container, false);

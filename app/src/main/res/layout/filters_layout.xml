@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/filter_layout_scrollview"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/normal_space">
+
+        <TextView
+            android:id="@+id/filter_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/min_space"
+            android:background="@drawable/shape_corner_transparent"
+            android:paddingHorizontal="@dimen/medium_space"
+            android:paddingVertical="@dimen/minn_space"
+            app:drawableStartCompat="?android:attr/actionModeFindDrawable" />
+
+        <TextView
+            android:id="@+id/sort_by_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="@dimen/min_space"
+            android:layout_marginStart="@dimen/medium_space"
+            android:background="@drawable/shape_corner_transparent"
+            android:drawablePadding="@dimen/min_space"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/medium_space"
+            android:text="@string/sort_by_title"
+            app:drawableEndCompat="@android:drawable/stat_notify_sync" />
+
+        <TextView
+            android:id="@+id/tag_filter_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="@dimen/min_space"
+            android:layout_marginStart="@dimen/medium_space"
+            android:background="@drawable/shape_corner_transparent"
+            android:drawablePadding="@dimen/min_space"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/medium_space"
+            android:text="@string/tag_title" />
+
+        <TextView
+            android:id="@+id/pay_type_filter_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="@dimen/min_space"
+            android:layout_marginStart="@dimen/medium_space"
+            android:background="@drawable/shape_corner_transparent"
+            android:drawablePadding="@dimen/min_space"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/medium_space"
+            android:text="@string/pay_type_title" />
+
+        <TextView
+            android:id="@+id/play_types_filter_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="@dimen/min_space"
+            android:layout_marginStart="@dimen/medium_space"
+            android:background="@drawable/shape_corner_transparent"
+            android:drawablePadding="@dimen/min_space"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/medium_space"
+            android:text="@string/play_type_title" />
+
+        <TextView
+            android:id="@+id/pegi_filter_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="@dimen/min_space"
+            android:layout_marginStart="@dimen/medium_space"
+            android:background="@drawable/shape_corner_transparent"
+            android:drawablePadding="@dimen/min_space"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/medium_space"
+            android:text="@string/pegi_age_title" />
+
+        <TextView
+            android:id="@+id/nop_filter_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="@dimen/min_space"
+            android:layout_marginStart="@dimen/medium_space"
+            android:background="@drawable/shape_corner_transparent"
+            android:drawablePadding="@dimen/min_space"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/medium_space"
+            android:text="@string/nop_title" />
+
+        <TextView
+            android:id="@+id/feature_filter_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="@dimen/min_space"
+            android:layout_marginStart="@dimen/medium_space"
+            android:background="@drawable/shape_corner_transparent"
+            android:drawablePadding="@dimen/min_space"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/medium_space"
+            android:text="@string/by_feature_title" />
+
+        <TextView
+            android:id="@+id/game_qlt_filter_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="@dimen/min_space"
+            android:layout_marginStart="@dimen/medium_space"
+            android:background="@drawable/shape_corner_transparent"
+            android:drawablePadding="@dimen/min_space"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/medium_space"
+            android:text="@string/game_quality_title" />
+
+    </LinearLayout>
+
+</HorizontalScrollView>
