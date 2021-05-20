@@ -109,12 +109,6 @@ public class HomeFragment extends BaseFragment {
 
 
     private void initView(View root) {
-        ViewCompat.setOnApplyWindowInsetsListener(nestedScrollView, (v, insets) -> {
-            // Move toolbar below status bar
-            nestedScrollView.setPadding(0, insets.getSystemWindowInsetTop() + (int)getResources().getDimension(R.dimen.minnn_space), 0, 0);
-            return insets;
-        });
-
         showActionbar(root, getResources().getString(R.string.app_label), false);
         setActionbarStyle(getResources().getDimension(R.dimen.logo_text_size), ContextCompat.getColor(getContext(), R.color.colorPrimary));
 
@@ -189,7 +183,8 @@ public class HomeFragment extends BaseFragment {
             if (!stopUpDateHomeScreen) {
                 ((HomeRVAdapter)rclMain.getAdapter()).bindDataWithCategoryData(new HomeUIData(HomeUIData.Type.DISCOVER_BY_CATEGORY, null, tags));
                 ((CategoryRVAdapter) Objects.requireNonNull(rclvCategory.getAdapter())).bindData(tags);
-                homeViewModel.setCurrentSelectedItemId(tags.get(0) != null ? tags.get(0).getTag() : "");
+                if (tags.size() != 0)
+                    homeViewModel.setCurrentSelectedItemId(tags.get(0) != null ? tags.get(0).getTag() : "");
             }
             hideLoadingScreen();
         });

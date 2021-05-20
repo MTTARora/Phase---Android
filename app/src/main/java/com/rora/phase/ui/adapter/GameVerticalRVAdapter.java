@@ -149,9 +149,10 @@ class VerticalGameItemVH extends BaseRVViewHolder {
         tvPayType.setText(game.getPayTypeName());
         tvDesc.setText(Html.fromHtml(game.getDesc(), Html.FROM_HTML_MODE_COMPACT));
         tvTag.setText("");
-        for (Tag tag : game.getTags()) {
-            tvTag.setText(tvTag.getText() + "#" + tag.getTag() + " ");
-        }
+        if (game.getTags() != null)
+            for (Tag tag : game.getTags()) {
+                tvTag.setText(tvTag.getText() + "#" + tag.getTag() + " ");
+            }
 
         ((PlatformRVAdapter) Objects.requireNonNull(rclvPlatform.getAdapter())).bindData(game.getPlatforms());
 

@@ -36,34 +36,35 @@ public class GameInfoViewHolder extends BaseRVViewHolder {
         itemView.findViewById(R.id.ic_ubisoft_imv).setVisibility(View.GONE);
         itemView.findViewById(R.id.ic_garena_imv).setVisibility(View.GONE);
         itemView.findViewById(R.id.ic_riot_imv).setVisibility(View.GONE);
-        for (Platform platform : game.getPlatforms()) {
+        if (game.getPlatforms() != null)
+            for (Platform platform : game.getPlatforms()) {
 
-            switch (platform.getPlatformName()) {
-                case "Steam":
-                    itemView.findViewById(R.id.ic_steam_imv).setVisibility(View.VISIBLE);
-                    break;
-                case "Battle.net":
-                    itemView.findViewById(R.id.ic_battle_net_imv).setVisibility(View.VISIBLE);
-                    break;
-                case "Epic":
-                    itemView.findViewById(R.id.ic_epic_imv).setVisibility(View.VISIBLE);
-                    break;
-                case "Origin":
-                    itemView.findViewById(R.id.ic_origin_imv).setVisibility(View.VISIBLE);
-                    break;
-                case "Ubisoft":
-                    itemView.findViewById(R.id.ic_ubisoft_imv).setVisibility(View.VISIBLE);
-                    break;
-                case "Garena":
-                    itemView.findViewById(R.id.ic_garena_imv).setVisibility(View.VISIBLE);
-                    break;
-                case "Riot":
-                    itemView.findViewById(R.id.ic_riot_imv).setVisibility(View.VISIBLE);
-                    break;
-                case "GOG":
-                    break;
+                switch (platform.getPlatformName()) {
+                    case "Steam":
+                        itemView.findViewById(R.id.ic_steam_imv).setVisibility(View.VISIBLE);
+                        break;
+                    case "Battle.net":
+                        itemView.findViewById(R.id.ic_battle_net_imv).setVisibility(View.VISIBLE);
+                        break;
+                    case "Epic":
+                        itemView.findViewById(R.id.ic_epic_imv).setVisibility(View.VISIBLE);
+                        break;
+                    case "Origin":
+                        itemView.findViewById(R.id.ic_origin_imv).setVisibility(View.VISIBLE);
+                        break;
+                    case "Ubisoft":
+                        itemView.findViewById(R.id.ic_ubisoft_imv).setVisibility(View.VISIBLE);
+                        break;
+                    case "Garena":
+                        itemView.findViewById(R.id.ic_garena_imv).setVisibility(View.VISIBLE);
+                        break;
+                    case "Riot":
+                        itemView.findViewById(R.id.ic_riot_imv).setVisibility(View.VISIBLE);
+                        break;
+                    case "GOG":
+                        break;
+                }
             }
-        }
 
         itemView.setOnClickListener(v -> {
             if (onItemSelectedListener != null)
