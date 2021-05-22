@@ -326,5 +326,7 @@
     <string name="by_feature_title">By feature</string>
     <string name="nop_title">Number of players</string>
     <string name="game_quality_title">Game quality</string>
+    <string name="all_title">All</string>
+    <string name="none_title">None</string>
 
 </resources>

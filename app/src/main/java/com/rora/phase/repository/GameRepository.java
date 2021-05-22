@@ -5,7 +5,9 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.rora.phase.model.Game;
 import com.rora.phase.model.Tag;
+import com.rora.phase.model.api.FilterQuery;
 import com.rora.phase.model.api.SearchSuggestion;
+import com.rora.phase.model.ui.FilterParams;
 import com.rora.phase.utils.callback.OnResultCallBack;
 import com.rora.phase.utils.network.APIServicesHelper;
 import com.rora.phase.utils.network.PhaseService;
@@ -155,7 +157,7 @@ public class GameRepository {
         });
     }
 
-    public void getCategoryListData() {
+    public void getTagListAndGamesByFirstCategoryData() {
         APIServicesHelper<List<Tag>> apiHelper = new APIServicesHelper<>();
 
         apiHelper.request(tagServices.getCategoryList(), (err, data) -> {
@@ -165,8 +167,26 @@ public class GameRepository {
                 List<Tag> list = data;
                 list = list == null ? new ArrayList<>() : list;
                 categoryList.postValue(list);
-                if(list.size() != 0)
+                if (list.size() != 0)
                     getGamesByCategoryData(list.get(0).getTag() != null ? list.get(0).getTag() : "", 1, 20);
+            }
+        });
+    }
+
+    public void getTagListData(OnResultCallBack<List<Tag>> resultCallBack) {
+
+        APIServicesHelper<List<Tag>> apiHelper = new APIServicesHelper<>();
+
+        apiHelper.request(tagServices.getCategoryList(), (err, data) -> {
+            if (err != null) {
+                if (resultCallBack != null)
+                    resultCallBack.onResult(err, null);
+            } else {
+                List<Tag> list = data;
+                list = list == null ? new ArrayList<>() : list;
+
+                if (resultCallBack != null)
+                    resultCallBack.onResult(null, list);
             }
         });
     }
@@ -230,10 +250,10 @@ public class GameRepository {
         });
     }
 
-    public void searchGame(String keySearch, OnResultCallBack<List<Game>> onResultCallBack) {
+    public void searchGame(FilterQuery params, OnResultCallBack<List<Game>> onResultCallBack) {
         APIServicesHelper<List<Game>> apiHelper = new APIServicesHelper<>();
 
-        apiHelper.request(gameServices.search(keySearch), (err, data) -> {
+        apiHelper.request(gameServices.search(params), (err, data) -> {
             if (err != null)
                 onResultCallBack.onResult(err, null);
             else

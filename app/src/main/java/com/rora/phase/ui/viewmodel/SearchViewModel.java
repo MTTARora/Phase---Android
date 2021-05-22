@@ -8,6 +8,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.rora.phase.model.Game;
+import com.rora.phase.model.Tag;
+import com.rora.phase.model.api.FilterQuery;
 import com.rora.phase.model.api.SearchSuggestion;
 import com.rora.phase.model.ui.FilterParams;
 import com.rora.phase.repository.GameRepository;
@@ -22,6 +24,7 @@ public class SearchViewModel extends AndroidViewModel {
     private MutableLiveData<List<Game>> searchList;
     private MutableLiveData<List<SearchSuggestion>> suggestionList;
     private MutableLiveData<FilterParams> filters;
+    private MutableLiveData<List<Tag>> tagList;
 
     public SearchViewModel(Application application) {
         super(application);
@@ -29,6 +32,9 @@ public class SearchViewModel extends AndroidViewModel {
         searchList = new MutableLiveData<>();
         suggestionList = new MutableLiveData<>();
         filters = new MutableLiveData<>();
+        tagList = new MutableLiveData<>();
+
+        filters.setValue(new FilterParams());
     }
 
     public LiveData<List<Game>> getSearchResult() {
@@ -43,12 +49,28 @@ public class SearchViewModel extends AndroidViewModel {
         return filters;
     }
 
+    public MutableLiveData<List<Tag>> getTagList() {
+        return tagList;
+    }
+
+    public void setFilters(FilterParams filterParams) {
+        this.filters.setValue(filterParams);
+    }
+
+    public void resetKeySearch() {
+        filters.getValue().setName("");
+    }
+
+
+    // SERVICES
+
     public boolean isUserLogged() {
         return !SharedPreferencesHelper.newInstance(getApplication().getBaseContext()).getUserToken().isEmpty();
     }
 
     public void searchGame(String keySearch) {
-        gameRepository.searchGame(keySearch, (errMsg, data) -> {
+        filters.getValue().setName(keySearch == null ? filters.getValue().getName() : keySearch);
+        gameRepository.searchGame(new FilterQuery(filters.getValue()), (errMsg, data) -> {
             if (errMsg != null) {
                 searchList.setValue(null);
                 return;
@@ -69,8 +91,16 @@ public class SearchViewModel extends AndroidViewModel {
         });
     }
 
-    public void filter(FilterParams filters) {
-        this.filters.setValue(filters);
+    public void getTagListData() {
+        gameRepository.getTagListData((errMsg, data) -> tagList.setValue(data));
     }
 
+    public void reset() {
+        searchList = new MutableLiveData<>();
+        suggestionList = new MutableLiveData<>();
+        filters = new MutableLiveData<>();
+        tagList = new MutableLiveData<>();
+
+        filters.setValue(new FilterParams());
+    }
 }

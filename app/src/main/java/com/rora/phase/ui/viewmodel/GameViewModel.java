@@ -7,10 +7,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.rora.phase.model.Game;
-import com.rora.phase.model.api.SearchSuggestion;
-import com.rora.phase.nvstream.http.ComputerDetails;
+import com.rora.phase.model.Tag;
 import com.rora.phase.repository.GameRepository;
-import com.rora.phase.repository.UserRepository;
 import com.rora.phase.utils.SharedPreferencesHelper;
 import com.rora.phase.utils.callback.OnResultCallBack;
 
@@ -38,14 +36,6 @@ public class GameViewModel extends AndroidViewModel {
         return game;
     }
 
-    public void resetGameData() {
-        game.postValue(null);
-    }
-
-    public MutableLiveData<Game> getCurrentGame() {
-        return currentGame;
-    }
-
     public LiveData<List<Game>> getNewGameList() {
         return newGameList;
     }
@@ -58,8 +48,19 @@ public class GameViewModel extends AndroidViewModel {
         return similarGameList;
     }
 
+    public MutableLiveData<Game> getCurrentGame() {
+        return currentGame;
+    }
+
     public void setCurrentGame(Game game) {
         currentGame.postValue(game);
+    }
+
+
+    //SERVICES
+
+    public void resetGameData() {
+        game.postValue(null);
     }
 
     public void getGame(String gameId) {

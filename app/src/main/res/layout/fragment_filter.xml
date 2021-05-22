@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,16 +9,19 @@
     <com.rora.phase.utils.ui.CustomToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/frame_option_filter"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintBottom_toTopOf="@id/apply_filter_btn">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
             android:paddingHorizontal="@dimen/normal_space">
 
@@ -37,17 +40,30 @@
                     android:layout_marginBottom="@dimen/min_space"/>
 
                 <RadioGroup
+                    android:id="@+id/options_sort_by_filter"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     app:layout_constraintTop_toBottomOf="@id/resolution_settings_desc">
 
                     <RadioButton
+                        android:id="@+id/sort_by_none_rb"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?android:selectableItemBackground"
+                        android:buttonTint="@color/colorPrimary"
+                        android:button="@null"
+                        android:drawableEnd="?android:attr/listChoiceIndicatorSingle"
+                        android:text="@string/none_title"
+                        android:textColor="@color/colorText"
+                        android:textSize="@dimen/title_text_size" />
+
+                    <RadioButton
                         android:id="@+id/sort_by_added_date_rb"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="?android:selectableItemBackground"
-                        android:backgroundTint="@color/colorPrimary"
+                        android:buttonTint="@color/colorPrimary"
                         android:button="@null"
                         android:drawableEnd="?android:attr/listChoiceIndicatorSingle"
                         android:text="Newest"
@@ -59,7 +75,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="?android:selectableItemBackground"
-                        android:backgroundTint="@color/colorPrimary"
+                        android:buttonTint="@color/colorPrimary"
                         android:button="@null"
                         android:drawableEnd="?android:attr/listChoiceIndicatorSingle"
                         android:text="@string/release_title"
@@ -71,7 +87,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="?android:selectableItemBackground"
-                        android:backgroundTint="@color/colorPrimary"
+                        android:buttonTint="@color/colorPrimary"
                         android:button="@null"
                         android:drawableEnd="?android:attr/listChoiceIndicatorSingle"
                         android:text="@string/rating_title"
@@ -83,7 +99,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="?android:selectableItemBackground"
-                        android:backgroundTint="@color/colorPrimary"
+                        android:buttonTint="@color/colorPrimary"
                         android:button="@null"
                         android:drawableEnd="?android:attr/listChoiceIndicatorSingle"
                         android:text="@string/now_playing_title"
@@ -91,6 +107,193 @@
                         android:textSize="@dimen/title_text_size" />
 
                 </RadioGroup>
+
+            </LinearLayout>
+
+            <!--FEATURE-->
+            <LinearLayout
+                android:id="@+id/frame_feature_filter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/max_space"
+                android:orientation="vertical"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/by_feature_title"
+                    android:layout_marginBottom="@dimen/min_space"/>
+
+                <RadioGroup
+                    android:id="@+id/options_feature_filter"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintTop_toBottomOf="@id/resolution_settings_desc">
+
+                    <RadioButton
+                        android:id="@+id/feature_none_rb"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?android:selectableItemBackground"
+                        android:buttonTint="@color/colorPrimary"
+                        android:button="@null"
+                        android:drawableEnd="?android:attr/listChoiceIndicatorSingle"
+                        android:text="@string/none_title"
+                        android:textColor="@color/colorText"
+                        android:textSize="@dimen/title_text_size" />
+
+                    <RadioButton
+                        android:id="@+id/feature_hot_rb"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?android:selectableItemBackground"
+                        android:buttonTint="@color/colorPrimary"
+                        android:button="@null"
+                        android:drawableEnd="?android:attr/listChoiceIndicatorSingle"
+                        android:text="@string/hot_title"
+                        android:textColor="@color/colorText"
+                        android:textSize="@dimen/title_text_size" />
+
+                    <RadioButton
+                        android:id="@+id/feature_editor_choice_rb"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?android:selectableItemBackground"
+                        android:buttonTint="@color/colorPrimary"
+                        android:button="@null"
+                        android:drawableEnd="?android:attr/listChoiceIndicatorSingle"
+                        android:text="@string/editor_choice_title"
+                        android:textColor="@color/colorText"
+                        android:textSize="@dimen/title_text_size" />
+
+                    <RadioButton
+                        android:id="@+id/feature_trending_rb"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?android:selectableItemBackground"
+                        android:buttonTint="@color/colorPrimary"
+                        android:button="@null"
+                        android:drawableEnd="?android:attr/listChoiceIndicatorSingle"
+                        android:text="@string/trending_title"
+                        android:textColor="@color/colorText"
+                        android:textSize="@dimen/title_text_size" />
+
+                    <RadioButton
+                        android:id="@+id/feature_recommend_rb"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?android:selectableItemBackground"
+                        android:buttonTint="@color/colorPrimary"
+                        android:button="@null"
+                        android:drawableEnd="?android:attr/listChoiceIndicatorSingle"
+                        android:text="@string/recommended_title"
+                        android:textColor="@color/colorText"
+                        android:textSize="@dimen/title_text_size" />
+
+                </RadioGroup>
+
+            </LinearLayout>
+
+            <!--PLATFORM-->
+            <LinearLayout
+                android:id="@+id/frame_platforms_filter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/max_space"
+                android:orientation="vertical"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/platform_title"
+                    android:layout_marginBottom="@dimen/min_space" />
+
+                <CheckBox
+                    android:id="@+id/platforms_steam_cb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?android:selectableItemBackground"
+                    android:buttonTint="@color/colorPrimary"
+                    android:button="@null"
+                    android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
+                    android:text="Steam"
+                    android:textColor="@color/colorText"
+                    android:textSize="@dimen/title_text_size" />
+
+                <CheckBox
+                    android:id="@+id/platforms_battle_cb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?android:selectableItemBackground"
+                    android:buttonTint="@color/colorPrimary"
+                    android:button="@null"
+                    android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
+                    android:text="Battle.net"
+                    android:textColor="@color/colorText"
+                    android:textSize="@dimen/title_text_size" />
+
+                <CheckBox
+                    android:id="@+id/platforms_epic_cb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?android:selectableItemBackground"
+                    android:buttonTint="@color/colorPrimary"
+                    android:button="@null"
+                    android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
+                    android:text="Epic games"
+                    android:textColor="@color/colorText"
+                    android:textSize="@dimen/title_text_size" />
+
+                <CheckBox
+                    android:id="@+id/platforms_origin_cb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?android:selectableItemBackground"
+                    android:buttonTint="@color/colorPrimary"
+                    android:button="@null"
+                    android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
+                    android:text="@string/pay_type_free_with_our_account_title"
+                    android:textColor="@color/colorText"
+                    android:textSize="@dimen/title_text_size" />
+
+                <CheckBox
+                    android:id="@+id/platforms_ubisoft_cb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?android:selectableItemBackground"
+                    android:buttonTint="@color/colorPrimary"
+                    android:button="@null"
+                    android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
+                    android:text="Ubisoft"
+                    android:textColor="@color/colorText"
+                    android:textSize="@dimen/title_text_size" />
+
+                <CheckBox
+                    android:id="@+id/platforms_garena_cb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?android:selectableItemBackground"
+                    android:buttonTint="@color/colorPrimary"
+                    android:button="@null"
+                    android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
+                    android:text="Garena"
+                    android:textColor="@color/colorText"
+                    android:textSize="@dimen/title_text_size" />
+
+                <CheckBox
+                    android:id="@+id/platforms_riot_cb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?android:selectableItemBackground"
+                    android:buttonTint="@color/colorPrimary"
+                    android:button="@null"
+                    android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
+                    android:text="Riot"
+                    android:textColor="@color/colorText"
+                    android:textSize="@dimen/title_text_size" />
 
             </LinearLayout>
 
@@ -114,7 +317,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?android:selectableItemBackground"
-                    android:backgroundTint="@color/colorPrimary"
+                    android:buttonTint="@color/colorPrimary"
                     android:button="@null"
                     android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
                     android:text="@string/pay_type_free_title"
@@ -126,7 +329,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?android:selectableItemBackground"
-                    android:backgroundTint="@color/colorPrimary"
+                    android:buttonTint="@color/colorPrimary"
                     android:button="@null"
                     android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
                     android:text="@string/pay_type_required_license_title"
@@ -138,7 +341,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?android:selectableItemBackground"
-                    android:backgroundTint="@color/colorPrimary"
+                    android:buttonTint="@color/colorPrimary"
                     android:button="@null"
                     android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
                     android:text="@string/pay_type_instance_play_title"
@@ -150,7 +353,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?android:selectableItemBackground"
-                    android:backgroundTint="@color/colorPrimary"
+                    android:buttonTint="@color/colorPrimary"
                     android:button="@null"
                     android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
                     android:text="@string/pay_type_free_with_our_account_title"
@@ -179,7 +382,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?android:selectableItemBackground"
-                    android:backgroundTint="@color/colorPrimary"
+                    android:buttonTint="@color/colorPrimary"
                     android:button="@null"
                     android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
                     android:text="@string/play_type_mnk_title"
@@ -191,7 +394,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?android:selectableItemBackground"
-                    android:backgroundTint="@color/colorPrimary"
+                    android:buttonTint="@color/colorPrimary"
                     android:button="@null"
                     android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
                     android:text="@string/play_type_controller_title"
@@ -203,7 +406,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?android:selectableItemBackground"
-                    android:backgroundTint="@color/colorPrimary"
+                    android:buttonTint="@color/colorPrimary"
                     android:button="@null"
                     android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
                     android:text="@string/play_type_joystick_title"
@@ -215,7 +418,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?android:selectableItemBackground"
-                    android:backgroundTint="@color/colorPrimary"
+                    android:buttonTint="@color/colorPrimary"
                     android:button="@null"
                     android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
                     android:text="@string/play_type_ost_title"
@@ -240,11 +443,11 @@
                     android:layout_marginBottom="@dimen/min_space"/>
 
                 <CheckBox
-                    android:id="@+id/platform_steam_cb"
+                    android:id="@+id/age_rating_3_cb"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?android:selectableItemBackground"
-                    android:backgroundTint="@color/colorPrimary"
+                    android:buttonTint="@color/colorPrimary"
                     android:button="@null"
                     android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
                     android:text="3+"
@@ -252,11 +455,11 @@
                     android:textSize="@dimen/title_text_size" />
 
                 <CheckBox
-                    android:id="@+id/platform_battle_cb"
+                    android:id="@+id/age_rating_7_cb"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?android:selectableItemBackground"
-                    android:backgroundTint="@color/colorPrimary"
+                    android:buttonTint="@color/colorPrimary"
                     android:button="@null"
                     android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
                     android:text="7+"
@@ -264,11 +467,11 @@
                     android:textSize="@dimen/title_text_size" />
 
                 <CheckBox
-                    android:id="@+id/platform_epic_cb"
+                    android:id="@+id/age_rating_12_cb"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?android:selectableItemBackground"
-                    android:backgroundTint="@color/colorPrimary"
+                    android:buttonTint="@color/colorPrimary"
                     android:button="@null"
                     android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
                     android:text="12+"
@@ -276,11 +479,11 @@
                     android:textSize="@dimen/title_text_size" />
 
                 <CheckBox
-                    android:id="@+id/platform_origin_cb"
+                    android:id="@+id/age_rating_16_cb"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?android:selectableItemBackground"
-                    android:backgroundTint="@color/colorPrimary"
+                    android:buttonTint="@color/colorPrimary"
                     android:button="@null"
                     android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
                     android:text="16+"
@@ -288,11 +491,11 @@
                     android:textSize="@dimen/title_text_size" />
 
                 <CheckBox
-                    android:id="@+id/platform_ubisoft_cb"
+                    android:id="@+id/age_rating_18_cb"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?android:selectableItemBackground"
-                    android:backgroundTint="@color/colorPrimary"
+                    android:buttonTint="@color/colorPrimary"
                     android:button="@null"
                     android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
                     android:text="18+"
@@ -321,7 +524,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?android:selectableItemBackground"
-                    android:backgroundTint="@color/colorPrimary"
+                    android:buttonTint="@color/colorPrimary"
                     android:button="@null"
                     android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
                     android:text="Single Player"
@@ -333,7 +536,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?android:selectableItemBackground"
-                    android:backgroundTint="@color/colorPrimary"
+                    android:buttonTint="@color/colorPrimary"
                     android:button="@null"
                     android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
                     android:text="Coop"
@@ -345,75 +548,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?android:selectableItemBackground"
-                    android:backgroundTint="@color/colorPrimary"
+                    android:buttonTint="@color/colorPrimary"
                     android:button="@null"
                     android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
                     android:text="Multiplayer"
-                    android:textColor="@color/colorText"
-                    android:textSize="@dimen/title_text_size" />
-
-            </LinearLayout>
-
-            <!--FEATURE-->
-            <LinearLayout
-                android:id="@+id/frame_feature_filter"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/max_space"
-                android:orientation="vertical"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/by_feature_title"
-                    android:layout_marginBottom="@dimen/min_space"/>
-
-                <CheckBox
-                    android:id="@+id/feature_hot_cb"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="?android:selectableItemBackground"
-                    android:backgroundTint="@color/colorPrimary"
-                    android:button="@null"
-                    android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
-                    android:text="@string/hot_title"
-                    android:textColor="@color/colorText"
-                    android:textSize="@dimen/title_text_size" />
-
-                <CheckBox
-                    android:id="@+id/feature_editor_choice_cb"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="?android:selectableItemBackground"
-                    android:backgroundTint="@color/colorPrimary"
-                    android:button="@null"
-                    android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
-                    android:text="@string/editor_choice_title"
-                    android:textColor="@color/colorText"
-                    android:textSize="@dimen/title_text_size" />
-
-                <CheckBox
-                    android:id="@+id/feature_trending_cb"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="?android:selectableItemBackground"
-                    android:backgroundTint="@color/colorPrimary"
-                    android:button="@null"
-                    android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
-                    android:text="@string/trending_title"
-                    android:textColor="@color/colorText"
-                    android:textSize="@dimen/title_text_size" />
-
-                <CheckBox
-                    android:id="@+id/feature_recommend_cb"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="?android:selectableItemBackground"
-                    android:backgroundTint="@color/colorPrimary"
-                    android:button="@null"
-                    android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
-                    android:text="@string/recommended_title"
                     android:textColor="@color/colorText"
                     android:textSize="@dimen/title_text_size" />
 
@@ -439,7 +577,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?android:selectableItemBackground"
-                    android:backgroundTint="@color/colorPrimary"
+                    android:buttonTint="@color/colorPrimary"
                     android:button="@null"
                     android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
                     android:text="HDR"
@@ -451,7 +589,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?android:selectableItemBackground"
-                    android:backgroundTint="@color/colorPrimary"
+                    android:buttonTint="@color/colorPrimary"
                     android:button="@null"
                     android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
                     android:text="Ray tracing"
@@ -463,7 +601,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?android:selectableItemBackground"
-                    android:backgroundTint="@color/colorPrimary"
+                    android:buttonTint="@color/colorPrimary"
                     android:button="@null"
                     android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
                     android:text="Dlss"
@@ -475,7 +613,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?android:selectableItemBackground"
-                    android:backgroundTint="@color/colorPrimary"
+                    android:buttonTint="@color/colorPrimary"
                     android:button="@null"
                     android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
                     android:text="Resolutions"
@@ -514,9 +652,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginHorizontal="@dimen/normal_space"
         android:layout_marginBottom="@dimen/normal_space"
         android:text="@string/apply_text"
         app:carbon_cornerRadius="@dimen/medium_radius" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

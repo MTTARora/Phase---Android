@@ -9,10 +9,8 @@ import com.rora.phase.model.Banner;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.Tag;
 import com.rora.phase.model.enums.GameListType;
-import com.rora.phase.model.ui.HomeUIData;
 import com.rora.phase.repository.BannerRepository;
 import com.rora.phase.repository.GameRepository;
-import com.rora.phase.repository.UserRepository;
 import com.rora.phase.utils.PageManager;
 import com.rora.phase.utils.SharedPreferencesHelper;
 
@@ -127,7 +125,7 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     public void getCategoryListData() {
-        gameRepository.getCategoryListData();
+        gameRepository.getTagListAndGamesByFirstCategoryData();
     }
 
     private void getNewGameListData(int page, int pageSize) {

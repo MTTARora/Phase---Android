@@ -6,8 +6,6 @@ import androidx.appcompat.widget.SearchView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.ViewCompat;
 import androidx.core.widget.ContentLoadingProgressBar;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,7 +19,6 @@ import android.widget.TextView;
 
 import com.rora.phase.R;
 import com.rora.phase.model.Game;
-import com.rora.phase.model.api.SearchSuggestion;
 import com.rora.phase.model.enums.GameListType;
 import com.rora.phase.model.ui.FilterParams;
 import com.rora.phase.ui.adapter.GameRVAdapter;
@@ -30,13 +27,11 @@ import com.rora.phase.ui.adapter.SearchSuggestionListAdapter;
 import com.rora.phase.ui.game.GameDetailFragment;
 import com.rora.phase.ui.game.GameListFragment;
 import com.rora.phase.ui.viewmodel.GameViewModel;
-import com.rora.phase.ui.viewmodel.HomeViewModel;
 import com.rora.phase.ui.viewmodel.SearchViewModel;
 import com.rora.phase.utils.callback.OnItemSelectedListener;
 import com.rora.phase.utils.ui.BaseFragment;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import carbon.widget.FrameLayout;
 
@@ -78,13 +73,22 @@ public class SearchFragment extends BaseFragment {
         initData();
 
         root.findViewById(R.id.btn_view_all_home_item).setOnClickListener(v -> moveTo(GameListFragment.newInstance("Hot", GameListType.HOT, null), GameListFragment.class.getSimpleName(), true));
-        filterLayout.setOnFiltersClickListener(type -> popupScreen(FilterFragment.newInstance(), FilterFragment.class.getSimpleName(), false));
+        filterLayout.setOnFiltersClickListener(type -> {
+            hideSoftKeyboard();
+            popupScreen(FilterFragment.newInstance(type), FilterFragment.class.getSimpleName(), false);
+        });
         root.setOnTouchListener((v, event) -> {
             hideSoftKeyboard();
             return true;
         });
 
         return root;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        searchViewModel.reset();
     }
 
     private void setupViews(View root) {
@@ -133,6 +137,7 @@ public class SearchFragment extends BaseFragment {
                         frameHotGames.setVisibility(View.VISIBLE);
                         searchResultRclv.setVisibility(View.GONE);
                     }
+                    searchViewModel.resetKeySearch();
                 }
                 else {
                     suggestionPb.show();
@@ -144,10 +149,15 @@ public class SearchFragment extends BaseFragment {
     }
 
     private void initData() {
-        searchViewModel.getFilters().observe(getViewLifecycleOwner(), new Observer<FilterParams>() {
-            @Override
-            public void onChanged(FilterParams filterParams) {
-                filterLayout.updateFilters(filterParams);
+        searchViewModel.getFilters().observe(getViewLifecycleOwner(), filterParams -> {
+            filterLayout.updateFilters(filterParams);
+            if (!filterParams.isDefault()) {
+                searchViewModel.searchGame(null);
+            } else {
+                frameSuggestion.setVisibility(View.GONE);
+                frameHotGames.setVisibility(View.VISIBLE);
+                searchResultRclv.setVisibility(View.GONE);
+                ((GameVerticalRVAdapter) searchResultRclv.getAdapter()).bindData(new ArrayList<>());
             }
         });
 
@@ -161,6 +171,7 @@ public class SearchFragment extends BaseFragment {
         searchViewModel.getSearchResult().observe(getViewLifecycleOwner(), games -> {
             frameSuggestion.setVisibility(View.GONE);
             frameHotGames.setVisibility(games == null || games.size() == 0 ? View.VISIBLE : View.GONE);
+            searchResultRclv.setVisibility(View.VISIBLE);
             ((GameVerticalRVAdapter) searchResultRclv.getAdapter()).bindData(games);
         });
 
@@ -170,6 +181,7 @@ public class SearchFragment extends BaseFragment {
         });
 
         gameViewModel.getHotGameListData(1, 20);
+        searchViewModel.getTagListData();
     }
 
     private void hideSoftKeyboard() {

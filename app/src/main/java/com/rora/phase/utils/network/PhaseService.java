@@ -5,7 +5,9 @@ import com.rora.phase.model.Game;
 import com.rora.phase.model.Host;
 import com.rora.phase.model.Tag;
 import com.rora.phase.model.User;
+import com.rora.phase.model.api.FilterQuery;
 import com.rora.phase.model.api.SearchSuggestion;
+import com.rora.phase.model.ui.FilterParams;
 
 import java.util.List;
 
@@ -18,6 +20,7 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.QueryMap;
 
 public interface PhaseService {
 
@@ -52,10 +55,11 @@ public interface PhaseService {
     Call<BaseResponse<List<Game>>> getSimilarGameList(@Query("gameId") String gameId, @Query("page") int page, @Query("page_size") int pageSize);
 
     @GET("./search")
-    Call<BaseResponse<List<Game>>> search(@Query("name") String keySearch);
+    Call<BaseResponse<List<Game>>> search(@QueryMap FilterQuery filters);
 
     @GET("./suggest-search")
     Call<BaseResponse<List<SearchSuggestion>>> suggestSearch(@Query("name") String keySearch);
+
 
     //--------------------------------------------------
 
