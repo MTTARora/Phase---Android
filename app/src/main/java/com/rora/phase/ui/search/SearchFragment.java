@@ -20,7 +20,6 @@ import android.widget.TextView;
 import com.rora.phase.R;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.enums.GameListType;
-import com.rora.phase.model.ui.FilterParams;
 import com.rora.phase.ui.adapter.GameRVAdapter;
 import com.rora.phase.ui.adapter.GameVerticalRVAdapter;
 import com.rora.phase.ui.adapter.SearchSuggestionListAdapter;
@@ -30,22 +29,22 @@ import com.rora.phase.ui.viewmodel.GameViewModel;
 import com.rora.phase.ui.viewmodel.SearchViewModel;
 import com.rora.phase.utils.callback.OnItemSelectedListener;
 import com.rora.phase.utils.ui.BaseFragment;
+import com.rora.phase.utils.ui.ListWithNotifyView;
 
 import java.util.ArrayList;
-
-import carbon.widget.FrameLayout;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
 
 public class SearchFragment extends BaseFragment {
 
     private SearchView searchView;
-    private ListView suggestionList;
+    private ListView suggestionLv;
+    private TextView tvSuggestionMsg;
     private FilterLayout filterLayout;
     private RecyclerView hotGamesRclv;
-    private FrameLayout frameSuggestion;
+    private carbon.widget.ConstraintLayout frameSuggestion;
     private ConstraintLayout frameHotGames;
-    private RecyclerView searchResultRclv;
+    private ListWithNotifyView searchResultView;
     private ContentLoadingProgressBar suggestionPb;
 
     private boolean enableSuggestion = true;
@@ -60,13 +59,14 @@ public class SearchFragment extends BaseFragment {
 
         View root = inflater.inflate(R.layout.fragment_search, container, false);
         searchView = root.findViewById(R.id.search);
-        suggestionList = root.findViewById(R.id.search_suggestion_lv);
+        suggestionLv = root.findViewById(R.id.search_suggestion_lv);
+        tvSuggestionMsg = root.findViewById(R.id.suggestion_msg_tv);
         frameSuggestion = root.findViewById(R.id.frame_suggestion_search);
         filterLayout = root.findViewById(R.id.filters_search);
         frameHotGames = root.findViewById(R.id.frame_hot_games_search);
         hotGamesRclv = root.findViewById(R.id.rclv_data_home_item);
         suggestionPb = root.findViewById(R.id.suggestion_pb);
-        searchResultRclv = root.findViewById(R.id.search_result_rclv);
+        searchResultView = root.findViewById(R.id.search_result_view);
 
         ((TextView)root.findViewById(R.id.session_home_item_tv)).setText("Hot");
         setupViews(root);
@@ -75,7 +75,7 @@ public class SearchFragment extends BaseFragment {
         root.findViewById(R.id.btn_view_all_home_item).setOnClickListener(v -> moveTo(GameListFragment.newInstance("Hot", GameListType.HOT, null), GameListFragment.class.getSimpleName(), true));
         filterLayout.setOnFiltersClickListener(type -> {
             hideSoftKeyboard();
-            popupScreen(FilterFragment.newInstance(type), FilterFragment.class.getSimpleName(), false);
+            moveTo(FilterFragment.newInstance(type), FilterFragment.class.getSimpleName(), false);
         });
         root.setOnTouchListener((v, event) -> {
             hideSoftKeyboard();
@@ -83,6 +83,12 @@ public class SearchFragment extends BaseFragment {
         });
 
         return root;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        hideSoftKeyboard();
     }
 
     @Override
@@ -97,22 +103,23 @@ public class SearchFragment extends BaseFragment {
             root.setPadding(0, insets.getSystemWindowInsetTop() + (int) getResources().getDimension(R.dimen.minnn_space), 0, 0);
             return insets;
         });
-        searchResultRclv.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
-        searchResultRclv.setAdapter(new GameVerticalRVAdapter(searchResultRclv));
-        searchResultRclv.hasFixedSize();
-        ((GameVerticalRVAdapter) searchResultRclv.getAdapter()).setOnItemSelectedListener((OnItemSelectedListener<Game>) (position, selectedItem) -> moveTo(GameDetailFragment.newInstance(selectedItem), GameDetailFragment.class.getSimpleName(), true));
+        searchResultView.setupList(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false), new GameVerticalRVAdapter(searchResultView.getListView()));
+        searchResultView.setOnItemSelectedListener((position, selectedItem) -> moveTo(GameDetailFragment.newInstance(selectedItem), GameDetailFragment.class.getSimpleName(), true));
 
         hotGamesRclv.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false));
         hotGamesRclv.setAdapter(new GameRVAdapter(GameRVAdapter.VIEW_TYPE_LANDSCAPE));
         hotGamesRclv.hasFixedSize();
-        ((GameRVAdapter)hotGamesRclv.getAdapter()).setOnItemSelectedListener((OnItemSelectedListener<Game>) (position, selectedItem) -> moveTo(GameDetailFragment.newInstance(selectedItem), GameDetailFragment.class.getSimpleName(), true));
+        ((GameRVAdapter)hotGamesRclv.getAdapter()).setOnItemSelectedListener((OnItemSelectedListener<Game>) (position, selectedItem) -> {
+            hideSoftKeyboard();
+            moveTo(GameDetailFragment.newInstance(selectedItem), GameDetailFragment.class.getSimpleName(), true);
+        });
 
-        suggestionPb.hide();
-        suggestionList.setAdapter(new SearchSuggestionListAdapter(getContext(), new ArrayList<>()));
-        ((SearchSuggestionListAdapter) suggestionList.getAdapter()).setOnItemSelectedListener((position, selectedItem) -> {
+        suggestionLv.setAdapter(new SearchSuggestionListAdapter(getContext(), new ArrayList<>()));
+        ((SearchSuggestionListAdapter) suggestionLv.getAdapter()).setOnItemSelectedListener((position, selectedItem) -> {
             hideSoftKeyboard();
             enableSuggestion = false;
             searchView.setQuery(selectedItem.getName(), false);
+            updateSuggestionUI(false, false, false);
             moveTo(GameDetailFragment.newInstance(Game.init(selectedItem)), GameDetailFragment.class.getSimpleName(), true);
         });
 
@@ -127,20 +134,20 @@ public class SearchFragment extends BaseFragment {
             public boolean onQueryTextChange(String newText) {
                 if (!enableSuggestion) {
                     enableSuggestion = true;
-                    ((SearchSuggestionListAdapter) suggestionList.getAdapter()).bindData(new ArrayList<>());
+                    updateSuggestionUI(false, false, false);
                     return false;
                 }
 
                 if (newText.isEmpty()) {
-                    ((SearchSuggestionListAdapter) suggestionList.getAdapter()).bindData(new ArrayList<>());
-                    if (searchResultRclv.getVisibility() == View.VISIBLE) {
+                    updateSuggestionUI(false, false, false);
+                    if (searchResultView.getVisibility() == View.VISIBLE) {
                         frameHotGames.setVisibility(View.VISIBLE);
-                        searchResultRclv.setVisibility(View.GONE);
+                        searchResultView.setVisibility(View.GONE);
                     }
                     searchViewModel.resetKeySearch();
                 }
                 else {
-                    suggestionPb.show();
+                    updateSuggestionUI(true, false, false);
                     searchViewModel.suggestSearch(newText);
                 }
                 return false;
@@ -156,23 +163,22 @@ public class SearchFragment extends BaseFragment {
             } else {
                 frameSuggestion.setVisibility(View.GONE);
                 frameHotGames.setVisibility(View.VISIBLE);
-                searchResultRclv.setVisibility(View.GONE);
-                ((GameVerticalRVAdapter) searchResultRclv.getAdapter()).bindData(new ArrayList<>());
+                searchResultView.setVisibility(View.GONE);
             }
         });
 
         searchViewModel.getSuggestionList().observe(getViewLifecycleOwner(), games -> {
-            if (frameSuggestion.getVisibility() == View.GONE)
-                frameSuggestion.setVisibility(View.VISIBLE);
-            ((SearchSuggestionListAdapter) suggestionList.getAdapter()).bindData(searchView.getQuery().toString().isEmpty() ? new ArrayList<>() : games);
-            suggestionPb.hide();
+            ((SearchSuggestionListAdapter) suggestionLv.getAdapter()).bindData(searchView.getQuery().toString().isEmpty() ? new ArrayList<>() : games);
+            updateSuggestionUI(!searchView.getQuery().toString().isEmpty(), !searchView.getQuery().toString().isEmpty(), !(games != null && games.size() != 0));
         });
 
         searchViewModel.getSearchResult().observe(getViewLifecycleOwner(), games -> {
-            frameSuggestion.setVisibility(View.GONE);
-            frameHotGames.setVisibility(games == null || games.size() == 0 ? View.VISIBLE : View.GONE);
-            searchResultRclv.setVisibility(View.VISIBLE);
-            ((GameVerticalRVAdapter) searchResultRclv.getAdapter()).bindData(games);
+            if (!searchView.getQuery().toString().isEmpty()) {
+                frameSuggestion.setVisibility(View.GONE);
+                frameHotGames.setVisibility(games == null || games.size() == 0 ? View.VISIBLE : View.GONE);
+                searchResultView.setVisibility(View.VISIBLE);
+                ((GameVerticalRVAdapter) searchResultView.getAdapter(true, games)).bindData(games);
+            }
         });
 
         gameViewModel.getHotGameList().observe(getViewLifecycleOwner(), games -> {
@@ -189,6 +195,32 @@ public class SearchFragment extends BaseFragment {
         if (getActivity().getCurrentFocus() != null)
             imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
         searchView.clearFocus();
+    }
+
+    private void updateSuggestionUI(boolean showSuggestions, boolean showItemList, boolean showMsg) {
+        if (searchView.getQuery().toString().isEmpty() || !showSuggestions) {
+            if (frameSuggestion.getVisibility() == View.VISIBLE)
+                frameSuggestion.setVisibility(View.GONE);
+            ((SearchSuggestionListAdapter) suggestionLv.getAdapter()).bindData(new ArrayList<>());
+            suggestionPb.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        if (frameSuggestion.getVisibility() == View.GONE)
+            frameSuggestion.setVisibility(View.VISIBLE);
+
+        if (!showItemList && !showMsg) {
+            ((SearchSuggestionListAdapter) suggestionLv.getAdapter()).bindData(new ArrayList<>());
+            suggestionPb.setVisibility(View.VISIBLE);
+        } else
+            suggestionPb.setVisibility(View.INVISIBLE);
+
+        if (showMsg) {
+            tvSuggestionMsg.setVisibility(View.VISIBLE);
+            ((SearchSuggestionListAdapter) suggestionLv.getAdapter()).bindData(new ArrayList<>());
+        }
+        else
+            tvSuggestionMsg.setVisibility(View.GONE);
     }
 
 }

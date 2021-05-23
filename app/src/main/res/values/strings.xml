@@ -328,5 +328,6 @@
     <string name="game_quality_title">Game quality</string>
     <string name="all_title">All</string>
     <string name="none_title">None</string>
+    <string name="nothing_here_txt">Nothing here</string>
 
 </resources>

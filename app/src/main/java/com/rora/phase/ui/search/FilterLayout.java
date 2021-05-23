@@ -53,7 +53,7 @@ public class FilterLayout extends HorizontalScrollView {
         byFeatureBtn.setOnClickListener(v -> notifyFilterSelected(FilterParams.Filter.BY_FEATURE));
         gameQltBtn.setOnClickListener(v -> notifyFilterSelected(FilterParams.Filter.GAME_QLT));
 
-        findViewById(R.id.filter_layout_scrollview).setHorizontalScrollBarEnabled(false);
+        setHorizontalScrollBarEnabled(false);
     }
 
     public void updateFilters(FilterParams filterParams) {

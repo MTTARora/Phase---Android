@@ -13,42 +13,11 @@
         android:layout_marginHorizontal="@dimen/normal_space"
         android:layout_marginTop="@dimen/max_space"
         android:background="@drawable/shape_bg_search"
-        android:translationZ="@dimen/medium_space"
+        android:translationZ="@dimen/maxxxx_space"
         app:iconifiedByDefault="false"
         app:layout_constraintTop_toTopOf="parent"
         app:queryBackground="@null"
         app:submitBackground="@null" />
-
-    <!--Suggestion-->
-    <carbon.widget.FrameLayout
-        android:id="@+id/frame_suggestion_search"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/medium_radius"
-        android:background="@color/white"
-        android:visibility="gone"
-        android:translationZ="@dimen/min_space"
-        app:carbon_cornerRadiusBottomEnd="@dimen/medium_radius"
-        app:carbon_cornerRadiusBottomStart="@dimen/medium_radius"
-        app:carbon_elevationAmbientShadowColor="@color/dim"
-        app:layout_constraintEnd_toEndOf="@id/search"
-        app:layout_constraintStart_toStartOf="@id/search"
-        app:layout_constraintTop_toBottomOf="@id/search">
-
-        <androidx.core.widget.ContentLoadingProgressBar
-            android:id="@+id/suggestion_pb"
-            style="?android:attr/progressBarStyleInverse"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:theme="@style/ContentLoadingProgress" />
-
-        <ListView
-            android:id="@+id/search_suggestion_lv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-    </carbon.widget.FrameLayout>
 
     <!--Filters-->
     <com.rora.phase.ui.search.FilterLayout
@@ -90,14 +59,56 @@
         app:layout_constraintTop_toBottomOf="@id/frame_history_search" />
 
     <!--Result-->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/search_result_rclv"
+    <com.rora.phase.utils.ui.ListWithNotifyView
+        android:id="@+id/search_result_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginHorizontal="@dimen/medium_space"
         android:layout_marginTop="@dimen/medium_space"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/frame_hot_games_search" />
+        app:layout_constraintTop_toBottomOf="@id/frame_hot_games_search"/>
+
+    <!--Suggestion-->
+    <carbon.widget.ConstraintLayout
+        android:id="@+id/frame_suggestion_search"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/medium_radius"
+        android:background="@color/white"
+        android:visibility="visible"
+        android:translationZ="@dimen/max_space"
+        app:carbon_cornerRadiusBottomEnd="@dimen/medium_radius"
+        app:carbon_cornerRadiusBottomStart="@dimen/medium_radius"
+        app:carbon_elevationAmbientShadowColor="@color/dim"
+        app:layout_constraintEnd_toEndOf="@id/search"
+        app:layout_constraintStart_toStartOf="@id/search"
+        app:layout_constraintTop_toBottomOf="@id/search">
+
+        <androidx.core.widget.ContentLoadingProgressBar
+            android:id="@+id/suggestion_pb"
+            style="?android:attr/progressBarStyleInverse"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:theme="@style/ContentLoadingProgress" />
+
+        <TextView
+            android:id="@+id/suggestion_msg_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="@color/gray"
+            android:textStyle="italic"
+            android:text="@string/nothing_here_txt"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <ListView
+            android:id="@+id/search_suggestion_lv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+    </carbon.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
