@@ -188,14 +188,13 @@ public class GameDetailFragment extends BaseFragment {
     }
 
     private void initData() {
-        gameViewModel.getGameData().observe(getViewLifecycleOwner(), game -> bindData(game));
+        gameViewModel.getGameData().observe(getViewLifecycleOwner(), this::bindData);
         gameViewModel.getCurrentGame().observe(getViewLifecycleOwner(), game -> {
             isPlayingThisGame = game != null;
 
             btnPlay.setImageResource(isPlayingThisGame ? android.R.drawable.ic_lock_power_off : R.drawable.ic_play);
         });
 
-        //gameViewModel.getNewGameList().observe(getViewLifecycleOwner(), gameList -> {
         gameViewModel.getSimilarGames().observe(getViewLifecycleOwner(), gameList -> {
             if (gameList != null && gameList.size() != 0) {
                 imvSimilarGamesErr.setVisibility(GONE);
@@ -205,7 +204,7 @@ public class GameDetailFragment extends BaseFragment {
             }
         });
 
-        if (game != null || game.getId() != null) {
+        if (game != null && game.getId() != null) {
             gameViewModel.getGame(game.getId().toString());
             gameViewModel.getSimilarGameList(game.getId().toString());
         }

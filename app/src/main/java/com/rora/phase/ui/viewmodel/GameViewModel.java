@@ -83,7 +83,7 @@ public class GameViewModel extends AndroidViewModel {
     }
 
     public void getSimilarGameList(String gameId) {
-        gameRepository.getSimilarGameListData(gameId, 0, 0);
+        gameRepository.getSimilarGameListData(gameId, 1, 20);
     }
 
     public void getHotGameListData(int page, int pageSize) {
