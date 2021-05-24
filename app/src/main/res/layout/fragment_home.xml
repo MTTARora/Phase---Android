@@ -73,7 +73,8 @@
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/other_games_vp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/min_space"/>
 
         </LinearLayout>
 

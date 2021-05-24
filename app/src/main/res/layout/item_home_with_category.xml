@@ -16,7 +16,7 @@
         android:layout_marginBottom="@dimen/max_space"
         android:clipToPadding="false"
         app:layout_constraintTop_toBottomOf="@id/frame_session_info_home_item"
-        android:paddingHorizontal="@dimen/min_space" />
+        android:paddingHorizontal="@dimen/medium_space" />
 
     <!--GAME LIST-->
     <FrameLayout
@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:clipChildren="false"
             android:clipToPadding="false"
-            android:paddingHorizontal="@dimen/medium_space" />
+            android:paddingStart="@dimen/normal_space" />
 
         <ImageView
             android:id="@+id/error_data_home_item_imv"

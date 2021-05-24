@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:clipChildren="false"
             android:clipToPadding="false"
-            android:paddingHorizontal="@dimen/medium_space" />
+            android:paddingStart="@dimen/normal_space" />
 
         <ImageView
             android:id="@+id/error_data_home_item_imv"
