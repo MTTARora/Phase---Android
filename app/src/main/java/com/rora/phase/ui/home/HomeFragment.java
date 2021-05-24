@@ -8,12 +8,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.core.view.ViewCompat;
 import androidx.core.widget.NestedScrollView;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,29 +21,26 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.rora.phase.R;
 import com.rora.phase.model.Game;
+import com.rora.phase.model.Tag;
 import com.rora.phase.model.enums.GameListType;
 import com.rora.phase.model.enums.PayTypeEnum;
 import com.rora.phase.model.ui.HomeUIData;
 import com.rora.phase.ui.adapter.BannerVPAdapter;
 import com.rora.phase.ui.adapter.CategoryRVAdapter;
-import com.rora.phase.ui.adapter.GameRVAdapter;
 import com.rora.phase.ui.adapter.TabPagerAdapter;
 import com.rora.phase.ui.game.GameDetailFragment;
 import com.rora.phase.ui.game.GameListFragment;
 import com.rora.phase.ui.viewmodel.HomeViewModel;
+import com.rora.phase.utils.callback.OnItemSelectedListener;
 import com.rora.phase.utils.ui.BaseFragment;
-import com.rora.phase.utils.ui.BaseRVAdapter;
 import com.rora.phase.utils.ui.CustomViewPagerTransformer;
 import com.rora.phase.utils.ui.HorizontalMarginItemDecoration;
-import com.rora.phase.utils.ui.ViewHelper;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import static android.view.View.GONE;
-import static com.rora.phase.ui.adapter.CategoryRVAdapter.MEDIUM_SIZE;
 import static com.rora.phase.ui.adapter.CategoryRVAdapter.NORMAL_SIZE;
+import static com.rora.phase.ui.adapter.CategoryRVAdapter.SINGLE_SELECT;
 
 public class HomeFragment extends BaseFragment {
 
@@ -137,11 +131,11 @@ public class HomeFragment extends BaseFragment {
         });
         homeAdapter.setOnChildItemClickListener((position, selectedItem) -> moveTo(GameDetailFragment.newInstance((Game) selectedItem), GameDetailFragment.class.getSimpleName(), true));
 
-        homeAdapter.setOnCategoryClickListener((position, selectedItemId) -> homeViewModel.getGamesDataByType(GameListType.BY_CATEGORY, (String) selectedItemId));
+        homeAdapter.setOnCategoryClickListener((OnItemSelectedListener<Tag>) (position, selectedTag) -> homeViewModel.getGamesDataByType(GameListType.BY_CATEGORY, selectedTag.getTagId().toString()));
 
-        CategoryRVAdapter categoryAdapter =  new CategoryRVAdapter(NORMAL_SIZE, true);
+        CategoryRVAdapter categoryAdapter = new CategoryRVAdapter(NORMAL_SIZE, true, SINGLE_SELECT);
         setupRecyclerView(rclvCategory, categoryAdapter, new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-        categoryAdapter.setOnItemSelectedListener((position, selectedItemId) -> goToGameListScreen((String)selectedItemId, GameListType.BY_CATEGORY, (String)selectedItemId));
+        categoryAdapter.setOnItemSelectedListener((OnItemSelectedListener<Tag>)(position, selectedItemId) -> goToGameListScreen(selectedItemId.getTag(), GameListType.BY_CATEGORY, selectedItemId.getTag()));
     }
 
     private void bindData() {
@@ -182,7 +176,7 @@ public class HomeFragment extends BaseFragment {
         homeViewModel.getCategoryList().observe(getViewLifecycleOwner(), tags -> {
             if (!stopUpDateHomeScreen) {
                 ((HomeRVAdapter)rclMain.getAdapter()).bindDataWithCategoryData(new HomeUIData(HomeUIData.Type.DISCOVER_BY_CATEGORY, null, tags));
-                ((CategoryRVAdapter) Objects.requireNonNull(rclvCategory.getAdapter())).bindData(tags);
+                ((CategoryRVAdapter) Objects.requireNonNull(rclvCategory.getAdapter())).bindData(tags, null);
                 if (tags.size() != 0)
                     homeViewModel.setCurrentSelectedItemId(tags.get(0) != null ? tags.get(0).getTag() : "");
             }

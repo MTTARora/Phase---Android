@@ -72,6 +72,7 @@ public class FilterLayout extends HorizontalScrollView {
             setBgColor(filterBtn, R.drawable.shape_corner_transparent);
 
         setBgColor(sortByBtn, filterParams.getSortBy() != FilterParams.SortType.NONE ? R.drawable.shape_corner_primary_color : R.drawable.shape_corner_transparent);
+        setBgColor(tagFilterBtn, filterParams.getTags().size() != 0 ? R.drawable.shape_corner_primary_color : R.drawable.shape_corner_transparent);
         setBgColor(platformBtn, !filterParams.getPlatforms().all ? R.drawable.shape_corner_primary_color : R.drawable.shape_corner_transparent);
         setBgColor(payTypeBtn, !filterParams.getPayTypes().all ? R.drawable.shape_corner_primary_color : R.drawable.shape_corner_transparent);
         setBgColor(playTypeBtn, !filterParams.getPlayTypes().all ? R.drawable.shape_corner_primary_color : R.drawable.shape_corner_transparent);
@@ -79,6 +80,7 @@ public class FilterLayout extends HorizontalScrollView {
         setBgColor(nopBtn, !filterParams.getNumberOfPlayers().all ? R.drawable.shape_corner_primary_color : R.drawable.shape_corner_transparent);
         setBgColor(byFeatureBtn, filterParams.getFeatureGamesType() != FilterParams.FeatureGamesType.ALL ? R.drawable.shape_corner_primary_color : R.drawable.shape_corner_transparent);
         setBgColor(gameQltBtn, filterParams.isOnlyHdr() || filterParams.isOnlyRayTracing() || filterParams.isOnlyDlss() ? R.drawable.shape_corner_primary_color : R.drawable.shape_corner_transparent);
+
     }
 
     private void notifyFilterSelected(FilterParams.Filter type) {

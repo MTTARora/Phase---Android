@@ -1,36 +1,29 @@
 package com.rora.phase.ui.home.viewholder;
 
 import android.app.Activity;
-import android.content.Context;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.rora.phase.MainActivity;
 import com.rora.phase.R;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.Tag;
 import com.rora.phase.model.ui.HomeUIData;
 import com.rora.phase.ui.adapter.CategoryRVAdapter;
 import com.rora.phase.ui.adapter.GameRVAdapter;
-import com.rora.phase.ui.home.HomeRVAdapter;
-import com.rora.phase.ui.viewmodel.HomeViewModel;
 import com.rora.phase.utils.callback.OnItemSelectedListener;
 import com.rora.phase.utils.ui.BaseRVAdapter;
 import com.rora.phase.utils.ui.BaseRVViewHolder;
-import com.rora.phase.utils.ui.ViewHelper;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.rora.phase.ui.adapter.CategoryRVAdapter.MEDIUM_SIZE;
+import static com.rora.phase.ui.adapter.CategoryRVAdapter.SINGLE_SELECT;
 
 public class ItemHomeWithCategoryVH extends BaseRVViewHolder {
 
@@ -50,7 +43,7 @@ public class ItemHomeWithCategoryVH extends BaseRVViewHolder {
         btnViewAll = itemView.findViewById(R.id.btn_view_all_home_item);
 
         setupGameRecyclerView(rclvCategoryList,
-                new CategoryRVAdapter(MEDIUM_SIZE, false),
+                new CategoryRVAdapter(MEDIUM_SIZE, false, SINGLE_SELECT),
                 new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.HORIZONTAL, false));
 
         setupGameRecyclerView(rclvGameList,
@@ -62,15 +55,15 @@ public class ItemHomeWithCategoryVH extends BaseRVViewHolder {
     public void bindData(Activity activity, HomeUIData data) {
         tvSession.setText(data.getSessionName(activity));
 
-        ((CategoryRVAdapter) rclvCategoryList.getAdapter()).bindData(data.tagList);
+        ((CategoryRVAdapter) rclvCategoryList.getAdapter()).bindData(data.tagList, null);
 
         if (onItemSelectedListener != null)
             btnViewAll.setOnClickListener(v -> onItemSelectedListener.onSelected(getLayoutPosition(), data));
     }
 
-    public void setOnCategoryClickListener(OnItemSelectedListener<String> onCategoryClickListener) {
+    public void setOnCategoryClickListener(OnItemSelectedListener<Tag> onCategoryClickListener) {
         if(onCategoryClickListener != null)
-            ((CategoryRVAdapter) rclvCategoryList.getAdapter()).setOnItemSelectedListener((position, selectedItem) -> onCategoryClickListener.onSelected(position, (String)selectedItem));
+            ((CategoryRVAdapter) rclvCategoryList.getAdapter()).setOnItemSelectedListener((OnItemSelectedListener<Tag>) onCategoryClickListener::onSelected);
     }
 
     private void setupGameRecyclerView(RecyclerView view, BaseRVAdapter adapter, RecyclerView.LayoutManager layoutManager) {

@@ -15,9 +15,11 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rora.phase.R;
+import com.rora.phase.model.Tag;
 import com.rora.phase.model.ui.FilterParams;
 import com.rora.phase.ui.adapter.CategoryRVAdapter;
 import com.rora.phase.ui.viewmodel.SearchViewModel;
+import com.rora.phase.utils.callback.OnItemSelectedListener;
 import com.rora.phase.utils.ui.BaseFragment;
 import com.rora.phase.utils.ui.GridAutofitLayoutManager;
 
@@ -251,10 +253,11 @@ public class FilterFragment extends BaseFragment {
         frameTag.setVisibility(type == FilterParams.Filter.ALL || type == FilterParams.Filter.TAG ? VISIBLE : View.GONE);
         if (type == FilterParams.Filter.ALL || type == FilterParams.Filter.TAG) {
             rclvTag.setLayoutManager(new GridAutofitLayoutManager(getContext(), WRAP_CONTENT));
-            rclvTag.setAdapter(new CategoryRVAdapter(CategoryRVAdapter.AUTO_SIZE, false));
+            rclvTag.setAdapter(new CategoryRVAdapter(CategoryRVAdapter.AUTO_SIZE, false, CategoryRVAdapter.MULTI_SELECT));
             rclvTag.setHasFixedSize(true);
 
-            searchViewModel.getTagList().observe(getViewLifecycleOwner(), tags -> ((CategoryRVAdapter)rclvTag.getAdapter()).bindData(tags));
+            searchViewModel.getTagList().observe(getViewLifecycleOwner(), tags -> ((CategoryRVAdapter)rclvTag.getAdapter()).bindData(tags, filters.getTags()));
+            ((CategoryRVAdapter)rclvTag.getAdapter()).setOnItemSelectedListener((OnItemSelectedListener<Tag>) (position, selectedItem) -> filters.addTag(selectedItem));
         }
 
         rgOptionsSortBy.setOnCheckedChangeListener((group, checkedId) -> {

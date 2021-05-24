@@ -45,6 +45,7 @@ import java.util.List;
 
 import static android.view.View.GONE;
 import static com.rora.phase.ui.adapter.CategoryRVAdapter.MEDIUM_SIZE;
+import static com.rora.phase.ui.adapter.CategoryRVAdapter.NONE_SELECT;
 import static com.rora.phase.ui.game.MediaViewerActivity.MEDIA_LIST_PARAM;
 import static com.rora.phase.ui.game.MediaViewerActivity.POSITION_PARAM;
 import static com.rora.phase.ui.game.MediaViewerActivity.SCREEN_TITLE_PARAM;
@@ -150,7 +151,7 @@ public class GameDetailFragment extends BaseFragment {
         });
 
         setupRecyclerView(rclvPlatform, new PlatformRVAdapter(), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL , false));
-        setupRecyclerView(rclvCategory,new CategoryRVAdapter(MEDIUM_SIZE, false), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL , false));
+        setupRecyclerView(rclvCategory,new CategoryRVAdapter(MEDIUM_SIZE, false, NONE_SELECT), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL , false));
         setupRecyclerView(rclvScreenshot, new MediaAdapter(0.47), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         setupRecyclerView(rclvSeries, new GameRVAdapter(GameRVAdapter.VIEW_TYPE_LANDSCAPE), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
@@ -239,7 +240,7 @@ public class GameDetailFragment extends BaseFragment {
         btnFavorite.setImageResource(game.isFavorited() ? R.drawable.ic_favorite : R.drawable.ic_unfavorite);
 
         ((PlatformRVAdapter)rclvPlatform.getAdapter()).bindData(game.getPlatforms());
-        ((CategoryRVAdapter)rclvCategory.getAdapter()).bindData(game.getTags());
+        ((CategoryRVAdapter)rclvCategory.getAdapter()).bindData(game.getTags(), null);
 
         ArrayList<MediaImage> screenshots = new ArrayList<>();
         screenshots.add(new MediaImage(game.getBanner()));

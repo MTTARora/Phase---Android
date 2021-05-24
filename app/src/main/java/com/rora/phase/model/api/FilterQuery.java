@@ -1,5 +1,6 @@
 package com.rora.phase.model.api;
 
+import com.rora.phase.model.Tag;
 import com.rora.phase.model.ui.FilterParams;
 
 import java.util.HashMap;
@@ -15,7 +16,6 @@ public class FilterQuery extends HashMap<String, String> {
     public FilterQuery(FilterParams params) {
         if (params.getName() != null && !params.getName().isEmpty())
             put("name", params.getName());
-        //tag
 
         if (params.getSortBy() != NONE) {
             String sortBy = "";
@@ -29,6 +29,14 @@ public class FilterQuery extends HashMap<String, String> {
                 sortBy = "nowPlaying";
 
             put(sortBy, "true");
+        }
+
+        if (params.getTags().size() != 0) {
+            String tagIds = "";
+            for (Tag tag : params.getTags()) {
+                tagIds = tagIds.isEmpty() ? tag.getTagId().toString() : (tagIds + "," + tag.getTagId());
+            }
+            put("tags", tagIds);
         }
 
         if (params.getFeatureGamesType() != FilterParams.FeatureGamesType.ALL) {

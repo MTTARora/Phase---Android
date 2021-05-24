@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 
 import com.rora.phase.R;
@@ -26,19 +27,25 @@ import static com.rora.phase.ui.adapter.CategoryRVAdapter.NORMAL_SIZE;
 public class CategoryRVAdapter extends BaseRVAdapter {
 
     private List<Tag> categoryList;
-    private List<Boolean> categorySelectedState;
+    private List<Tag> selectedTagList;
     private int size;
     private boolean hasBackground;
+    private int selectionType;
 
     public static final int AUTO_SIZE = 0;
     public static final int MEDIUM_SIZE = 1;
     public static final int NORMAL_SIZE = 2;
 
-    public CategoryRVAdapter(int size, boolean hasBackground) {
+    public static final int NONE_SELECT = 3;
+    public static final int SINGLE_SELECT = 4;
+    public static final int MULTI_SELECT = 5;
+
+    public CategoryRVAdapter(int size, boolean hasBackground, int selectionType) {
         this.categoryList = new ArrayList<>();
-        categorySelectedState = new ArrayList<>();
+        selectedTagList = new ArrayList<>();
         this.size = size;
         this.hasBackground = hasBackground;
+        this.selectionType = selectionType;
     }
 
 
@@ -65,15 +72,32 @@ public class CategoryRVAdapter extends BaseRVAdapter {
 
     @Override
     public void onBindViewHolder(@NonNull BaseRVViewHolder holder, int position) {
-        ((CategoryViewHolder)holder).bindData(categoryList.get(position), onItemSelectedListener != null ? categorySelectedState.get(position) : false, size, hasBackground);
+        Tag currentTag = categoryList.get(position);
+        ((CategoryViewHolder)holder).bindData(currentTag, selectedTagList != null && selectedTagList.contains(currentTag), size, hasBackground);
 
         if (onItemSelectedListener != null)
             ((CategoryViewHolder)holder).btnCategory.setOnClickListener(v -> {
-                onItemSelectedListener.onSelected(position, categoryList.get(position).getTag());
-
-                for (int i = 0; i < categorySelectedState.size(); i++) {
-                    categorySelectedState.set(i, i == position);
+                switch (selectionType) {
+                    case SINGLE_SELECT:
+                        if (selectedTagList.contains(currentTag)) {
+                            selectedTagList.clear();
+                        }
+                        else {
+                            selectedTagList.clear();
+                            selectedTagList.add(currentTag);
+                        }
+                        break;
+                    case MULTI_SELECT:
+                        if (selectedTagList.contains(currentTag))
+                            selectedTagList.remove(currentTag);
+                        else
+                            selectedTagList.add(currentTag);
+                        break;
+                    default:
+                        break;
                 }
+                onItemSelectedListener.onSelected(position, currentTag);
+
                 notifyDataSetChanged();
             });
     }
@@ -83,19 +107,15 @@ public class CategoryRVAdapter extends BaseRVAdapter {
         return categoryList.size();
     }
 
-    @Override
-    public <T> void bindData(T categoryList) {
-        this.categoryList = categoryList != null ? (List<Tag>) categoryList : new ArrayList<>();
-
-        for (int i = 0; i < ((List<Tag>) categoryList).size(); i++) {
-            if (onItemSelectedListener == null) {
-                categorySelectedState.add(false);
-            } else {
-                if (i == 0)
-                    categorySelectedState.add(true);
-                else
-                    categorySelectedState.add(false);
-            }
+    public void bindData(List<Tag> categoryList, @Nullable List<Tag> previousState) {
+        this.categoryList = categoryList != null ? categoryList : new ArrayList<>();
+        if (previousState != null && previousState.size() != 0)
+            this.selectedTagList = new ArrayList<>(previousState);
+        else {
+            if (onItemSelectedListener == null)
+                selectedTagList.clear();
+            else if (selectionType == SINGLE_SELECT)
+                selectedTagList.add(categoryList.size() != 0 ? categoryList.get(0) : null);
         }
 
         notifyDataSetChanged();

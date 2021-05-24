@@ -5,8 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,15 +21,12 @@ import com.rora.phase.ui.adapter.RecentPlayVPAdapter;
 import com.rora.phase.ui.game.GameDetailFragment;
 import com.rora.phase.ui.viewmodel.UserViewModel;
 import com.rora.phase.utils.DateTimeHelper;
-import com.rora.phase.utils.MediaHelper;
 import com.rora.phase.utils.ui.BaseFragment;
 import com.rora.phase.utils.ui.CustomViewPagerTransformer;
 import com.rora.phase.utils.ui.HorizontalMarginItemDecoration;
 
-import java.util.List;
-
-import static carbon.beta.BottomSheetLayout.Style.List;
 import static com.rora.phase.ui.adapter.CategoryRVAdapter.MEDIUM_SIZE;
+import static com.rora.phase.ui.adapter.CategoryRVAdapter.NONE_SELECT;
 
 public class RecentPlayFragment extends BaseFragment {
 
@@ -96,7 +91,7 @@ public class RecentPlayFragment extends BaseFragment {
                 tvPayType.setText(game.getPayTypeName());
                 tvAge.setText(game.getPegiAge() == null ? "N/A" : game.getPegiAge() + "+");
                 tvReleasedDate.setText(DateTimeHelper.format(game.getReleaseDate()));
-                ((CategoryRVAdapter)rclvCategory.getAdapter()).bindData(game.getTags());
+                ((CategoryRVAdapter)rclvCategory.getAdapter()).bindData(game.getTags(), null);
                 userViewModel.setCurrentRecentPlay(game);
                 imbFavorite.setImageResource(game.isFavorited() ? R.drawable.ic_favorite : R.drawable.ic_unfavorite);
             }
@@ -108,7 +103,7 @@ public class RecentPlayFragment extends BaseFragment {
         });
 
         rclvCategory.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL , false));
-        rclvCategory.setAdapter(new CategoryRVAdapter(MEDIUM_SIZE, false));
+        rclvCategory.setAdapter(new CategoryRVAdapter(MEDIUM_SIZE, false, NONE_SELECT));
         rclvCategory.setHasFixedSize(true);
 
         recentPlayAdapter.setOnItemSelectedListener((position, selectedItem) -> moveTo(GameDetailFragment.newInstance((Game) selectedItem), GameDetailFragment.class.getSimpleName(), true));

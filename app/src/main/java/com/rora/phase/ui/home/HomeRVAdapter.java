@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.rora.phase.MainActivity;
 import com.rora.phase.R;
 import com.rora.phase.model.Game;
+import com.rora.phase.model.Tag;
 import com.rora.phase.model.ui.HomeUIData;
 import com.rora.phase.ui.home.viewholder.ItemHomeVH;
 import com.rora.phase.ui.home.viewholder.ItemHomeWithCategoryVH;
@@ -30,7 +31,7 @@ public class HomeRVAdapter extends BaseRVAdapter {
     private Activity activity;
     private List<HomeUIData> dataList;
     private OnItemSelectedListener<HomeUIData> onViewAllClickListener;
-    private OnItemSelectedListener<String> onCategoryClickListener;
+    private OnItemSelectedListener<Tag> onCategoryClickListener;
 
     public HomeRVAdapter(Activity activity) {
         this.activity = activity;
@@ -75,7 +76,7 @@ public class HomeRVAdapter extends BaseRVAdapter {
             ((ItemHomeWithCategoryVH)holder).bindData(activity, dataList.get(position));
 
             if (onCategoryClickListener != null)
-                ((ItemHomeWithCategoryVH)holder).setOnCategoryClickListener((pos, selectedItem) -> onCategoryClickListener.onSelected(position, selectedItem));
+                ((ItemHomeWithCategoryVH)holder).setOnCategoryClickListener((OnItemSelectedListener<Tag>) (pos, selectedItem) -> onCategoryClickListener.onSelected(position, selectedItem));
         }
 
         //holder.bindData(context, dataList.get(position));
@@ -115,7 +116,7 @@ public class HomeRVAdapter extends BaseRVAdapter {
         this.onViewAllClickListener = onClickListener;
     }
 
-    public void setOnCategoryClickListener(OnItemSelectedListener<String> onCategoryClickListener) {
+    public void setOnCategoryClickListener(OnItemSelectedListener<Tag> onCategoryClickListener) {
         this.onCategoryClickListener = onCategoryClickListener;
     }
 }

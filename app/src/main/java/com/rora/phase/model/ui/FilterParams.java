@@ -2,6 +2,7 @@ package com.rora.phase.model.ui;
 
 import com.rora.phase.model.NumberOfPlayer;
 import com.rora.phase.model.SupportPlayType;
+import com.rora.phase.model.Tag;
 import com.rora.phase.model.enums.PayTypeEnum;
 
 import java.io.Serializable;
@@ -21,6 +22,7 @@ public class FilterParams {
     private boolean onlyRayTracing;
     private boolean onlyDlss;
     private Resolutions resolutions;
+    private List<Tag> tagList;
 
     public FilterParams() {
         sortBy = SortType.NONE;
@@ -34,6 +36,7 @@ public class FilterParams {
         onlyRayTracing = false;
         onlyDlss = false;
         resolutions = new Resolutions();
+        tagList = new ArrayList<>();
     }
 
     public FilterParams(FilterParams filterParams) {
@@ -89,6 +92,8 @@ public class FilterParams {
         this.resolutions._1280 = filterParams.resolutions._1280;
         this.resolutions._1920 = filterParams.resolutions._1920;
         this.resolutions._4k = filterParams.resolutions._4k;
+
+        this.tagList = filterParams.tagList;
     }
 
     public String getName() {
@@ -197,8 +202,27 @@ public class FilterParams {
                 && !onlyHdr
                 && !onlyRayTracing
                 && !onlyDlss
-                && resolutions.all;
+                && resolutions.all
+                && getTags().size() == 0;
 
+    }
+
+    public void addTag(Tag selectedTag) {
+        boolean isExist = false;
+        for (int i = 0; i < tagList.size(); i++) {
+            if (tagList.get(i).equals(selectedTag)) {
+                tagList.remove(i);
+                isExist = true;
+                break;
+            }
+        }
+
+        if (!isExist)
+            tagList.add(selectedTag);
+    }
+
+    public List<Tag> getTags() {
+        return tagList == null ? new ArrayList<>() : tagList;
     }
 
     // Classes

@@ -103,16 +103,9 @@ public class SearchFragment extends BaseFragment {
             root.setPadding(0, insets.getSystemWindowInsetTop() + (int) getResources().getDimension(R.dimen.minnn_space), 0, 0);
             return insets;
         });
+
         searchResultView.setupList(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false), new GameVerticalRVAdapter(searchResultView.getListView()));
         searchResultView.setOnItemSelectedListener((position, selectedItem) -> moveTo(GameDetailFragment.newInstance(selectedItem), GameDetailFragment.class.getSimpleName(), true));
-
-        hotGamesRclv.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false));
-        hotGamesRclv.setAdapter(new GameRVAdapter(GameRVAdapter.VIEW_TYPE_LANDSCAPE));
-        hotGamesRclv.hasFixedSize();
-        ((GameRVAdapter)hotGamesRclv.getAdapter()).setOnItemSelectedListener((OnItemSelectedListener<Game>) (position, selectedItem) -> {
-            hideSoftKeyboard();
-            moveTo(GameDetailFragment.newInstance(selectedItem), GameDetailFragment.class.getSimpleName(), true);
-        });
 
         suggestionLv.setAdapter(new SearchSuggestionListAdapter(getContext(), new ArrayList<>()));
         ((SearchSuggestionListAdapter) suggestionLv.getAdapter()).setOnItemSelectedListener((position, selectedItem) -> {
@@ -121,6 +114,14 @@ public class SearchFragment extends BaseFragment {
             searchView.setQuery(selectedItem.getName(), false);
             updateSuggestionUI(false, false, false);
             moveTo(GameDetailFragment.newInstance(Game.init(selectedItem)), GameDetailFragment.class.getSimpleName(), true);
+        });
+
+        hotGamesRclv.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false));
+        hotGamesRclv.setAdapter(new GameRVAdapter(GameRVAdapter.VIEW_TYPE_LANDSCAPE));
+        hotGamesRclv.hasFixedSize();
+        ((GameRVAdapter)hotGamesRclv.getAdapter()).setOnItemSelectedListener((OnItemSelectedListener<Game>) (position, selectedItem) -> {
+            hideSoftKeyboard();
+            moveTo(GameDetailFragment.newInstance(selectedItem), GameDetailFragment.class.getSimpleName(), true);
         });
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
