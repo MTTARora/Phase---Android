@@ -9,14 +9,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.rora.phase.utils.ui.ErrorView
-        android:id="@+id/error_view"
+    <com.rora.phase.utils.ui.LoadingView
+        android:id="@+id/loading_view_list_with_notify"
         android:layout_width="match_parent"
         android:layout_height="@dimen/banner_height"
-        android:gravity="center"
-        android:scaleType="center"
-        android:src="?android:attr/alertDialogIcon"
-        android:visibility="visible"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

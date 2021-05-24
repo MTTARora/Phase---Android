@@ -126,13 +126,16 @@ public class SearchFragment extends BaseFragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                searchResultView.startLoading();
+                enableSuggestion = false;
+                frameSuggestion.setVisibility(View.GONE);
                 searchViewModel.searchGame(query);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (!enableSuggestion) {
+                if (!enableSuggestion && !newText.isEmpty()) {
                     enableSuggestion = true;
                     updateSuggestionUI(false, false, false);
                     return false;
@@ -158,7 +161,8 @@ public class SearchFragment extends BaseFragment {
     private void initData() {
         searchViewModel.getFilters().observe(getViewLifecycleOwner(), filterParams -> {
             filterLayout.updateFilters(filterParams);
-            if (!filterParams.isDefault()) {
+            if (!searchView.getQuery().toString().isEmpty() || !filterParams.isDefault()) {
+                searchResultView.startLoading();
                 searchViewModel.searchGame(null);
             } else {
                 frameSuggestion.setVisibility(View.GONE);
@@ -168,13 +172,14 @@ public class SearchFragment extends BaseFragment {
         });
 
         searchViewModel.getSuggestionList().observe(getViewLifecycleOwner(), games -> {
-            ((SearchSuggestionListAdapter) suggestionLv.getAdapter()).bindData(searchView.getQuery().toString().isEmpty() ? new ArrayList<>() : games);
-            updateSuggestionUI(!searchView.getQuery().toString().isEmpty(), !searchView.getQuery().toString().isEmpty(), !(games != null && games.size() != 0));
+            if (enableSuggestion) {
+                ((SearchSuggestionListAdapter) suggestionLv.getAdapter()).bindData(searchView.getQuery().toString().isEmpty() ? new ArrayList<>() : games);
+                updateSuggestionUI(!searchView.getQuery().toString().isEmpty(), !searchView.getQuery().toString().isEmpty(), !(games != null && games.size() != 0));
+            }
         });
 
         searchViewModel.getSearchResult().observe(getViewLifecycleOwner(), games -> {
-            if (!searchView.getQuery().toString().isEmpty()) {
-                frameSuggestion.setVisibility(View.GONE);
+            if (!searchView.getQuery().toString().isEmpty() || !searchViewModel.getFilters().getValue().isDefault()) {
                 frameHotGames.setVisibility(games == null || games.size() == 0 ? View.VISIBLE : View.GONE);
                 searchResultView.setVisibility(View.VISIBLE);
                 ((GameVerticalRVAdapter) searchResultView.getAdapter(true, games)).bindData(games);

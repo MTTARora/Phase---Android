@@ -37,9 +37,12 @@ public class ErrorView extends LinearLayout {
     }
 
     public void setAction(String title, OnClickListener onClickListener) {
-        actionBtn.setVisibility(VISIBLE);
-        actionBtn.setText(title);
-        actionBtn.setOnClickListener(onClickListener);
+        if (title != null && !title.isEmpty()) {
+            actionBtn.setVisibility(VISIBLE);
+            actionBtn.setText(title);
+            actionBtn.setOnClickListener(onClickListener);
+        } else
+            actionBtn.setVisibility(GONE);
     }
 
 }

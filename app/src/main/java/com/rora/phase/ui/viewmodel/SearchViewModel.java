@@ -70,7 +70,7 @@ public class SearchViewModel extends AndroidViewModel {
 
     public void searchGame(String keySearch) {
         filters.getValue().setName(keySearch == null ? filters.getValue().getName() : keySearch);
-        if (keySearch != null && !keySearch.isEmpty() || !filters.getValue().isDefault())
+        if (filters.getValue().getName() != null && !filters.getValue().getName().isEmpty() || !filters.getValue().isDefault())
             gameRepository.searchGame(new FilterQuery(filters.getValue()), (errMsg, data) -> {
                 if (errMsg != null) {
                     searchList.setValue(null);

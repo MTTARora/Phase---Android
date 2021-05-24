@@ -19,14 +19,14 @@ import carbon.widget.ConstraintLayout;
 public class ListWithNotifyView extends ConstraintLayout {
 
     private RecyclerView listRclv;
-    private ErrorView errorView;
+    private LoadingView loadingView;
 
     public ListWithNotifyView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         inflate(context, R.layout.custom_list_with_notify, this);
 
         listRclv = findViewById(R.id.list_rclv);
-        errorView = findViewById(R.id.error_view);
+        loadingView = findViewById(R.id.loading_view_list_with_notify);
     }
 
     public void setupList(RecyclerView.LayoutManager layoutManager, BaseRVAdapter adapter) {
@@ -35,9 +35,15 @@ public class ListWithNotifyView extends ConstraintLayout {
         listRclv.setHasFixedSize(true);
     }
 
-    public void setMsg(String msg) {
-        errorView.setVisibility(VISIBLE);
-        errorView.setMsg(msg);
+    public void startLoading() {
+        setVisibility(VISIBLE);
+        loadingView.startLoading();
+        listRclv.setVisibility(GONE);
+    }
+
+    public void stopLoading(String err) {
+        listRclv.setVisibility(err != null && !err.isEmpty() ? GONE : VISIBLE);
+        loadingView.stopLoading(err, null, null);
     }
 
     /**
@@ -47,13 +53,8 @@ public class ListWithNotifyView extends ConstraintLayout {
         if (checkData) {
             if (getVisibility() == GONE)
                 setVisibility(VISIBLE);
-            if (data != null && data.size() != 0) {
-                errorView.setVisibility(GONE);
-                ((BaseRVAdapter) listRclv.getAdapter()).bindData(data);
-            } else {
-                errorView.setVisibility(VISIBLE);
-                errorView.setMsg(getResources().getString(R.string.nothing_here_txt));
-            }
+
+            stopLoading(data != null && data.size() != 0 ? null : getResources().getString(R.string.nothing_here_txt));
         }
 
         return (BaseRVAdapter) listRclv.getAdapter();
