@@ -20,11 +20,6 @@
         android:paddingTop="@dimen/medium_space"
         android:paddingHorizontal="@dimen/medium_space">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/game_list_vertical_rclv"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
         <ImageView
             android:id="@+id/error_imv"
             android:layout_width="match_parent"
@@ -32,6 +27,12 @@
             android:scaleType="center"
             android:src="?android:attr/alertDialogIcon"
             android:visibility="visible"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/game_list_vertical_rclv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimaryDark"/>
 
     </FrameLayout>
 

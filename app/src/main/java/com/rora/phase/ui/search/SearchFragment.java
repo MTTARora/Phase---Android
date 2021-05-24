@@ -141,7 +141,7 @@ public class SearchFragment extends BaseFragment {
                     return false;
                 }
 
-                if (newText.isEmpty()) {
+                if (newText.isEmpty() && searchViewModel.getFilters().getValue().isDefault()) {
                     updateSuggestionUI(false, false, false);
                     if (searchResultView.getVisibility() == View.VISIBLE) {
                         frameHotGames.setVisibility(View.VISIBLE);
