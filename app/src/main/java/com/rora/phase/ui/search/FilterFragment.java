@@ -12,6 +12,7 @@ import android.widget.RadioGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rora.phase.R;
@@ -252,7 +253,7 @@ public class FilterFragment extends BaseFragment {
 
         frameTag.setVisibility(type == FilterParams.Filter.ALL || type == FilterParams.Filter.TAG ? VISIBLE : View.GONE);
         if (type == FilterParams.Filter.ALL || type == FilterParams.Filter.TAG) {
-            rclvTag.setLayoutManager(new GridAutofitLayoutManager(getContext(), WRAP_CONTENT));
+            rclvTag.setLayoutManager(new GridLayoutManager(getContext(), 3));
             rclvTag.setAdapter(new CategoryRVAdapter(CategoryRVAdapter.AUTO_SIZE, false, CategoryRVAdapter.MULTI_SELECT));
             rclvTag.setHasFixedSize(true);
 

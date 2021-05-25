@@ -96,9 +96,10 @@ public class CategoryRVAdapter extends BaseRVAdapter {
                     default:
                         break;
                 }
+
+                ((CategoryViewHolder)holder).btnCategory.setBackgroundColor(holder.itemView.getContext().getColor(selectedTagList != null && selectedTagList.contains(currentTag) ? R.color.colorPrimary : R.color.colorPrimaryDark));
                 onItemSelectedListener.onSelected(position, currentTag);
 
-                notifyDataSetChanged();
             });
     }
 
@@ -108,7 +109,7 @@ public class CategoryRVAdapter extends BaseRVAdapter {
     }
 
     public void bindData(List<Tag> categoryList, @Nullable List<Tag> previousState) {
-        this.categoryList = categoryList != null ? categoryList : new ArrayList<>();
+        this.categoryList = categoryList != null ? new ArrayList<>(categoryList) : new ArrayList<>();
         if (previousState != null && previousState.size() != 0)
             this.selectedTagList = new ArrayList<>(previousState);
         else {

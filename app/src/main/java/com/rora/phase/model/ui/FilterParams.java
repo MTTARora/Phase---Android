@@ -93,7 +93,7 @@ public class FilterParams {
         this.resolutions._1920 = filterParams.resolutions._1920;
         this.resolutions._4k = filterParams.resolutions._4k;
 
-        this.tagList = filterParams.tagList;
+        this.tagList = new ArrayList<>(filterParams.tagList);
     }
 
     public String getName() {
