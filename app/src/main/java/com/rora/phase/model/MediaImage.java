@@ -87,30 +87,72 @@ public class MediaImage extends Media {
     }
 
     @Override
-    public String getAvailableLink() {
+    public String getAvailableLink(Quality quality) {
 
         if (this.availableLink != null && !this.availableLink.isEmpty())
             return availableLink;
 
-        if (this._1280x720 != null && !this._1280x720.isEmpty())
-            return get_1280x720();
+        switch (quality) {
+            case LOW:
+                if (this._640x360 != null && !this._640x360.isEmpty())
+                    return get_640x360();
 
-        if (this._640x360 != null && !this._640x360.isEmpty())
-            return get_640x360();
+                if (this._420x236 != null && !this._420x236.isEmpty())
+                    return get_420x236();
 
-        if (this._1920x1080 != null && !this._1920x1080.isEmpty())
-            return get_1920x1080();
+                if (this._200x112 != null && !this._200x112.isEmpty())
+                    return get_200x112();
 
-        if (this._2560x1440 != null && !this._2560x1440.isEmpty())
-            return get_2560x1440();
+                if (this._1280x720 != null && !this._1280x720.isEmpty())
+                    return get_1280x720();
 
-        if (this._420x236 != null && !this._420x236.isEmpty())
-            return get_420x236();
+                if (this._1920x1080 != null && !this._1920x1080.isEmpty())
+                    return get_1920x1080();
 
-        if (this._200x112 != null && !this._200x112.isEmpty())
-            return get_200x112();
+                if (this._2560x1440 != null && !this._2560x1440.isEmpty())
+                    return get_2560x1440();
+
+            case MEDIUM:
+                if (this._1280x720 != null && !this._1280x720.isEmpty())
+                    return get_1280x720();
+
+                if (this._640x360 != null && !this._640x360.isEmpty())
+                    return get_640x360();
+
+                if (this._1920x1080 != null && !this._1920x1080.isEmpty())
+                    return get_1920x1080();
+
+                if (this._2560x1440 != null && !this._2560x1440.isEmpty())
+                    return get_2560x1440();
+
+                if (this._420x236 != null && !this._420x236.isEmpty())
+                    return get_420x236();
+
+                if (this._200x112 != null && !this._200x112.isEmpty())
+                    return get_200x112();
+
+            case HIGH:
+                if (this._1920x1080 != null && !this._1920x1080.isEmpty())
+                    return get_1920x1080();
+
+                if (this._2560x1440 != null && !this._2560x1440.isEmpty())
+                    return get_2560x1440();
+
+                if (this._1280x720 != null && !this._1280x720.isEmpty())
+                    return get_1280x720();
+
+                if (this._640x360 != null && !this._640x360.isEmpty())
+                    return get_640x360();
+
+                if (this._420x236 != null && !this._420x236.isEmpty())
+                    return get_420x236();
+
+                if (this._200x112 != null && !this._200x112.isEmpty())
+                    return get_200x112();
+        }
 
         return null;
 
     }
+
 }

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.rora.phase.R;
 import com.rora.phase.model.Banner;
 import com.rora.phase.model.MediaImage;
+import com.rora.phase.model.ui.Media;
 import com.rora.phase.utils.MediaHelper;
 import com.rora.phase.utils.ui.BaseRVAdapter;
 import com.rora.phase.utils.ui.BaseRVViewHolder;
@@ -57,11 +58,6 @@ public class MediaAdapter extends BaseRVAdapter {
         return mediaList.size();
     }
 
-    public void bindData(List<MediaImage> mediaList) {
-        this.mediaList = mediaList == null ? new ArrayList<>() : mediaList;
-        notifyDataSetChanged();
-    }
-
     @Override
     public <T> void bindData(T mediaList) {
         this.mediaList = mediaList == null ? new ArrayList<>() : (List<MediaImage>) mediaList;
@@ -81,11 +77,11 @@ class MediaVH extends BaseRVViewHolder {
 
     @Override
     public <T> void bindData(T data) {
-        if (data == null || ((MediaImage)data).getAvailableLink() == null || ((MediaImage)data).getAvailableLink().isEmpty())
+        if (data == null || ((MediaImage)data).getAvailableLink(Media.Quality.LOW) == null || ((MediaImage)data).getAvailableLink(Media.Quality.LOW).isEmpty())
             return;
 
         itemView.findViewById(R.id.media_error).setVisibility(View.GONE);
-        MediaHelper.loadImage(imageImv, ((MediaImage)data).getAvailableLink());
+        MediaHelper.loadImage(imageImv, ((MediaImage)data).getAvailableLink(Media.Quality.LOW));
     }
 
 }

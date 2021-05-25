@@ -78,22 +78,51 @@ public class MediaVideo extends Media {
     }
 
     @Override
-    public String getAvailableLink() {
+    public String getAvailableLink(Quality quality) {
 
         if (this.availableLink != null && !this.availableLink.isEmpty())
             return availableLink;
 
-        if (!get_854x480().isEmpty())
-            return get_854x480();
+        switch (quality) {
+            case LOW:
+                if (!get_640x360().isEmpty())
+                    return get_640x360();
 
-        if (!get_1920x1080().isEmpty())
-            return get_1920x1080();
+                if (!get_320x180().isEmpty())
+                    return get_320x180();
 
-        if (!get_640x360().isEmpty())
-            return get_640x360();
+                if (!get_854x480().isEmpty())
+                    return get_854x480();
 
-        if (!get_320x180().isEmpty())
-            return get_320x180();
+                if (!get_1920x1080().isEmpty())
+                    return get_1920x1080();
+
+            case MEDIUM:
+                if (!get_854x480().isEmpty())
+                    return get_854x480();
+
+                if (!get_640x360().isEmpty())
+                    return get_640x360();
+
+                if (!get_320x180().isEmpty())
+                    return get_320x180();
+
+                if (!get_1920x1080().isEmpty())
+                    return get_1920x1080();
+
+            case HIGH:
+                if (!get_1920x1080().isEmpty())
+                    return get_1920x1080();
+
+                if (!get_854x480().isEmpty())
+                    return get_854x480();
+
+                if (!get_640x360().isEmpty())
+                    return get_640x360();
+
+                if (!get_320x180().isEmpty())
+                    return get_320x180();
+        }
 
         return "";
 

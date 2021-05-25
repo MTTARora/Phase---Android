@@ -24,6 +24,7 @@ import com.rora.phase.model.Game;
 import com.rora.phase.model.MediaImage;
 import com.rora.phase.model.Screenshot;
 import com.rora.phase.model.SupportPlayType;
+import com.rora.phase.model.ui.Media;
 import com.rora.phase.repository.UserRepository;
 import com.rora.phase.ui.adapter.CategoryRVAdapter;
 import com.rora.phase.ui.adapter.GameRVAdapter;
@@ -226,10 +227,10 @@ public class GameDetailFragment extends BaseFragment {
         this.game = game;
 
         //game.setTrailers("https://steamcdn-a.akamaihd.net/steam/apps/256679772/movie_max.mp4");
-        if (!game.getTrailers().isEmpty() && !game.getTrailers().get(0).getAvailableLink().isEmpty())
-            topMediaView.loadVideo(getLifecycle(), game.getTrailers().get(0).getAvailableLink());
+        if (!game.getTrailers().isEmpty() && !game.getTrailers().get(0).getAvailableLink(Media.Quality.MEDIUM).isEmpty())
+            topMediaView.loadVideo(getLifecycle(), game.getTrailers().get(0).getAvailableLink(Media.Quality.MEDIUM));
         else
-            topMediaView.loadImage(game.getBanner().getAvailableLink());
+            topMediaView.loadImage(game.getBanner().getAvailableLink(Media.Quality.MEDIUM));
 
         tvGameName.setText(game.getName());
         tvPayType.setText(game.getPayTypeName());

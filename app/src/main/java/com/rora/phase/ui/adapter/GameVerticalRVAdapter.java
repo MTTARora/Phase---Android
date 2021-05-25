@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.rora.phase.R;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.Tag;
+import com.rora.phase.model.ui.Media;
 import com.rora.phase.ui.game.viewholder.LoadingVH;
 import com.rora.phase.utils.MediaHelper;
 import com.rora.phase.utils.callback.ILoadMore;
@@ -144,7 +145,7 @@ class VerticalGameItemVH extends BaseRVViewHolder {
     }
 
     public void bindData(Game game) {
-        MediaHelper.loadImage(imvBanner, game.getBanner().getAvailableLink());
+        MediaHelper.loadImage(imvBanner, game.getBanner().getAvailableLink(Media.Quality.LOW));
         tvGameName.setText(game.getName());
         tvPayType.setText(game.getPayTypeName());
         tvDesc.setText(Html.fromHtml(game.getDesc(), Html.FROM_HTML_MODE_COMPACT));

@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.rora.phase.R;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.Platform;
+import com.rora.phase.model.ui.Media;
 import com.rora.phase.utils.MediaHelper;
 import com.rora.phase.utils.ui.BaseRVViewHolder;
 
@@ -26,7 +27,7 @@ public class GameInfoViewHolder extends BaseRVViewHolder {
     }
 
     public void bindData(Game game, boolean isPortrait) {
-        MediaHelper.loadImage(imvBanner, isPortrait ? game.getTile() : game.getBanner().getAvailableLink());
+        MediaHelper.loadImage(imvBanner, isPortrait ? game.getTile() : game.getBanner().getAvailableLink(Media.Quality.LOW));
         tvName.setText(game.getName());
         tvPayType.setText(game.getPayTypeName());
         itemView.findViewById(R.id.ic_steam_imv).setVisibility(View.GONE);

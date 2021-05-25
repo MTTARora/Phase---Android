@@ -10,5 +10,11 @@ import java.io.Serializable;
 public abstract class Media implements Serializable {
     protected String availableLink;
 
-    public abstract String getAvailableLink();
+    public enum Quality {
+        LOW,
+        MEDIUM,
+        HIGH
+    }
+
+    public abstract String getAvailableLink(Quality qlt);
 }

@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.rora.phase.R;
 import com.rora.phase.model.MediaImage;
+import com.rora.phase.model.ui.Media;
 import com.rora.phase.utils.MediaHelper;
 import com.rora.phase.utils.ui.BaseRVAdapter;
 import com.rora.phase.utils.ui.BaseRVViewHolder;
@@ -78,7 +79,7 @@ class MediaViewerVH extends BaseRVViewHolder {
 
     @Override
     public <T> void bindData(T data) {
-        MediaHelper.loadImage(imageView, ((MediaImage)data).getAvailableLink());
+        MediaHelper.loadImage(imageView, ((MediaImage)data).getAvailableLink(Media.Quality.MEDIUM));
     }
 
 }
