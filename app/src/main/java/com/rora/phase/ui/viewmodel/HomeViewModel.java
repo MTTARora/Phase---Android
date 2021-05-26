@@ -4,6 +4,7 @@ import android.app.Application;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.rora.phase.model.Banner;
 import com.rora.phase.model.Game;
@@ -13,7 +14,9 @@ import com.rora.phase.repository.BannerRepository;
 import com.rora.phase.repository.GameRepository;
 import com.rora.phase.utils.PageManager;
 import com.rora.phase.utils.SharedPreferencesHelper;
+import com.rora.phase.utils.callback.OnResultCallBack;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -24,7 +27,8 @@ public class HomeViewModel extends AndroidViewModel {
     private BannerRepository bannerRepository;
 
     private LiveData<List<Banner>> bannerList;
-    private LiveData<List<Game>> newGameList, editorsChoiceList, hotGameList, trendingList, gameByCategoryList, gameByPayTypeList;
+    private MutableLiveData<List<Game>> newGameList;
+    private LiveData<List<Game>> editorsChoiceList, hotGameList, trendingList, gameByCategoryList, gameByPayTypeList;
     private LiveData<List<Tag>> categoryList;
     private PageManager pager, newGamePager, editorPager, hotGamePager, trendingPager, gameByCategoryPager;
     private String currentSelectedItemId;
@@ -34,8 +38,8 @@ public class HomeViewModel extends AndroidViewModel {
         bannerRepository = new BannerRepository();
         gameRepository = new GameRepository();
 
-        bannerList = bannerRepository.getBannerList();
-        newGameList = gameRepository.getNewGameList();
+        newGameList = new MutableLiveData<>();
+        bannerList = bannerRepository.getBannerList();;
         editorsChoiceList = gameRepository.getEditorsChoiceList();
         hotGameList = gameRepository.getHotGameList();
         trendingList = gameRepository.getTrendingList();
@@ -129,7 +133,12 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     private void getNewGameListData(int page, int pageSize) {
-        gameRepository.getNewGameListData(page, pageSize);
+        gameRepository.getNewGameListData(page, pageSize, (errMsg, data) -> {
+            if (errMsg != null && !errMsg.isEmpty())
+                newGameList.setValue(new ArrayList<>());
+            else
+                newGameList.setValue(data);
+        });
     }
 
     private void getEditorsChoiceListData(int page, int pageSize) {

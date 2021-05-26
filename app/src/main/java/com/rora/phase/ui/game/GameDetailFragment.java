@@ -138,7 +138,6 @@ public class GameDetailFragment extends BaseFragment {
     public void onDestroy() {
         super.onDestroy();
         gameViewModel.resetGameData();
-        //getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
     }
 
     //---------------------------------------------------------------------------------------
@@ -146,7 +145,6 @@ public class GameDetailFragment extends BaseFragment {
 
     private void initView() {
         ViewCompat.setOnApplyWindowInsetsListener(btnBack, (v, insets) -> {
-            // Move toolbar below status bar
             btnBack.setPadding(0, insets.getSystemWindowInsetTop() + (int)getResources().getDimension(R.dimen.minnn_space), 0, 0);
             return insets;
         });
@@ -226,7 +224,6 @@ public class GameDetailFragment extends BaseFragment {
 
         this.game = game;
 
-        //game.setTrailers("https://steamcdn-a.akamaihd.net/steam/apps/256679772/movie_max.mp4");
         if (!game.getTrailers().isEmpty() && !game.getTrailers().get(0).getAvailableLink(Media.Quality.MEDIUM).isEmpty())
             topMediaView.loadVideo(getLifecycle(), game.getTrailers().get(0).getAvailableLink(Media.Quality.MEDIUM));
         else

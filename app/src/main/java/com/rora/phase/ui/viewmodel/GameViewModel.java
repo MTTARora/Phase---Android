@@ -12,6 +12,7 @@ import com.rora.phase.repository.GameRepository;
 import com.rora.phase.utils.SharedPreferencesHelper;
 import com.rora.phase.utils.callback.OnResultCallBack;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GameViewModel extends AndroidViewModel {
@@ -19,15 +20,15 @@ public class GameViewModel extends AndroidViewModel {
     private GameRepository gameRepository;
     private MutableLiveData<Game> game;
     private MutableLiveData<Game> currentGame;
-    private LiveData<List<Game>> similarGameList, newGameList, hotGameList;
+    private MutableLiveData<List<Game>> similarGameList, newGameList, hotGameList;
 
     public GameViewModel(Application application) {
         super(application);
         gameRepository = new GameRepository();
 
         game = new MutableLiveData<>();
-        similarGameList = gameRepository.getSimilarGameList();
-        newGameList = gameRepository.getNewGameList();
+        similarGameList = new MutableLiveData<>();
+        newGameList = new MutableLiveData<>();
         hotGameList = gameRepository.getHotGameList();
         currentGame = new MutableLiveData<>();
     }
@@ -60,7 +61,8 @@ public class GameViewModel extends AndroidViewModel {
     //SERVICES
 
     public void resetGameData() {
-        game.postValue(null);
+        game.setValue(null);
+        similarGameList.setValue(null);
     }
 
     public void getGame(String gameId) {
@@ -79,14 +81,25 @@ public class GameViewModel extends AndroidViewModel {
     }
 
     public void getNewGameListData(int page, int pageSize) {
-        gameRepository.getNewGameListData(page, pageSize);
+        gameRepository.getNewGameListData(page, pageSize, (errMsg, data) -> {
+            if (errMsg != null && !errMsg.isEmpty())
+                newGameList.setValue(new ArrayList<>());
+            else
+                newGameList.setValue(data);
+        });
     }
 
     public void getSimilarGameList(String gameId) {
-        gameRepository.getSimilarGameListData(gameId, 1, 20);
+        gameRepository.getSimilarGameListData(gameId, 1, 20, (errMsg, data) -> {
+            if (errMsg != null && !errMsg.isEmpty())
+                similarGameList.setValue(new ArrayList<>());
+            else
+                similarGameList.setValue(data);
+        });
     }
 
     public void getHotGameListData(int page, int pageSize) {
         gameRepository.getHotGameListData(page, pageSize);
     }
+
 }

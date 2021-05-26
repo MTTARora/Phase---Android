@@ -11,10 +11,12 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentActivity;
 
 import com.rora.phase.RoraLog;
@@ -22,8 +24,10 @@ import com.rora.phase.R;
 import com.rora.phase.binding.crypto.AndroidCryptoProvider;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.UserPlayingData;
+import com.rora.phase.model.ui.Media;
 import com.rora.phase.preferences.GlPreferences;
 import com.rora.phase.utils.Dialog;
+import com.rora.phase.utils.MediaHelper;
 import com.rora.phase.utils.UiHelper;
 import com.rora.phase.utils.callback.PlayGameProgressCallBack;
 import com.rora.phase.utils.services.PlayServices;
@@ -37,7 +41,9 @@ public class LoadingGameActivity extends FragmentActivity {
 
     private TextView tvLoadingProgress;
     private ProgressBar pbLoadingProgress;
+    private ImageView backgroundImv;
 
+    private Game game;
     private boolean completeOnCreateCalled;
 
     private PlayServices.ComputerManagerBinder managerBinder;
@@ -80,10 +86,10 @@ public class LoadingGameActivity extends FragmentActivity {
         // handle initializing views with the config change accounted for.
         // This is not prone to races because both callbacks are invoked
         // in the main thread.
-        if (completeOnCreateCalled) {
-            // Reinitialize views just in case orientation changed
-            initializeViews();
-        }
+        //if (completeOnCreateCalled) {
+        //    // Reinitialize views just in case orientation changed
+        //    initializeViews();
+        //}
     }
 
 
@@ -96,38 +102,43 @@ public class LoadingGameActivity extends FragmentActivity {
 
         tvLoadingProgress = findViewById(R.id.loading_game_progress_tv);
         pbLoadingProgress = findViewById(R.id.loading_game_pb);
+        backgroundImv = findViewById(R.id.play_progress_loading_imv);
+
+        initData();
+        setupViews();
 
         // Create a GLSurfaceView to fetch GLRenderer unless we have a cached result already.
-        final GlPreferences glPrefs = GlPreferences.readPreferences(this);
-        if (!glPrefs.savedFingerprint.equals(Build.FINGERPRINT) || glPrefs.glRenderer.isEmpty()) {
-            GLSurfaceView surfaceView = new GLSurfaceView(this);
-            surfaceView.setRenderer(new GLSurfaceView.Renderer() {
-                @Override
-                public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
-                    // Save the GLRenderer string so we don't need to do this next time
-                    glPrefs.glRenderer = gl10.glGetString(GL10.GL_RENDERER);
-                    glPrefs.savedFingerprint = Build.FINGERPRINT;
-                    glPrefs.writePreferences();
-
-                    RoraLog.info("Fetched GL Renderer: " + glPrefs.glRenderer);
-
-                    runOnUiThread(() -> completeOnCreate());
-                }
-
-                @Override
-                public void onSurfaceChanged(GL10 gl10, int i, int i1) {
-                }
-
-                @Override
-                public void onDrawFrame(GL10 gl10) {
-                }
-            });
-            setContentView(surfaceView);
-        }
-        else {
-            RoraLog.info("Cached GL Renderer: " + glPrefs.glRenderer);
-            completeOnCreate();
-        }
+        //final GlPreferences glPrefs = GlPreferences.readPreferences(this);
+        //if (!glPrefs.savedFingerprint.equals(Build.FINGERPRINT) || glPrefs.glRenderer.isEmpty()) {
+        //    GLSurfaceView surfaceView = new GLSurfaceView(this);
+        //    surfaceView.setRenderer(new GLSurfaceView.Renderer() {
+        //        @Override
+        //        public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
+        //            // Save the GLRenderer string so we don't need to do this next time
+        //            glPrefs.glRenderer = gl10.glGetString(GL10.GL_RENDERER);
+        //            glPrefs.savedFingerprint = Build.FINGERPRINT;
+        //            glPrefs.writePreferences();
+        //
+        //            RoraLog.info("Fetched GL Renderer: " + glPrefs.glRenderer);
+        //
+        //            runOnUiThread(() -> completeOnCreate());
+        //        }
+        //
+        //        @Override
+        //        public void onSurfaceChanged(GL10 gl10, int i, int i1) {
+        //        }
+        //
+        //        @Override
+        //        public void onDrawFrame(GL10 gl10) {
+        //        }
+        //    });
+        //    setContentView(surfaceView);
+        //}
+        //else {
+        //    RoraLog.info("Cached GL Renderer: " + glPrefs.glRenderer);
+        //    completeOnCreate();
+        //}
+        bindService(new Intent(this, PlayServices.class), serviceConnection, Service.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -152,41 +163,45 @@ public class LoadingGameActivity extends FragmentActivity {
         }, null);
     }
 
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) {
-            hideSystemUI();
-        }
-    }
-
     private void hideSystemUI() {
         // Enables regular immersive mode.
         // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
         // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+
         View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_IMMERSIVE
                         // Set the content to appear under the system bars so that the
                         // content doesn't resize when the system bars hide and show.
-                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         // Hide the nav bar and status bar
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+        );
     }
+
     //-------------------------------------------------------------------------
 
+    private void initData() {
+        game =  Game.fromJson((getIntent().getStringExtra(KEY_GAME)));
+    }
+
+    private void setupViews() {
+        hideSystemUI();
+        MediaHelper.loadImage(backgroundImv, game.getBanner().getAvailableLink(Media.Quality.MEDIUM));
+    }
 
     private void completeOnCreate() {
-        completeOnCreateCalled = true;
-
-        UiHelper.setLocale(this);
+        //completeOnCreateCalled = true;
+        //
+        //UiHelper.setLocale(this);
 
         // Bind to the computer manager service
         bindService(new Intent(this, PlayServices.class), serviceConnection, Service.BIND_AUTO_CREATE);
 
-        initializeViews();
+        //initializeViews();
     }
 
     private void initializeViews() {
@@ -197,7 +212,6 @@ public class LoadingGameActivity extends FragmentActivity {
     }
 
     private void startConnect() {
-        Game game =  Game.fromJson((getIntent().getStringExtra(KEY_GAME)));
         managerBinder.startConnectProgress(this, game, playProgressCallBack);
     }
 

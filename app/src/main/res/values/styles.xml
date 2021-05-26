@@ -42,8 +42,6 @@
         <item name="android:windowFullscreen">true</item>
     </style>
 
-
-
     <!-- Stream activity theme -->
     <style name="StreamTheme" parent="StreamBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->

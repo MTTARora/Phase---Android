@@ -21,13 +21,12 @@ public class GameRepository {
     private PhaseService gameServices;
     private PhaseService tagServices;
 
-    private MutableLiveData<List<Game>> newGameList, recentPlayList, editorsChoiceList, hotGameList, trendingList, gameByCategoryList, gamesByPayTypeList, similarGameList;
+    private MutableLiveData<List<Game>> recentPlayList, editorsChoiceList, hotGameList, trendingList, gameByCategoryList, gamesByPayTypeList;
     private MutableLiveData<List<Tag>> categoryList;
 
     private MutableLiveData<String> errMsg;
 
     public GameRepository() {
-        newGameList = new MutableLiveData<>();
         recentPlayList = new MutableLiveData<>();
         editorsChoiceList = new MutableLiveData<>();
         hotGameList = new MutableLiveData<>();
@@ -35,7 +34,6 @@ public class GameRepository {
         categoryList = new MutableLiveData<>();
         gameByCategoryList = new MutableLiveData<>();
         gamesByPayTypeList = new MutableLiveData<>();
-        similarGameList = new MutableLiveData<>();
 
         errMsg = new MutableLiveData<>();
 
@@ -46,10 +44,6 @@ public class GameRepository {
 
 
     //---------- GET SET ----------
-
-    public LiveData<List<Game>> getNewGameList() {
-        return newGameList;
-    }
 
     public MutableLiveData<List<Game>> getRecentPlayList() {
         return recentPlayList;
@@ -79,14 +73,9 @@ public class GameRepository {
         return gamesByPayTypeList;
     }
 
-    public MutableLiveData<List<Game>> getSimilarGameList() {
-        return similarGameList;
-    }
-
     //----------------------------
 
     public void reset() {
-        newGameList = new MutableLiveData<>();
         recentPlayList = new MutableLiveData<>();
         editorsChoiceList = new MutableLiveData<>();
         hotGameList = new MutableLiveData<>();
@@ -94,21 +83,16 @@ public class GameRepository {
         categoryList = new MutableLiveData<>();
         gameByCategoryList = new MutableLiveData<>();
         gamesByPayTypeList = new MutableLiveData<>();
-        similarGameList = new MutableLiveData<>();
     }
 
-    public void getNewGameListData(int page, int pageSize) {
+    public void getNewGameListData(int page, int pageSize, OnResultCallBack<List<Game>> onResultCallBack) {
         APIServicesHelper<List<Game>> apiHelper = new APIServicesHelper<>();
 
         apiHelper.request(gameServices.getNewGames(page, pageSize), (err, data) -> {
-            if (err != null) {
-                newGameList.postValue(new ArrayList<>());
-                errMsg.postValue(err);
-            } else {
-                List<Game> listGame = data;
-                listGame = listGame == null ? new ArrayList<>() : listGame;
-                newGameList.postValue(listGame);
-            }
+            if (err != null)
+                onResultCallBack.onResult(err, null);
+            else
+                onResultCallBack.onResult(null, data == null ? new ArrayList<>() : data);
         });
     }
 
@@ -120,9 +104,7 @@ public class GameRepository {
                 editorsChoiceList.postValue(new ArrayList<>());
                 errMsg.postValue(err);
             } else {
-                List<Game> listGame = data;
-                listGame = listGame == null ? new ArrayList<>() : listGame;
-                editorsChoiceList.postValue(listGame);
+                editorsChoiceList.postValue(data == null ? new ArrayList<>() : data);
             }
         });
     }
@@ -135,9 +117,7 @@ public class GameRepository {
                 hotGameList.postValue(new ArrayList<>());
                 errMsg.postValue(err);
             } else {
-                List<Game> listGame = data;
-                listGame = listGame == null ? new ArrayList<>() : listGame;
-                hotGameList.postValue(listGame);
+                hotGameList.postValue(data == null ? new ArrayList<>() : data);
             }
         });
     }
@@ -150,9 +130,7 @@ public class GameRepository {
                 trendingList.postValue(new ArrayList<>());
                 errMsg.postValue(err);
             } else {
-                List<Game> listGame = data;
-                listGame = listGame == null ? new ArrayList<>() : listGame;
-                trendingList.postValue(listGame);
+                trendingList.postValue(data == null ? new ArrayList<>() : data);
             }
         });
     }
@@ -164,8 +142,7 @@ public class GameRepository {
             if (err != null) {
                 categoryList.postValue(new ArrayList<>());
             } else {
-                List<Tag> list = data;
-                list = list == null ? new ArrayList<>() : list;
+                List<Tag> list = data == null ? new ArrayList<>() : data;
                 categoryList.postValue(list);
                 if (list.size() != 0)
                     getGamesByCategoryData(list.get(0).getTag() != null ? list.get(0).getTag() : "", 1, 20);
@@ -178,16 +155,11 @@ public class GameRepository {
         APIServicesHelper<List<Tag>> apiHelper = new APIServicesHelper<>();
 
         apiHelper.request(tagServices.getCategoryList(), (err, data) -> {
-            if (err != null) {
+            if (err != null)
                 if (resultCallBack != null)
                     resultCallBack.onResult(err, null);
-            } else {
-                List<Tag> list = data;
-                list = list == null ? new ArrayList<>() : list;
-
-                if (resultCallBack != null)
-                    resultCallBack.onResult(null, list);
-            }
+                else if (resultCallBack != null)
+                    resultCallBack.onResult(null, data == null ? new ArrayList<>() : data);
         });
     }
 
@@ -199,25 +171,19 @@ public class GameRepository {
                 gameByCategoryList.postValue(new ArrayList<>());
                 errMsg.postValue(err);
             } else {
-                List<Game> listGame = data;
-                listGame = listGame == null ? new ArrayList<>() : listGame;
-                gameByCategoryList.postValue(listGame);
+                gameByCategoryList.postValue(data == null ? new ArrayList<>() : data);
             }
         });
     }
 
-    public void getSimilarGameListData(String gameId, int page, int pageSize) {
+    public void getSimilarGameListData(String gameId, int page, int pageSize, OnResultCallBack<List<Game>> resultCallBack) {
         APIServicesHelper<List<Game>> apiHelper = new APIServicesHelper<>();
 
         apiHelper.request(gameServices.getSimilarGameList(gameId, page, pageSize), (err, data) -> {
-            if (err != null) {
-                similarGameList.postValue(new ArrayList<>());
-                errMsg.postValue(err);
-            } else {
-                List<Game> listGame = data;
-                listGame = listGame == null ? new ArrayList<>() : listGame;
-                similarGameList.postValue(listGame);
-            }
+            if (err != null)
+                resultCallBack.onResult(err, null);
+            else
+                resultCallBack.onResult(null, data == null ? new ArrayList<>() : data);
         });
     }
 
@@ -229,9 +195,7 @@ public class GameRepository {
                 gamesByPayTypeList.postValue(new ArrayList<>());
                 errMsg.postValue(err);
             } else {
-                List<Game> listGame = data;
-                listGame = listGame == null ? new ArrayList<>() : listGame;
-                gamesByPayTypeList.postValue(listGame);
+                gamesByPayTypeList.postValue(data == null ? new ArrayList<>() : data);
             }
         });
     }
@@ -240,13 +204,11 @@ public class GameRepository {
         APIServicesHelper<Game> apiHelper = new APIServicesHelper<>();
 
         apiHelper.request(gameServices.getGame(gameId), (err, data) -> {
-            if (err != null) {
+            if (err != null)
                 onResultCallBack.onResult(err, null);
-            } else {
-                Game game = data;
-                game = game == null ? new Game() : game;
-                onResultCallBack.onResult(null, game);
-            }
+            else
+                onResultCallBack.onResult(null, data == null ? new Game() : data);
+
         });
     }
 

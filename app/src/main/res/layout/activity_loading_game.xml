@@ -1,31 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorPrimary"
     tools:context=".ui.game.LoadingGameActivity">
 
-    <TextView
-        android:id="@+id/loading_game_progress_tv"
+    <ImageView
+        android:id="@+id/play_progress_loading_imv"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/please_wait_msg"
-        app:layout_constraintBottom_toTopOf="@id/loading_game_pb"
-        app:layout_constraintStart_toStartOf="@id/loading_game_pb"
-        app:layout_constraintEnd_toEndOf="@id/loading_game_pb"/>
-
-    <ProgressBar
-        android:id="@+id/loading_game_pb"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintWidth_percent=".6"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
         app:layout_constraintEnd_toEndOf="parent"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:max="10"
-        android:visibility="visible"/>
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <carbon.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_dim_fader_corner_rectangle"
+        android:paddingTop="@dimen/medium_space"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/loading_game_progress_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/medium_space"
+            android:text="@string/please_wait_msg"
+            app:layout_constraintBottom_toTopOf="@id/loading_game_pb"
+            app:layout_constraintEnd_toEndOf="@id/loading_game_pb"
+            app:layout_constraintStart_toStartOf="@id/loading_game_pb" />
+
+        <ProgressBar
+            android:id="@+id/loading_game_pb"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:max="10"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </carbon.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
