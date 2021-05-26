@@ -136,6 +136,29 @@ public class HomeFragment extends BaseFragment {
         CategoryRVAdapter categoryAdapter = new CategoryRVAdapter(NORMAL_SIZE, true, SINGLE_SELECT);
         setupRecyclerView(rclvCategory, categoryAdapter, new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         categoryAdapter.setOnItemSelectedListener((OnItemSelectedListener<Tag>)(position, selectedItemId) -> goToGameListScreen(selectedItemId.getTag(), GameListType.BY_CATEGORY, selectedItemId.getTag()));
+
+        otherGamesAdapter = new TabPagerAdapter(this);
+        otherGamesAdapter.addPage(getResources().getString(R.string.free_to_play_title), GameListFragment.newInstance(null, GameListType.BY_PAY_TYPE, PayTypeEnum.FREE.toString()));
+        if (homeViewModel.isUserLogged())
+            otherGamesAdapter.addPage(getResources().getString(R.string.recommended_title), GameListFragment.newInstance(null, GameListType.RECOMMENDED, null));
+
+        vpOtherGames.setAdapter(otherGamesAdapter);
+
+        new TabLayoutMediator(tbOtherGames, vpOtherGames, ((tab, position) -> tab.setText(otherGamesAdapter.getTitle(position)))).attach();
+        ViewGroup.LayoutParams layoutParams = vpOtherGames.getLayoutParams();
+
+        //Calculate size
+        int height = ((AppCompatActivity)getContext()).getWindowManager().getDefaultDisplay().getHeight();
+        layoutParams.height = height - getActionBar().getHeight() - tbOtherGames.getHeight() - 300;
+        vpOtherGames.setLayoutParams(layoutParams);
+    }
+
+    private void setupBannerView() {
+        bannerAdapter = new BannerVPAdapter(0);
+        vpBanner.setAdapter(bannerAdapter);
+        vpBanner.setOffscreenPageLimit(2);
+        vpBanner.setPageTransformer(new CustomViewPagerTransformer());
+        vpBanner.addItemDecoration(new HorizontalMarginItemDecoration());
     }
 
     private void bindData() {
@@ -194,29 +217,6 @@ public class HomeFragment extends BaseFragment {
         homeViewModel.getGamesDataByType(GameListType.EDITOR, null);
         homeViewModel.getGamesDataByType(GameListType.NEW, null);
         homeViewModel.getCategoryListData();
-    }
-
-    private void setupBannerView() {
-        bannerAdapter = new BannerVPAdapter(0);
-        vpBanner.setAdapter(bannerAdapter);
-        vpBanner.setOffscreenPageLimit(2);
-        vpBanner.setPageTransformer(new CustomViewPagerTransformer());
-        vpBanner.addItemDecoration(new HorizontalMarginItemDecoration());
-
-        otherGamesAdapter = new TabPagerAdapter(this);
-        otherGamesAdapter.addPage(getResources().getString(R.string.free_to_play_title), GameListFragment.newInstance(null, GameListType.BY_PAY_TYPE, PayTypeEnum.FREE.toString()));
-        if (homeViewModel.isUserLogged())
-            otherGamesAdapter.addPage(getResources().getString(R.string.recommended_title), GameListFragment.newInstance(null, GameListType.RECOMMENDED, null));
-
-        vpOtherGames.setAdapter(otherGamesAdapter);
-
-        new TabLayoutMediator(tbOtherGames, vpOtherGames, ((tab, position) -> tab.setText(otherGamesAdapter.getTitle(position)))).attach();
-        ViewGroup.LayoutParams layoutParams = vpOtherGames.getLayoutParams();
-
-        //Calculate size
-        int height = ((AppCompatActivity)getContext()).getWindowManager().getDefaultDisplay().getHeight();
-        layoutParams.height = height - getActionBar().getHeight() - tbOtherGames.getHeight() - 300;
-        vpOtherGames.setLayoutParams(layoutParams);
     }
 
     private void setupRecyclerView(RecyclerView view, RecyclerView.Adapter adapter, RecyclerView.LayoutManager layoutManager) {

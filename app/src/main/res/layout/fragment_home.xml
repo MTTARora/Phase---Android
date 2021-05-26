@@ -11,8 +11,8 @@
         android:id="@+id/frame_home"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
-        android:clipToPadding="false">
+        android:clipToPadding="false"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -22,7 +22,7 @@
             <com.rora.phase.utils.ui.CustomToolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
 
             <!--BANNER-->
             <androidx.viewpager2.widget.ViewPager2
@@ -36,11 +36,11 @@
                 android:id="@+id/error_banner_home_imv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/maxx_space"
                 android:scaleType="center"
                 android:src="?android:attr/alertDialogIcon"
                 android:visibility="visible"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginBottom="@dimen/maxx_space"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <!--CATEGORY-->
             <androidx.recyclerview.widget.RecyclerView
@@ -49,7 +49,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/max_space"
                 android:clipToPadding="false"
-                android:paddingHorizontal="@dimen/min_space" />
+                android:paddingHorizontal="@dimen/medium_space" />
 
             <!--MAIN LIST-->
             <androidx.recyclerview.widget.RecyclerView
@@ -59,7 +59,8 @@
                 android:layout_marginBottom="@dimen/normal_space"
                 android:clipChildren="false"
                 android:clipToPadding="false"
-                android:orientation="vertical"/>
+                android:orientation="vertical"
+                android:overScrollMode="never" />
 
             <!--Others-->
             <com.google.android.material.tabs.TabLayout
@@ -74,7 +75,8 @@
                 android:id="@+id/other_games_vp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="@dimen/min_space"/>
+                android:clipToPadding="false"
+                android:clipChildren="false" />
 
         </LinearLayout>
 

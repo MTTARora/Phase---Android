@@ -15,7 +15,9 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="@dimen/medium_space">
+        android:paddingTop="@dimen/medium_space"
+        android:clipToPadding="false"
+        android:clipChildren="false">
 
         <ImageView
             android:id="@+id/error_imv"

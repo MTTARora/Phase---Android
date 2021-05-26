@@ -12,7 +12,7 @@
         android:id="@+id/category_item_home_rclv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/max_space"
+        android:layout_marginTop="@dimen/normal_space"
         android:layout_marginBottom="@dimen/max_space"
         android:clipToPadding="false"
         app:layout_constraintTop_toBottomOf="@id/frame_session_info_home_item"

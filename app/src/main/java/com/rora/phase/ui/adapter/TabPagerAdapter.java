@@ -28,7 +28,6 @@ public class TabPagerAdapter extends FragmentStateAdapter {
         return pageList.get(position).page;
     }
 
-
     @Override
     public int getItemCount() {
         return pageList.size();
