@@ -210,7 +210,11 @@ public class PlayServices extends Service {
                     callBack.onFindAHost(false);
                     //STEP 3: Get host data
                     RoraLog.info("Play game - STEP 3: Get available host");
-                    userRepository.getComputerData((errMsg, response) -> {
+                    String deviceName = Build.MANUFACTURER
+                            + " " + Build.MODEL + " " + Build.VERSION.RELEASE
+                            + " " + Build.VERSION_CODES.class.getFields()[android.os.Build.VERSION.SDK_INT].getName();
+
+                    userRepository.getAvailableHost(deviceName, deviceName, game.getId().toString(),(errMsg, response) -> {
                         listener.onFindAHost(true);
                         callBack.onFindAHost(true);
                         if (errMsg != null) {

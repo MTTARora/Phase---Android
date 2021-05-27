@@ -60,8 +60,10 @@ public interface UserPhaseService {
     @GET("/recommended")
     Call<BaseResponse<List<Game>>> getRecommended(@Query("page") int page,@Query("page_size") int pageSize);
 
+    //------- PLAY APIs --------
+
     @GET("./play/available-host")
-    Call<BaseResponse<FindingHostResponse>> getComputerIP();
+    Call<BaseResponse<FindingHostResponse>> getAvailableHost(@Query("deviceId") String deviceId, @Query("deviceName") String deviceName, @Query("gameId") String gameId);
 
     @POST("./play/confirm-pin")
     Call<BaseResponse> sendPinToHost(@Body PinConfirmBody confirmData);

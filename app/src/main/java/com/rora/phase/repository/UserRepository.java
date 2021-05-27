@@ -229,10 +229,10 @@ public class UserRepository {
         });
     }
 
-    public void getComputerData(OnResultCallBack<FindingHostResponse> callBack) {
+    public void getAvailableHost(String deviceName, String deviceId, String gameId, OnResultCallBack<FindingHostResponse> callBack) {
         APIServicesHelper<FindingHostResponse> apiHelper = new APIServicesHelper<>();
 
-        apiHelper.request(userAuthenticatedServices.getComputerIP(), (err, data) -> {
+        apiHelper.request(userAuthenticatedServices.getAvailableHost(deviceName, deviceId, gameId), (err, data) -> {
             if (err != null) {
                 callBack.onResult(err, null);
             } else {
