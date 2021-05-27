@@ -2,6 +2,7 @@ package com.rora.phase.utils.callback;
 
 public interface PlayGameProgressCallBack {
     void onStart(boolean isDone);
+    void onConnectionEstablished(boolean isSuccess);
     void onFindAHost(boolean isDone);
     void onQueueUpdated(boolean isFirstInit, int total, int position);
     void onPairPc(boolean isDone);

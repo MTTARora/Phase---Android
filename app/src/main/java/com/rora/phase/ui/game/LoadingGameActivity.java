@@ -190,6 +190,7 @@ public class LoadingGameActivity extends FragmentActivity {
 
     private void setupViews() {
         hideSystemUI();
+        pbLoadingProgress.setMax(14);
         MediaHelper.loadImage(backgroundImv, game.getBanner().getAvailableLink(Media.Quality.MEDIUM));
     }
 
@@ -231,10 +232,25 @@ public class LoadingGameActivity extends FragmentActivity {
         }
 
         @Override
+        public void onConnectionEstablished(boolean isSuccess) {
+            LoadingGameActivity.this.runOnUiThread(() -> {
+                if (!isSuccess) {
+                    stopConnect();
+                    LoadingGameActivity.this.runOnUiThread(() -> Toast.makeText(getApplicationContext(), getResources().getString(R.string.undetected_error_from_server), Toast.LENGTH_LONG).show());
+                    LoadingGameActivity.this.finish();
+                    return;
+                }
+
+                tvLoadingProgress.setText(getResources().getString(R.string.getting_data_from_server_play_msg));
+                pbLoadingProgress.setProgress(isSuccess ? 3 : 4);
+            });
+        }
+
+        @Override
         public void onFindAHost(boolean isDone) {
             LoadingGameActivity.this.runOnUiThread(() -> {
                 tvLoadingProgress.setText(getResources().getString(R.string.finding_a_host_play_msg));
-                pbLoadingProgress.setProgress(isDone ? 3 : 4);
+                pbLoadingProgress.setProgress(isDone ? 5 : 6);
             });
         }
 
@@ -247,7 +263,7 @@ public class LoadingGameActivity extends FragmentActivity {
         public void onPairPc(boolean isDone) {
             LoadingGameActivity.this.runOnUiThread(() -> {
                 tvLoadingProgress.setText(getResources().getString(R.string.connecting_to_host_play_msg));
-                pbLoadingProgress.setProgress(isDone ? 5 : 6);
+                pbLoadingProgress.setProgress(isDone ? 7 : 8);
             });
         }
 
@@ -255,7 +271,7 @@ public class LoadingGameActivity extends FragmentActivity {
         public void onGetHostApps(boolean isDone) {
             LoadingGameActivity.this.runOnUiThread(() -> {
                 tvLoadingProgress.setText(getResources().getString(R.string.getting_necessary_data_play_msg));
-                pbLoadingProgress.setProgress(isDone ? 7 : 8);
+                pbLoadingProgress.setProgress(isDone ? 9 : 10);
             });
         }
 
@@ -263,7 +279,7 @@ public class LoadingGameActivity extends FragmentActivity {
         public void onPrepareHost(boolean isDone) {
             LoadingGameActivity.this.runOnUiThread(() -> {
                 tvLoadingProgress.setText(getResources().getString(R.string.preparing_environment_play_msg));
-                pbLoadingProgress.setProgress(isDone ? 9 : 10);
+                pbLoadingProgress.setProgress(isDone ? 11 : 12);
             });
         }
 
@@ -271,7 +287,7 @@ public class LoadingGameActivity extends FragmentActivity {
         public void onStartConnect(boolean isDone) {
             LoadingGameActivity.this.runOnUiThread(() -> {
                 tvLoadingProgress.setText(getResources().getString(R.string.done_connection_msg));
-                pbLoadingProgress.setProgress(isDone ? 11 : 12);
+                pbLoadingProgress.setProgress(isDone ? 13 : 14);
             });
         }
 

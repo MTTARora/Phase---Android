@@ -343,14 +343,13 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
 
     private PlayGameProgressCallBack playGameProgressCallBack = new PlayGameProgressCallBack() {
         @Override
-        public void onStart(boolean isDone) {
-
-        }
+        public void onStart(boolean isDone) { }
 
         @Override
-        public void onFindAHost(boolean isDone) {
+        public void onConnectionEstablished(boolean isSuccess) { }
 
-        }
+        @Override
+        public void onFindAHost(boolean isDone) { }
 
         @Override
         public void onQueueUpdated(boolean isFirstInit, int total, int position) {

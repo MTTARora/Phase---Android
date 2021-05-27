@@ -2,6 +2,8 @@ package com.rora.phase.utils.network.realtime.playhub;
 
 import android.content.Context;
 
+import com.microsoft.signalr.Action;
+import com.microsoft.signalr.Action2;
 import com.microsoft.signalr.HubConnection;
 import com.microsoft.signalr.HubConnectionBuilder;
 import com.microsoft.signalr.HubConnectionState;
@@ -42,12 +44,11 @@ public class PlayHub {
             }
         });
 
+        hubConnection.on("ConnectionEstablished", listener::onConnectionEstablished, String.class, boolean.class);
         hubConnection.on("OnAppReady", listener::onAppReady, boolean.class);
-        hubConnection.on("PlayingError", (err) -> listener.onDisconnected(500), String.class);
+        hubConnection.on("PlayingError", (String err) -> listener.onDisconnected(500), String.class);
         hubConnection.on("OnHostAvailable", listener::onHostAvailable, Host.class);
-        hubConnection.on("UpdatePlayQueue", (position) -> {
-            listener.onUpdatePlayQueue(position);
-        }, int.class);
+        hubConnection.on("UpdatePlayQueue", listener::onUpdatePlayQueue, int.class);
     }
 
     public void stopConnect() {

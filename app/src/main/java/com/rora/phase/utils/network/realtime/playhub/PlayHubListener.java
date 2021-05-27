@@ -4,6 +4,7 @@ import com.rora.phase.model.Host;
 
 public interface PlayHubListener {
     void onConnected();
+    void onConnectionEstablished(String msg, boolean isSuccess);
     void onUpdatePlayQueue(int position);
     void onHostAvailable(Host host); //In case user is in queue then have available host
     void onAppReady(boolean isSuccess);

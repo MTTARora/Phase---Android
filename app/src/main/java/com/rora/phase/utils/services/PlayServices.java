@@ -191,38 +191,53 @@ public class PlayServices extends Service {
             playHub.startConnect(getApplicationContext(), new PlayHubListener() {
                 @Override
                 public void onConnected() {
-                    //listener.onFindAHost(false);
-                    //callBack.onFindAHost(false);
-                    ////STEP 2: Get host data
-                    //RoraLog.info("Play game - STEP 2: Get available host");
-                    //userRepository.getComputerData((errMsg, response) -> {
-                    //    listener.onFindAHost(true);
-                    //    callBack.onFindAHost(true);
-                    //    if (errMsg != null) {
-                    //        RoraLog.warning("Play Game - Error: " + errMsg);
-                    //        stopConnect(callBack, errMsg);
-                    //        return;
-                    //    }
-                    //
-                    //    new Thread(() -> {
-                    //        try {
-                    //            //STEP 2.1: Check queue
-                    //            if (response.queue != null) {
-                    //                RoraLog.info("Play game: So many players are playing right now, please wait!");
-                    //                setCurrentState(UserPlayingData.PlayingState.IN_QUEUE);
-                    //                listener.onQueueUpdated(true, response.queue.getTotal(), response.queue.getCurrentPosition());
-                    //                callBack.onQueueUpdated(true, response.queue.getTotal(), response.queue.getCurrentPosition());
-                    //                return;
-                    //            }
-                    //
-                    //            //STEP 3: Pair
-                    //            continueProgressWithAvailableHost(response.host, callBack);
-                    //        } catch (Exception e) {
-                    //            RoraLog.info("Play Game - Error: " + e.getMessage());
-                    //            stopConnect(callBack, e.getMessage());
-                    //        }
-                    //    }).start();
-                    //});
+                    listener.onStart(true);
+                    callBack.onStart(true);
+                    RoraLog.info("Play game - STEP 2: Waiting for server establishing connection");
+                }
+
+                //STEP 2: Waiting for server establishing connection
+                @Override
+                public void onConnectionEstablished(String msg, boolean isSuccess) {
+                    if (!isSuccess) {
+                        RoraLog.info("Play game - STEP 2: Establishing connection with server failed - " + msg);
+                        listener.onConnectionEstablished(false);
+                        callBack.onConnectionEstablished(false);
+                        return;
+                    }
+
+                    listener.onFindAHost(false);
+                    callBack.onFindAHost(false);
+                    //STEP 3: Get host data
+                    RoraLog.info("Play game - STEP 3: Get available host");
+                    userRepository.getComputerData((errMsg, response) -> {
+                        listener.onFindAHost(true);
+                        callBack.onFindAHost(true);
+                        if (errMsg != null) {
+                            RoraLog.warning("Play Game - Error: " + errMsg);
+                            stopConnect(callBack, errMsg);
+                            return;
+                        }
+
+                        new Thread(() -> {
+                            try {
+                                //STEP 3.1: Check queue
+                                if (response.queue != null) {
+                                    RoraLog.info("Play game: So many players are playing right now, please wait!");
+                                    setCurrentState(UserPlayingData.PlayingState.IN_QUEUE);
+                                    listener.onQueueUpdated(true, response.queue.getTotal(), response.queue.getCurrentPosition());
+                                    callBack.onQueueUpdated(true, response.queue.getTotal(), response.queue.getCurrentPosition());
+                                    return;
+                                }
+
+                                //STEP 4: Pair
+                                continueProgressWithAvailableHost(response.host, callBack);
+                            } catch (Exception e) {
+                                RoraLog.info("Play Game - Error: " + e.getMessage());
+                                stopConnect(callBack, e.getMessage());
+                            }
+                        }).start();
+                    });
                 }
 
                 @Override
@@ -250,8 +265,8 @@ public class PlayServices extends Service {
                         return;
                     }
 
-                    //STEP 6: Play
-                    RoraLog.info("Play game - STEP 6: Start remote connect...");
+                    //STEP 7: Play
+                    RoraLog.info("Play game - STEP 7: Start remote connect...");
                     listener.onStartConnect(false);
                     callBack.onStartConnect(false);
                     String error = start(activity, binder);
@@ -313,8 +328,8 @@ public class PlayServices extends Service {
             callBack.onPairPc(true);
             Thread.sleep(1000);
 
-            //STEP 4: Get game list from nvdia
-            RoraLog.info("Play game - STEP 4: Getting app list from nvidia...");
+            //STEP 5: Get game list from nvdia
+            RoraLog.info("Play game - STEP 5: Getting app list from nvidia...");
             listener.onGetHostApps(false);
             callBack.onGetHostApps(false);
             err = getNecessaryAppFromNvidia();
@@ -326,8 +341,8 @@ public class PlayServices extends Service {
             listener.onGetHostApps(true);
             callBack.onGetHostApps(true);
 
-            //STEP 5: Request host to prepare app if pair success
-            RoraLog.info("Play game - STEP 5: Pair success, requesting host for preparation app...");
+            //STEP 6: Request host to prepare app if pair success
+            RoraLog.info("Play game - STEP 6: Pair success, requesting host for preparation app...");
             listener.onPrepareHost(false);
             callBack.onPrepareHost(false);
             userRepository.prepareAppHost(currentGame.getId().toString(), "1", null, null, (error, data) -> {
