@@ -40,7 +40,7 @@ public class UserRepository {
     private SharedPreferencesHelper dbSharedPref;
 
     private MutableLiveData<User> user;
-    private MutableLiveData<List<Game>> favoriteList, recentPlayList, recommendedList;
+    private MutableLiveData<List<Game>> favoriteList;
     private MutableLiveData<DataResponse> signInResult;
     private MutableLiveData<DataResponse> signUpResult;
     private MutableLiveData<DataResponse> forgotPasswordResult;
@@ -59,8 +59,6 @@ public class UserRepository {
 
         user = new MutableLiveData<>();
         favoriteList =  new MutableLiveData<>();
-        recentPlayList =  new MutableLiveData<>();
-        recommendedList = new MutableLiveData<>();
         signInResult =  new MutableLiveData<>();
         signUpResult =  new MutableLiveData<>();
         forgotPasswordResult = new MutableLiveData<>();
@@ -93,14 +91,6 @@ public class UserRepository {
         return favoriteList;
     }
 
-    public MutableLiveData<List<Game>> getRecentPlayList() {
-        return recentPlayList;
-    }
-
-    public MutableLiveData<List<Game>> getRecommendedGameList() {
-        return recommendedList;
-    }
-
     //---------------------------------------------------------------
 
 
@@ -110,11 +100,10 @@ public class UserRepository {
         APIServicesHelper apiHelper = new APIServicesHelper<>();
 
         apiHelper.request(userServices.signUp(credential), (err, data) -> {
-            if (err != null) {
+            if (err != null)
                 signUpResult.setValue(new DataResponse(err, null));
-            } else {
+            else
                 signUpResult.setValue(new DataResponse(null, data));
-            }
         });
     }
 
@@ -128,9 +117,9 @@ public class UserRepository {
                 User user = data.getInfo();
                 String token = data.getToken();
 
-                if (token != null && user != null) {
+                if (token != null && user != null)
                     storeLocalUser(user.getUserName(), token);
-                }
+
                 signInResult.setValue(new DataResponse(null, data));
             }
         });
@@ -148,11 +137,10 @@ public class UserRepository {
         APIServicesHelper apiHelper = new APIServicesHelper<>();
 
         apiHelper.request(userServices.forgotPassword(email), (err, data) -> {
-            if (err != null) {
+            if (err != null)
                 forgotPasswordResult.setValue(new DataResponse(err, null));
-            } else {
+            else
                 forgotPasswordResult.setValue(new DataResponse(null, data));
-            }
         });
     }
 
@@ -160,11 +148,10 @@ public class UserRepository {
         APIServicesHelper apiHelper = new APIServicesHelper<>();
 
         apiHelper.request(userServices.verifyEmail(email), (err, data) -> {
-            if (err != null) {
+            if (err != null)
                 emailVerificationResult.setValue(new DataResponse(err, null));
-            } else {
+            else
                 emailVerificationResult.setValue(new DataResponse(null, data));
-            }
         });
     }
 
@@ -214,18 +201,14 @@ public class UserRepository {
         });
     }
 
-    public void getRecentPlayData() {
+    public void getRecentPlayData(OnResultCallBack<List<Game>> onResultCallBack) {
         APIServicesHelper<List<Game>> apiHelper = new APIServicesHelper<>();
 
-        //userAuthenticatedServices
-        //apiHelper.request(userAuthenticatedServices.getRecentPlay(1, 20), (err, data) -> {
-        apiHelper.request(gameServices.getNewGames(1, 20), (err, data) -> {
-            if (err != null) {
-                recentPlayList.postValue(new ArrayList<>());
-            } else {
-                List<Game> listGame = data == null ? new ArrayList<>() : data;
-                recentPlayList.postValue(listGame);
-            }
+        apiHelper.request(userAuthenticatedServices.getRecentPlay(1, 20), (err, data) -> {
+            if (err != null)
+                onResultCallBack.onResult(err, null);
+            else
+                onResultCallBack.onResult(null, data == null ? new ArrayList<>() : data);
         });
     }
 
@@ -233,16 +216,10 @@ public class UserRepository {
         APIServicesHelper<FindingHostResponse> apiHelper = new APIServicesHelper<>();
 
         apiHelper.request(userAuthenticatedServices.getAvailableHost(deviceName, deviceId, gameId), (err, data) -> {
-            if (err != null) {
+            if (err != null)
                 callBack.onResult(err, null);
-            } else {
-                if (data.queue != null || data.host == null) {
-                    RoraLog.info("So many players are playing right now, please wait!");
-                    callBack.onResult(null, data);
-                }
-                else
-                    callBack.onResult(null, data);
-            }
+            else
+                callBack.onResult(null, data);
         });
     }
 
@@ -250,9 +227,9 @@ public class UserRepository {
         APIServicesHelper apiHelper = new APIServicesHelper<>();
 
         apiHelper.request(userAuthenticatedServices.sendPinToHost(new PinConfirmBody(pinStr)), (err, data) -> {
-            if (err != null) {
+            if (err != null)
                 callBack.onResult(err, null);
-            } else
+            else
                 callBack.onResult(null, null);
         });
     }
@@ -261,9 +238,9 @@ public class UserRepository {
         APIServicesHelper apiHelper = new APIServicesHelper<>();
         PrepareAppModel data = new PrepareAppModel(gameId, platformId, platformUsername, platformPassword);
         apiHelper.request(userAuthenticatedServices.prepareApp(data), (err, result) -> {
-            if (err != null && !err.contains("success")) {
+            if (err != null && !err.contains("success"))
                 callBack.onResult(err, null);
-            } else
+            else
                 callBack.onResult(null, null);
         });
     }

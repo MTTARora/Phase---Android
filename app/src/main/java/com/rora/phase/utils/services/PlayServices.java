@@ -226,7 +226,7 @@ public class PlayServices extends Service {
                         new Thread(() -> {
                             try {
                                 //STEP 3.1: Check queue
-                                if (response.queue != null) {
+                                if (response.queue != null || response.host == null) {
                                     RoraLog.info("Play game: So many players are playing right now, please wait!");
                                     setCurrentState(UserPlayingData.PlayingState.IN_QUEUE);
                                     listener.onQueueUpdated(true, response.queue.getTotal(), response.queue.getCurrentPosition());
