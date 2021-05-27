@@ -131,7 +131,7 @@ public class HomeFragment extends BaseFragment {
         });
         homeAdapter.setOnChildItemClickListener((position, selectedItem) -> moveTo(GameDetailFragment.newInstance((Game) selectedItem), GameDetailFragment.class.getSimpleName(), true));
 
-        homeAdapter.setOnCategoryClickListener((OnItemSelectedListener<Tag>) (position, selectedTag) -> homeViewModel.getGamesDataByType(GameListType.BY_CATEGORY, selectedTag.getTagId().toString()));
+        homeAdapter.setOnCategoryClickListener((OnItemSelectedListener<Tag>) (position, selectedTag) -> homeViewModel.getGamesDataByType(GameListType.BY_CATEGORY, selectedTag.getTag().toString()));
 
         CategoryRVAdapter categoryAdapter = new CategoryRVAdapter(NORMAL_SIZE, true, SINGLE_SELECT);
         setupRecyclerView(rclvCategory, categoryAdapter, new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));

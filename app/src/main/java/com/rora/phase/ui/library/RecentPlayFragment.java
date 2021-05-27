@@ -25,6 +25,7 @@ import com.rora.phase.utils.ui.BaseFragment;
 import com.rora.phase.utils.ui.CustomViewPagerTransformer;
 import com.rora.phase.utils.ui.HorizontalMarginItemDecoration;
 
+import static com.rora.phase.ui.adapter.CategoryRVAdapter.AUTO_SIZE;
 import static com.rora.phase.ui.adapter.CategoryRVAdapter.MEDIUM_SIZE;
 import static com.rora.phase.ui.adapter.CategoryRVAdapter.NONE_SELECT;
 
@@ -103,7 +104,7 @@ public class RecentPlayFragment extends BaseFragment {
         });
 
         rclvCategory.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL , false));
-        rclvCategory.setAdapter(new CategoryRVAdapter(MEDIUM_SIZE, false, NONE_SELECT));
+        rclvCategory.setAdapter(new CategoryRVAdapter(AUTO_SIZE, false, NONE_SELECT));
         rclvCategory.setHasFixedSize(true);
 
         recentPlayAdapter.setOnItemSelectedListener((position, selectedItem) -> moveTo(GameDetailFragment.newInstance((Game) selectedItem), GameDetailFragment.class.getSimpleName(), true));

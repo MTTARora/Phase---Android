@@ -12,14 +12,14 @@
 
     <carbon.widget.TextView
         android:id="@+id/btn_category"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:ellipsize="end"
         android:gravity="center"
         android:maxLines="1"
         android:paddingHorizontal="@dimen/medium_space"
         android:paddingVertical="@dimen/min_space"
-        android:text="Action"
+        android:text="--"
         android:textAllCaps="false"
         android:textSize="@dimen/normal_text_size"
         android:background="@color/colorPrimaryDark"
@@ -28,4 +28,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:carbon_cornerRadius="@dimen/medium_radius"/>
+
 </androidx.cardview.widget.CardView>

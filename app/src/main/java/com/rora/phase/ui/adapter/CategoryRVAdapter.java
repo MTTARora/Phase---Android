@@ -19,6 +19,7 @@ import com.rora.phase.utils.ui.ViewHelper;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static com.rora.phase.ui.adapter.CategoryRVAdapter.MEDIUM_SIZE;
 import static com.rora.phase.ui.adapter.CategoryRVAdapter.AUTO_SIZE;
@@ -56,8 +57,8 @@ public class CategoryRVAdapter extends BaseRVAdapter {
 
         switch (size) {
             case AUTO_SIZE:
-                ViewHelper.setSize(root, WRAP_CONTENT, WRAP_CONTENT);
-                ((ViewGroup.MarginLayoutParams) root.getLayoutParams()).setMarginEnd((int) parent.getContext().getResources().getDimension(R.dimen.min_space));
+                //ViewHelper.setSize(root, WRAP_CONTENT, WRAP_CONTENT);
+                //((ViewGroup.MarginLayoutParams) root.getLayoutParams()).setMarginEnd((int) parent.getContext().getResources().getDimension(R.dimen.min_space));
                 break;
             case MEDIUM_SIZE:
                 ViewHelper.setSizePercentageWithScreenAndItSelf(root, 0.22, 0, 3);
@@ -79,6 +80,20 @@ public class CategoryRVAdapter extends BaseRVAdapter {
             ((CategoryViewHolder)holder).btnCategory.setOnClickListener(v -> {
                 switch (selectionType) {
                     case SINGLE_SELECT:
+                        if (selectedTagList.size() != 0 && currentTag == selectedTagList.get(0))
+                            return;
+
+                        if (selectedTagList.size() == 0) {
+
+                            selectedTagList.add(currentTag);
+
+                            notifyItemChanged(0);
+                            ((CategoryViewHolder)holder).btnCategory.setBackgroundColor(holder.itemView.getContext().getColor(selectedTagList != null && selectedTagList.contains(currentTag) ? R.color.colorPrimary : R.color.colorPrimaryDark));
+                            onItemSelectedListener.onSelected(position, currentTag);
+                            return;
+                        }
+
+                        Tag previousTag = selectedTagList.get(0);
                         if (selectedTagList.contains(currentTag)) {
                             selectedTagList.clear();
                         }
@@ -86,19 +101,23 @@ public class CategoryRVAdapter extends BaseRVAdapter {
                             selectedTagList.clear();
                             selectedTagList.add(currentTag);
                         }
+                        notifyItemChanged(categoryList.indexOf(previousTag));
+
+                        ((CategoryViewHolder)holder).btnCategory.setBackgroundColor(holder.itemView.getContext().getColor(selectedTagList != null && selectedTagList.contains(currentTag) ? R.color.colorPrimary : R.color.colorPrimaryDark));
+                        onItemSelectedListener.onSelected(position, currentTag);
                         break;
                     case MULTI_SELECT:
                         if (selectedTagList.contains(currentTag))
                             selectedTagList.remove(currentTag);
                         else
                             selectedTagList.add(currentTag);
+
+                        ((CategoryViewHolder)holder).btnCategory.setBackgroundColor(holder.itemView.getContext().getColor(selectedTagList != null && selectedTagList.contains(currentTag) ? R.color.colorPrimary : R.color.colorPrimaryDark));
+                        onItemSelectedListener.onSelected(position, currentTag);
                         break;
                     default:
                         break;
                 }
-
-                ((CategoryViewHolder)holder).btnCategory.setBackgroundColor(holder.itemView.getContext().getColor(selectedTagList != null && selectedTagList.contains(currentTag) ? R.color.colorPrimary : R.color.colorPrimaryDark));
-                onItemSelectedListener.onSelected(position, currentTag);
 
             });
     }
@@ -152,6 +171,7 @@ class CategoryViewHolder extends BaseRVViewHolder {
                 btnCategory.setTextSize(context.getResources().getDimension(R.dimen.minnnn_text_size));
                 break;
             case MEDIUM_SIZE:
+                ViewHelper.setSize(btnCategory, MATCH_PARENT, 0);
                 //cvFrame.setRadius(context.getResources().getDimension(R.dimen.maxx_radius));
                 break;
             case NORMAL_SIZE:

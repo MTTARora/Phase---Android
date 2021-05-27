@@ -22,6 +22,7 @@ import com.rora.phase.utils.ui.BaseRVViewHolder;
 
 import java.util.List;
 
+import static com.rora.phase.ui.adapter.CategoryRVAdapter.AUTO_SIZE;
 import static com.rora.phase.ui.adapter.CategoryRVAdapter.MEDIUM_SIZE;
 import static com.rora.phase.ui.adapter.CategoryRVAdapter.SINGLE_SELECT;
 
@@ -43,7 +44,7 @@ public class ItemHomeWithCategoryVH extends BaseRVViewHolder {
         btnViewAll = itemView.findViewById(R.id.btn_view_all_home_item);
 
         setupGameRecyclerView(rclvCategoryList,
-                new CategoryRVAdapter(MEDIUM_SIZE, false, SINGLE_SELECT),
+                new CategoryRVAdapter(AUTO_SIZE, false, SINGLE_SELECT),
                 new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.HORIZONTAL, false));
 
         setupGameRecyclerView(rclvGameList,

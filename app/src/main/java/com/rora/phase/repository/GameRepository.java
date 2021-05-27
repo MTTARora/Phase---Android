@@ -156,10 +156,9 @@ public class GameRepository {
 
         apiHelper.request(tagServices.getCategoryList(), (err, data) -> {
             if (err != null)
-                if (resultCallBack != null)
-                    resultCallBack.onResult(err, null);
-                else if (resultCallBack != null)
-                    resultCallBack.onResult(null, data == null ? new ArrayList<>() : data);
+                resultCallBack.onResult(err, null);
+            else
+                resultCallBack.onResult(null, data == null ? new ArrayList<>() : data);
         });
     }
 
