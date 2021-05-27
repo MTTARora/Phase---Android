@@ -68,11 +68,11 @@ public class GameViewModel extends AndroidViewModel {
     public void getGame(String gameId) {
         gameRepository.getGameData(gameId, (errMsg, data) -> {
             if (errMsg != null) {
-                game.postValue(null);
+                game.setValue(null);
                 return;
             }
 
-            game.postValue(data);
+            game.setValue(data);
         });
     }
 

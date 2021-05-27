@@ -12,6 +12,7 @@ import com.rora.phase.model.Tag;
 import com.rora.phase.model.enums.GameListType;
 import com.rora.phase.repository.BannerRepository;
 import com.rora.phase.repository.GameRepository;
+import com.rora.phase.repository.UserRepository;
 import com.rora.phase.utils.PageManager;
 import com.rora.phase.utils.SharedPreferencesHelper;
 import com.rora.phase.utils.callback.OnResultCallBack;
@@ -25,11 +26,13 @@ public class HomeViewModel extends AndroidViewModel {
 
     private GameRepository gameRepository;
     private BannerRepository bannerRepository;
+    private UserRepository userRepository;
 
     private LiveData<List<Banner>> bannerList;
     private MutableLiveData<List<Game>> newGameList;
     private LiveData<List<Game>> editorsChoiceList, hotGameList, trendingList, gameByCategoryList, gameByPayTypeList;
     private LiveData<List<Tag>> categoryList;
+    private MutableLiveData<List<Game>> recentPlayList;
     private PageManager pager, newGamePager, editorPager, hotGamePager, trendingPager, gameByCategoryPager;
     private String currentSelectedItemId;
 
@@ -37,6 +40,7 @@ public class HomeViewModel extends AndroidViewModel {
         super(application);
         bannerRepository = new BannerRepository();
         gameRepository = new GameRepository();
+        userRepository = new UserRepository(application.getApplicationContext());
 
         newGameList = new MutableLiveData<>();
         bannerList = bannerRepository.getBannerList();;
@@ -44,6 +48,7 @@ public class HomeViewModel extends AndroidViewModel {
         hotGameList = gameRepository.getHotGameList();
         trendingList = gameRepository.getTrendingList();
         categoryList = gameRepository.getCategoryList();
+        recentPlayList = new MutableLiveData<>();
         gameByCategoryList = gameRepository.getGameByCategoryList();
         gameByPayTypeList = gameRepository.getGamesByPayTypeList();
 
@@ -91,6 +96,10 @@ public class HomeViewModel extends AndroidViewModel {
         return gameByPayTypeList;
     }
 
+    public LiveData<List<Game>> getRecentPlayList() {
+        return recentPlayList;
+    }
+
     public LiveData<List<Game>> getGamesByListType(GameListType type) {
         if (type != null)
             switch (type) {
@@ -107,7 +116,7 @@ public class HomeViewModel extends AndroidViewModel {
                 case BY_PAY_TYPE:
                     return getGamesByPayTypeList();
                 case RECOMMENDED:
-                    break;
+                    return getRecentPlayList();
                 default: return null;
             }
 
@@ -163,6 +172,15 @@ public class HomeViewModel extends AndroidViewModel {
         gameRepository.getGamesByPayTypeData(payType, page, pageSize);
     }
 
+    public void getRecentPlayData() {
+        userRepository.getRecentPlayData((errMsg, data) -> {
+            if (errMsg != null && !errMsg.isEmpty())
+                recentPlayList.setValue(new ArrayList<>());
+            else
+                recentPlayList.setValue(data);
+        });
+    }
+
     /** This method will always get the first page with default page size
      * @param param category id, pay type,...
      * */
@@ -180,6 +198,7 @@ public class HomeViewModel extends AndroidViewModel {
                     getEditorsChoiceListData(1, editorPager.getPageSize());
                     break;
                 case RECOMMENDED:
+                    getRecentPlayData();
                     break;
                 case TRENDING:
                     getTrendingListData(1, trendingPager.getPageSize());

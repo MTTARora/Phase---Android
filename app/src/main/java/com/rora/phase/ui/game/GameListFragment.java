@@ -90,8 +90,9 @@ public class GameListFragment extends BaseFragment {
 
     private void bindData(View root) {
         if (screenTitle == null) {
-            homeViewModel.getGamesByPayTypeList().observe(getViewLifecycleOwner(), games -> {
+            homeViewModel.getGamesByListType(listType).observe(getViewLifecycleOwner(), games -> {
                 errImv.setVisibility(games != null && games.size() != 0 ? View.GONE : View.VISIBLE);
+                rclvGameList.setVisibility(games != null && games.size() != 0 ? View.VISIBLE : View.GONE);
 
                 ((GameVerticalRVAdapter) Objects.requireNonNull(rclvGameList.getAdapter())).bindData(games);
             });

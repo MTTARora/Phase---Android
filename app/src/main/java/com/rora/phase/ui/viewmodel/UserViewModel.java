@@ -13,7 +13,9 @@ import com.rora.phase.model.api.LoginCredential;
 import com.rora.phase.model.api.SignUpCredential;
 import com.rora.phase.repository.UserRepository;
 import com.rora.phase.utils.DataResponse;
+import com.rora.phase.utils.callback.OnResultCallBack;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserViewModel extends AndroidViewModel {
@@ -21,19 +23,20 @@ public class UserViewModel extends AndroidViewModel {
     private UserRepository userRepository;
 
     private LiveData<User> user;
-    private LiveData<List<Game>> recentPlayList, favoriteList;
+    private LiveData<List<Game>> favoriteList;
     private LiveData<DataResponse> signInResult;
     private LiveData<DataResponse> signUpResult;
     private LiveData<DataResponse> forgotPasswordResult;
     private LiveData<DataResponse> emailVerificationResult;
     private MutableLiveData<Game> currentRecentPlay;
+    private MutableLiveData<List<Game>> recentPlayList;
 
     public UserViewModel(@NonNull Application application) {
         super(application);
         userRepository = new UserRepository(application.getApplicationContext());
 
         user = userRepository.getUser();
-        recentPlayList = userRepository.getRecentPlayList();
+        recentPlayList = new MutableLiveData<>();
         favoriteList = userRepository.getFavoriteList();
         signInResult = userRepository.getSignInResult();
         signUpResult = userRepository.getSignUpResult();
@@ -88,7 +91,12 @@ public class UserViewModel extends AndroidViewModel {
     }
 
     public void getRecentPlayData() {
-        userRepository.getRecentPlayData();
+        userRepository.getRecentPlayData((errMsg, data) -> {
+            if (errMsg != null && !errMsg.isEmpty())
+                recentPlayList.setValue(new ArrayList<>());
+            else
+                recentPlayList.setValue(data);
+        });
     }
 
     public void getFavoriteListData() {
