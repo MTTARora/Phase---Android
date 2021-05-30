@@ -30,6 +30,7 @@ public class UserViewModel extends AndroidViewModel {
     private LiveData<DataResponse> emailVerificationResult;
     private MutableLiveData<Game> currentRecentPlay;
     private MutableLiveData<List<Game>> recentPlayList;
+    private MutableLiveData<Boolean> triggerLoginListener;
 
     public UserViewModel(@NonNull Application application) {
         super(application);
@@ -43,6 +44,7 @@ public class UserViewModel extends AndroidViewModel {
         forgotPasswordResult = userRepository.getForgotPasswordResult();
         emailVerificationResult = userRepository.getEmailVerificationResult();
         currentRecentPlay = new MutableLiveData<>();
+        triggerLoginListener = new MutableLiveData<>();
     }
 
     //-------------------GET/SET--------------------
@@ -79,6 +81,10 @@ public class UserViewModel extends AndroidViewModel {
         return currentRecentPlay;
     }
 
+    public LiveData<Boolean> triggerLoginListener() {
+        return triggerLoginListener;
+    }
+
     //----------------------------------------------
 
     public void signIn(String username, String password) {
@@ -99,16 +105,35 @@ public class UserViewModel extends AndroidViewModel {
         });
     }
 
-    public void getFavoriteListData() {
-        userRepository.getFavoriteListData();
+    public void getFavoriteListData(OnResultCallBack onResultCallBack) {
+        userRepository.getFavoriteListData((errMsg, data) -> {
+            if (errMsg != null && !errMsg.isEmpty())
+                onResultCallBack.onResult(errMsg, null);
+            else
+                onResultCallBack.onResult(null, null);
+        });
     }
 
-    public void addFavorite(String gameId) {
-        userRepository.addFavorite(gameId);
-    }
-
-    public void removeFavorite(String gameId) {
-        userRepository.removeFavorite(gameId);
+    public void updateFavorite(Game game, OnResultCallBack onResultCallBack) {
+        if (game.isFavorited()) {
+            userRepository.removeFavorite(game.getId().toString(), (errMsg, data) -> {
+                if (errMsg != null && !errMsg.isEmpty()) {
+                    onResultCallBack.onResult(errMsg, null);
+                } else {
+                    game.setFavorited(false);
+                    onResultCallBack.onResult(null, null);
+                }
+            });
+        } else {
+            userRepository.addFavorite(game.getId().toString(), (errMsg, data) -> {
+                if (errMsg != null && !errMsg.isEmpty()) {
+                    onResultCallBack.onResult(errMsg, null);
+                } else {
+                    game.setFavorited(true);
+                    onResultCallBack.onResult(null, null);
+                }
+            });
+        }
     }
 
     public boolean isUserLogged() {
@@ -138,5 +163,10 @@ public class UserViewModel extends AndroidViewModel {
 
     public void setCurrentRecentPlay(Game game) {
         currentRecentPlay.postValue(game);
+    }
+
+    public void triggerLogin() {
+        triggerLoginListener.setValue(true);
+        userRepository.signOut();
     }
 }

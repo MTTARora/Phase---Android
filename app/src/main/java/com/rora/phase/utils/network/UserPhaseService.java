@@ -20,6 +20,8 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface UserPhaseService {
@@ -42,18 +44,15 @@ public interface UserPhaseService {
     @POST("./")
     Call<BaseResponse> updateInfo(@Body User user);
 
-    @GET("/favorite")
-    Call<BaseResponse<List<Game>>> getFavorite();
+    @GET("./favorite")
+    Call<BaseResponse<List<Game>>> getFavorites();
 
-    @FormUrlEncoded
-    @POST("/favorite")
-    Call<BaseResponse> addFavorite(@Field("game_id") String gameId);
+    @POST("favorite/{gameId}")
+    Call<BaseResponse<String>> addFavorite(@Path("gameId") String gameId);
 
-    @FormUrlEncoded
-    @DELETE("/favorite")
-    Call<BaseResponse> removeFavorite(@Field("game_id") String gameId);
+    @PUT("favorite/{gameId}")
+    Call<BaseResponse<String>> removeFavorite(@Path("gameId") String gameId);
 
-    //@GET("/recent_play")
     @GET("./recent_play")
     Call<BaseResponse<List<Game>>> getRecentPlay(@Query("page") int page, @Query("page_size") int pageSize);
 

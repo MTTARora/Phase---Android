@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
@@ -31,6 +32,7 @@ import com.rora.phase.model.UserPlayingData;
 import com.rora.phase.ui.game.GameDetailFragment;
 import com.rora.phase.ui.auth.AuthActivity;
 import com.rora.phase.ui.viewmodel.GameViewModel;
+import com.rora.phase.ui.viewmodel.UserViewModel;
 import com.rora.phase.utils.Dialog;
 import com.rora.phase.utils.MediaHelper;
 import com.rora.phase.utils.callback.PlayGameProgressCallBack;
@@ -53,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
     private ImageButton triggerProgressMainBtn, triggerProgressBtn;
 
     private GameViewModel gameViewModel;
+    private UserViewModel userViewModel;
     private MenuItem currentBottomTab;
     private Menu bottomMenu;
     private PlayServices.ComputerManagerBinder managerBinder;
@@ -79,12 +82,17 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
         }
     };
 
+
+    //-------------------------------- LIFECYCLE --------------------------------
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
         gameViewModel = new ViewModelProvider(this).get(GameViewModel.class);
+
         bottomNavView = findViewById(R.id.bottom_nav_view);
 
         queueViewMain = findViewById(R.id.frame_queue_main);
@@ -117,46 +125,8 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
         triggerProgressBtn.setOnClickListener(v -> quitSession());
         //setupSettingDialog();
 
-
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-    }
-
-    //private void setupSettingDialog() {
-    //    GameSettingsDialog settingsDialog = new GameSettingsDialog(this);
-    //    settingsDialog.setOnSettingsChangedListener(new GameSettingsDialog.OnGameSettingsChanged() {
-    //        @Override
-    //        public void onStretchVideoChanged(boolean isEnable) {
-    //            //Restart this activity to apply new configs
-    //            Intent intent = getIntent();
-    //            finish();
-    //            startActivity(intent);
-    //        }
-    //
-    //        @Override
-    //        public void onTouchScreenMethodChanged(boolean enableTrackPad) {
-    //        }
-    //
-    //        @Override
-    //        public void onControllerModeChanged(VirtualController.ControllerMode mode) {
-    //        }
-    //    });
-    //    findViewById(R.id.settings_game_fab).setOnClickListener(v -> settingsDialog.show());
-    //}
-
-    private void goToGameDetails() {
-        Fragment currentDisplayScreen = FragmentManagerHelper.getCurrentFrag(getSupportFragmentManager(), R.id.main_container);
-        if (currentDisplayScreen != null && currentDisplayScreen instanceof GameDetailFragment) {
-            if(((GameDetailFragment) currentDisplayScreen).getCurrentGameId() != managerBinder.getCurrentGame().getId()) {
-                findViewById(R.id.main_loading_view).setVisibility(VISIBLE);
-                getSupportFragmentManager().popBackStack();
-                FragmentManagerHelper.replace(getSupportFragmentManager(), R.id.main_container, GameDetailFragment.newInstance(managerBinder.getCurrentGame()), GameDetailFragment.class.getSimpleName());
-            }
-
-            return;
-        }
-
-        findViewById(R.id.main_loading_view).setVisibility(VISIBLE);
-        FragmentManagerHelper.replace(getSupportFragmentManager(), R.id.main_container, GameDetailFragment.newInstance(managerBinder.getCurrentGame()), GameDetailFragment.class.getSimpleName());
+        setupData();
     }
 
     @Override
@@ -173,6 +143,9 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
             unbindService(serviceConnection);
     }
 
+    //-------------------------------- END LIFECYCLE --------------------------------
+
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId() == android.R.id.home)
@@ -186,6 +159,13 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
     //    setBottomNavVisibility(destination);
     //    setActionbarVisibility(destination);
     //}
+
+    private void setupData() {
+        userViewModel.triggerLoginListener().observe(this, requireLogin -> {
+            if (requireLogin)
+                goToLoginScreen();
+        });
+    }
 
     private void setActionbarVisibility(NavDestination destination) {
         if (destination.getId() == R.id.navigation_home
@@ -229,6 +209,29 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
                 managerBinder.stopConnect(null);
             }, null);
         }
+    }
+
+    private void goToGameDetails() {
+        Fragment currentDisplayScreen = FragmentManagerHelper.getCurrentFrag(getSupportFragmentManager(), R.id.main_container);
+        if (currentDisplayScreen != null && currentDisplayScreen instanceof GameDetailFragment) {
+            if(((GameDetailFragment) currentDisplayScreen).getCurrentGameId() != managerBinder.getCurrentGame().getId()) {
+                findViewById(R.id.main_loading_view).setVisibility(VISIBLE);
+                getSupportFragmentManager().popBackStack();
+                FragmentManagerHelper.replace(getSupportFragmentManager(), R.id.main_container, GameDetailFragment.newInstance(managerBinder.getCurrentGame()), GameDetailFragment.class.getSimpleName());
+            }
+
+            return;
+        }
+
+        findViewById(R.id.main_loading_view).setVisibility(VISIBLE);
+        FragmentManagerHelper.replace(getSupportFragmentManager(), R.id.main_container, GameDetailFragment.newInstance(managerBinder.getCurrentGame()), GameDetailFragment.class.getSimpleName());
+    }
+
+    private void goToLoginScreen() {
+        runOnUiThread(() -> Toast.makeText(this, getString(R.string.require_login_msg), Toast.LENGTH_LONG).show());
+        Intent intent = new Intent(MainActivity.this, AuthActivity.class);
+        intent.putExtra(AuthActivity.START_IN_APP_PARAM, true);
+        startActivity(intent);
     }
 
     //---------------------------------- PLAY QUEUE ----------------------------------
@@ -414,12 +417,8 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
 
         @Override
         public void onError(String err) {
-            if (err.contains("login")) {
-                MainActivity.this.runOnUiThread(() -> Toast.makeText(getApplicationContext(), err, Toast.LENGTH_LONG).show());
-                Intent intent = new Intent(MainActivity.this, AuthActivity.class);
-                intent.putExtra(AuthActivity.START_IN_APP_PARAM, true);
-                startActivity(intent);
-            }
+            if (err.contains("login"))
+                goToLoginScreen();
         }
     };
 

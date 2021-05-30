@@ -19,15 +19,20 @@ import java.util.List;
 public class GameRepository {
 
     private PhaseService gameServices;
+    private PhaseService gameAuthServices;
     private PhaseService tagServices;
 
-    private MutableLiveData<List<Game>> recentPlayList, editorsChoiceList, hotGameList, trendingList, gameByCategoryList, gamesByPayTypeList;
+    private MutableLiveData<List<Game>> editorsChoiceList, hotGameList, trendingList, gameByCategoryList, gamesByPayTypeList;
     private MutableLiveData<List<Tag>> categoryList;
 
     private MutableLiveData<String> errMsg;
 
     public GameRepository() {
-        recentPlayList = new MutableLiveData<>();
+        PhaseServiceHelper phaseServiceHelper = new PhaseServiceHelper();
+        gameServices = phaseServiceHelper.getGamePhaseService(false);
+        gameAuthServices = phaseServiceHelper.getGamePhaseService(true);
+        tagServices = phaseServiceHelper.getPhaseService();
+
         editorsChoiceList = new MutableLiveData<>();
         hotGameList = new MutableLiveData<>();
         trendingList = new MutableLiveData<>();
@@ -36,18 +41,10 @@ public class GameRepository {
         gamesByPayTypeList = new MutableLiveData<>();
 
         errMsg = new MutableLiveData<>();
-
-        PhaseServiceHelper phaseServiceHelper = new PhaseServiceHelper();
-        gameServices = phaseServiceHelper.getGamePhaseService();
-        tagServices = phaseServiceHelper.getPhaseService();
     }
 
 
     //---------- GET SET ----------
-
-    public MutableLiveData<List<Game>> getRecentPlayList() {
-        return recentPlayList;
-    }
 
     public MutableLiveData<List<Game>> getEditorsChoiceList() {
         return editorsChoiceList;
@@ -76,7 +73,6 @@ public class GameRepository {
     //----------------------------
 
     public void reset() {
-        recentPlayList = new MutableLiveData<>();
         editorsChoiceList = new MutableLiveData<>();
         hotGameList = new MutableLiveData<>();
         trendingList = new MutableLiveData<>();
@@ -199,15 +195,14 @@ public class GameRepository {
         });
     }
 
-    public void getGameData(String gameId, OnResultCallBack<Game> onResultCallBack) {
+    public void getGameData(String gameId, boolean withAuth, OnResultCallBack<Game> onResultCallBack) {
         APIServicesHelper<Game> apiHelper = new APIServicesHelper<>();
 
-        apiHelper.request(gameServices.getGame(gameId), (err, data) -> {
+        apiHelper.request((withAuth ? gameAuthServices : gameServices).getGame(gameId), (err, data) -> {
             if (err != null)
                 onResultCallBack.onResult(err, null);
             else
                 onResultCallBack.onResult(null, data == null ? new Game() : data);
-
         });
     }
 

@@ -5,7 +5,6 @@ import android.content.Context;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
-import com.rora.phase.RoraLog;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.User;
 import com.rora.phase.model.UserPlayingData;
@@ -36,7 +35,6 @@ public class UserRepository {
 
     private UserPhaseService userAuthenticatedServices;
     private UserPhaseService userServices;
-    private PhaseService gameServices;
     private SharedPreferencesHelper dbSharedPref;
 
     private MutableLiveData<User> user;
@@ -54,13 +52,12 @@ public class UserRepository {
         PhaseServiceHelper phaseServiceHelper = new PhaseServiceHelper(context);
         userAuthenticatedServices = phaseServiceHelper.getUserPhaseService(true);
         userServices = phaseServiceHelper.getUserPhaseService(false);
-        gameServices = phaseServiceHelper.getGamePhaseService();
         dbSharedPref = new SharedPreferencesHelper(context);
 
         user = new MutableLiveData<>();
-        favoriteList =  new MutableLiveData<>();
-        signInResult =  new MutableLiveData<>();
-        signUpResult =  new MutableLiveData<>();
+        favoriteList = new MutableLiveData<>();
+        signInResult = new MutableLiveData<>();
+        signUpResult = new MutableLiveData<>();
         forgotPasswordResult = new MutableLiveData<>();
         emailVerificationResult = new MutableLiveData<>();
     }
@@ -169,35 +166,36 @@ public class UserRepository {
         });
     }
 
-    public void getFavoriteListData() {
+    public void getFavoriteListData(OnResultCallBack<List<Game>> resultCallBack) {
+        APIServicesHelper<List<Game>> apiServicesHelper = new APIServicesHelper<>();
 
-    }
-
-    public void addFavorite(String gameId) {
-        userAuthenticatedServices.addFavorite(gameId).enqueue(new Callback<BaseResponse>() {
-            @Override
-            public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
-                signInResult.postValue(new DataResponse());
-            }
-
-            @Override
-            public void onFailure(Call<BaseResponse> call, Throwable t) {
-                signInResult.postValue(new DataResponse("Please try again later!", null));
-            }
+        apiServicesHelper.request(userAuthenticatedServices.getFavorites(), (err, data) -> {
+            if (err != null)
+                resultCallBack.onResult(err, null);
+            else
+                resultCallBack.onResult(null, data == null ? new ArrayList<>() : data);
         });
     }
 
-    public void removeFavorite(String gameId) {
-        userAuthenticatedServices.removeFavorite(gameId).enqueue(new Callback<BaseResponse>() {
-            @Override
-            public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
-                signInResult.postValue(new DataResponse());
-            }
+    public void addFavorite(String gameId, OnResultCallBack resultCallBack) {
+        APIServicesHelper apiServicesHelper = new APIServicesHelper<>();
 
-            @Override
-            public void onFailure(Call<BaseResponse> call, Throwable t) {
-                signInResult.postValue(new DataResponse("Please try again later!", null));
-            }
+        apiServicesHelper.request(userAuthenticatedServices.addFavorite(gameId), (err, data) -> {
+            if (err != null)
+                resultCallBack.onResult(err, null);
+            else
+                resultCallBack.onResult(null, data);
+        });
+    }
+
+    public void removeFavorite(String gameId, OnResultCallBack resultCallBack) {
+        APIServicesHelper servicesHelper = new APIServicesHelper();
+
+        servicesHelper.request(userAuthenticatedServices.removeFavorite(gameId), (err, data) -> {
+            if (err != null)
+                resultCallBack.onResult(err, null);
+            else
+                resultCallBack.onResult(null, data);
         });
     }
 

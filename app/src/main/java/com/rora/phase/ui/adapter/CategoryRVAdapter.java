@@ -176,6 +176,7 @@ class CategoryViewHolder extends BaseRVViewHolder {
                 break;
             case NORMAL_SIZE:
                 btnCategory.setTextSize(context.getResources().getDimension(R.dimen.minnn_text_size));
+                ViewHelper.setSize(btnCategory, MATCH_PARENT, 0);
                 break;
             default: break;
         }

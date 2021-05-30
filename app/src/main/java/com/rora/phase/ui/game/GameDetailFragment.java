@@ -33,9 +33,11 @@ import com.rora.phase.ui.adapter.MediaAdapter;
 import com.rora.phase.ui.adapter.PlatformRVAdapter;
 import com.rora.phase.ui.auth.AuthActivity;
 import com.rora.phase.ui.viewmodel.GameViewModel;
+import com.rora.phase.ui.viewmodel.UserViewModel;
 import com.rora.phase.utils.DateTimeHelper;
 import com.rora.phase.utils.Dialog;
 import com.rora.phase.utils.MediaHelper;
+import com.rora.phase.utils.callback.OnResultCallBack;
 import com.rora.phase.utils.services.PlayServicesMessageSender;
 import com.rora.phase.utils.ui.BaseFragment;
 import com.rora.phase.utils.ui.ExpandableTextView;
@@ -45,6 +47,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static android.view.View.GONE;
+import static com.rora.phase.ui.adapter.CategoryRVAdapter.AUTO_SIZE;
 import static com.rora.phase.ui.adapter.CategoryRVAdapter.MEDIUM_SIZE;
 import static com.rora.phase.ui.adapter.CategoryRVAdapter.NONE_SELECT;
 import static com.rora.phase.ui.game.MediaViewerActivity.MEDIA_LIST_PARAM;
@@ -63,6 +66,7 @@ public class GameDetailFragment extends BaseFragment {
     private ImageButton btnBack, btnFavorite, btnPlay, firstPlayTypeBtn, secondPlayTypeBtn, thirdPlayTypeBtn, lastPlayTypeBtn;
 
     private GameViewModel gameViewModel;
+    private UserViewModel userViewModel;
     private Game game;
     private boolean isPlayingThisGame;
     private boolean isFirstInit = true;
@@ -84,6 +88,7 @@ public class GameDetailFragment extends BaseFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         gameViewModel = new ViewModelProvider(requireActivity()).get(GameViewModel.class);
+        userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
 
         if (getArguments() != null) {
             game = getArguments().getParcelable(KEY_GAME);
@@ -145,16 +150,16 @@ public class GameDetailFragment extends BaseFragment {
 
     private void initView() {
         ViewCompat.setOnApplyWindowInsetsListener(btnBack, (v, insets) -> {
-            btnBack.setPadding(0, insets.getSystemWindowInsetTop() + (int)getResources().getDimension(R.dimen.minnn_space), 0, 0);
+            btnBack.setPadding(0, insets.getSystemWindowInsetTop() + (int) getResources().getDimension(R.dimen.minnn_space), 0, 0);
             return insets;
         });
 
-        setupRecyclerView(rclvPlatform, new PlatformRVAdapter(), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL , false));
-        setupRecyclerView(rclvCategory,new CategoryRVAdapter(MEDIUM_SIZE, false, NONE_SELECT), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL , false));
+        setupRecyclerView(rclvPlatform, new PlatformRVAdapter(), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        setupRecyclerView(rclvCategory, new CategoryRVAdapter(AUTO_SIZE, false, NONE_SELECT), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         setupRecyclerView(rclvScreenshot, new MediaAdapter(0.47), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         setupRecyclerView(rclvSeries, new GameRVAdapter(GameRVAdapter.VIEW_TYPE_LANDSCAPE), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
-        rclvSimilar.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL , false));
+        rclvSimilar.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         rclvSimilar.setAdapter(new GameVerticalRVAdapter(rclvSimilar));
         ((GameVerticalRVAdapter) rclvSimilar.getAdapter()).setOnItemSelectedListener((position, selectedItem) -> moveTo(GameDetailFragment.newInstance((Game) selectedItem), GameDetailFragment.class.getSimpleName(), true));
 
@@ -172,8 +177,11 @@ public class GameDetailFragment extends BaseFragment {
                         Thread.sleep(500);
 
                         startConnect();
-                    } catch (InterruptedException e) { e.printStackTrace(); }
-                }, () -> {});
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }, () -> {
+                });
 
                 return;
             }
@@ -182,8 +190,17 @@ public class GameDetailFragment extends BaseFragment {
         });
 
         btnFavorite.setOnClickListener(v -> {
-            //gameViewModel.updateFavorite();
-            btnFavorite.setImageResource(R.drawable.ic_favorite);
+            showLoadingScreen();
+            userViewModel.updateFavorite(game, (err, data) -> {
+                if (err != null && !err.isEmpty())
+                    if (err.equals("401"))
+                        userViewModel.triggerLogin();
+                    else
+                        getActivity().runOnUiThread(() -> Toast.makeText(getContext(), err, Toast.LENGTH_LONG).show());
+                else
+                    btnFavorite.setImageResource(game.isFavorited() ? R.drawable.ic_favorite : R.drawable.ic_unfavorite);
+                hideLoadingScreen();
+            });
         });
     }
 
@@ -198,7 +215,7 @@ public class GameDetailFragment extends BaseFragment {
         gameViewModel.getSimilarGames().observe(getViewLifecycleOwner(), gameList -> {
             if (gameList != null && gameList.size() != 0) {
                 imvSimilarGamesErr.setVisibility(GONE);
-                ((GameVerticalRVAdapter)rclvSimilar.getAdapter()).bindData(gameList);
+                ((GameVerticalRVAdapter) rclvSimilar.getAdapter()).bindData(gameList);
             } else {
                 imvSimilarGamesErr.setVisibility(View.VISIBLE);
             }
@@ -215,7 +232,7 @@ public class GameDetailFragment extends BaseFragment {
     private void bindData(Game game) {
         if (game == null || this.game.getId() != game.getId()) {
             //Handle stupid err - duplicate response from live data
-            if(!isFirstInit) {
+            if (!isFirstInit) {
                 hideLoadingScreen();
             }
             isFirstInit = false;
@@ -237,16 +254,16 @@ public class GameDetailFragment extends BaseFragment {
         tvDesc.setText(Html.fromHtml(game.getDesc(), Html.FROM_HTML_MODE_COMPACT));
         btnFavorite.setImageResource(game.isFavorited() ? R.drawable.ic_favorite : R.drawable.ic_unfavorite);
 
-        ((PlatformRVAdapter)rclvPlatform.getAdapter()).bindData(game.getPlatforms());
-        ((CategoryRVAdapter)rclvCategory.getAdapter()).bindData(game.getTags(), null);
+        ((PlatformRVAdapter) rclvPlatform.getAdapter()).bindData(game.getPlatforms());
+        ((CategoryRVAdapter) rclvCategory.getAdapter()).bindData(game.getTags(), null);
 
         ArrayList<MediaImage> screenshots = new ArrayList<>();
         screenshots.add(new MediaImage(game.getBanner()));
         for (Screenshot screenshot : game.getScreenshots()) {
             screenshots.add(new MediaImage(screenshot));
         }
-        ((MediaAdapter)rclvScreenshot.getAdapter()).bindData(screenshots);
-        ((MediaAdapter)rclvScreenshot.getAdapter()).setOnItemSelectedListener((position, selectedItem) -> {
+        ((MediaAdapter) rclvScreenshot.getAdapter()).bindData(screenshots);
+        ((MediaAdapter) rclvScreenshot.getAdapter()).setOnItemSelectedListener((position, selectedItem) -> {
             Intent mediaIntent = new Intent(getActivity(), MediaViewerActivity.class);
 
             Bundle mediaBundle = new Bundle();
@@ -316,7 +333,7 @@ public class GameDetailFragment extends BaseFragment {
         }
 
         //if (game.getSeriesId() == 0) {
-            frameSeries.setVisibility(GONE);
+        frameSeries.setVisibility(GONE);
         //} else {
         //    ((GameMinInfoRecyclerViewAdapter)rclvSeries.getAdapter()).bindData(game.getSeriesId());
         //}

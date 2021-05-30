@@ -57,7 +57,20 @@ public class PhaseServiceHelper {
 
     /** Return service with game api url */
 
-    public PhaseService getGamePhaseService() {
+    public PhaseService getGamePhaseService(boolean auth) {
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        if (auth) {
+            httpClient.addInterceptor(chain -> {
+                Request newRequest  = chain.request().newBuilder()
+                        .addHeader("Authorization", "Bearer " + sharedPreferencesHelper.getUserToken())
+                        .build();
+                return chain.proceed(newRequest);
+            });
+        }
 
         phaseService = new retrofit2.Retrofit.Builder()
                 .baseUrl(gameBaseUrl)
@@ -66,7 +79,6 @@ public class PhaseServiceHelper {
                 .create(PhaseService.class);
 
         return phaseService;
-
     }
 
     /** Return service with game api url */
@@ -105,17 +117,19 @@ public class PhaseServiceHelper {
         } else {
             String err = "Could not get data from server, please try again later!";
             try {
-                if (response.errorBody() != null || response.body() != null) {
+                if (response.code() == 401) {
+                    RoraLog.warning("Trying to detect error from server failed: " + response.code() + " - " + response.headers().get("www-authenticate"));
+                    err = String.valueOf(401);
+                } else if (response.errorBody() != null || response.body() != null) {
                     JSONObject jObjError = new JSONObject(response.errorBody().string());
                     err = jObjError.getString("message");
                 }
             } catch (Exception e) {
-                RoraLog.warning("api response err - " + e.getMessage());
+                RoraLog.warning("Trying to detect error from server failed: " + response.code() + " - " + e.getMessage());
             }
 
             data.setMsg(err);
         }
         return data;
     }
-
 }

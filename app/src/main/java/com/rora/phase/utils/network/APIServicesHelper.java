@@ -46,7 +46,7 @@ public class APIServicesHelper<T> {
             @Override
             public void onFailure(Call<BaseResponse<T>> call, Throwable t) {
                 RoraLog.warning("API Services - Can't connect to server: " + request.request().url() + " - " + t.getMessage());
-                callBack.onResponse("Can't connect to server, please try again later!", null);
+                callBack.onResponse("Could not connect to server, please try again later!", null);
             }
         });
     }
