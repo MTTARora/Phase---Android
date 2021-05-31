@@ -57,13 +57,13 @@ public class PhaseServiceHelper {
 
     /** Return service with game api url */
 
-    public PhaseService getGamePhaseService(boolean auth) {
+    public PhaseService getGamePhaseService() {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-        if (auth) {
+        if (!sharedPreferencesHelper.getUserToken().isEmpty()) {
             httpClient.addInterceptor(chain -> {
                 Request newRequest  = chain.request().newBuilder()
                         .addHeader("Authorization", "Bearer " + sharedPreferencesHelper.getUserToken())
@@ -72,7 +72,10 @@ public class PhaseServiceHelper {
             });
         }
 
+        httpClient.addInterceptor(logging);
+
         phaseService = new retrofit2.Retrofit.Builder()
+                .client(httpClient.build())
                 .baseUrl(gameBaseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()

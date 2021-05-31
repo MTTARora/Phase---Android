@@ -115,7 +115,7 @@ public class UserViewModel extends AndroidViewModel {
     }
 
     public void updateFavorite(Game game, OnResultCallBack onResultCallBack) {
-        if (game.isFavorited()) {
+        if (game.getFavorited()) {
             userRepository.removeFavorite(game.getId().toString(), (errMsg, data) -> {
                 if (errMsg != null && !errMsg.isEmpty()) {
                     onResultCallBack.onResult(errMsg, null);

@@ -27,7 +27,7 @@ public class GameViewModel extends AndroidViewModel {
 
     public GameViewModel(Application application) {
         super(application);
-        gameRepository = new GameRepository();
+        gameRepository = new GameRepository(application.getApplicationContext());
 
         game = new MutableLiveData<>();
         similarGameList = new MutableLiveData<>();
@@ -69,7 +69,7 @@ public class GameViewModel extends AndroidViewModel {
     }
 
     public void getGame(String gameId) {
-        gameRepository.getGameData(gameId, isUserLogged(), (errMsg, data) -> {
+        gameRepository.getGameData(gameId, (errMsg, data) -> {
             if (errMsg != null) {
                 game.setValue(null);
                 return;

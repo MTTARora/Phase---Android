@@ -110,7 +110,7 @@ public class Game implements Parcelable {
     private List<Platform> platforms;
     @SerializedName("favorited")
     @Expose
-    private boolean isFavorited;
+    private Boolean favorited;
 
     public Game() {
     }
@@ -382,12 +382,12 @@ public class Game implements Parcelable {
         this.numberOfPlayers = numberOfPlayers;
     }
 
-    public boolean isFavorited() {
-        return isFavorited;
+    public boolean getFavorited() {
+        return favorited;
     }
 
     public void setFavorited(boolean favorited) {
-        isFavorited = favorited;
+        this.favorited = favorited;
     }
 
     //---------- PARCELABLE FUNCTION ----------

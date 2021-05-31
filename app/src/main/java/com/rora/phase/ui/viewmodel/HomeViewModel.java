@@ -39,7 +39,7 @@ public class HomeViewModel extends AndroidViewModel {
     public HomeViewModel(Application application) {
         super(application);
         bannerRepository = new BannerRepository();
-        gameRepository = new GameRepository();
+        gameRepository = new GameRepository(application.getApplicationContext());
         userRepository = new UserRepository(application.getApplicationContext());
 
         newGameList = new MutableLiveData<>();

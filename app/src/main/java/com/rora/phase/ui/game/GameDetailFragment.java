@@ -37,7 +37,6 @@ import com.rora.phase.ui.viewmodel.UserViewModel;
 import com.rora.phase.utils.DateTimeHelper;
 import com.rora.phase.utils.Dialog;
 import com.rora.phase.utils.MediaHelper;
-import com.rora.phase.utils.callback.OnResultCallBack;
 import com.rora.phase.utils.services.PlayServicesMessageSender;
 import com.rora.phase.utils.ui.BaseFragment;
 import com.rora.phase.utils.ui.ExpandableTextView;
@@ -48,7 +47,6 @@ import java.util.List;
 
 import static android.view.View.GONE;
 import static com.rora.phase.ui.adapter.CategoryRVAdapter.AUTO_SIZE;
-import static com.rora.phase.ui.adapter.CategoryRVAdapter.MEDIUM_SIZE;
 import static com.rora.phase.ui.adapter.CategoryRVAdapter.NONE_SELECT;
 import static com.rora.phase.ui.game.MediaViewerActivity.MEDIA_LIST_PARAM;
 import static com.rora.phase.ui.game.MediaViewerActivity.POSITION_PARAM;
@@ -198,7 +196,7 @@ public class GameDetailFragment extends BaseFragment {
                     else
                         getActivity().runOnUiThread(() -> Toast.makeText(getContext(), err, Toast.LENGTH_LONG).show());
                 else
-                    btnFavorite.setImageResource(game.isFavorited() ? R.drawable.ic_favorite : R.drawable.ic_unfavorite);
+                    btnFavorite.setImageResource(game.getFavorited() ? R.drawable.ic_favorite : R.drawable.ic_unfavorite);
                 hideLoadingScreen();
             });
         });
@@ -252,7 +250,7 @@ public class GameDetailFragment extends BaseFragment {
         tvAgeRating.setText(game.getPegiAge().toString() + "+");
         tvRelease.setText(DateTimeHelper.format(game.getReleaseDate()));
         tvDesc.setText(Html.fromHtml(game.getDesc(), Html.FROM_HTML_MODE_COMPACT));
-        btnFavorite.setImageResource(game.isFavorited() ? R.drawable.ic_favorite : R.drawable.ic_unfavorite);
+        btnFavorite.setImageResource(game.getFavorited() ? R.drawable.ic_favorite : R.drawable.ic_unfavorite);
 
         ((PlatformRVAdapter) rclvPlatform.getAdapter()).bindData(game.getPlatforms());
         ((CategoryRVAdapter) rclvCategory.getAdapter()).bindData(game.getTags(), null);

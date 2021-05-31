@@ -28,7 +28,7 @@ public class SearchViewModel extends AndroidViewModel {
 
     public SearchViewModel(Application application) {
         super(application);
-        gameRepository = new GameRepository();
+        gameRepository = new GameRepository(application.getApplicationContext());
         searchList = new MutableLiveData<>();
         suggestionList = new MutableLiveData<>();
         filters = new MutableLiveData<>();

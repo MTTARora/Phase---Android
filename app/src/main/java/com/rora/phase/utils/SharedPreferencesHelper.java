@@ -8,6 +8,8 @@ import android.os.Bundle;
 import com.rora.phase.R;
 import com.rora.phase.model.UserPlayingData;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class SharedPreferencesHelper {
 
     private SharedPreferences sharedPreferences;
@@ -26,7 +28,7 @@ public class SharedPreferencesHelper {
     }
 
     public SharedPreferencesHelper(Context context) {
-        this.sharedPreferences = context.getSharedPreferences(PREFERENCE_FILE_KEY, Context.MODE_PRIVATE);
+        this.sharedPreferences = context.getSharedPreferences(PREFERENCE_FILE_KEY, MODE_PRIVATE);
     }
 
     private void saveString(String key, String value) {

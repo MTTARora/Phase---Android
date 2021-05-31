@@ -1,5 +1,7 @@
 package com.rora.phase.repository;
 
+import android.content.Context;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -19,7 +21,6 @@ import java.util.List;
 public class GameRepository {
 
     private PhaseService gameServices;
-    private PhaseService gameAuthServices;
     private PhaseService tagServices;
 
     private MutableLiveData<List<Game>> editorsChoiceList, hotGameList, trendingList, gameByCategoryList, gamesByPayTypeList;
@@ -27,10 +28,9 @@ public class GameRepository {
 
     private MutableLiveData<String> errMsg;
 
-    public GameRepository() {
-        PhaseServiceHelper phaseServiceHelper = new PhaseServiceHelper();
-        gameServices = phaseServiceHelper.getGamePhaseService(false);
-        gameAuthServices = phaseServiceHelper.getGamePhaseService(true);
+    public GameRepository(Context context) {
+        PhaseServiceHelper phaseServiceHelper = new PhaseServiceHelper(context);
+        gameServices = phaseServiceHelper.getGamePhaseService();
         tagServices = phaseServiceHelper.getPhaseService();
 
         editorsChoiceList = new MutableLiveData<>();
@@ -195,10 +195,10 @@ public class GameRepository {
         });
     }
 
-    public void getGameData(String gameId, boolean withAuth, OnResultCallBack<Game> onResultCallBack) {
+    public void getGameData(String gameId, OnResultCallBack<Game> onResultCallBack) {
         APIServicesHelper<Game> apiHelper = new APIServicesHelper<>();
 
-        apiHelper.request((withAuth ? gameAuthServices : gameServices).getGame(gameId), (err, data) -> {
+        apiHelper.request((gameServices).getGame(gameId), (err, data) -> {
             if (err != null)
                 onResultCallBack.onResult(err, null);
             else

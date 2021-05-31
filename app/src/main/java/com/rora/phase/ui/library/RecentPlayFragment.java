@@ -26,7 +26,6 @@ import com.rora.phase.utils.ui.CustomViewPagerTransformer;
 import com.rora.phase.utils.ui.HorizontalMarginItemDecoration;
 
 import static com.rora.phase.ui.adapter.CategoryRVAdapter.AUTO_SIZE;
-import static com.rora.phase.ui.adapter.CategoryRVAdapter.MEDIUM_SIZE;
 import static com.rora.phase.ui.adapter.CategoryRVAdapter.NONE_SELECT;
 
 public class RecentPlayFragment extends BaseFragment {
@@ -94,7 +93,7 @@ public class RecentPlayFragment extends BaseFragment {
                 tvReleasedDate.setText(DateTimeHelper.format(game.getReleaseDate()));
                 ((CategoryRVAdapter)rclvCategory.getAdapter()).bindData(game.getTags(), null);
                 userViewModel.setCurrentRecentPlay(game);
-                imbFavorite.setImageResource(game.isFavorited() ? R.drawable.ic_favorite : R.drawable.ic_unfavorite);
+                imbFavorite.setImageResource(game.getFavorited() ? R.drawable.ic_favorite : R.drawable.ic_unfavorite);
             }
 
             @Override
