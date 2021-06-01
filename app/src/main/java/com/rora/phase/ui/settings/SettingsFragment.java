@@ -76,7 +76,7 @@ public class SettingsFragment extends BaseFragment {
 
         signBtn.setText(!settingsViewModel.isUserLogged() ? getResources().getString(R.string.sign_in_text) : getResources().getString(R.string.sign_out_text));
         userNameTv.setText(user != null && !user.getEmail().isEmpty() ? user.getEmail() : getResources().getString(R.string.guest_text));
-        userIdTv.setText(user != null && !user.getuId().isEmpty() ? user.getuId() : "--");
+        userIdTv.setText("ID: " + (user != null && !user.getuId().isEmpty() ? user.getuId() : "--"));
     }
 
 }

@@ -69,7 +69,7 @@
                 android:layout_height="wrap_content"
                 android:lines="1"
                 android:maxLines="1"
-                android:textSize="@dimen/title_text_size" />
+                android:textSize="@dimen/max_sub_title_text_size" />
         </LinearLayout>
 
         <!--USER SESSION-->
