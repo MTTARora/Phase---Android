@@ -337,5 +337,6 @@
     <string name="game_settings_title">Game Settings</string>
     <string name="location_title">Location</string>
     <string name="customer_service_title">Customer Service</string>
+    <string name="empty_recent_play_msg">You haven\'t play anything recently</string>
 
 </resources>

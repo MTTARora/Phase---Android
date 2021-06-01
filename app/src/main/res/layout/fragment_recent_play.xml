@@ -7,140 +7,157 @@
     android:layout_height="match_parent"
     tools:context=".ui.library.RecentPlayFragment">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!--BANNER-->
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/recent_play_vp"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="@dimen/maxxxx_space"
-            android:layout_weight="1"
-            app:layout_constraintTop_toTopOf="parent" />
-
+        <!--INFO-->
         <LinearLayout
+            android:id="@+id/frame_recent_play_info"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingBottom="@dimen/normal_space">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/game_name_tv"
+            <!--BANNER-->
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/recent_play_vp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:gravity="center"
-                android:lines="2"
-                android:maxLines="2"
-                android:text="---"
-                android:textColor="@color/colorText"
-                android:textSize="@dimen/header_text_size"
-                android:textStyle="bold" />
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginTop="@dimen/maxxxx_space"/>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/category_recent_play_rclv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="@dimen/min_space"
-                android:clipToPadding="false"
-                android:paddingHorizontal="@dimen/normal_space"/>
-
-            <TextView
-                android:id="@+id/pay_type_tv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/medium_space"
-                android:gravity="center"
-                android:text="---"
-                android:textColor="@color/colorPrimary" />
-
+            <!--INFO-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/max_space"
-                android:orientation="horizontal"
-                android:paddingHorizontal="@dimen/normal_space">
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/normal_space">
 
-                <!--AGE RATING-->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
+                <TextView
+                    android:id="@+id/game_name_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:lines="2"
+                    android:maxLines="2"
+                    android:text="---"
+                    android:textColor="@color/colorText"
+                    android:textSize="@dimen/header_text_size"
+                    android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/age_rating_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="N/A"
-                        android:textColor="@color/colorText"
-                        android:textSize="@dimen/title_text_size"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/age_rating_title"
-                        android:textSize="@dimen/normal_text_size" />
-
-                </LinearLayout>
-
-                <!--RELEASE-->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/release_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="-- --.--"
-                        android:textColor="@color/colorText"
-                        android:textSize="@dimen/title_text_size"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/release_title"
-                        android:textSize="@dimen/normal_text_size" />
-
-                </LinearLayout>
-
-                <!--AGE RATING-->
-                <LinearLayout
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/category_recent_play_rclv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/min_space"
+                    android:clipToPadding="false"
+                    android:paddingHorizontal="@dimen/normal_space"/>
 
-                    <ImageButton
-                        android:id="@+id/favorite_recent_play_btn"
-                        android:layout_width="@dimen/ic_medium_size"
-                        android:layout_height="@dimen/ic_medium_size"
-                        android:layout_gravity="center"
-                        android:background="@android:color/transparent"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/ic_unfavorite" />
+                <TextView
+                    android:id="@+id/pay_type_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/medium_space"
+                    android:gravity="center"
+                    android:text="---"
+                    android:textColor="@color/colorPrimary" />
 
-                    <TextView
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/max_space"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="@dimen/normal_space">
+
+                    <!--AGE RATING-->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/age_rating_tv"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="N/A"
+                            android:textColor="@color/colorText"
+                            android:textSize="@dimen/title_text_size"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/age_rating_title"
+                            android:textSize="@dimen/normal_text_size" />
+
+                    </LinearLayout>
+
+                    <!--RELEASE-->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/release_tv"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="-- --.--"
+                            android:textColor="@color/colorText"
+                            android:textSize="@dimen/title_text_size"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/release_title"
+                            android:textSize="@dimen/normal_text_size" />
+
+                    </LinearLayout>
+
+                    <!--AGE RATING-->
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/favorite_title"
-                        android:textSize="@dimen/normal_text_size" />
-                </LinearLayout>
+                        android:orientation="vertical">
 
+                        <ImageButton
+                            android:id="@+id/favorite_recent_play_btn"
+                            android:layout_width="@dimen/ic_medium_size"
+                            android:layout_height="@dimen/ic_medium_size"
+                            android:layout_gravity="center"
+                            android:background="@android:color/transparent"
+                            android:scaleType="fitXY"
+                            android:src="@drawable/ic_unfavorite" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/favorite_title"
+                            android:textSize="@dimen/normal_text_size" />
+                    </LinearLayout>
+
+                </LinearLayout>
             </LinearLayout>
+
         </LinearLayout>
-    </LinearLayout>
+
+        <com.rora.phase.utils.ui.ErrorView
+            android:id="@+id/error_view_recent_play"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

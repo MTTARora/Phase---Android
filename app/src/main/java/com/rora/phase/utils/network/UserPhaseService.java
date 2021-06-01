@@ -56,7 +56,7 @@ public interface UserPhaseService {
     @PUT("favorite/{gameId}")
     Call<BaseResponse<String>> removeFavorite(@Path("gameId") String gameId);
 
-    @GET("./recent_play")
+    @GET("./recent-play")
     Call<BaseResponse<List<Game>>> getRecentPlay(@Query("page") int page, @Query("page_size") int pageSize);
 
     @GET("/recommended")

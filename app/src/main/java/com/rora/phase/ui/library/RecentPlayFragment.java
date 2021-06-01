@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +24,7 @@ import com.rora.phase.ui.viewmodel.UserViewModel;
 import com.rora.phase.utils.DateTimeHelper;
 import com.rora.phase.utils.ui.BaseFragment;
 import com.rora.phase.utils.ui.CustomViewPagerTransformer;
+import com.rora.phase.utils.ui.ErrorView;
 import com.rora.phase.utils.ui.HorizontalMarginItemDecoration;
 
 import static com.rora.phase.ui.adapter.CategoryRVAdapter.AUTO_SIZE;
@@ -33,8 +35,10 @@ public class RecentPlayFragment extends BaseFragment {
     private SwipeRefreshLayout swipeRefreshLayout;
     private ViewPager2 vpGameList;
     private TextView tvName, tvPayType, tvAge, tvReleasedDate;
+    private LinearLayout frameInfo;
     private ImageButton imbFavorite;
     private RecyclerView rclvCategory;
+    private ErrorView errView;
 
     private UserViewModel userViewModel;
 
@@ -46,12 +50,14 @@ public class RecentPlayFragment extends BaseFragment {
         View root = inflater.inflate(R.layout.fragment_recent_play, container, false);
         swipeRefreshLayout = root.findViewById(R.id.refresh_recent_play_layout);
         vpGameList = root.findViewById(R.id.recent_play_vp);
+        frameInfo = root.findViewById(R.id.frame_recent_play_info);
         tvName = root.findViewById(R.id.game_name_tv);
         tvPayType = root.findViewById(R.id.pay_type_tv);
         tvAge = root.findViewById(R.id.age_rating_tv);
         tvReleasedDate = root.findViewById(R.id.release_tv);
         imbFavorite = root.findViewById(R.id.favorite_recent_play_btn);
         rclvCategory = root.findViewById(R.id.category_recent_play_rclv);
+        errView = root.findViewById(R.id.error_view_recent_play);
 
         initData();
         setupViews();
@@ -112,10 +118,21 @@ public class RecentPlayFragment extends BaseFragment {
 
     private void initData() {
         userViewModel.getRecentPlayList().observe(getViewLifecycleOwner(), games -> {
-            if (games == null || games.size() == 0) {
+            hideLoadingScreen();
+            if (games == null) {
                 userViewModel.setCurrentRecentPlay(null);
                 return;
             }
+
+            if (games.size() == 0) {
+                errView.setVisibility(View.VISIBLE);
+                frameInfo.setVisibility(View.GONE);
+                errView.setMsg(getResources().getString(R.string.empty_recent_play_msg));
+            } else {
+                errView.setVisibility(View.GONE);
+                frameInfo.setVisibility(View.VISIBLE);
+            }
+
             ((RecentPlayVPAdapter)vpGameList.getAdapter()).bindData(games);
         });
         userViewModel.getRecentPlayData();
