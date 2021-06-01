@@ -56,7 +56,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/user_name_edt"
+            android:id="@+id/user_name_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
@@ -72,7 +72,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/max_space"
             android:orientation="vertical"
-            app:layout_constraintTop_toBottomOf="@id/user_name_edt">
+            app:layout_constraintTop_toBottomOf="@id/user_name_tv">
 
             <TextView
                 android:layout_width="match_parent"

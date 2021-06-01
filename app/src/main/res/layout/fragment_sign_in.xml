@@ -73,7 +73,7 @@
             app:layout_constraintWidth_percent=".75" />
 
         <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/user_name_edt"
+            android:id="@+id/user_name_tv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
@@ -93,7 +93,7 @@
             android:textSize="@dimen/title_text_size"
             android:paddingStart="@dimen/min_space"
             android:layout_marginTop="@dimen/max_space"
-            app:layout_constraintTop_toBottomOf="@id/user_name_edt"
+            app:layout_constraintTop_toBottomOf="@id/user_name_tv"
             app:layout_constraintEnd_toEndOf="@id/password_edt"
             app:layout_constraintStart_toStartOf="@id/password_edt"
             app:layout_constraintWidth_percent=".75" />

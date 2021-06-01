@@ -104,7 +104,7 @@ public class HomeFragment extends BaseFragment {
 
     private void initView(View root) {
         showActionbar(root, getResources().getString(R.string.app_label), false);
-        setActionbarStyle(getResources().getDimension(R.dimen.logo_text_size), ContextCompat.getColor(getContext(), R.color.colorPrimary));
+        setActionbarStyle(getResources().getDimension(R.dimen.title_text_size), ContextCompat.getColor(getContext(), R.color.colorPrimary));
 
         refreshLayout.setOnRefreshListener(() -> {
             updateData();

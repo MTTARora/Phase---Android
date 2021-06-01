@@ -18,6 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1">
+
             <TextView
                 android:id="@+id/trouble_signing_in_tv"
                 android:layout_width="match_parent"
@@ -42,6 +43,7 @@
                     android:id="@+id/forgot_password_title_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:clickable="false"
                     android:text="@string/forgot_password_text"
                     android:textColor="@color/colorText"
                     android:textSize="@dimen/sub_title_text_size"
@@ -84,8 +86,8 @@
                     <View
                         android:layout_width="0dp"
                         android:layout_height="0.8dp"
-                        android:background="@color/colorText"
                         android:layout_marginBottom="@dimen/min_space"
+                        android:background="@color/colorText"
                         app:layout_constraintBottom_toBottomOf="@id/send_forgot_password_btn"
                         app:layout_constraintEnd_toEndOf="@id/email_forgot_password_edt"
                         app:layout_constraintStart_toStartOf="@id/email_forgot_password_edt" />
@@ -118,6 +120,7 @@
                     android:id="@+id/email_verification_title_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:clickable="false"
                     android:text="@string/email_verification_text"
                     android:textColor="@color/colorText"
                     android:textSize="@dimen/sub_title_text_size"
@@ -160,8 +163,8 @@
                     <View
                         android:layout_width="0dp"
                         android:layout_height="0.8dp"
-                        android:background="@color/colorText"
                         android:layout_marginBottom="@dimen/min_space"
+                        android:background="@color/colorText"
                         app:layout_constraintBottom_toBottomOf="@id/send_email_verification_btn"
                         app:layout_constraintEnd_toEndOf="@id/email_email_verification_edt"
                         app:layout_constraintStart_toStartOf="@id/email_email_verification_edt" />
@@ -194,6 +197,7 @@
                     android:id="@+id/other_issues_title_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:clickable="false"
                     android:text="@string/other_issues_txt"
                     android:textColor="@color/colorText"
                     android:textSize="@dimen/sub_title_text_size"
@@ -236,8 +240,8 @@
                     <View
                         android:layout_width="0dp"
                         android:layout_height="0.8dp"
-                        android:background="@color/colorText"
                         android:layout_marginBottom="@dimen/min_space"
+                        android:background="@color/colorText"
                         app:layout_constraintBottom_toBottomOf="@id/other_issues_send_btn"
                         app:layout_constraintEnd_toEndOf="@id/email_other_issues_edt"
                         app:layout_constraintStart_toStartOf="@id/email_other_issues_edt"
@@ -265,8 +269,8 @@
                         android:gravity="top"
                         android:hint="@string/describe_issue_hint"
                         android:lines="5"
-                        app:carbon_cornerRadius="@dimen/medium_radius"
                         android:padding="@dimen/medium_space"
+                        app:carbon_cornerRadius="@dimen/medium_radius"
                         app:layout_constraintTop_toBottomOf="@id/other_issues_send_btn" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
@@ -279,9 +283,9 @@
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:text="@string/back_to_sign_in_txt"
-            android:textStyle="italic"
+            android:textAllCaps="false"
             android:textColor="@color/colorPrimary"
-            android:textAllCaps="false"/>
+            android:textStyle="italic" />
     </LinearLayout>
 
 </androidx.core.widget.NestedScrollView>

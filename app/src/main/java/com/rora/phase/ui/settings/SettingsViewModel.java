@@ -8,6 +8,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.google.gson.Gson;
+import com.rora.phase.model.User;
 import com.rora.phase.repository.UserRepository;
 
 public class SettingsViewModel extends AndroidViewModel {
@@ -27,7 +29,10 @@ public class SettingsViewModel extends AndroidViewModel {
         return userRepository.isUserLogged();
     }
 
-    public String getUserName() {
-        return userRepository.getUserName();
+    public User getLocalUserInfo() {
+        if (userRepository.getLocalUserInfo().isEmpty())
+            return null;
+
+        return (new Gson()).fromJson(userRepository.getLocalUserInfo(), User.class);
     }
 }

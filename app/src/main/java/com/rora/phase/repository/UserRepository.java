@@ -20,7 +20,6 @@ import com.rora.phase.utils.SharedPreferencesHelper;
 import com.rora.phase.utils.callback.OnResultCallBack;
 import com.rora.phase.utils.network.APIServicesHelper;
 import com.rora.phase.utils.network.BaseResponse;
-import com.rora.phase.utils.network.PhaseService;
 import com.rora.phase.utils.network.PhaseServiceHelper;
 import com.rora.phase.utils.network.UserPhaseService;
 
@@ -103,7 +102,7 @@ public class UserRepository {
                 String token = data.getToken();
 
                 if (token != null && user != null)
-                    storeLocalUser(user.getUserName(), token);
+                    storeLocalUser((new Gson()).toJson(user), token);
 
                 signInResult.setValue(new DataResponse(null, data));
             }
@@ -240,13 +239,13 @@ public class UserRepository {
         return dbSharedPref.getUserToken();
     }
 
-    public String getUserName() {
-        return dbSharedPref.getUserName();
+    public void storeLocalUser(String userInfo, String token) {
+        dbSharedPref.saveUserInfo(userInfo);
+        dbSharedPref.setUserToken(token);
     }
 
-    public void storeLocalUser(String userName, String token) {
-        dbSharedPref.setUserName(userName);
-        dbSharedPref.setUserToken(token);
+    public String getLocalUserInfo() {
+        return dbSharedPref.getUserInfo();
     }
 
     public boolean isUserLogged() {

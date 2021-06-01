@@ -1,12 +1,7 @@
 package com.rora.phase.utils;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Bundle;
-
-import com.rora.phase.R;
-import com.rora.phase.model.UserPlayingData;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -17,7 +12,7 @@ public class SharedPreferencesHelper {
 
     private final String PREFERENCE_FILE_KEY = "com.rora.phase.PREFERENCE_FILE_KEY";
 
-    private final String USER_NAME_KEY = "user_name";
+    private final String USER_INFO_KEY = "user";
     private final String USER_TOKEN_KEY = "user_token";
     private final String USER_COMPUTER_KEY = "user_computer";
     private final String USER_PLAY_STATE_KEY = "user_play_state";
@@ -37,12 +32,12 @@ public class SharedPreferencesHelper {
         editor.apply();
     }
 
-    public void setUserName(String userName) {
-        saveString(USER_NAME_KEY, userName);
+    public void saveUserInfo(String user) {
+        saveString(USER_INFO_KEY, user);
     }
 
-    public String getUserName() {
-        return sharedPreferences.getString(USER_NAME_KEY, "");
+    public String getUserInfo() {
+        return sharedPreferences.getString(USER_INFO_KEY, "");
     }
 
     public void setUserToken(String token) {

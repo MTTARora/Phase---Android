@@ -40,7 +40,7 @@ public class SignUpFragment extends Fragment {
 
         View root = inflater.inflate(R.layout.fragment_sign_up, container, false);
 
-        usernameEdt = root.findViewById(R.id.user_name_edt);
+        usernameEdt = root.findViewById(R.id.user_name_tv);
         passwordEdt = root.findViewById(R.id.password_edt);
         confirmPasswordEdt = root.findViewById(R.id.confirm_password_edt);
         errTv = root.findViewById(R.id.err_sign_up_tv);

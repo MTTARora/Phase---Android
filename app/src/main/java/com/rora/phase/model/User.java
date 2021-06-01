@@ -33,7 +33,7 @@ public class User {
     }
 
     public String getuId() {
-        return uId;
+        return uId == null ? "" : uId;
     }
 
     public void setuId(String uId) {

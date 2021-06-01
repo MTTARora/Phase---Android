@@ -86,7 +86,7 @@ public class SignInFragment extends Fragment {
 
         View root = inflater.inflate(R.layout.fragment_sign_in, container, false);
 
-        usernameTv = root.findViewById(R.id.user_name_edt);
+        usernameTv = root.findViewById(R.id.user_name_tv);
         passwordTv = root.findViewById(R.id.password_edt);
         errTv = root.findViewById(R.id.err_sign_in_tv);
         progressBar = root.findViewById(R.id.sign_in_pb);
