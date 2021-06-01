@@ -41,8 +41,6 @@ public class UserRepository {
     private MutableLiveData<List<Game>> favoriteList;
     private MutableLiveData<DataResponse> signInResult;
     private MutableLiveData<DataResponse> signUpResult;
-    private MutableLiveData<DataResponse> forgotPasswordResult;
-    private MutableLiveData<DataResponse> emailVerificationResult;
 
     public static UserRepository newInstance(Context context) {
         return new UserRepository(context);
@@ -58,8 +56,6 @@ public class UserRepository {
         favoriteList = new MutableLiveData<>();
         signInResult = new MutableLiveData<>();
         signUpResult = new MutableLiveData<>();
-        forgotPasswordResult = new MutableLiveData<>();
-        emailVerificationResult = new MutableLiveData<>();
     }
 
     //--------------------------------GET/SET------------------------
@@ -74,14 +70,6 @@ public class UserRepository {
 
     public MutableLiveData<DataResponse> getSignUpResult() {
         return signUpResult;
-    }
-
-    public MutableLiveData<DataResponse> getForgotPasswordResult() {
-        return forgotPasswordResult;
-    }
-
-    public MutableLiveData<DataResponse> getEmailVerificationResult() {
-        return emailVerificationResult;
     }
 
     public MutableLiveData<List<Game>> getFavoriteList() {
@@ -130,25 +118,25 @@ public class UserRepository {
         storeLocalUser(null, null);
     }
 
-    public void forgotPassword(String email) {
+    public void forgotPassword(String email, OnResultCallBack resultCallBack) {
         APIServicesHelper apiHelper = new APIServicesHelper<>();
 
-        apiHelper.request(userServices.forgotPassword(email), (err, data) -> {
+        apiHelper.request(userServices.forgotPassword(new User(email)), (err, data) -> {
             if (err != null)
-                forgotPasswordResult.setValue(new DataResponse(err, null));
+                resultCallBack.onResult(err, null);
             else
-                forgotPasswordResult.setValue(new DataResponse(null, data));
+                resultCallBack.onResult(null, data);
         });
     }
 
-    public void verifyEmail(String email) {
+    public void verifyEmail(String email, OnResultCallBack callBack) {
         APIServicesHelper apiHelper = new APIServicesHelper<>();
 
         apiHelper.request(userServices.verifyEmail(email), (err, data) -> {
             if (err != null)
-                emailVerificationResult.setValue(new DataResponse(err, null));
+                callBack.onResult(err, null);
             else
-                emailVerificationResult.setValue(new DataResponse(null, data));
+                callBack.onResult(null, data);
         });
     }
 

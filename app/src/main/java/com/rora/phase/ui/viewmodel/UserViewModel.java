@@ -26,8 +26,8 @@ public class UserViewModel extends AndroidViewModel {
     private LiveData<List<Game>> favoriteList;
     private LiveData<DataResponse> signInResult;
     private LiveData<DataResponse> signUpResult;
-    private LiveData<DataResponse> forgotPasswordResult;
-    private LiveData<DataResponse> emailVerificationResult;
+    private MutableLiveData<DataResponse> forgotPasswordResult;
+    private MutableLiveData<DataResponse> emailVerificationResult;
     private MutableLiveData<Game> currentRecentPlay;
     private MutableLiveData<List<Game>> recentPlayList;
     private MutableLiveData<Boolean> triggerLoginListener;
@@ -41,8 +41,8 @@ public class UserViewModel extends AndroidViewModel {
         favoriteList = userRepository.getFavoriteList();
         signInResult = userRepository.getSignInResult();
         signUpResult = userRepository.getSignUpResult();
-        forgotPasswordResult = userRepository.getForgotPasswordResult();
-        emailVerificationResult = userRepository.getEmailVerificationResult();
+        forgotPasswordResult = new MutableLiveData<>();
+        emailVerificationResult = new MutableLiveData<>();
         currentRecentPlay = new MutableLiveData<>();
         triggerLoginListener = new MutableLiveData<>();
     }
@@ -154,11 +154,21 @@ public class UserViewModel extends AndroidViewModel {
     }
 
     public void forgotPassword(String email) {
-        userRepository.forgotPassword(email);
+        userRepository.forgotPassword(email, (errMsg, data) -> {
+            if (errMsg != null && !errMsg.isEmpty())
+                forgotPasswordResult.setValue(new DataResponse(errMsg, null));
+            else
+                forgotPasswordResult.setValue(new DataResponse(null, data));
+        });
     }
 
     public void verifyEmail(String email) {
-        userRepository.verifyEmail(email);
+        userRepository.verifyEmail(email, (errMsg, data) -> {
+            if (errMsg != null && !errMsg.isEmpty())
+                forgotPasswordResult.setValue(new DataResponse(errMsg, null));
+            else
+                forgotPasswordResult.setValue(new DataResponse(null, data));
+        });
     }
 
     public void setCurrentRecentPlay(Game game) {

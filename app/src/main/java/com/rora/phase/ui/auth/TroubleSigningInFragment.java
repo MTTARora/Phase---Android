@@ -132,7 +132,7 @@ public class TroubleSigningInFragment extends Fragment {
         tvOtherIssuesMsgResult.setText(getResources().getString(R.string.fill_in_your_email));
 
         String email = edtEmailForgotPW.getText().toString();
-        if (email == null || email.isEmpty()) {
+        if (email.isEmpty()) {
             tvForgotPwMsgResult.setTextColor(getContext().getColor(R.color.red));
             tvForgotPwMsgResult.setText(getResources().getString(R.string.fill_in_your_email));
 
@@ -152,7 +152,7 @@ public class TroubleSigningInFragment extends Fragment {
         tvOtherIssuesMsgResult.setText(getResources().getString(R.string.fill_in_your_email));
 
         String email = edtEmailMailVerification.getText().toString();
-        if (email == null || email.isEmpty()) {
+        if (email.isEmpty()) {
             tvEmailVerificationMsgResult.setTextColor(getContext().getColor(R.color.red));
             tvEmailVerificationMsgResult.setText(getResources().getString(R.string.fill_in_your_email));
 
@@ -172,7 +172,7 @@ public class TroubleSigningInFragment extends Fragment {
         tvEmailVerificationMsgResult.setText(getResources().getString(R.string.fill_in_your_email));
 
         String email = edtEmailMailVerification.getText().toString();
-        if (email == null || email.isEmpty()) {
+        if (email.isEmpty()) {
             tvOtherIssuesMsgResult.setTextColor(getContext().getColor(R.color.red));
             tvOtherIssuesMsgResult.setText(getResources().getString(R.string.fill_in_your_email));
 

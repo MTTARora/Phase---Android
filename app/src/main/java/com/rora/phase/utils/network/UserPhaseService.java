@@ -32,8 +32,11 @@ public interface UserPhaseService {
     @POST("./login")
     Call<BaseResponse<LoginResponse>> signIn(@Body LoginCredential credentials);
 
-    @POST("/forgot_password")
-    Call<BaseResponse> forgotPassword(@Body String email);
+    @POST("forgot-password")
+    Call<BaseResponse> forgotPassword(@Body User email);
+
+    @POST("reset_password")
+    Call<BaseResponse> resetPassword(@Body String email);
 
     @POST("./verify_mail")
     Call<BaseResponse> verifyEmail(@Body String email);

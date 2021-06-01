@@ -22,7 +22,7 @@ public class PhaseServiceHelper {
     private SharedPreferencesHelper sharedPreferencesHelper;
 
     private static final String basePhaseHttpsUrl = "https://roragame.rorasoft.com/api/";
-    private static final String basePhaseHttpUrl = "http://roragame.rorasoft.com/api/";
+    private static final String basePhaseHttpUrl = "https://roragame.rorasoft.com/api/";
     //private static final String basePhaseHttpsUrl = "http://10.0.2.2:53315/api/";
     //private static final String basePhaseHttpUrl = "http://10.0.2.2:53315/api/";
     private final String userBaseUrl = basePhaseHttpsUrl + "users/";
