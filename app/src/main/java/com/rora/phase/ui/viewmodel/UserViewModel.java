@@ -23,11 +23,12 @@ public class UserViewModel extends AndroidViewModel {
     private UserRepository userRepository;
 
     private LiveData<User> user;
-    private LiveData<List<Game>> favoriteList;
+    private MutableLiveData<List<Game>> favoriteList;
     private LiveData<DataResponse> signInResult;
     private LiveData<DataResponse> signUpResult;
     private MutableLiveData<DataResponse> forgotPasswordResult;
     private MutableLiveData<DataResponse> emailVerificationResult;
+    private MutableLiveData<DataResponse<Game>> updateFavoriteResult;
     private MutableLiveData<Game> currentRecentPlay;
     private MutableLiveData<List<Game>> recentPlayList;
     private MutableLiveData<Boolean> triggerLoginListener;
@@ -38,13 +39,14 @@ public class UserViewModel extends AndroidViewModel {
 
         user = userRepository.getUser();
         recentPlayList = new MutableLiveData<>();
-        favoriteList = userRepository.getFavoriteList();
+        favoriteList = new MutableLiveData<>();
         signInResult = userRepository.getSignInResult();
         signUpResult = userRepository.getSignUpResult();
         forgotPasswordResult = new MutableLiveData<>();
         emailVerificationResult = new MutableLiveData<>();
         currentRecentPlay = new MutableLiveData<>();
         triggerLoginListener = new MutableLiveData<>();
+        updateFavoriteResult = new MutableLiveData<>();
     }
 
     //-------------------GET/SET--------------------
@@ -85,6 +87,10 @@ public class UserViewModel extends AndroidViewModel {
         return triggerLoginListener;
     }
 
+    public MutableLiveData<DataResponse<Game>> getUpdateFavoriteResult() {
+        return updateFavoriteResult;
+    }
+
     //----------------------------------------------
 
     public void signIn(String username, String password) {
@@ -105,33 +111,41 @@ public class UserViewModel extends AndroidViewModel {
         });
     }
 
-    public void getFavoriteListData(OnResultCallBack onResultCallBack) {
+    public void getFavoriteListData() {
         userRepository.getFavoriteListData((errMsg, data) -> {
             if (errMsg != null && !errMsg.isEmpty())
-                onResultCallBack.onResult(errMsg, null);
+                favoriteList.setValue(null);
             else
-                onResultCallBack.onResult(null, null);
+                favoriteList.setValue(data);
         });
     }
 
     public void updateFavorite(Game game, OnResultCallBack onResultCallBack) {
+        DataResponse<Game> result = new DataResponse<>();
+
         if (game.getFavorited()) {
             userRepository.removeFavorite(game.getId().toString(), (errMsg, data) -> {
                 if (errMsg != null && !errMsg.isEmpty()) {
                     onResultCallBack.onResult(errMsg, null);
+                    result.setMsg(errMsg);
                 } else {
                     game.setFavorited(false);
                     onResultCallBack.onResult(null, null);
+                    result.setData(game);
                 }
+                updateFavoriteResult.setValue(result);
             });
         } else {
             userRepository.addFavorite(game.getId().toString(), (errMsg, data) -> {
                 if (errMsg != null && !errMsg.isEmpty()) {
                     onResultCallBack.onResult(errMsg, null);
+                    result.setMsg(errMsg);
                 } else {
                     game.setFavorited(true);
                     onResultCallBack.onResult(null, null);
+                    result.setData(game);
                 }
+                updateFavoriteResult.setValue(result);
             });
         }
     }

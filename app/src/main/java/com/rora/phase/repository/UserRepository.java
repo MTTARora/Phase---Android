@@ -37,7 +37,6 @@ public class UserRepository {
     private SharedPreferencesHelper dbSharedPref;
 
     private MutableLiveData<User> user;
-    private MutableLiveData<List<Game>> favoriteList;
     private MutableLiveData<DataResponse> signInResult;
     private MutableLiveData<DataResponse> signUpResult;
 
@@ -52,7 +51,6 @@ public class UserRepository {
         dbSharedPref = new SharedPreferencesHelper(context);
 
         user = new MutableLiveData<>();
-        favoriteList = new MutableLiveData<>();
         signInResult = new MutableLiveData<>();
         signUpResult = new MutableLiveData<>();
     }
@@ -69,10 +67,6 @@ public class UserRepository {
 
     public MutableLiveData<DataResponse> getSignUpResult() {
         return signUpResult;
-    }
-
-    public MutableLiveData<List<Game>> getFavoriteList() {
-        return favoriteList;
     }
 
     //---------------------------------------------------------------

@@ -16,7 +16,7 @@
     <com.rora.phase.utils.ui.ErrorView
         android:id="@+id/error_loading_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_gravity="center"
         android:visibility="invisible"/>
