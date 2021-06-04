@@ -224,6 +224,20 @@ public class UserRepository {
         });
     }
 
+    public void deposit(Double amount, OnResultCallBack<String> onResultCallBack) {
+
+        APIServicesHelper<String> apiServicesHelper = new APIServicesHelper<>();
+
+        //apiServicesHelper.request(userAuthenticatedServices.deposit(amount), (err, result) -> {
+        //    if (err != null && !err.isEmpty())
+        //        onResultCallBack.onResult(err, null);
+        //    else
+        //        onResultCallBack.onResult(null, result);
+        //});
+        onResultCallBack.onResult(null, "https://developer.android.com/guide/webapps/webview");
+
+    }
+
     //----------------------------------------------------------------------------------------
 
 

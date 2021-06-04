@@ -338,5 +338,8 @@
     <string name="location_title">Location</string>
     <string name="customer_service_title">Customer Service</string>
     <string name="empty_recent_play_msg">You haven\'t play anything recently</string>
+    <string name="deposit">Deposit</string>
+    <string name="amount_txt">Amount</string>
+    <string name="wrong_info_msg">Please check your info again!</string>
 
 </resources>

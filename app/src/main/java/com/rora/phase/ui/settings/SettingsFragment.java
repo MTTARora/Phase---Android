@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.rora.phase.R;
 import com.rora.phase.model.User;
 import com.rora.phase.ui.auth.AuthActivity;
+import com.rora.phase.ui.settings.wallet.WalletFragment;
 import com.rora.phase.utils.ui.BaseFragment;
 
 import carbon.widget.Button;
@@ -46,6 +47,8 @@ public class SettingsFragment extends BaseFragment {
             intent.putExtra(AuthActivity.START_IN_APP_PARAM, true);
             startActivity(intent);
         });
+
+        root.findViewById(R.id.payment_title_settings_tv).setOnClickListener(v -> moveTo(new WalletFragment(), WalletFragment.class.getSimpleName(), false));
 
         setupViews();
         initData();

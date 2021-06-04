@@ -1,12 +1,14 @@
 package com.rora.phase.ui.viewmodel;
 
 import android.app.Application;
+import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.rora.phase.R;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.User;
 import com.rora.phase.model.api.LoginCredential;
@@ -20,6 +22,7 @@ import java.util.List;
 
 public class UserViewModel extends AndroidViewModel {
 
+    private Context context;
     private UserRepository userRepository;
 
     private LiveData<User> user;
@@ -35,6 +38,7 @@ public class UserViewModel extends AndroidViewModel {
 
     public UserViewModel(@NonNull Application application) {
         super(application);
+        this.context = application.getApplicationContext();
         userRepository = new UserRepository(application.getApplicationContext());
 
         user = userRepository.getUser();
@@ -192,5 +196,21 @@ public class UserViewModel extends AndroidViewModel {
     public void triggerLogin() {
         triggerLoginListener.setValue(true);
         userRepository.signOut();
+    }
+
+    public void deposit(String amount, OnResultCallBack<String> onResultCallBack) {
+        double amountD = Double.parseDouble(amount);
+
+        if (amountD == 0) {
+            onResultCallBack.onResult(context.getResources().getString(R.string.wrong_info_msg), null);
+            return;
+        }
+
+        userRepository.deposit(amountD, (errMsg, data) -> {
+            if (errMsg != null && !errMsg.isEmpty())
+                onResultCallBack.onResult(errMsg, null);
+            else
+                onResultCallBack.onResult(null, data);
+        });
     }
 }

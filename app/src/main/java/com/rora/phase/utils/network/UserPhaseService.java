@@ -73,4 +73,6 @@ public interface UserPhaseService {
     @POST("./play/prepare-app")
     Call<BaseResponse<String>> prepareApp(@Body PrepareAppModel data);
 
+    @POST("./deposit")
+    Call<BaseResponse<String>> deposit(@Body Double amount);
 }
