@@ -126,9 +126,9 @@ public abstract class BaseFragment extends Fragment {
 
     //----------------------------- ACTIONBAR --------------------------------
 
-    public void showActionbar(View root, String title, boolean enableBackBtn) {
+    public void showActionbar(View root, String title, boolean enableBackBtn, View.OnClickListener onBackPressed) {
         customActionBar = root.findViewById(R.id.toolbar);
-        customActionBar.showActionbar(title, enableBackBtn);
+        customActionBar.showActionbar(title, enableBackBtn, onBackPressed);
     }
 
     public void hideActionbar(View root) {

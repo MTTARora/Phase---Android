@@ -9,7 +9,9 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/normal_space">
 
         <com.rora.phase.utils.ui.MediaView
             android:id="@+id/top_media_game_details"
@@ -30,19 +32,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/maxx_space"
-            app:layout_constraintBottom_toBottomOf="@id/top_media_game_details"
+            app:layout_constraintTop_toTopOf="@id/play_btn"
+            app:layout_constraintBottom_toBottomOf="@id/play_btn"
             app:layout_constraintStart_toStartOf="parent" />
 
         <!--Info-->
-
-        <ImageButton
-            android:id="@+id/back_btn"
+        <com.rora.phase.utils.ui.CustomToolbar
+            android:id="@+id/toolbar_game_details"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:minHeight="@dimen/ic_touchable_size"
             android:background="@android:color/transparent"
-            android:src="@drawable/abc_vector_test"
-            android:layout_marginStart="@dimen/maxx_space"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
@@ -71,7 +71,7 @@
             android:textColor="@color/colorText"
             android:textSize="@dimen/header_text_size"
             android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@id/top_media_game_details" />
+            app:layout_constraintTop_toBottomOf="@id/play_btn" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/category_game_rclv"
@@ -147,10 +147,16 @@
             android:paddingHorizontal="@dimen/maxx_space"
             app:layout_constraintTop_toBottomOf="@id/frame_pay_type_game_details">
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.8dp"
+                android:background="@color/gray" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/max_space">
 
                 <!--AGE RATING-->
                 <LinearLayout
@@ -231,7 +237,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.8dp"
-                android:layout_marginTop="@dimen/maxx_space"
+                android:layout_marginTop="@dimen/max_space"
                 android:background="@color/gray" />
 
         </LinearLayout>
@@ -241,7 +247,7 @@
             android:id="@+id/frame_play_type_game_details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/maxxx_space"
+            android:layout_marginTop="@dimen/max_space"
             android:orientation="vertical"
             android:paddingHorizontal="@dimen/maxx_space"
             app:layout_constraintTop_toBottomOf="@id/frame_others_info_game_details">
@@ -461,7 +467,7 @@
                     android:layout_height="wrap_content"
                     android:clipChildren="false"
                     android:clipToPadding="false"
-                    android:paddingHorizontal="@dimen/medium_space" />
+                    android:paddingStart="@dimen/normal_space" />
 
                 <ImageView
                     android:id="@+id/error_screenshot_imv"
@@ -542,6 +548,7 @@
 
         <!-- Similar-->
         <LinearLayout
+            android:id="@+id/similar_games_frame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/normal_space"
@@ -589,6 +596,7 @@
                     android:layout_height="wrap_content"
                     android:clipChildren="false"
                     android:clipToPadding="false"
+                    android:overScrollMode="never"
                     android:paddingHorizontal="@dimen/min_space" />
 
                 <ImageView

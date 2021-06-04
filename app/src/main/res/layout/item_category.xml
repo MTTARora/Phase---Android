@@ -8,7 +8,7 @@
     android:layout_marginEnd="@dimen/medium_space"
     app:cardBackgroundColor="@color/gray"
     app:contentPadding="0.55dp"
-    app:cardCornerRadius="@dimen/medium_radius">
+    app:cardCornerRadius="@dimen/max_radius">
 
     <carbon.widget.TextView
         android:id="@+id/btn_category"
@@ -27,6 +27,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:carbon_cornerRadius="@dimen/medium_radius"/>
+        app:carbon_cornerRadius="@dimen/max_radius"/>
 
 </androidx.cardview.widget.CardView>

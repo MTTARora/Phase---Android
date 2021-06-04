@@ -16,7 +16,7 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <ImageButton
-            android:id="@+id/back_btn"
+            android:id="@+id/back_btn_custom_toolbar"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginStart="@dimen/normal_space"
@@ -31,7 +31,7 @@
             android:layout_height="match_parent"
             android:layout_marginStart="@dimen/max_space"
             android:gravity="center|start"
-            app:layout_constraintStart_toEndOf="@id/back_btn" />
+            app:layout_constraintStart_toEndOf="@id/back_btn_custom_toolbar" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -67,7 +67,7 @@ public class MediaViewerActivity extends AppCompatActivity {
             return insets;
         });
 
-        toolbar.showActionbar(title, true);
+        toolbar.showActionbar(title, true, null);
         mediaViewerVp.setAdapter(new MediaViewerAdapter(mediaImageList, 0));
         mediaViewerVp.setOffscreenPageLimit(mediaImageList.size());
         mediaViewerVp.setCurrentItem(currentPosition, false);

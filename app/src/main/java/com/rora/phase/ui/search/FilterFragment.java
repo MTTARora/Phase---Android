@@ -124,7 +124,7 @@ public class FilterFragment extends BaseFragment {
 
         root.findViewById(R.id.apply_filter_btn).setOnClickListener(v -> applyFilters());
 
-        showActionbar(root, "Filters", true);
+        showActionbar(root, "Filters", true, null);
         initData();
         return root;
     }

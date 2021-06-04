@@ -3,7 +3,6 @@ package com.rora.phase.ui.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,19 +19,24 @@ import com.rora.phase.utils.ui.ViewHelper;
 import java.util.ArrayList;
 import java.util.List;
 
+import carbon.widget.ImageView;
+
 public class MediaAdapter extends BaseRVAdapter {
 
     private List<MediaImage> mediaList;
     private double widthPercent = 0;
+    private boolean haveCorner;
 
-    public MediaAdapter(double customWidthPercent) {
+    public MediaAdapter(double customWidthPercent, boolean haveCorner) {
         this.mediaList = new ArrayList<>();
         this.widthPercent = customWidthPercent;
+        this.haveCorner = haveCorner;
     }
 
     @NonNull
     @Override
     public BaseRVViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        super.onCreateViewHolder(parent, viewType);
         View root = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_media, parent, false);
         if (widthPercent != 0) {
             //ViewHelper.setSizePercentageWithScreenAndItSelf(root, widthPercent, 0, 1.5);
@@ -49,6 +53,9 @@ public class MediaAdapter extends BaseRVAdapter {
     @Override
     public void onBindViewHolder(@NonNull BaseRVViewHolder holder, int position) {
         holder.bindData(mediaList.get(position));
+        if (haveCorner)
+            ((MediaVH) holder).imageImv.setCornerRadius(context.getResources().getDimension(R.dimen.medium_radius));
+
         if (onItemSelectedListener != null)
             holder.itemView.setOnClickListener(v -> onItemSelectedListener.onSelected(position, mediaList.get(position)));
     }
@@ -67,7 +74,7 @@ public class MediaAdapter extends BaseRVAdapter {
 
 class MediaVH extends BaseRVViewHolder {
 
-    private ImageView imageImv;
+    public ImageView imageImv;
 
     public MediaVH(@NonNull View itemView) {
         super(itemView);

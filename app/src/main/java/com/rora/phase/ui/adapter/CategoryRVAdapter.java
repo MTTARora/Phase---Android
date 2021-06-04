@@ -167,7 +167,7 @@ class CategoryViewHolder extends BaseRVViewHolder {
 
         switch (size) {
             case AUTO_SIZE:
-                cvFrame.setRadius(context.getResources().getDimension(R.dimen.medium_radius));
+                cvFrame.setRadius(context.getResources().getDimension(R.dimen.max_radius));
                 btnCategory.setTextSize(context.getResources().getDimension(R.dimen.minnnn_text_size));
                 break;
             case MEDIUM_SIZE:

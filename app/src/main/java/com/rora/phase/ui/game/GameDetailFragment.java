@@ -39,6 +39,7 @@ import com.rora.phase.utils.Dialog;
 import com.rora.phase.utils.MediaHelper;
 import com.rora.phase.utils.services.PlayServicesMessageSender;
 import com.rora.phase.utils.ui.BaseFragment;
+import com.rora.phase.utils.ui.CustomToolbar;
 import com.rora.phase.utils.ui.ExpandableTextView;
 import com.rora.phase.utils.ui.MediaView;
 
@@ -54,14 +55,15 @@ import static com.rora.phase.ui.game.MediaViewerActivity.SCREEN_TITLE_PARAM;
 
 public class GameDetailFragment extends BaseFragment {
 
-    private LinearLayout frameSeries;
+    private LinearLayout frameSeries, frameSimilar;
     private MediaView topMediaView;
     private ImageView imvSimilarGamesErr;
     private RecyclerView rclvPlatform, rclvCategory, rclvScreenshot, rclvSeries, rclvSimilar;
     private TextView tvGameName, tvPayType, tvPayTypeDesc, tvAgeRating, tvRelease;
     private ExpandableTextView tvDesc;
     private LinearLayout frameFirstPlayType, frameLastPlayType;
-    private ImageButton btnBack, btnFavorite, btnPlay, firstPlayTypeBtn, secondPlayTypeBtn, thirdPlayTypeBtn, lastPlayTypeBtn;
+    private CustomToolbar toolbar;
+    private ImageButton btnFavorite, btnPlay, firstPlayTypeBtn, secondPlayTypeBtn, thirdPlayTypeBtn, lastPlayTypeBtn;
 
     private GameViewModel gameViewModel;
     private UserViewModel userViewModel;
@@ -95,6 +97,7 @@ public class GameDetailFragment extends BaseFragment {
         View root = inflater.inflate(R.layout.fragment_game_detail, container, false);
 
         frameSeries = root.findViewById(R.id.frame_series);
+        frameSimilar = root.findViewById(R.id.similar_games_frame);
 
         topMediaView = root.findViewById(R.id.top_media_game_details);
         imvSimilarGamesErr = root.findViewById(R.id.error_similar_imv);
@@ -114,7 +117,7 @@ public class GameDetailFragment extends BaseFragment {
 
         btnFavorite = root.findViewById(R.id.favorite_btn);
         btnPlay = root.findViewById(R.id.play_btn);
-        btnBack = root.findViewById(R.id.back_btn);
+        toolbar = root.findViewById(R.id.toolbar_game_details);
 
         frameFirstPlayType = root.findViewById(R.id.frame_ic_first_play_type);
         frameLastPlayType = root.findViewById(R.id.frame_ic_last_play_type);
@@ -147,21 +150,20 @@ public class GameDetailFragment extends BaseFragment {
 
 
     private void initView() {
-        ViewCompat.setOnApplyWindowInsetsListener(btnBack, (v, insets) -> {
-            btnBack.setPadding(0, insets.getSystemWindowInsetTop() + (int) getResources().getDimension(R.dimen.minnn_space), 0, 0);
+        ViewCompat.setOnApplyWindowInsetsListener(toolbar, (v, insets) -> {
+            toolbar.setPadding(0, insets.getSystemWindowInsetTop() + (int) getResources().getDimension(R.dimen.minnn_space), 0, 0);
             return insets;
         });
 
         setupRecyclerView(rclvPlatform, new PlatformRVAdapter(), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         setupRecyclerView(rclvCategory, new CategoryRVAdapter(AUTO_SIZE, false, NONE_SELECT), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        setupRecyclerView(rclvScreenshot, new MediaAdapter(0.47), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        setupRecyclerView(rclvScreenshot, new MediaAdapter(0.6, true), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         setupRecyclerView(rclvSeries, new GameRVAdapter(GameRVAdapter.VIEW_TYPE_LANDSCAPE), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
         rclvSimilar.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         rclvSimilar.setAdapter(new GameVerticalRVAdapter(rclvSimilar));
         ((GameVerticalRVAdapter) rclvSimilar.getAdapter()).setOnItemSelectedListener((position, selectedItem) -> moveTo(GameDetailFragment.newInstance((Game) selectedItem), GameDetailFragment.class.getSimpleName(), true));
 
-        btnBack.setOnClickListener(v -> getActivity().onBackPressed());
         btnPlay.setOnClickListener(v -> {
             if (isPlayingThisGame) {
                 playServicesMsgSenderCallback.sendMessage(PlayServicesMessageSender.MsgCode.STOP);
@@ -212,14 +214,17 @@ public class GameDetailFragment extends BaseFragment {
 
         gameViewModel.getSimilarGames().observe(getViewLifecycleOwner(), gameList -> {
             if (gameList != null && gameList.size() != 0) {
+                frameSimilar.setVisibility(View.VISIBLE);
                 imvSimilarGamesErr.setVisibility(GONE);
                 ((GameVerticalRVAdapter) rclvSimilar.getAdapter()).bindData(gameList);
             } else {
+                frameSimilar.setVisibility(GONE);
                 imvSimilarGamesErr.setVisibility(View.VISIBLE);
             }
         });
 
         if (game != null && game.getId() != null) {
+            toolbar.showActionbar("", true, v -> getActivity().onBackPressed());
             gameViewModel.getGame(game.getId().toString());
             gameViewModel.getSimilarGameList(game.getId().toString());
         }

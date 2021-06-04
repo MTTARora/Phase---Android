@@ -98,7 +98,7 @@ public class GameListFragment extends BaseFragment {
             });
             hideActionbar(root);
         } else {
-            showActionbar(root, screenTitle, true);
+            showActionbar(root, screenTitle, true, null);
             setScreenTitle(root, screenTitle);
 
             homeViewModel.getGamesByListType(listType).observe(getViewLifecycleOwner(), games -> {
