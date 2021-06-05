@@ -110,7 +110,7 @@ public class Game implements Parcelable {
     private List<Platform> platforms;
     @SerializedName("favorited")
     @Expose
-    private Boolean favorited;
+    private boolean favorited;
 
     public Game() {
     }
