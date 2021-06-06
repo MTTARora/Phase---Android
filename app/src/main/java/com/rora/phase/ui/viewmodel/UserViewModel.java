@@ -108,8 +108,11 @@ public class UserViewModel extends AndroidViewModel {
 
     public void getRecentPlayData() {
         userRepository.getRecentPlayData((errMsg, data) -> {
-            if (errMsg != null && !errMsg.isEmpty())
+            if (errMsg != null && !errMsg.isEmpty()) {
+                if (errMsg.equals("401"))
+                    triggerLogin();
                 recentPlayList.setValue(new ArrayList<>());
+            }
             else
                 recentPlayList.setValue(data);
         });
@@ -117,8 +120,11 @@ public class UserViewModel extends AndroidViewModel {
 
     public void getFavoriteListData() {
         userRepository.getFavoriteListData((errMsg, data) -> {
-            if (errMsg != null && !errMsg.isEmpty())
+            if (errMsg != null && !errMsg.isEmpty()) {
+                if (errMsg.equals("401"))
+                    triggerLogin();
                 favoriteList.setValue(null);
+            }
             else
                 favoriteList.setValue(data);
         });
@@ -130,6 +136,8 @@ public class UserViewModel extends AndroidViewModel {
         if (game.getFavorited()) {
             userRepository.removeFavorite(game.getId().toString(), (errMsg, data) -> {
                 if (errMsg != null && !errMsg.isEmpty()) {
+                    if (errMsg.equals("401"))
+                        triggerLogin();
                     onResultCallBack.onResult(errMsg, null);
                     result.setMsg(errMsg);
                 } else {
@@ -142,6 +150,8 @@ public class UserViewModel extends AndroidViewModel {
         } else {
             userRepository.addFavorite(game.getId().toString(), (errMsg, data) -> {
                 if (errMsg != null && !errMsg.isEmpty()) {
+                    if (errMsg.equals("401"))
+                        triggerLogin();
                     onResultCallBack.onResult(errMsg, null);
                     result.setMsg(errMsg);
                 } else {

@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -44,7 +45,6 @@ public class LibraryFragment extends BaseFragment {
         libraryVp = root.findViewById(R.id.library_vp);
         frameError = root.findViewById(R.id.error_view);
 
-        //setupViews();
         initData();
         return root;
     }
@@ -62,6 +62,15 @@ public class LibraryFragment extends BaseFragment {
         userViewModel.getCurrentRecentPlay().observe(getViewLifecycleOwner(), game -> {
             MediaHelper.loadImageWithBlurEffect(getContext(), backgroundLl, game == null ? null : game.getTile());
             hideLoadingScreen();
+        });
+
+        userViewModel.triggerLoginListener().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean requireLogin) {
+                if (requireLogin) {
+                    setupViews();
+                }
+            }
         });
     }
 
