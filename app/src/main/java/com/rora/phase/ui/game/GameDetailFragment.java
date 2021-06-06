@@ -152,6 +152,7 @@ public class GameDetailFragment extends BaseFragment {
     private void initView() {
         ViewCompat.setOnApplyWindowInsetsListener(toolbar, (v, insets) -> {
             toolbar.setPadding(0, insets.getSystemWindowInsetTop() + (int) getResources().getDimension(R.dimen.minnn_space), 0, 0);
+            btnPlay.setPadding(0, insets.getSystemWindowInsetTop() + (int) getResources().getDimension(R.dimen.minnn_space), 0, 0);
             return insets;
         });
 
@@ -304,7 +305,6 @@ public class GameDetailFragment extends BaseFragment {
                     secondPlayTypeBtn.setOnClickListener(v -> Toast.makeText(getContext(), playTypeList.get(1).getPlayType(), Toast.LENGTH_SHORT).show());
                     MediaHelper.loadSvg(lastPlayTypeBtn, SupportPlayType.Type.getIconForType(playTypeList.get(2).getId()));
                     lastPlayTypeBtn.setOnClickListener(v -> Toast.makeText(getContext(), playTypeList.get(2).getPlayType(), Toast.LENGTH_SHORT).show());
-
                     thirdPlayTypeBtn.setVisibility(GONE);
                     break;
                 case 4:

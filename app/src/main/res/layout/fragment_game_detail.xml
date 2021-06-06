@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintDimensionRatio="1:0.5625"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -32,19 +32,31 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/maxx_space"
-            app:layout_constraintTop_toTopOf="@id/play_btn"
             app:layout_constraintBottom_toBottomOf="@id/play_btn"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/play_btn" />
 
-        <!--Info-->
         <com.rora.phase.utils.ui.CustomToolbar
             android:id="@+id/toolbar_game_details"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:minHeight="@dimen/ic_touchable_size"
             android:background="@android:color/transparent"
+            android:minHeight="@dimen/ic_touchable_size"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/favorite_btn"
+            android:layout_width="@dimen/ic_medium_size"
+            android:layout_height="@dimen/ic_medium_size"
+            android:layout_gravity="center"
+            android:layout_marginEnd="@dimen/normal_space"
+            android:background="@android:color/transparent"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_unfavorite"
+            app:layout_constraintBottom_toBottomOf="@id/toolbar_game_details"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/toolbar_game_details" />
 
         <ImageButton
             android:id="@+id/play_btn"
@@ -137,111 +149,6 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!--OTHERS INFO-->
-        <LinearLayout
-            android:id="@+id/frame_others_info_game_details"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/maxxx_space"
-            android:orientation="vertical"
-            android:paddingHorizontal="@dimen/maxx_space"
-            app:layout_constraintTop_toBottomOf="@id/frame_pay_type_game_details">
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.8dp"
-                android:background="@color/gray" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="@dimen/max_space">
-
-                <!--AGE RATING-->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/age_rating_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="N/A"
-                        android:textColor="@color/colorText"
-                        android:textSize="@dimen/title_text_size"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/age_rating_title"
-                        android:textSize="@dimen/normal_text_size"/>
-
-                </LinearLayout>
-
-                <!--RELEASE-->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/release_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="-- --.--"
-                        android:textColor="@color/colorText"
-                        android:textSize="@dimen/title_text_size"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/release_title"
-                        android:textSize="@dimen/normal_text_size" />
-
-                </LinearLayout>
-
-                <!--AGE RATING-->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <ImageButton
-                        android:id="@+id/favorite_btn"
-                        android:layout_width="@dimen/ic_medium_size"
-                        android:layout_height="@dimen/ic_medium_size"
-                        android:layout_gravity="center"
-                        android:background="@android:color/transparent"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/ic_unfavorite" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/favorite_title"
-                        android:textSize="@dimen/normal_text_size"/>
-
-                </LinearLayout>
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.8dp"
-                android:layout_marginTop="@dimen/max_space"
-                android:background="@color/gray" />
-
-        </LinearLayout>
-
         <!--SUPPORT PLAY TYPES-->
         <LinearLayout
             android:id="@+id/frame_play_type_game_details"
@@ -250,11 +157,18 @@
             android:layout_marginTop="@dimen/max_space"
             android:orientation="vertical"
             android:paddingHorizontal="@dimen/maxx_space"
-            app:layout_constraintTop_toBottomOf="@id/frame_others_info_game_details">
+            app:layout_constraintTop_toBottomOf="@id/frame_pay_type_game_details">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.8dp"
+                android:background="@color/gray"
+                android:layout_marginTop="@dimen/maxx_space" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/max_space">
 
                 <LinearLayout
                     android:id="@+id/frame_ic_first_play_type"
@@ -273,14 +187,15 @@
                         android:scaleType="fitXY"
                         android:src="@drawable/ic_keyboard"
                         android:tint="@color/white"
+                        android:backgroundTint="@color/white"
                         android:visibility="visible" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/age_rating_title"
-                        android:visibility="invisible"
-                        android:textSize="@dimen/normal_text_size"/>
+                        android:textSize="@dimen/normal_text_size"
+                        android:visibility="invisible" />
                 </LinearLayout>
 
                 <ImageButton
@@ -323,14 +238,16 @@
                         android:layout_gravity="center"
                         android:background="@android:color/transparent"
                         android:scaleType="fitXY"
-                        android:src="@drawable/ic_unfavorite" />
+                        android:src="@drawable/ic_keyboard"
+                        android:tint="@color/white"
+                        android:backgroundTint="@color/white"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/favorite_title"
-                        android:visibility="invisible"
-                        android:textSize="@dimen/normal_text_size" />
+                        android:textSize="@dimen/normal_text_size"
+                        android:visibility="invisible" />
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -342,7 +259,7 @@
 
         </LinearLayout>
 
-        <!--DESC-->
+        <!--INFO-->
         <LinearLayout
             android:id="@+id/frame_game_details"
             android:layout_width="match_parent"
@@ -356,11 +273,11 @@
                 android:id="@+id/game_desc_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:lineHeight="@dimen/max_space"
                 android:text="..."
                 android:textAlignment="center"
                 android:textSize="@dimen/sub_title_text_size"
                 android:textStyle="italic"
-                android:lineHeight="@dimen/max_space"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <LinearLayout
@@ -372,7 +289,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/genre_title"/>
+                    android:text="@string/genre_title" />
 
                 <TextView
                     android:id="@+id/genre_game_details_tv"
@@ -385,8 +302,10 @@
                     android:maxLines="1"
                     android:text="none"
                     android:textColor="@color/colorText" />
+
             </LinearLayout>
 
+            <!--RELEASE-->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -396,10 +315,10 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/style_title" />
+                    android:text="@string/release_title" />
 
                 <TextView
-                    android:id="@+id/style_game_details_tv"
+                    android:id="@+id/release_tv"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginStart="@dimen/min_space"
@@ -407,9 +326,37 @@
                     android:ellipsize="end"
                     android:lines="1"
                     android:maxLines="1"
-                    android:text="none"
+                    android:text="-- --.--"
                     android:textColor="@color/colorText" />
+
             </LinearLayout>
+
+            <!--AGE RATING-->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/min_space"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/age_rating_title" />
+
+                <TextView
+                    android:id="@+id/age_rating_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/min_space"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:lines="1"
+                    android:maxLines="1"
+                    android:text="N/A"
+                    android:textColor="@color/colorText" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
         <!--SCREENSHOT-->

@@ -53,7 +53,7 @@ public class SupportPlayType {
 
         public static int getIconForType(int supportPlayTypeId) {
             switch (supportPlayTypeId) {
-                case 1: return R.drawable.ic_unfavorite;
+                case 1: return R.drawable.ic_keyboard;
                 case 2: return R.drawable.ic_library;
                 case 3: return R.drawable.ic_home;
                 case 4: return R.drawable.ic_settings;
