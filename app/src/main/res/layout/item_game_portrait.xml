@@ -11,6 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:cardCornerRadius="@dimen/max_radius"
+        app:cardElevation="@dimen/medium_elevation"
+        app:cardUseCompatPadding="true"
         app:layout_constraintDimensionRatio="1:1.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -138,7 +140,6 @@
         android:id="@+id/game_name_item_game_info_tv"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/min_space"
         android:ellipsize="end"
         android:lines="2"
         android:paddingHorizontal="@dimen/medium_space"

@@ -29,8 +29,8 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginEnd="@dimen/min_space"
-            android:layout_marginBottom="@dimen/min_space"
+            app:cardUseCompatPadding="true"
+            app:cardElevation="@dimen/medium_elevation"
             app:cardCornerRadius="@dimen/max_radius">
 
             <ImageView
@@ -167,8 +167,7 @@
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:lines="2"
-        android:paddingHorizontal="@dimen/min_space"
-        android:layout_marginTop="@dimen/min_space"
+        android:paddingHorizontal="@dimen/medium_space"
         android:textColor="@color/colorText"
         android:textSize="@dimen/normal_text_size"
         android:textStyle="bold"
