@@ -7,6 +7,7 @@
     <dimen name="minnn_space">1dp</dimen>
     <dimen name="minn_space">3dp</dimen>
     <dimen name="min_space">5dp</dimen>
+    <dimen name="min_medium_space">8dp</dimen>
     <dimen name="medium_space">10dp</dimen>
     <dimen name="normal_space">16dp</dimen>
     <dimen name="max_space">20dp</dimen>
@@ -33,7 +34,7 @@
     <dimen name="ic_touchable_size">48dp</dimen>
     <dimen name="ic_medium_size">38dp</dimen>
     <dimen name="ic_min_size">20dp</dimen>
-    <dimen name="ic_minn_size">18dp</dimen>
+    <dimen name="ic_minn_size">15dp</dimen>
 
     <!-- Text sizes -->
     <dimen name="max_text_size">30sp</dimen>

@@ -54,7 +54,7 @@
                     android:paddingVertical="@dimen/min_space"
                     android:paddingStart="@dimen/min_space"
                     app:carbon_cornerRadius="14dp"
-                    app:carbon_elevationShadowColor="@color/colorPrimary"
+                    app:carbon_elevationShadowColor="@color/colorPrimaryDark"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 

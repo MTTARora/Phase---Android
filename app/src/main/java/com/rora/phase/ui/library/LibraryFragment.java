@@ -68,7 +68,7 @@ public class LibraryFragment extends BaseFragment {
             @Override
             public void onChanged(Boolean requireLogin) {
                 if (requireLogin) {
-                    setupViews();
+                    setupGuestViews();
                 }
             }
         });
@@ -83,18 +83,11 @@ public class LibraryFragment extends BaseFragment {
 
         showLoadingScreen();
         if (!userViewModel.isUserLogged()) {
-            userViewModel.setCurrentRecentPlay(null);
-            frameError.setVisibility(View.VISIBLE);
-            frameError.setMsg(getResources().getString(R.string.require_login_msg));
-            frameError.setAction(getResources().getString(R.string.login_title), v -> {
-                Intent intent = new Intent(getActivity(), AuthActivity.class);
-                intent.putExtra(AuthActivity.START_IN_APP_PARAM, true);
-                startActivity(intent);
-                needReload = true;
-            });
+            setupGuestViews();
             return;
         }
         frameError.setVisibility(View.GONE);
+        libraryVp.setVisibility(View.VISIBLE);
 
         TabPagerAdapter adapter = new TabPagerAdapter(this);
         adapter.addPage(getResources().getString(R.string.recent_play_title), new RecentPlayFragment());
@@ -103,6 +96,19 @@ public class LibraryFragment extends BaseFragment {
         libraryVp.setUserInputEnabled(false);
         libraryVp.setAdapter(adapter);
         new TabLayoutMediator(libraryTabLayout, libraryVp, ((tab, position) -> tab.setText(adapter.getTitle(position)))).attach();
+    }
+
+    private void setupGuestViews() {
+        userViewModel.setCurrentRecentPlay(null);
+        libraryVp.setVisibility(View.GONE);
+        frameError.setVisibility(View.VISIBLE);
+        frameError.setMsg(getResources().getString(R.string.require_login_msg));
+        frameError.setAction(getResources().getString(R.string.login_title), v -> {
+            Intent intent = new Intent(getActivity(), AuthActivity.class);
+            intent.putExtra(AuthActivity.START_IN_APP_PARAM, true);
+            startActivity(intent);
+            needReload = true;
+        });
     }
 
 }
