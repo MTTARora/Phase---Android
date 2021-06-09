@@ -341,5 +341,6 @@
     <string name="deposit">Deposit</string>
     <string name="amount_txt">Amount</string>
     <string name="wrong_info_msg">Please check your info again!</string>
+    <string name="play_title">Play</string>
 
 </resources>

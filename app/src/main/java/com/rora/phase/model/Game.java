@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.rora.phase.model.api.SearchSuggestion;
+import com.rora.phase.model.ui.Media;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,9 @@ public class Game implements Parcelable {
     @SerializedName("trailers")
     @Expose
     private List<MediaVideo> trailers;
+    @SerializedName("gamePlayClips")
+    @Expose
+    private List<MediaVideo> gamePlays;
     @SerializedName("releaseDate")
     @Expose
     private String releaseDate;
@@ -155,6 +159,14 @@ public class Game implements Parcelable {
 
     public void setTrailers(List<MediaVideo> trailers) {
         this.trailers = trailers;
+    }
+
+    public List<MediaVideo> getGamePlays() {
+        return gamePlays;
+    }
+
+    public void setGamePlays(List<MediaVideo> gamePlays) {
+        this.gamePlays = gamePlays;
     }
 
     public String getReleaseDate() {
@@ -388,6 +400,16 @@ public class Game implements Parcelable {
 
     public void setFavorited(boolean favorited) {
         this.favorited = favorited;
+    }
+
+    public List<MediaVideo> getVideos() {
+        List<MediaVideo> list = new ArrayList<>();
+        if (getTrailers() != null && getTrailers().size() != 0)
+            list.addAll(getTrailers());
+        else if (getGamePlays() != null && getGamePlays().size() != 0)
+            list.addAll(getGamePlays());
+
+        return list;
     }
 
     //---------- PARCELABLE FUNCTION ----------

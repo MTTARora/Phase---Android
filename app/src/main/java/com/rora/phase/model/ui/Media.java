@@ -8,6 +8,8 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 
 public abstract class Media implements Serializable {
+    @SerializedName("link")
+    @Expose
     protected String availableLink;
 
     public enum Quality {
@@ -17,4 +19,8 @@ public abstract class Media implements Serializable {
     }
 
     public abstract String getAvailableLink(Quality qlt);
+
+    public void setAvailableLink(String availableLink) {
+        this.availableLink = availableLink;
+    }
 }

@@ -41,12 +41,15 @@ public class MediaHelper {
         });
     }
 
-    public static void loadVideo(VideoView v, String url, boolean enableRepeatWhenDone) {
+    public static void loadVideo(VideoView v, String url, boolean enableRepeatWhenDone, boolean autoPlay) {
         if (url == null || url.isEmpty())
             return;
 
         v.setVideoPath(url);
-        v.start();
+
+        if (autoPlay)
+            v.start();
+
         if (enableRepeatWhenDone)
             v.setOnCompletionListener(MediaPlayer::start);
     }

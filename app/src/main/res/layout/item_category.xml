@@ -4,7 +4,6 @@
     android:id="@+id/category_frame"
     android:layout_width="wrap_content"
     android:layout_height="@dimen/category_height"
-    android:layout_marginStart="@dimen/min_space"
     android:layout_marginEnd="@dimen/medium_space"
     app:cardBackgroundColor="@color/gray"
     app:contentPadding="0.55dp"

@@ -7,13 +7,14 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.rora.phase.MainActivity;
 import com.rora.phase.R;
-import com.rora.phase.model.Banner;
 import com.rora.phase.model.MediaImage;
 import com.rora.phase.model.ui.Media;
 import com.rora.phase.utils.MediaHelper;
 import com.rora.phase.utils.ui.BaseRVAdapter;
 import com.rora.phase.utils.ui.BaseRVViewHolder;
+import com.rora.phase.utils.ui.MediaView;
 import com.rora.phase.utils.ui.ViewHelper;
 
 import java.util.ArrayList;
@@ -23,14 +24,16 @@ import carbon.widget.ImageView;
 
 public class MediaAdapter extends BaseRVAdapter {
 
-    private List<MediaImage> mediaList;
+    private List<Media> mediaList;
     private double widthPercent = 0;
     private boolean haveCorner;
+    private boolean isPicture;
 
-    public MediaAdapter(double customWidthPercent, boolean haveCorner) {
+    public MediaAdapter(boolean isPicture, double customWidthPercent, boolean haveCorner) {
         this.mediaList = new ArrayList<>();
         this.widthPercent = customWidthPercent;
         this.haveCorner = haveCorner;
+        this.isPicture = isPicture;
     }
 
     @NonNull
@@ -52,9 +55,10 @@ public class MediaAdapter extends BaseRVAdapter {
 
     @Override
     public void onBindViewHolder(@NonNull BaseRVViewHolder holder, int position) {
-        holder.bindData(mediaList.get(position));
+        ((MediaVH)holder).bindData(mediaList.get(position), isPicture);
+
         if (haveCorner)
-            ((MediaVH) holder).imageImv.setCornerRadius(context.getResources().getDimension(R.dimen.medium_radius));
+            ((MediaVH) holder).mediaView.setCornerRadius(context.getResources().getDimension(R.dimen.medium_radius));
 
         if (onItemSelectedListener != null)
             holder.itemView.setOnClickListener(v -> onItemSelectedListener.onSelected(position, mediaList.get(position)));
@@ -67,28 +71,29 @@ public class MediaAdapter extends BaseRVAdapter {
 
     @Override
     public <T> void bindData(T mediaList) {
-        this.mediaList = mediaList == null ? new ArrayList<>() : (List<MediaImage>) mediaList;
+        this.mediaList = mediaList == null ? new ArrayList<>() : (List<Media>) mediaList;
         notifyDataSetChanged();
     }
 }
 
 class MediaVH extends BaseRVViewHolder {
 
-    public ImageView imageImv;
+    public MediaView mediaView;
 
     public MediaVH(@NonNull View itemView) {
         super(itemView);
 
-        imageImv = itemView.findViewById(R.id.image_media_imv);
+        mediaView = itemView.findViewById(R.id.media_mv);
     }
 
-    @Override
-    public <T> void bindData(T data) {
-        if (data == null || ((MediaImage)data).getAvailableLink(Media.Quality.LOW) == null || ((MediaImage)data).getAvailableLink(Media.Quality.LOW).isEmpty())
+    public void bindData(Media data, boolean isPicture) {
+        if (data == null || data.getAvailableLink(Media.Quality.LOW) == null || data.getAvailableLink(Media.Quality.LOW).isEmpty())
             return;
 
-        itemView.findViewById(R.id.media_error).setVisibility(View.GONE);
-        MediaHelper.loadImage(imageImv, ((MediaImage)data).getAvailableLink(Media.Quality.LOW));
+        if (isPicture)
+            mediaView.loadImage(data.getAvailableLink(Media.Quality.LOW));
+        else
+            mediaView.loadVideo(((MainActivity)itemView.getContext()).getLifecycle(), data.getAvailableLink(Media.Quality.LOW), false, false, false, false);
     }
 
 }

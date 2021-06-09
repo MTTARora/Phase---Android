@@ -3,49 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/transparent"
-    app:carbon_cornerRadius="@dimen/maxx_radius">
+    android:background="@android:color/transparent">
 
-    <com.rora.phase.utils.ui.ErrorView
-        android:id="@+id/media_error"
+    <com.rora.phase.utils.ui.MediaView
+        android:id="@+id/media_mv"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:gravity="center"
         app:layout_constraintDimensionRatio="1:0.5625"
         app:layout_constraintTop_toTopOf="parent"/>
-
-    <carbon.widget.ImageView
-        android:id="@+id/image_media_imv"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:scaleType="fitXY"
-        app:layout_constraintDimensionRatio="1:0.5625"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
-        android:id="@+id/yt_video_media"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:visibility="gone"
-        app:layout_constraintDimensionRatio="1:0.5625"
-        app:layout_constraintTop_toTopOf="parent"/>
-
-    <VideoView
-        android:id="@+id/video_media_vv"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:visibility="gone"
-        app:layout_constraintDimensionRatio="1:0.5625"
-        app:layout_constraintTop_toTopOf="parent"/>
-
-    <androidx.core.widget.ContentLoadingProgressBar
-        android:id="@+id/video_pb"
-        style="?android:attr/progressBarStyleInverse"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:theme="@style/ContentLoadingProgress"
-        app:layout_constraintTop_toTopOf="@id/video_media_vv"
-        app:layout_constraintBottom_toBottomOf="@id/video_media_vv"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

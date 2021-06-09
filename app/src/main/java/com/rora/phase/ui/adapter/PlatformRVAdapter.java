@@ -31,7 +31,7 @@ public class PlatformRVAdapter extends RecyclerView.Adapter<PlatformViewHolder> 
     @Override
     public PlatformViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View root = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_platform, parent, false);
-        ViewHelper.setSizePercentageWithScreen(root, 0.035, 0);
+        ViewHelper.setSizePercentageWithScreen(root, 0.03, 0);
         return new PlatformViewHolder(root);
     }
 

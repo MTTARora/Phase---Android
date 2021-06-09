@@ -20,22 +20,6 @@
             app:layout_constraintDimensionRatio="1:0.5625"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:background="@drawable/shape_dim_primary_dark_fader_corner_rectangle"
-            app:layout_constraintBottom_toBottomOf="@id/top_media_game_details"
-            app:layout_constraintHeight_percent=".05" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/platform_rclv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/maxx_space"
-            app:layout_constraintBottom_toBottomOf="@id/play_btn"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/play_btn" />
-
         <com.rora.phase.utils.ui.CustomToolbar
             android:id="@+id/toolbar_game_details"
             android:layout_width="0dp"
@@ -45,220 +29,261 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@drawable/shape_dim_primary_dark_fader_corner_rectangle"
+            app:layout_constraintBottom_toBottomOf="@id/top_media_game_details"
+            app:layout_constraintHeight_percent=".05" />
+
+        <ImageButton
+            android:id="@+id/dump_view"
+            android:layout_width="@dimen/ic_medium_size"
+            android:layout_height="@dimen/ic_medium_size"
+            android:layout_marginEnd="@dimen/maxx_space"
+            android:background="@android:color/transparent"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_play"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@id/top_media_game_details"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!--MAIN INFO-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/frame_main_info_game"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/medium_space"
+            app:layout_constraintTop_toTopOf="@id/dump_view">
+
+            <!--BANNER-->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/frame_banner_tail"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:cardCornerRadius="@dimen/min_radius"
+                app:cardElevation="@dimen/medium_elevation"
+                app:cardUseCompatPadding="true"
+                app:layout_constraintDimensionRatio="1:1.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.36">
+
+                <ImageView
+                    android:id="@+id/banner_tile_imv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitXY"/>
+
+                <carbon.widget.RecyclerView
+                    android:id="@+id/platform_rclv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|top"
+                    android:background="@color/colorPrimaryDark"
+                    android:paddingVertical="@dimen/min_space"
+                    android:paddingStart="@dimen/min_space"
+                    android:elevation="@dimen/max_elevation"
+                    app:carbon_cornerRadius="14dp"
+                    android:layout_marginTop="@dimen/min_space"
+                    android:layout_marginEnd="@dimen/min_space" />
+
+                <!--PLAY TYPE-->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:background="@drawable/shape_dim_fader_corner_rectangle">
+
+                    <ImageButton
+                        android:id="@+id/ic_first_play_type_ib"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_gravity="center"
+                        android:background="@android:color/transparent"
+                        android:backgroundTint="@color/white"
+                        android:padding="@dimen/min_space"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/ic_keyboard"
+                        android:tint="@color/white"
+                        android:visibility="visible"
+                        app:layout_constraintDimensionRatio="1:1"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintWidth_percent="0.25" />
+
+                    <ImageButton
+                        android:id="@+id/ic_second_play_type_ib"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:background="@android:color/transparent"
+                        android:padding="@dimen/min_space"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/ic_library"
+                        android:visibility="visible"
+                        app:layout_constraintDimensionRatio="1:1"
+                        app:layout_constraintEnd_toStartOf="@id/ic_third_play_type_ib"
+                        app:layout_constraintStart_toEndOf="@id/ic_first_play_type_ib"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintWidth_percent="0.25" />
+
+                    <ImageButton
+                        android:id="@+id/ic_third_play_type_ib"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:background="@android:color/transparent"
+                        android:padding="@dimen/min_space"
+                        android:scaleType="fitXY"
+                        android:src="?android:attr/fingerprintAuthDrawable"
+                        app:layout_constraintDimensionRatio="1:1"
+                        app:layout_constraintEnd_toStartOf="@id/ic_last_play_type_ib"
+                        app:layout_constraintStart_toEndOf="@id/ic_second_play_type_ib"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintWidth_percent="0.25" />
+
+                    <ImageButton
+                        android:id="@+id/ic_last_play_type_ib"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:background="@android:color/transparent"
+                        android:backgroundTint="@color/white"
+                        android:padding="@dimen/min_space"
+                        android:scaleType="fitXY"
+                        android:src="?attr/actionModeSelectAllDrawable"
+                        android:tint="@color/white"
+                        app:layout_constraintDimensionRatio="1:1"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintWidth_percent="0.25" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="@dimen/normal_space"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/medium_elevation"
+                android:paddingBottom="@dimen/max_elevation"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/frame_banner_tail"
+                app:layout_constraintTop_toTopOf="@id/frame_banner_tail">
+
+                <TextView
+                    android:id="@+id/game_name_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:text="--"
+                    android:textColor="@color/colorText"
+                    android:textSize="@dimen/header_text_size"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <RatingBar
+                    android:id="@+id/rating_game_rb"
+                    style="@style/Widget.AppCompat.RatingBar.Small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:progressTint="@color/colorPrimary"
+                    android:rating="4"
+                    app:layout_constraintHeight_percent=".1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/game_name_tv" />
+
+                <!--CATEGORY-->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/category_game_rclv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/min_space"
+                    android:clipToPadding="false"
+                    app:layout_constraintTop_toBottomOf="@id/rating_game_rb" />
+
+                <LinearLayout
+                    android:id="@+id/frame_pay_type_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginEnd="@dimen/normal_space"
+                    android:background="@drawable/shape_corner_light_bg"
+                    android:gravity="bottom"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="@dimen/medium_space"
+                    android:paddingVertical="@dimen/min_space"
+                    app:layout_constraintBottom_toBottomOf="parent">
+
+                    <TextView
+                        android:id="@+id/pay_type_tv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Free with your account"
+                        android:textColor="@color/colorText"
+                        android:textSize="@dimen/normal_text_size" />
+
+                    <TextView
+                        android:id="@+id/pay_type_desc_tv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:text="Free with your account"
+                        android:textSize="@dimen/min_text_size"
+                        android:textStyle="italic" />
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!--BUTTONS-->
+        <Button
+            android:id="@+id/play_btn"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/ic_medium_size"
+            android:layout_marginHorizontal="@dimen/normal_space"
+            android:layout_marginTop="@dimen/maxxx_space"
+            android:background="@drawable/shape_corner_primary_color"
+            android:text="@string/play_title"
+            android:textAllCaps="false"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/favorite_btn"
+            app:layout_constraintTop_toBottomOf="@id/frame_main_info_game" />
+
+        <ImageView
+            android:id="@+id/play_btn_imv"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:translationZ="@dimen/min_space"
+            android:layout_marginVertical="@dimen/medium_space"
+            android:layout_marginStart="@dimen/normal_space"
+            app:layout_constraintDimensionRatio="1:1"
+            android:minHeight="@dimen/ic_medium_size"
+            android:background="@android:color/transparent"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_play"
+            android:clickable="false"
+            app:layout_constraintBottom_toBottomOf="@id/play_btn"
+            app:layout_constraintStart_toStartOf="@id/play_btn"
+            app:layout_constraintTop_toTopOf="@id/play_btn" />
+
         <ImageButton
             android:id="@+id/favorite_btn"
             android:layout_width="0dp"
-            android:layout_height="@dimen/ic_medium_size"
+            android:layout_height="0dp"
             android:layout_gravity="center"
-            app:layout_constraintDimensionRatio="1:1"
             android:layout_marginEnd="@dimen/normal_space"
             android:background="@android:color/transparent"
             android:scaleType="fitXY"
             android:src="@drawable/ic_unfavorite"
-            app:layout_constraintBottom_toBottomOf="@id/toolbar_game_details"
+            app:layout_constraintBottom_toBottomOf="@id/play_btn"
+            app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/toolbar_game_details" />
+            app:layout_constraintTop_toTopOf="@id/play_btn" />
 
-        <ImageButton
-            android:id="@+id/play_btn"
-            android:layout_width="@dimen/ic_medium_size"
-            android:layout_height="@dimen/ic_medium_size"
-            android:layout_marginEnd="@dimen/maxx_space"
-            android:layout_marginBottom="-24dp"
-            android:background="@android:color/transparent"
-            android:scaleType="fitXY"
-            android:src="@drawable/ic_play"
-            app:layout_constraintBottom_toBottomOf="@id/top_media_game_details"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/top_media_game_details" />
-
-        <TextView
-            android:id="@+id/game_name_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/max_space"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:paddingHorizontal="@dimen/maxx_space"
-            android:text="--"
-            android:textColor="@color/colorText"
-            android:textSize="@dimen/header_text_size"
-            android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@id/play_btn" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/category_game_rclv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/medium_space"
-            android:clipToPadding="false"
-            android:paddingStart="@dimen/max_space"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/game_name_tv" />
-
-        <!--PAY TYPE-->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/frame_pay_type_game_details"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/maxx_space"
-            android:orientation="horizontal"
-            android:paddingHorizontal="@dimen/maxx_space"
-            app:layout_constraintTop_toBottomOf="@id/category_game_rclv">
-
-            <ImageView
-                android:id="@+id/ic_pay_type"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:scaleType="fitXY"
-                android:src="?attr/actionModePasteDrawable"
-                app:layout_constraintBottom_toBottomOf="@id/frame_pay_type_info"
-                app:layout_constraintDimensionRatio="1:1.3"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/frame_pay_type_info" />
-
-            <LinearLayout
-                android:id="@+id/frame_pay_type_info"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/medium_space"
-                android:orientation="vertical"
-                android:paddingVertical="@dimen/min_space"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/ic_pay_type"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <TextView
-                    android:id="@+id/pay_type_tv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Free with your account"
-                    android:textColor="@color/colorText" />
-
-                <TextView
-                    android:id="@+id/pay_type_desc_tv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:lines="2"
-                    android:maxLines="2"
-                    android:text="Free with your account"
-                    android:textSize="@dimen/normal_text_size"
-                    android:textStyle="italic" />
-            </LinearLayout>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <!--SUPPORT PLAY TYPES-->
-        <LinearLayout
-            android:id="@+id/frame_play_type_game_details"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/max_space"
-            android:orientation="vertical"
-            android:paddingHorizontal="@dimen/maxx_space"
-            app:layout_constraintTop_toBottomOf="@id/frame_pay_type_game_details">
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.8dp"
-                android:background="@color/gray"
-                android:layout_marginTop="@dimen/maxx_space" />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/max_space">
-
-                <LinearLayout
-                    android:id="@+id/frame_ic_first_play_type"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <ImageButton
-                        android:id="@+id/ic_first_play_type_ib"
-                        android:layout_width="@dimen/ic_medium_size"
-                        android:layout_height="@dimen/ic_medium_size"
-                        android:layout_gravity="center"
-                        android:background="@android:color/transparent"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/ic_keyboard"
-                        android:tint="@color/white"
-                        android:backgroundTint="@color/white"
-                        android:visibility="visible" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/age_rating_title"
-                        android:textSize="@dimen/normal_text_size"
-                        android:visibility="invisible" />
-                </LinearLayout>
-
-                <ImageButton
-                    android:id="@+id/ic_second_play_type_ib"
-                    android:layout_width="@dimen/ic_medium_size"
-                    android:layout_height="@dimen/ic_medium_size"
-                    android:layout_gravity="center"
-                    android:background="@android:color/transparent"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/ic_library"
-                    android:visibility="visible"
-                    app:layout_constraintEnd_toStartOf="@id/ic_third_play_type_ib"
-                    app:layout_constraintStart_toEndOf="@id/frame_ic_first_play_type"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <ImageButton
-                    android:id="@+id/ic_third_play_type_ib"
-                    android:layout_width="@dimen/ic_medium_size"
-                    android:layout_height="@dimen/ic_medium_size"
-                    android:layout_gravity="center"
-                    android:background="@android:color/transparent"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/ic_settings"
-                    app:layout_constraintEnd_toStartOf="@id/frame_ic_last_play_type"
-                    app:layout_constraintStart_toEndOf="@id/ic_second_play_type_ib"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <LinearLayout
-                    android:id="@+id/frame_ic_last_play_type"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <ImageButton
-                        android:id="@+id/ic_last_play_type_ib"
-                        android:layout_width="@dimen/ic_medium_size"
-                        android:layout_height="@dimen/ic_medium_size"
-                        android:layout_gravity="center"
-                        android:background="@android:color/transparent"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/ic_keyboard"
-                        android:tint="@color/white"
-                        android:backgroundTint="@color/white"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/favorite_title"
-                        android:textSize="@dimen/normal_text_size"
-                        android:visibility="invisible" />
-                </LinearLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.8dp"
-                android:layout_marginTop="@dimen/medium_space"
-                android:background="@color/gray" />
-
-        </LinearLayout>
 
         <!--INFO-->
         <LinearLayout
@@ -268,7 +293,7 @@
             android:layout_marginTop="@dimen/maxxx_space"
             android:orientation="vertical"
             android:paddingHorizontal="@dimen/normal_space"
-            app:layout_constraintTop_toBottomOf="@id/frame_play_type_game_details">
+            app:layout_constraintTop_toBottomOf="@id/play_btn">
 
             <com.rora.phase.utils.ui.ExpandableTextView
                 android:id="@+id/game_desc_tv"
@@ -281,6 +306,7 @@
                 android:textStyle="italic"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <!--RELEASE-->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -290,34 +316,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/genre_title"
-                    android:textColor="@color/colorText"/>
-
-                <TextView
-                    android:id="@+id/genre_game_details_tv"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="@dimen/min_space"
-                    android:layout_weight="1"
-                    android:ellipsize="end"
-                    android:lines="1"
-                    android:maxLines="1"
-                    android:text="none" />
-
-            </LinearLayout>
-
-            <!--RELEASE-->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/min_space"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:text="@string/release_title"
-                    android:textColor="@color/colorText"/>
+                    android:textColor="@color/colorText" />
 
                 <TextView
                     android:id="@+id/release_tv"
@@ -343,7 +343,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/age_rating_title"
-                    android:textColor="@color/colorText"/>
+                    android:textColor="@color/colorText" />
 
                 <TextView
                     android:id="@+id/age_rating_tv"
@@ -360,6 +360,48 @@
 
         </LinearLayout>
 
+        <!--MEDIA-->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/frame_media_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/maxx_space"
+            android:layout_marginHorizontal="@dimen/normal_space"
+            app:layout_constraintDimensionRatio="1:0.5625"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/frame_game_details"
+            app:cardCornerRadius="@dimen/medium_radius">
+            <com.rora.phase.utils.ui.MediaView
+                android:id="@+id/media_container_game_details"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </androidx.cardview.widget.CardView>
+
+        <!--VIDEOS-->
+        <FrameLayout
+            android:id="@+id/frame_videos_game_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/maxx_space"
+            app:layout_constraintTop_toBottomOf="@id/frame_media_container">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/video_rclv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:paddingStart="@dimen/normal_space" />
+
+            <ImageView
+                android:id="@+id/error_video_imv"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/game_info_item_height"
+                android:scaleType="center"
+                android:src="?android:attr/alertDialogIcon"
+                android:visibility="gone" />
+        </FrameLayout>
+
         <!--SCREENSHOT-->
         <LinearLayout
             android:id="@+id/frame_screenshot"
@@ -367,7 +409,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/maxx_space"
             android:orientation="vertical"
-            app:layout_constraintTop_toBottomOf="@id/frame_game_details">
+            app:layout_constraintTop_toBottomOf="@id/frame_videos_game_details">
 
             <LinearLayout
                 android:layout_width="match_parent"
