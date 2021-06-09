@@ -47,9 +47,10 @@
 
         <ImageButton
             android:id="@+id/favorite_btn"
-            android:layout_width="@dimen/ic_medium_size"
+            android:layout_width="0dp"
             android:layout_height="@dimen/ic_medium_size"
             android:layout_gravity="center"
+            app:layout_constraintDimensionRatio="1:1"
             android:layout_marginEnd="@dimen/normal_space"
             android:background="@android:color/transparent"
             android:scaleType="fitXY"
@@ -289,7 +290,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/genre_title" />
+                    android:text="@string/genre_title"
+                    android:textColor="@color/colorText"/>
 
                 <TextView
                     android:id="@+id/genre_game_details_tv"
@@ -300,8 +302,7 @@
                     android:ellipsize="end"
                     android:lines="1"
                     android:maxLines="1"
-                    android:text="none"
-                    android:textColor="@color/colorText" />
+                    android:text="none" />
 
             </LinearLayout>
 
@@ -315,7 +316,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/release_title" />
+                    android:text="@string/release_title"
+                    android:textColor="@color/colorText"/>
 
                 <TextView
                     android:id="@+id/release_tv"
@@ -326,8 +328,7 @@
                     android:ellipsize="end"
                     android:lines="1"
                     android:maxLines="1"
-                    android:text="-- --.--"
-                    android:textColor="@color/colorText" />
+                    android:text="-- --.--" />
 
             </LinearLayout>
 
@@ -341,7 +342,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/age_rating_title" />
+                    android:text="@string/age_rating_title"
+                    android:textColor="@color/colorText"/>
 
                 <TextView
                     android:id="@+id/age_rating_tv"
@@ -352,8 +354,7 @@
                     android:ellipsize="end"
                     android:lines="1"
                     android:maxLines="1"
-                    android:text="N/A"
-                    android:textColor="@color/colorText" />
+                    android:text="N/A" />
 
             </LinearLayout>
 

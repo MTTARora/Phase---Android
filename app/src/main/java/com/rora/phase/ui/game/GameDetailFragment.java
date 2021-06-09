@@ -151,8 +151,7 @@ public class GameDetailFragment extends BaseFragment {
 
     private void initView() {
         ViewCompat.setOnApplyWindowInsetsListener(toolbar, (v, insets) -> {
-            toolbar.setPadding(0, insets.getSystemWindowInsetTop() + (int) getResources().getDimension(R.dimen.minnn_space), 0, 0);
-            btnPlay.setPadding(0, insets.getSystemWindowInsetTop() + (int) getResources().getDimension(R.dimen.minnn_space), 0, 0);
+            toolbar.setPadding(0, insets.getSystemWindowInsetTop(), 0, 0);
             return insets;
         });
 

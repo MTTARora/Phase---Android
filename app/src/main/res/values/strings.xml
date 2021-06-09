@@ -235,8 +235,8 @@
     <string name="total_play_time_txt">Total</string>
     <string name="recommended_title">Recommended</string>
     <string name="free_to_play_title">Free to play</string>
-    <string name="age_rating_title">Age rating</string>
-    <string name="release_title">Release</string>
+    <string name="age_rating_title">Age rating:</string>
+    <string name="release_title">Release:</string>
     <string name="favorite_title">Favorite</string>
     <string name="un_favorite_title">UnFavorite</string>
     <string name="screenshot_title">Screenshot</string>
