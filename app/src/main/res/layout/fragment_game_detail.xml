@@ -407,7 +407,7 @@
             android:id="@+id/frame_screenshot"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/maxx_space"
+            android:layout_marginTop="@dimen/max_space"
             android:orientation="vertical"
             app:layout_constraintTop_toBottomOf="@id/frame_videos_game_details">
 

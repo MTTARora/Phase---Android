@@ -106,7 +106,7 @@ public class MediaView extends ConstraintLayout {
             //    isPaused = !isPaused;
             //}
             if (!autoPlay)
-                mp.seekTo(5000);
+                mp.seekTo(1000);
             videoPb.setVisibility(GONE);
         });
     }

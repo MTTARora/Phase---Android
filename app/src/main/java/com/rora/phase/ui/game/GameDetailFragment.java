@@ -272,12 +272,13 @@ public class GameDetailFragment extends BaseFragment {
             screenshots.add(new MediaImage(screenshot));
         }
 
+        topMediaView.loadImage(game.getBanner().getAvailableLink(Media.Quality.MEDIUM));
         if (game.getVideos().size() == 0) {
             frameVideos.setVisibility(GONE);
-            topMediaView.loadImage(game.getBanner().getAvailableLink(Media.Quality.MEDIUM));
+            //topMediaView.loadImage(game.getBanner().getAvailableLink(Media.Quality.MEDIUM));
             mediaContainerMv.loadImage(screenshots.size() != 0 ? screenshots.get(0).getAvailableLink(Media.Quality.MEDIUM) : null);
         } else {
-            topMediaView.loadVideo(getLifecycle(), game.getVideos().get(0).getAvailableLink(Media.Quality.MEDIUM), false, false, true, true);
+            //topMediaView.loadVideo(getLifecycle(), game.getVideos().get(0).getAvailableLink(Media.Quality.MEDIUM), false, false, true, true);
             mediaContainerMv.loadVideo(getLifecycle(), game.getVideos().get(0).getAvailableLink(Media.Quality.MEDIUM), true, false, false, false);
             if (game.getVideos().size() > 0) {
                 frameVideos.setVisibility(View.VISIBLE);
