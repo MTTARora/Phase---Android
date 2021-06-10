@@ -93,7 +93,7 @@ class MediaVH extends BaseRVViewHolder {
         if (isPicture)
             mediaView.loadImage(data.getAvailableLink(Media.Quality.LOW));
         else
-            mediaView.loadVideo(((MainActivity)itemView.getContext()).getLifecycle(), data.getAvailableLink(Media.Quality.LOW), false, false, false, false);
+            mediaView.loadVideo(((MainActivity)itemView.getContext()).getLifecycle(), data.getAvailableLink(Media.Quality.LOW), MediaView.LIGHT_VIDEO_MODE);
     }
 
 }

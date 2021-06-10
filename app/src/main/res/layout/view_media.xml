@@ -22,21 +22,36 @@
         app:layout_constraintDimensionRatio="1:0.5625"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
-        android:id="@+id/yt_video_media"
+    <!--VIDEO-->
+    <FrameLayout
+        android:id="@+id/frame_video_media_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:visibility="gone"
         app:layout_constraintDimensionRatio="1:0.5625"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <VideoView
-        android:id="@+id/video_media_vv"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:visibility="gone"
-        app:layout_constraintDimensionRatio="1:0.5625"
-        app:layout_constraintTop_toTopOf="parent" />
+        <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+            android:id="@+id/yt_video_media"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+        <VideoView
+            android:id="@+id/video_media_vv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <com.google.android.exoplayer2.ui.PlayerView
+            android:id="@+id/player_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:focusable="false"
+            android:focusedByDefault="false"
+            app:auto_show="false"
+            app:controller_layout_id="@layout/custom_player_control_view"/>
+
+    </FrameLayout>
 
     <androidx.core.widget.ContentLoadingProgressBar
         android:id="@+id/video_pb"

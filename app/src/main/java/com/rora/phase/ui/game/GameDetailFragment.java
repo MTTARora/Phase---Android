@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.view.ViewCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -59,6 +60,7 @@ import static com.rora.phase.ui.game.MediaViewerActivity.SCREEN_TITLE_PARAM;
 
 public class GameDetailFragment extends BaseFragment {
 
+    private NestedScrollView scrollView;
     private LinearLayout frameSeries, frameSimilar;
     private FrameLayout frameVideos;
     private MediaView topMediaView, mediaContainerMv;
@@ -102,6 +104,7 @@ public class GameDetailFragment extends BaseFragment {
 
         View root = inflater.inflate(R.layout.fragment_game_detail, container, false);
 
+        scrollView = root.findViewById(R.id.game_details_scroll_view);
         frameSeries = root.findViewById(R.id.frame_series);
         frameSimilar = root.findViewById(R.id.similar_games_frame);
         frameVideos = root.findViewById(R.id.frame_videos_game_details);
@@ -141,12 +144,24 @@ public class GameDetailFragment extends BaseFragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        mediaContainerMv.initializePlayer();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
 
         Game currentPlayingGame = UserRepository.newInstance(getContext()).getCurrentGame();
         MediaHelper.loadSvg(btnPlayImv, isPlayingThisGame ? android.R.drawable.ic_lock_power_off : R.drawable.ic_play);
         btnPlay.setText(isPlayingThisGame ? R.string.stop_text : R.string.play_title);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mediaContainerMv.releasePlayer();
     }
 
     @Override
@@ -166,8 +181,8 @@ public class GameDetailFragment extends BaseFragment {
 
         setupRecyclerView(rclvPlatform, new PlatformRVAdapter(), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         setupRecyclerView(rclvCategory, new CategoryRVAdapter(AUTO_SIZE, false, NONE_SELECT), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        setupRecyclerView(rclvVideos, new MediaAdapter(false, 0.6, true), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-        setupRecyclerView(rclvScreenshot, new MediaAdapter(true, 0.6, true), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        setupRecyclerView(rclvVideos, new MediaAdapter(false, 0.65, true), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        setupRecyclerView(rclvScreenshot, new MediaAdapter(true, 0.65, true), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         setupRecyclerView(rclvSeries, new GameRVAdapter(GameRVAdapter.VIEW_TYPE_LANDSCAPE), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
         rclvSimilar.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
@@ -275,11 +290,10 @@ public class GameDetailFragment extends BaseFragment {
         topMediaView.loadImage(game.getBanner().getAvailableLink(Media.Quality.MEDIUM));
         if (game.getVideos().size() == 0) {
             frameVideos.setVisibility(GONE);
-            //topMediaView.loadImage(game.getBanner().getAvailableLink(Media.Quality.MEDIUM));
             mediaContainerMv.loadImage(screenshots.size() != 0 ? screenshots.get(0).getAvailableLink(Media.Quality.MEDIUM) : null);
         } else {
             //topMediaView.loadVideo(getLifecycle(), game.getVideos().get(0).getAvailableLink(Media.Quality.MEDIUM), false, false, true, true);
-            mediaContainerMv.loadVideo(getLifecycle(), game.getVideos().get(0).getAvailableLink(Media.Quality.MEDIUM), true, false, false, false);
+            mediaContainerMv.loadVideo(getLifecycle(), game.getVideos().get(0).getAvailableLink(Media.Quality.MEDIUM), MediaView.LIGHT_VIDEO_MODE);
             if (game.getVideos().size() > 0) {
                 frameVideos.setVisibility(View.VISIBLE);
 
@@ -378,6 +392,8 @@ public class GameDetailFragment extends BaseFragment {
         //}
         //((GameVerticalRVAdapter)rclvSimilar.getAdapter()).bindData(game.getPlatforms());
 
+
+        scrollView.scrollTo(0,0);
         hideLoadingScreen();
     }
 

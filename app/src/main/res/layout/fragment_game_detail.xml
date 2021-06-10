@@ -2,6 +2,7 @@
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/game_details_scroll_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark"
@@ -45,7 +46,7 @@
             android:scaleType="fitXY"
             android:src="@drawable/ic_play"
             android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="@id/top_media_game_details"
+            app:layout_constraintTop_toBottomOf="@id/top_media_game_details"
             app:layout_constraintEnd_toEndOf="parent" />
 
         <!--MAIN INFO-->
