@@ -217,11 +217,13 @@ public class GameDetailFragment extends BaseFragment {
         btnFavorite.setOnClickListener(v -> {
             showLoadingScreen();
             userViewModel.updateFavorite(game, (err, data) -> {
-                if (err != null && !err.isEmpty())
+                if (err != null && !err.isEmpty()) {
                     if (!err.equals("401"))
                         getActivity().runOnUiThread(() -> Toast.makeText(getContext(), err, Toast.LENGTH_LONG).show());
+                }
                 else
                     btnFavorite.setImageResource(game.getFavorited() ? R.drawable.ic_favorite : R.drawable.ic_unfavorite);
+
                 hideLoadingScreen();
             });
         });
