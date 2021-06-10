@@ -60,7 +60,7 @@
     <dimen name="game_info_image_layer_height">160dp</dimen>
     <dimen name="category_height">32dp</dimen>
     <dimen name="vertical_game_item_height">100dp</dimen>
-    <dimen name="normal_width_img">205dp</dimen>
-    <dimen name="small_width_img">171dp</dimen>
+    <dimen name="normal_width_img">215dp</dimen>
+    <dimen name="small_width_img">181dp</dimen>
     <dimen name="rounded_radius">250dp</dimen>
 </resources>
