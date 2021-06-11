@@ -36,6 +36,13 @@ public class WalletFragment extends BaseFragment {
         return root;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!userViewModel.isUserLogged())
+            getActivity().onBackPressed();
+    }
+
     private void setupView(View root) {
         showActionbar(root, null, true, null);
     }
@@ -43,14 +50,15 @@ public class WalletFragment extends BaseFragment {
     private void initData() {
         showLoadingScreen();
         userViewModel.getWalletResult().observe(getViewLifecycleOwner(), walletDataResult -> {
-            hideLoadingScreen();
-
             if (walletDataResult.getMsg() != null && !walletDataResult.getMsg().isEmpty()) {
+                hideLoadingScreen();
                 return;
             }
 
             balanceTv.setText(walletDataResult.getData().getCash() + "$");
+            hideLoadingScreen();
         });
+
         activityLnv.stopLoading(getString(R.string.nothing_here_msg));
         userViewModel.getWallet();
     }
