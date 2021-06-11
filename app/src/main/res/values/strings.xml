@@ -328,7 +328,7 @@
     <string name="game_quality_title">Game quality</string>
     <string name="all_title">All</string>
     <string name="none_title">None</string>
-    <string name="nothing_here_txt">Nothing here</string>
+    <string name="nothing_here_msg">Nothing here</string>
     <string name="wallet_title">Wallet</string>
     <string name="two_fa_title">2FA</string>
     <string name="social_title">Social</string>
@@ -342,5 +342,7 @@
     <string name="amount_txt">Amount</string>
     <string name="wrong_info_msg">Please check your info again!</string>
     <string name="play_title">Play</string>
+    <string name="wallet_balance_txt">Wallet Balance</string>
+    <string name="activity_title">Activity</string>
 
 </resources>

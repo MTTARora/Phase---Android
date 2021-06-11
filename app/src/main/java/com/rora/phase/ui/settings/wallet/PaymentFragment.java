@@ -36,7 +36,7 @@ public class PaymentFragment extends BaseFragment {
     }
 
     private void setupView(View root) {
-        showActionbar(root, getString(R.string.wallet_title), true, null);
+        showActionbar(root, getString(R.string.deposit), true, null);
     }
 
     private void initData() {

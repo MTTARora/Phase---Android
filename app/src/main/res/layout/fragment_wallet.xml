@@ -11,18 +11,107 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"/>
-
-    <Button
-        android:id="@+id/deposit_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/shape_corner_primary_color"
-        android:text="@string/deposit"
-        android:textAllCaps="false"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/frame_wallet_info"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintHeight_percent=".3"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/wallet_balance_txt" />
+
+        <TextView
+            android:id="@+id/wallet_balance_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="100$"
+            android:textSize="@dimen/max_text_size"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!--BUTTONS-->
+    <LinearLayout
+        android:id="@+id/frame_wallet_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/normal_space"
+        app:layout_constraintTop_toBottomOf="@id/frame_wallet_info">
+
+        <Button
+            android:id="@+id/deposit_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_corner_primary_color"
+            android:text="@string/deposit"
+            android:textAllCaps="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </LinearLayout>
+
+    <!--ACTIVITY-->
+    <LinearLayout
+        android:id="@+id/frame_screenshot"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/max_space"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/normal_space"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/frame_wallet_buttons">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <!--<androidx.cardview.widget.CardView-->
+            <!--    android:layout_width="5dp"-->
+            <!--    android:layout_height="match_parent"-->
+            <!--    android:layout_marginVertical="@dimen/medium_space"-->
+            <!--    android:layout_marginEnd="@dimen/min_space"-->
+            <!--    app:cardBackgroundColor="@color/colorPrimary"-->
+            <!--    app:cardCornerRadius="@dimen/normal_radius" />-->
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="@string/activity_title"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/title_text_size"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btn_view_all_screenshot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:gravity="end|center"
+                android:text="@string/view_all_txt"
+                android:textSize="@dimen/normal_text_size" />
+
+        </LinearLayout>
+
+        <com.rora.phase.utils.ui.ListWithNotifyView
+            android:id="@+id/wallet_activity_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/min_space" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

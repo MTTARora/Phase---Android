@@ -73,7 +73,6 @@ public class SettingsFragment extends BaseFragment {
     }
 
     private void setupViews() {
-        //showLoadingScreen();
         ViewCompat.setOnApplyWindowInsetsListener(frame, (v, insets) -> {
             frame.setPadding(0, insets.getSystemWindowInsetTop() + (int) getResources().getDimension(R.dimen.normal_space), 0, (int) getResources().getDimension(R.dimen.normal_space));
             return insets;

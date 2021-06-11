@@ -401,6 +401,7 @@
                 android:scaleType="center"
                 android:src="?android:attr/alertDialogIcon"
                 android:visibility="gone" />
+
         </FrameLayout>
 
         <!--SCREENSHOT-->

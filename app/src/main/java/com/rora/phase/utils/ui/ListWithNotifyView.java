@@ -2,7 +2,6 @@ package com.rora.phase.utils.ui;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.widget.BaseAdapter;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -41,6 +40,7 @@ public class ListWithNotifyView extends ConstraintLayout {
         listRclv.setVisibility(GONE);
     }
 
+    /** @param err pass null to simplify stop loading */
     public void stopLoading(String err) {
         listRclv.setVisibility(err != null && !err.isEmpty() ? GONE : VISIBLE);
         loadingView.stopLoading(err, null, null);
@@ -54,7 +54,7 @@ public class ListWithNotifyView extends ConstraintLayout {
             if (getVisibility() == GONE)
                 setVisibility(VISIBLE);
 
-            stopLoading(data != null && data.size() != 0 ? null : getResources().getString(R.string.nothing_here_txt));
+            stopLoading(data != null && data.size() != 0 ? null : getResources().getString(R.string.nothing_here_msg));
         }
 
         return (BaseRVAdapter) listRclv.getAdapter();
