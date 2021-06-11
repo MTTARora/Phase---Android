@@ -246,7 +246,7 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/ic_medium_size"
             android:layout_marginHorizontal="@dimen/normal_space"
-            android:layout_marginTop="@dimen/maxxx_space"
+            android:layout_marginTop="@dimen/maxx_space"
             android:background="@drawable/shape_corner_primary_color"
             android:text="@string/play_title"
             android:textAllCaps="false"
@@ -408,7 +408,7 @@
             android:id="@+id/frame_screenshot"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/max_space"
+            android:layout_marginTop="@dimen/medium_space"
             android:orientation="vertical"
             app:layout_constraintTop_toBottomOf="@id/frame_videos_game_details">
 
