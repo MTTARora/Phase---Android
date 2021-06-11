@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.widget.NestedScrollView;
@@ -174,10 +175,10 @@ public class GameDetailFragment extends BaseFragment {
 
 
     private void initView() {
-        ViewCompat.setOnApplyWindowInsetsListener(toolbar, (v, insets) -> {
-            toolbar.setPadding(0, insets.getSystemWindowInsetTop(), 0, 0);
-            return insets;
-        });
+        //ViewCompat.setOnApplyWindowInsetsListener(toolbar, (v, insets) -> {
+        //    toolbar.setPadding(0, insets.getSystemWindowInsetTop(), 0, 0);
+        //    return insets;
+        //});
 
         setupRecyclerView(rclvPlatform, new PlatformRVAdapter(), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         setupRecyclerView(rclvCategory, new CategoryRVAdapter(AUTO_SIZE, false, NONE_SELECT), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
@@ -250,7 +251,7 @@ public class GameDetailFragment extends BaseFragment {
         });
 
         if (game != null && game.getId() != null) {
-            toolbar.showActionbar("", true, v -> getActivity().onBackPressed());
+            toolbar.showActionbar(((AppCompatActivity)getActivity()),"", true, v -> getActivity().onBackPressed());
             gameViewModel.getGame(game.getId().toString());
             gameViewModel.getSimilarGameList(game.getId().toString());
         }

@@ -61,13 +61,8 @@ public class MediaViewerActivity extends AppCompatActivity {
 
     private void setupViews() {
         hideSystemUI();
-        ViewCompat.setOnApplyWindowInsetsListener(toolbar, (v, insets) -> {
-            // Move toolbar below status bar
-            toolbar.setPadding(0, insets.getSystemWindowInsetTop() + (int)getResources().getDimension(R.dimen.min_space), 0, 0);
-            return insets;
-        });
 
-        toolbar.showActionbar(title, true, null);
+        toolbar.showActionbar(this, title, true, null);
         mediaViewerVp.setAdapter(new MediaViewerAdapter(mediaImageList, 0));
         mediaViewerVp.setOffscreenPageLimit(mediaImageList.size());
         mediaViewerVp.setCurrentItem(currentPosition, false);

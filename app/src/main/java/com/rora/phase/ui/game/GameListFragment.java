@@ -69,11 +69,6 @@ public class GameListFragment extends BaseFragment {
         rclvGameList = root.findViewById(R.id.game_list_vertical_rclv);
         errImv = root.findViewById(R.id.error_imv);
 
-        ViewCompat.setOnApplyWindowInsetsListener(root.findViewById(R.id.toolbar), (v, insets) -> {
-            root.findViewById(R.id.toolbar).setPadding(0, insets.getSystemWindowInsetTop() + (int)getResources().getDimension(R.dimen.minnn_space), 0, 0);
-            return insets;
-        });
-
         initView();
         bindData(root);
 

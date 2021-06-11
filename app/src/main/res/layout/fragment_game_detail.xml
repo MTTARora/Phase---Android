@@ -35,7 +35,7 @@
             android:layout_height="0dp"
             android:background="@drawable/shape_dim_primary_dark_fader_corner_rectangle"
             app:layout_constraintBottom_toBottomOf="@id/top_media_game_details"
-            app:layout_constraintHeight_percent=".05" />
+            app:layout_constraintHeight_percent=".02" />
 
         <ImageButton
             android:id="@+id/dump_view"
