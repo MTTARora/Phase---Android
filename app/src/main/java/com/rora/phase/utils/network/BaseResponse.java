@@ -1,9 +1,6 @@
 package com.rora.phase.utils.network;
 
-import com.rora.phase.model.Game;
-import com.rora.phase.utils.DataResponse;
-
-import java.util.List;
+import com.rora.phase.utils.DataResult;
 
 public class BaseResponse<T> {
 
@@ -12,8 +9,8 @@ public class BaseResponse<T> {
     private String message;
     private T data;
 
-    public static <T> DataResponse<T> getResult(BaseResponse<T> response) {
-        DataResponse<T> resp = new DataResponse<>();
+    public static <T> DataResult<T> getResult(BaseResponse<T> response) {
+        DataResult<T> resp = new DataResult<>();
 
         if(response != null && response.statusCode == 200) {
             resp.setData(response.data);

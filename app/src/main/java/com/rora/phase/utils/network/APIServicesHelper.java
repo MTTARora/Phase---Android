@@ -1,7 +1,7 @@
 package com.rora.phase.utils.network;
 
 import com.rora.phase.RoraLog;
-import com.rora.phase.utils.DataResponse;
+import com.rora.phase.utils.DataResult;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -18,12 +18,12 @@ public class APIServicesHelper<T> {
         request.enqueue(new Callback<BaseResponse<T>>() {
             @Override
             public void onResponse(Call<BaseResponse<T>> call, Response<BaseResponse<T>> response) {
-                DataResponse<BaseResponse<T>> dataResponse = PhaseServiceHelper.handleResponse(response);
-                String err = dataResponse.getMsg();
+                DataResult<BaseResponse<T>> dataResult = PhaseServiceHelper.handleResponse(response);
+                String err = dataResult.getMsg();
                 T data = null;
 
                 if (err == null) {
-                    DataResponse<T> dataResp = BaseResponse.getResult(dataResponse.getData());
+                    DataResult<T> dataResp = BaseResponse.getResult(dataResult.getData());
                     if (dataResp == null)
                         err = "No data from server";
                     else {

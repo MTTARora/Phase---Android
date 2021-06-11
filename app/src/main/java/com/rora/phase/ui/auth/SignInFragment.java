@@ -22,7 +22,7 @@ import android.widget.TextView;
 import com.rora.phase.MainActivity;
 import com.rora.phase.R;
 import com.rora.phase.ui.viewmodel.UserViewModel;
-import com.rora.phase.utils.DataResponse;
+import com.rora.phase.utils.DataResult;
 import com.rora.phase.utils.ui.FragmentManagerHelper;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
@@ -39,7 +39,7 @@ public class SignInFragment extends Fragment {
 
     private boolean fromInApp;
 
-    Observer<DataResponse> signInResultObserver = dataResponse -> {
+    Observer<DataResult> signInResultObserver = dataResponse -> {
         loading(false);
         String err = dataResponse.getMsg();
         if (err != null) {

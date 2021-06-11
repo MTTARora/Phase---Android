@@ -8,13 +8,15 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.gson.Gson;
 import com.rora.phase.R;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.User;
+import com.rora.phase.model.Wallet;
 import com.rora.phase.model.api.LoginCredential;
 import com.rora.phase.model.api.SignUpCredential;
 import com.rora.phase.repository.UserRepository;
-import com.rora.phase.utils.DataResponse;
+import com.rora.phase.utils.DataResult;
 import com.rora.phase.utils.callback.OnResultCallBack;
 
 import java.util.ArrayList;
@@ -27,14 +29,15 @@ public class UserViewModel extends AndroidViewModel {
 
     private LiveData<User> user;
     private MutableLiveData<List<Game>> favoriteList;
-    private LiveData<DataResponse> signInResult;
-    private LiveData<DataResponse> signUpResult;
-    private MutableLiveData<DataResponse> forgotPasswordResult;
-    private MutableLiveData<DataResponse> emailVerificationResult;
-    private MutableLiveData<DataResponse<Game>> updateFavoriteResult;
+    private LiveData<DataResult> signInResult;
+    private LiveData<DataResult> signUpResult;
+    private MutableLiveData<DataResult> forgotPasswordResult;
+    private MutableLiveData<DataResult> emailVerificationResult;
+    private MutableLiveData<DataResult<Game>> updateFavoriteResult;
     private MutableLiveData<Game> currentRecentPlay;
     private MutableLiveData<List<Game>> recentPlayList;
     private MutableLiveData<Boolean> triggerLoginListener;
+    private MutableLiveData<DataResult<Wallet>> walletResult;
 
     public UserViewModel(@NonNull Application application) {
         super(application);
@@ -51,6 +54,7 @@ public class UserViewModel extends AndroidViewModel {
         currentRecentPlay = new MutableLiveData<>();
         triggerLoginListener = new MutableLiveData<>();
         updateFavoriteResult = new MutableLiveData<>();
+        walletResult = new MutableLiveData<>();
     }
 
     //-------------------GET/SET--------------------
@@ -67,19 +71,19 @@ public class UserViewModel extends AndroidViewModel {
         return favoriteList;
     }
 
-    public LiveData<DataResponse> getSignInResult() {
+    public LiveData<DataResult> getSignInResult() {
         return signInResult;
     }
 
-    public LiveData<DataResponse> getSignUpResult() {
+    public LiveData<DataResult> getSignUpResult() {
         return signUpResult;
     }
 
-    public LiveData<DataResponse> getForgotPasswordResult() {
+    public LiveData<DataResult> getForgotPasswordResult() {
         return forgotPasswordResult;
     }
 
-    public LiveData<DataResponse> getEmailVerificationResult() {
+    public LiveData<DataResult> getEmailVerificationResult() {
         return emailVerificationResult;
     }
 
@@ -91,8 +95,12 @@ public class UserViewModel extends AndroidViewModel {
         return triggerLoginListener;
     }
 
-    public MutableLiveData<DataResponse<Game>> getUpdateFavoriteResult() {
+    public MutableLiveData<DataResult<Game>> getUpdateFavoriteResult() {
         return updateFavoriteResult;
+    }
+
+    public MutableLiveData<DataResult<Wallet>> getWalletResult() {
+        return walletResult;
     }
 
     //----------------------------------------------
@@ -104,6 +112,33 @@ public class UserViewModel extends AndroidViewModel {
 
     public void signInAsGuest() {
         userRepository.signInAsGuest();
+    }
+
+    public void signOut() {
+        userRepository.signOut();
+    }
+
+    public void signUp(String username, String password, String confirmPassword) {
+        SignUpCredential signUpIdentify = new SignUpCredential(username, password, confirmPassword);
+        userRepository.signUp(signUpIdentify);
+    }
+
+    public void forgotPassword(String email) {
+        userRepository.forgotPassword(email, (errMsg, data) -> {
+            if (errMsg != null && !errMsg.isEmpty())
+                forgotPasswordResult.setValue(new DataResult(errMsg, null));
+            else
+                forgotPasswordResult.setValue(new DataResult(null, data));
+        });
+    }
+
+    public void verifyEmail(String email) {
+        userRepository.verifyEmail(email, (errMsg, data) -> {
+            if (errMsg != null && !errMsg.isEmpty())
+                forgotPasswordResult.setValue(new DataResult(errMsg, null));
+            else
+                forgotPasswordResult.setValue(new DataResult(null, data));
+        });
     }
 
     public void getRecentPlayData() {
@@ -131,7 +166,7 @@ public class UserViewModel extends AndroidViewModel {
     }
 
     public void updateFavorite(Game game, OnResultCallBack onResultCallBack) {
-        DataResponse<Game> result = new DataResponse<>();
+        DataResult<Game> result = new DataResult<>();
 
         if (game.getFavorited()) {
             userRepository.removeFavorite(game.getId().toString(), (errMsg, data) -> {
@@ -168,35 +203,15 @@ public class UserViewModel extends AndroidViewModel {
         return userRepository.isUserLogged();
     }
 
-    public User getLocalUser() {
-        return new User(userRepository.getUserToken());
+    public User getLocalUserInfo() {
+        if (userRepository.getLocalUserInfo().isEmpty())
+            return null;
+
+        return (new Gson()).fromJson(userRepository.getLocalUserInfo(), User.class);
     }
 
     public void resetPlayData() {
         userRepository.storeCurrentGame(null);
-    }
-
-    public void signUp(String username, String password, String confirmPassword) {
-        SignUpCredential signUpIdentify = new SignUpCredential(username, password, confirmPassword);
-        userRepository.signUp(signUpIdentify);
-    }
-
-    public void forgotPassword(String email) {
-        userRepository.forgotPassword(email, (errMsg, data) -> {
-            if (errMsg != null && !errMsg.isEmpty())
-                forgotPasswordResult.setValue(new DataResponse(errMsg, null));
-            else
-                forgotPasswordResult.setValue(new DataResponse(null, data));
-        });
-    }
-
-    public void verifyEmail(String email) {
-        userRepository.verifyEmail(email, (errMsg, data) -> {
-            if (errMsg != null && !errMsg.isEmpty())
-                forgotPasswordResult.setValue(new DataResponse(errMsg, null));
-            else
-                forgotPasswordResult.setValue(new DataResponse(null, data));
-        });
     }
 
     public void setCurrentRecentPlay(Game game) {
@@ -206,6 +221,17 @@ public class UserViewModel extends AndroidViewModel {
     public void triggerLogin() {
         triggerLoginListener.setValue(true);
         userRepository.signOut();
+    }
+
+    public void getWallet() {
+        userRepository.getWallet((err, data) -> {
+            DataResult<Wallet> result = new DataResult<>(err, data);
+            if (err != null && !err.isEmpty()) {
+                if (err.equals("401"))
+                    triggerLogin();
+            }
+            walletResult.setValue(result);
+        });
     }
 
     public void deposit(String amount, OnResultCallBack<String> onResultCallBack) {

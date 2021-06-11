@@ -329,7 +329,7 @@
     <string name="all_title">All</string>
     <string name="none_title">None</string>
     <string name="nothing_here_txt">Nothing here</string>
-    <string name="payment_title">Payment</string>
+    <string name="wallet_title">Wallet</string>
     <string name="two_fa_title">2FA</string>
     <string name="social_title">Social</string>
     <string name="notification_title">Notifications</string>

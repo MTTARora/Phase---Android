@@ -1,13 +1,13 @@
 package com.rora.phase.utils;
 
-public class DataResponse<T> {
+public class DataResult<T> {
     private String msg;
     private T data;
 
-    public DataResponse() {
+    public DataResult() {
     }
 
-    public DataResponse(String msg, T data) {
+    public DataResult(String msg, T data) {
         this.msg = msg;
         this.data = data;
     }

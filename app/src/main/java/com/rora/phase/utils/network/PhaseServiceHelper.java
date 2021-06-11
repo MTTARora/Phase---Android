@@ -3,7 +3,7 @@ package com.rora.phase.utils.network;
 import android.content.Context;
 
 import com.rora.phase.RoraLog;
-import com.rora.phase.utils.DataResponse;
+import com.rora.phase.utils.DataResult;
 import com.rora.phase.utils.SharedPreferencesHelper;
 
 import org.json.JSONObject;
@@ -26,6 +26,7 @@ public class PhaseServiceHelper {
     //private static final String basePhaseHttpsUrl = "http://10.0.2.2:53315/api/";
     //private static final String basePhaseHttpUrl = "http://10.0.2.2:53315/api/";
     private final String userBaseUrl = basePhaseHttpsUrl + "users/";
+    private final String walletBaseUrl = basePhaseHttpsUrl + "wallet/";
     private final String userAuthBaseUrl = basePhaseHttpsUrl + "auth/";
     private final String gameBaseUrl = basePhaseHttpUrl + "games/";
 
@@ -43,7 +44,6 @@ public class PhaseServiceHelper {
     /** Return service with root api url */
 
     public PhaseService getPhaseService() {
-
         phaseService = new retrofit2.Retrofit.Builder()
                 .baseUrl(basePhaseHttpUrl)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -51,7 +51,6 @@ public class PhaseServiceHelper {
                 .create(PhaseService.class);
 
         return phaseService;
-
     }
 
 
@@ -59,20 +58,10 @@ public class PhaseServiceHelper {
 
     public PhaseService getGamePhaseService() {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        addLog(httpClient);
 
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-
-        if (!sharedPreferencesHelper.getUserToken().isEmpty()) {
-            httpClient.addInterceptor(chain -> {
-                Request newRequest  = chain.request().newBuilder()
-                        .addHeader("Authorization", "Bearer " + sharedPreferencesHelper.getUserToken())
-                        .build();
-                return chain.proceed(newRequest);
-            });
-        }
-
-        httpClient.addInterceptor(logging);
+        if (!sharedPreferencesHelper.getUserToken().isEmpty())
+            addAuthenticate(httpClient);
 
         phaseService = new retrofit2.Retrofit.Builder()
                 .client(httpClient.build())
@@ -88,20 +77,10 @@ public class PhaseServiceHelper {
 
     public UserPhaseService getUserPhaseService(boolean auth) {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        addLog(httpClient);
 
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-
-        if (auth) {
-            httpClient.addInterceptor(chain -> {
-                Request newRequest  = chain.request().newBuilder()
-                        .addHeader("Authorization", "Bearer " + sharedPreferencesHelper.getUserToken())
-                        .build();
-                return chain.proceed(newRequest);
-            });
-        }
-
-        httpClient.addInterceptor(logging);
+        if (auth)
+            addAuthenticate(httpClient);
 
         userPhaseService = new retrofit2.Retrofit.Builder()
                 .client(httpClient.build())
@@ -113,8 +92,39 @@ public class PhaseServiceHelper {
         return userPhaseService;
     }
 
-    public static <T> DataResponse<T> handleResponse(Response<T> response) {
-        DataResponse<T> data = new DataResponse<>();
+    public UserPhaseService getWalletService() {
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        addAuthenticate(httpClient);
+        addLog(httpClient);
+
+        userPhaseService = new retrofit2.Retrofit.Builder()
+                .client(httpClient.build())
+                .baseUrl(walletBaseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(UserPhaseService.class);
+
+        return userPhaseService;
+    }
+
+    private void addAuthenticate(OkHttpClient.Builder httpClient) {
+        httpClient.addInterceptor(chain -> {
+            Request newRequest  = chain.request().newBuilder()
+                    .addHeader("Authorization", "Bearer " + sharedPreferencesHelper.getUserToken())
+                    .build();
+            return chain.proceed(newRequest);
+        });
+    }
+
+    private void addLog(OkHttpClient.Builder httpClient) {
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        httpClient.addInterceptor(logging);
+    }
+
+    public static <T> DataResult<T> handleResponse(Response<T> response) {
+        DataResult<T> data = new DataResult<>();
         if(response.code() == 200) {
             data.setData(response.body());
         } else {

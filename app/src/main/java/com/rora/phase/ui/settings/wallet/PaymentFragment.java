@@ -2,7 +2,6 @@ package com.rora.phase.ui.settings.wallet;
 
 import android.os.Bundle;
 
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
@@ -13,9 +12,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.rora.phase.R;
-import com.rora.phase.model.User;
 import com.rora.phase.ui.viewmodel.UserViewModel;
-import com.rora.phase.utils.callback.OnResultCallBack;
 import com.rora.phase.utils.ui.BaseFragment;
 
 public class PaymentFragment extends BaseFragment {
@@ -39,7 +36,7 @@ public class PaymentFragment extends BaseFragment {
     }
 
     private void setupView(View root) {
-        showActionbar(root, getString(R.string.payment_title), true, null);
+        showActionbar(root, getString(R.string.wallet_title), true, null);
     }
 
     private void initData() {

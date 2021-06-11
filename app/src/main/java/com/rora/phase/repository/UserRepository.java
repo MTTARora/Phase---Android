@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.User;
 import com.rora.phase.model.UserPlayingData;
+import com.rora.phase.model.Wallet;
 import com.rora.phase.model.api.FindingHostResponse;
 import com.rora.phase.model.api.LoginCredential;
 import com.rora.phase.model.api.LoginResponse;
@@ -15,7 +16,7 @@ import com.rora.phase.model.api.PinConfirmBody;
 import com.rora.phase.model.api.PrepareAppModel;
 import com.rora.phase.model.api.SignUpCredential;
 import com.rora.phase.nvstream.http.ComputerDetails;
-import com.rora.phase.utils.DataResponse;
+import com.rora.phase.utils.DataResult;
 import com.rora.phase.utils.SharedPreferencesHelper;
 import com.rora.phase.utils.callback.OnResultCallBack;
 import com.rora.phase.utils.network.APIServicesHelper;
@@ -34,11 +35,12 @@ public class UserRepository {
 
     private UserPhaseService userAuthenticatedServices;
     private UserPhaseService userServices;
+    private UserPhaseService walletServices;
     private SharedPreferencesHelper dbSharedPref;
 
     private MutableLiveData<User> user;
-    private MutableLiveData<DataResponse> signInResult;
-    private MutableLiveData<DataResponse> signUpResult;
+    private MutableLiveData<DataResult> signInResult;
+    private MutableLiveData<DataResult> signUpResult;
 
     public static UserRepository newInstance(Context context) {
         return new UserRepository(context);
@@ -48,6 +50,7 @@ public class UserRepository {
         PhaseServiceHelper phaseServiceHelper = new PhaseServiceHelper(context);
         userAuthenticatedServices = phaseServiceHelper.getUserPhaseService(true);
         userServices = phaseServiceHelper.getUserPhaseService(false);
+        walletServices = phaseServiceHelper.getWalletService();
         dbSharedPref = new SharedPreferencesHelper(context);
 
         user = new MutableLiveData<>();
@@ -61,11 +64,11 @@ public class UserRepository {
         return user;
     }
 
-    public MutableLiveData<DataResponse> getSignInResult() {
+    public MutableLiveData<DataResult> getSignInResult() {
         return signInResult;
     }
 
-    public MutableLiveData<DataResponse> getSignUpResult() {
+    public MutableLiveData<DataResult> getSignUpResult() {
         return signUpResult;
     }
 
@@ -79,9 +82,9 @@ public class UserRepository {
 
         apiHelper.request(userServices.signUp(credential), (err, data) -> {
             if (err != null)
-                signUpResult.setValue(new DataResponse(err, null));
+                signUpResult.setValue(new DataResult(err, null));
             else
-                signUpResult.setValue(new DataResponse(null, data));
+                signUpResult.setValue(new DataResult(null, data));
         });
     }
 
@@ -90,7 +93,7 @@ public class UserRepository {
 
         apiHelper.request(userServices.signIn(loginCredential), (err, data) -> {
             if (err != null) {
-                signInResult.setValue(new DataResponse(err, null));
+                signInResult.setValue(new DataResult(err, null));
             } else {
                 User user = data.getInfo();
                 String token = data.getToken();
@@ -98,13 +101,13 @@ public class UserRepository {
                 if (token != null && user != null)
                     storeLocalUser((new Gson()).toJson(user), token);
 
-                signInResult.setValue(new DataResponse(null, data));
+                signInResult.setValue(new DataResult(null, data));
             }
         });
     }
 
     public void signInAsGuest() {
-        signInResult.postValue(new DataResponse<String>(null, null));
+        signInResult.postValue(new DataResult<String>(null, null));
     }
 
     public void signOut() {
@@ -137,12 +140,12 @@ public class UserRepository {
         userAuthenticatedServices.updateInfo(user).enqueue(new Callback<BaseResponse>() {
             @Override
             public void onResponse(Call<BaseResponse> call, Response<BaseResponse> response) {
-                signInResult.postValue(new DataResponse());
+                signInResult.postValue(new DataResult());
             }
 
             @Override
             public void onFailure(Call<BaseResponse> call, Throwable t) {
-                signInResult.postValue(new DataResponse("Please try again later!", null));
+                signInResult.postValue(new DataResult("Please try again later!", null));
             }
         });
     }
@@ -221,6 +224,17 @@ public class UserRepository {
                 callBack.onResult(err, null);
             else
                 callBack.onResult(null, null);
+        });
+    }
+
+    public void getWallet(OnResultCallBack<Wallet> onResultCallBack) {
+        APIServicesHelper<Wallet> apiServicesHelper = new APIServicesHelper<>();
+
+        apiServicesHelper.request(walletServices.getWallet(), (err, result) -> {
+            if (err != null && !err.isEmpty())
+                onResultCallBack.onResult(err, null);
+            else
+                onResultCallBack.onResult(null, result);
         });
     }
 

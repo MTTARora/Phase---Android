@@ -3,6 +3,7 @@ package com.rora.phase.utils.network;
 import com.rora.phase.model.Game;
 import com.rora.phase.model.Host;
 import com.rora.phase.model.User;
+import com.rora.phase.model.Wallet;
 import com.rora.phase.model.api.FindingHostResponse;
 import com.rora.phase.model.api.LoginCredential;
 import com.rora.phase.model.api.LoginResponse;
@@ -47,6 +48,11 @@ public interface UserPhaseService {
     @POST("./")
     Call<BaseResponse> updateInfo(@Body User user);
 
+    @GET("./wallet-information")
+    Call<BaseResponse<Wallet>> getWallet();
+
+    //-------------- LIBRARY ---------------
+
     @GET("./favorite")
     Call<BaseResponse<List<Game>>> getFavorites();
 
@@ -62,7 +68,7 @@ public interface UserPhaseService {
     @GET("/recommended")
     Call<BaseResponse<List<Game>>> getRecommended(@Query("page") int page,@Query("page_size") int pageSize);
 
-    //------- PLAY APIs --------
+    //---------- PLAY ----------
 
     @GET("./play/available-host")
     Call<BaseResponse<FindingHostResponse>> getAvailableHost(@Query("deviceId") String deviceId, @Query("deviceName") String deviceName, @Query("gameId") String gameId);

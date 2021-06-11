@@ -84,13 +84,13 @@
             app:layout_constraintTop_toBottomOf="@id/frame_user_avatar">
 
             <TextView
-                android:id="@+id/payment_title_settings_tv"
+                android:id="@+id/wallet_title_settings_tv"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:gravity="center|start"
                 android:paddingVertical="@dimen/normal_space"
-                android:text="@string/payment_title"
+                android:text="@string/wallet_title"
                 android:textColor="@color/colorText"
                 android:textSize="@dimen/sub_title_text_size"
                 android:textStyle="bold"
