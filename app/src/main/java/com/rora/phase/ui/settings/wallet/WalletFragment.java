@@ -79,6 +79,7 @@ public class WalletFragment extends BaseFragment {
 
         activityLnv.stopLoading(getString(R.string.nothing_here_msg));
         userViewModel.getWallet();
+        userViewModel.getTransactions();
     }
 
 }

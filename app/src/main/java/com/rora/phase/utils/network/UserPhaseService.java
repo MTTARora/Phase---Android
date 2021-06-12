@@ -1,14 +1,13 @@
 package com.rora.phase.utils.network;
 
 import com.rora.phase.model.Game;
-import com.rora.phase.model.Host;
 import com.rora.phase.model.Transaction;
 import com.rora.phase.model.User;
 import com.rora.phase.model.Wallet;
 import com.rora.phase.model.api.FindingHostResponse;
 import com.rora.phase.model.api.LoginCredential;
 import com.rora.phase.model.api.LoginResponse;
-import com.rora.phase.model.api.PinConfirmBody;
+import com.rora.phase.model.api.PinConfirmData;
 import com.rora.phase.model.api.PrepareAppModel;
 import com.rora.phase.model.api.SignUpCredential;
 
@@ -16,11 +15,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.DELETE;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
-import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
@@ -81,7 +76,7 @@ public interface UserPhaseService {
     Call<BaseResponse<FindingHostResponse>> getAvailableHost(@Query("deviceId") String deviceId, @Query("deviceName") String deviceName, @Query("gameId") String gameId);
 
     @POST("./play/confirm-pin")
-    Call<BaseResponse> sendPinToHost(@Body PinConfirmBody confirmData);
+    Call<BaseResponse> sendPinToHost(@Body PinConfirmData confirmData);
 
     @POST("./play/prepare-app")
     Call<BaseResponse<String>> prepareApp(@Body PrepareAppModel data);

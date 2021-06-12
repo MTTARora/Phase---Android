@@ -13,7 +13,7 @@ import com.rora.phase.model.Wallet;
 import com.rora.phase.model.api.FindingHostResponse;
 import com.rora.phase.model.api.LoginCredential;
 import com.rora.phase.model.api.LoginResponse;
-import com.rora.phase.model.api.PinConfirmBody;
+import com.rora.phase.model.api.PinConfirmData;
 import com.rora.phase.model.api.PrepareAppModel;
 import com.rora.phase.model.api.SignUpCredential;
 import com.rora.phase.nvstream.http.ComputerDetails;
@@ -209,7 +209,7 @@ public class UserRepository {
     public void sendPinToHost(String pinStr, OnResultCallBack<ComputerDetails> callBack) {
         APIServicesHelper apiHelper = new APIServicesHelper<>();
 
-        apiHelper.request(userAuthenticatedServices.sendPinToHost(new PinConfirmBody(pinStr)), (err, data) -> {
+        apiHelper.request(userAuthenticatedServices.sendPinToHost(new PinConfirmData(pinStr)), (err, data) -> {
             if (err != null)
                 callBack.onResult(err, null);
             else
