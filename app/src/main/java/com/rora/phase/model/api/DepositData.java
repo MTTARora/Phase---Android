@@ -4,13 +4,13 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class DepositData {
-    @SerializedName("product")
+    @SerializedName("productId")
     @Expose
     public int product;
     @SerializedName("cash")
     @Expose
     public double amount;
-    @SerializedName("type")
+    @SerializedName("typeId")
     @Expose
     public int type;
 

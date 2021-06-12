@@ -13,29 +13,173 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
+    <!--<EditText-->
+    <!--    android:id="@+id/deposit_amount_edt"-->
+    <!--    android:layout_width="match_parent"-->
+    <!--    android:layout_height="wrap_content"-->
+    <!--    android:hint="@string/amount_txt"-->
+    <!--    android:layout_marginHorizontal="@dimen/normal_space"-->
+    <!--    app:layout_constraintTop_toBottomOf="@id/toolbar"-->
+    <!--    android:drawableStart="@drawable/ic_dollar_symbol"-->
+    <!--    android:background="shape"-->
+    <!--    android:inputType="numberDecimal"/>-->
+
+    <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/deposit_amount_edt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/amount_txt"
         android:layout_marginHorizontal="@dimen/normal_space"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
-        android:inputType="numberDecimal"/>
+        android:backgroundTint="@color/colorText"
+        android:drawableStart="@drawable/ic_dollar_symbol"
+        android:drawablePadding="@dimen/medium_space"
+        android:gravity="center_vertical"
+        android:hint="@string/amount_txt"
+        android:inputType="numberDecimal"
+        android:paddingBottom="@dimen/max_space"
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
+    <!--BUTTONS-->
+    <LinearLayout
+        android:id="@+id/frame_deposit_options"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/normal_space"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/normal_space"
+        app:layout_constraintTop_toBottomOf="@id/deposit_amount_edt">
+
+        <Button
+            android:id="@+id/one_dollar_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/medium_space"
+            android:layout_weight="1"
+            android:background="@drawable/shape_corner_light_bg"
+            android:text="1$"
+            android:textAllCaps="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/ten_dollar_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/medium_space"
+            android:layout_weight="1"
+            android:background="@drawable/shape_corner_light_bg"
+            android:text="10$"
+            android:textAllCaps="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/one_hundred_dollar_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/shape_corner_light_bg"
+            android:text="100$"
+            android:textAllCaps="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/frame_payment_options"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/normal_space"
+        android:layout_marginTop="@dimen/maxxxx_space"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/frame_deposit_options">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/min_space"
+            android:text="@string/payment_method_title"
+            android:textColor="@color/colorText"
+            android:textSize="@dimen/title_text_size"
+            android:textStyle="bold" />
+
+        <RadioGroup
+            android:id="@+id/options_sort_by_filter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/medium_space"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@id/resolution_settings_desc">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_corner_light_bg">
+
+                <RadioButton
+                    android:id="@+id/poli_method_options_cb"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:button="@null"
+                    android:buttonTint="@color/colorPrimary"
+                    android:drawableEnd="?android:attr/listChoiceIndicatorSingle"
+                    android:paddingVertical="@dimen/normal_space"
+                    android:paddingEnd="@dimen/normal_space"
+                    android:paddingStart="@dimen/medium_space"
+                    android:text="POLi"
+                    android:textColor="@color/colorText"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/logo_poli_payment_imv"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:checked="true"
+                    android:drawableTint="@color/colorPrimary"/>
+
+                <carbon.widget.ImageView
+                    android:id="@+id/logo_poli_payment_imv"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:background="@color/white"
+                    android:padding="@dimen/normal_space"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/ic_poli_payment"
+                    app:carbon_cornerRadiusTopStart="@dimen/medium_radius"
+                    app:carbon_cornerRadiusBottomStart="@dimen/medium_radius"
+                    app:carbon_cornerRadiusTopEnd="@dimen/maxxx_radius"
+                    app:carbon_cornerRadiusBottomEnd="@dimen/maxxx_radius"
+                    app:layout_constraintBottom_toBottomOf="@id/poli_method_options_cb"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/poli_method_options_cb"
+                    app:layout_constraintWidth_percent=".2" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </RadioGroup>
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/confirm_deposit_btn"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/normal_space"
+        android:layout_marginBottom="@dimen/normal_space"
+        android:background="@drawable/shape_corner_primary_color"
+        android:focusable="false"
         android:text="@string/deposit"
         android:textAllCaps="false"
-        app:layout_constraintEnd_toEndOf="@id/deposit_amount_edt"
-        app:layout_constraintTop_toBottomOf="@id/deposit_amount_edt" />
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
     <WebView
         android:id="@+id/deposit_wv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:translationZ="@dimen/normal_space"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

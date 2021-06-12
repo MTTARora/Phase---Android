@@ -54,7 +54,7 @@ class TransactionVH extends BaseRVViewHolder<Transaction> {
 
     private TextView tvAmount;
     private TextView tvId;
-    private TextView tvDate;
+    private TextView tvDate, tvState;
 
     public TransactionVH(@NonNull View itemView) {
         super(itemView);
@@ -62,13 +62,15 @@ class TransactionVH extends BaseRVViewHolder<Transaction> {
         tvAmount = itemView.findViewById(R.id.amount_transaction_item_tv);
         tvId = itemView.findViewById(R.id.id_transaction_item_tv);
         tvDate = itemView.findViewById(R.id.date_transaction_item_tv);
+        tvState = itemView.findViewById(R.id.state_transaction_item_tv);
     }
 
     @Override
     public void bindData(Transaction data) {
-        tvAmount.setText(String.valueOf(data.getCash()));
-        tvId.setText(data.getId());
-        tvDate.setText(DateTimeHelper.format(data.getDate()));
+        tvAmount.setText(data.getAmount() + "$");
+        tvId.setText("#" + data.getId());
+        tvDate.setText(DateTimeHelper.formatIncludeTime(data.getDate()));
+        tvState.setText(data.getState());
     }
 
 }

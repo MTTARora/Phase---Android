@@ -14,6 +14,7 @@ import com.rora.phase.model.Game;
 import com.rora.phase.model.Transaction;
 import com.rora.phase.model.User;
 import com.rora.phase.model.Wallet;
+import com.rora.phase.model.api.DepositData;
 import com.rora.phase.model.api.LoginCredential;
 import com.rora.phase.model.api.SignUpCredential;
 import com.rora.phase.repository.UserRepository;
@@ -254,7 +255,7 @@ public class UserViewModel extends AndroidViewModel {
         });
     }
 
-    public void deposit(String amount, OnResultCallBack<String> onResultCallBack) {
+    public void deposit(String amount, int productId, int type, OnResultCallBack<String> onResultCallBack) {
         double amountD = Double.parseDouble(amount);
 
         if (amountD == 0) {
@@ -262,7 +263,7 @@ public class UserViewModel extends AndroidViewModel {
             return;
         }
 
-        userRepository.deposit(amountD, (errMsg, data) -> {
+        userRepository.deposit(new DepositData(productId, amountD, type), (errMsg, data) -> {
             if (errMsg != null && !errMsg.isEmpty())
                 onResultCallBack.onResult(errMsg, null);
             else

@@ -3,6 +3,7 @@ package com.rora.phase.utils.ui;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -23,6 +24,7 @@ import com.rora.phase.utils.services.PlayServicesMessageSender;
 
 import javax.annotation.Nullable;
 
+import static android.content.Context.INPUT_METHOD_SERVICE;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
@@ -205,6 +207,12 @@ public abstract class BaseFragment extends Fragment {
             ((MainActivity) getActivity()).updateQueueVisibility(VISIBLE, GONE);
         else
             ((MainActivity) getActivity()).updateQueueVisibility(GONE, VISIBLE);
+    }
+
+    protected void hideSoftKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);
+        if (getActivity().getCurrentFocus() != null)
+            imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
     }
 
 }

@@ -344,5 +344,6 @@
     <string name="play_title">Play</string>
     <string name="wallet_balance_txt">Wallet Balance</string>
     <string name="activity_title">Activity</string>
+    <string name="payment_method_title">Pay with</string>
 
 </resources>

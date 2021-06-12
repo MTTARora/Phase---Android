@@ -11,6 +11,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.rora.phase.R;
 import com.rora.phase.model.Transaction;
@@ -23,6 +24,7 @@ import java.util.List;
 
 public class WalletFragment extends BaseFragment {
 
+    private SwipeRefreshLayout swipeRefreshLayout;
     private TextView balanceTv;
     private ListWithNotifyView activityLnv;
 
@@ -53,11 +55,17 @@ public class WalletFragment extends BaseFragment {
     private void setupView(View root) {
         showActionbar(root, null, true, null);
 
+        ((SwipeRefreshLayout)root.findViewById(R.id.refresh_layout_wallet)).setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getData();
+                ((SwipeRefreshLayout)root.findViewById(R.id.refresh_layout_wallet)).setRefreshing(false);
+            }
+        });
         activityLnv.setupList(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false), new TransactionAdapter());
     }
 
     private void initData() {
-        showLoadingScreen();
         userViewModel.getWalletResult().observe(getViewLifecycleOwner(), walletDataResult -> {
             if (walletDataResult.getMsg() != null && !walletDataResult.getMsg().isEmpty()) {
                 hideLoadingScreen();
@@ -78,6 +86,11 @@ public class WalletFragment extends BaseFragment {
         });
 
         activityLnv.stopLoading(getString(R.string.nothing_here_msg));
+        getData();
+    }
+
+    private void getData() {
+        showLoadingScreen();
         userViewModel.getWallet();
         userViewModel.getTransactions();
     }

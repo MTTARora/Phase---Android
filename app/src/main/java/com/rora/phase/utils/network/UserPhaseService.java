@@ -4,6 +4,7 @@ import com.rora.phase.model.Game;
 import com.rora.phase.model.Transaction;
 import com.rora.phase.model.User;
 import com.rora.phase.model.Wallet;
+import com.rora.phase.model.api.DepositData;
 import com.rora.phase.model.api.FindingHostResponse;
 import com.rora.phase.model.api.LoginCredential;
 import com.rora.phase.model.api.LoginResponse;
@@ -51,7 +52,7 @@ public interface UserPhaseService {
     Call<BaseResponse<List<Transaction>>> getTransactions();
 
     @POST("./deposit")
-    Call<BaseResponse<String>> deposit(@Body Double amount);
+    Call<BaseResponse<String>> deposit(@Body DepositData data);
 
     //-------------- LIBRARY ---------------
 

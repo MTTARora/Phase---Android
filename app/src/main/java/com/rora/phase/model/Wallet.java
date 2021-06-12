@@ -26,7 +26,7 @@ public class Wallet {
     }
 
     public String getCash() {
-        return cash == null ? "0" : cash;
+        return cash == null ? "0.00" : cash;
     }
 
     public void setCash(String cash) {

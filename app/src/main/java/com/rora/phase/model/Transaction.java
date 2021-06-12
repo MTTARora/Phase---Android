@@ -7,12 +7,15 @@ public class Transaction {
     @SerializedName("transactionId")
     @Expose
     private String id;
-    @SerializedName("cash")
+    @SerializedName("total")
     @Expose
-    private double cash;
-    @SerializedName("date")
+    private double amount;
+    @SerializedName("paymentDate")
     @Expose
     private String date;
+    @SerializedName("state")
+    @Expose
+    private String state;
 
     public String getId() {
         return id;
@@ -22,12 +25,12 @@ public class Transaction {
         this.id = id;
     }
 
-    public double getCash() {
-        return cash;
+    public double getAmount() {
+        return amount;
     }
 
-    public void setCash(double cash) {
-        this.cash = cash;
+    public void setAmount(double amount) {
+        this.amount = amount;
     }
 
     public String getDate() {
@@ -36,5 +39,13 @@ public class Transaction {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 }

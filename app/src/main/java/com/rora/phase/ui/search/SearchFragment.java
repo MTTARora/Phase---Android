@@ -196,10 +196,9 @@ public class SearchFragment extends BaseFragment {
         searchViewModel.getTagListData();
     }
 
-    private void hideSoftKeyboard() {
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);
-        if (getActivity().getCurrentFocus() != null)
-            imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+    @Override
+    protected void hideSoftKeyboard() {
+        super.hideSoftKeyboard();
         searchView.clearFocus();
     }
 

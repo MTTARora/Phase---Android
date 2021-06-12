@@ -10,6 +10,7 @@ import com.rora.phase.model.Transaction;
 import com.rora.phase.model.User;
 import com.rora.phase.model.UserPlayingData;
 import com.rora.phase.model.Wallet;
+import com.rora.phase.model.api.DepositData;
 import com.rora.phase.model.api.FindingHostResponse;
 import com.rora.phase.model.api.LoginCredential;
 import com.rora.phase.model.api.LoginResponse;
@@ -250,18 +251,17 @@ public class UserRepository {
         });
     }
 
-    public void deposit(Double amount, OnResultCallBack<String> onResultCallBack) {
-
+    public void deposit(DepositData data, OnResultCallBack<String> onResultCallBack) {
         APIServicesHelper<String> apiServicesHelper = new APIServicesHelper<>();
 
-        //apiServicesHelper.request(userAuthenticatedServices.deposit(amount), (err, result) -> {
-        //    if (err != null && !err.isEmpty())
-        //        onResultCallBack.onResult(err, null);
-        //    else
-        //        onResultCallBack.onResult(null, result);
-        //});
-        onResultCallBack.onResult(null, "https://developer.android.com/guide/webapps/webview");
+        apiServicesHelper.request(walletServices.deposit(data), (err, result) -> {
+            if (err != null && !err.isEmpty())
+                onResultCallBack.onResult(err, null);
+            else
+                onResultCallBack.onResult(null, result);
+        });
 
+        //onResultCallBack.onResult(null, "https://developer.android.com/guide/webapps/webview");
     }
 
     //----------------------------------------------------------------------------------------
