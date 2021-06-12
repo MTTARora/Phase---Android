@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.rora.phase.utils.callback.OnItemSelectedListener;
 
-public abstract class BaseRVViewHolder extends RecyclerView.ViewHolder {
+public abstract class BaseRVViewHolder<T> extends RecyclerView.ViewHolder {
 
     protected OnItemSelectedListener onItemSelectedListener;
     protected OnItemSelectedListener onChildItemClickListener;
@@ -24,7 +24,7 @@ public abstract class BaseRVViewHolder extends RecyclerView.ViewHolder {
         this.onChildItemClickListener = onChildItemClickListener;
     }
 
-    public <T> void bindData(T data) {
+    public void bindData(T data) {
 
     }
 

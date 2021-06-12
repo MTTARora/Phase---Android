@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
 import com.rora.phase.model.Game;
+import com.rora.phase.model.Transaction;
 import com.rora.phase.model.User;
 import com.rora.phase.model.UserPlayingData;
 import com.rora.phase.model.Wallet;
@@ -235,6 +236,17 @@ public class UserRepository {
                 onResultCallBack.onResult(err, null);
             else
                 onResultCallBack.onResult(null, result);
+        });
+    }
+
+    public void getTransactions(OnResultCallBack<List<Transaction>> resultCallBack) {
+        APIServicesHelper<List<Transaction>> apiServicesHelper = new APIServicesHelper<>();
+
+        apiServicesHelper.request(walletServices.getTransactions(), (err, result) -> {
+            if (err != null && !err.isEmpty())
+                resultCallBack.onResult(err, null);
+            else
+                resultCallBack.onResult(null, result);
         });
     }
 

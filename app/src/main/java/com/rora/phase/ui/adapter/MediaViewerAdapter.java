@@ -67,7 +67,7 @@ public class MediaViewerAdapter extends BaseRVAdapter {
 
 }
 
-class MediaViewerVH extends BaseRVViewHolder {
+class MediaViewerVH extends BaseRVViewHolder<MediaImage> {
 
     private ImageView imageView;
 
@@ -78,8 +78,8 @@ class MediaViewerVH extends BaseRVViewHolder {
     }
 
     @Override
-    public <T> void bindData(T data) {
-        MediaHelper.loadImage(imageView, ((MediaImage)data).getAvailableLink(Media.Quality.MEDIUM));
+    public void bindData(MediaImage data) {
+        MediaHelper.loadImage(imageView, data.getAvailableLink(Media.Quality.MEDIUM));
     }
 
 }

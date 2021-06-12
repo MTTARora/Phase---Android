@@ -69,7 +69,7 @@ public class SettingsFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
 
-        updateData();
+        initData();
     }
 
     private void setupViews() {

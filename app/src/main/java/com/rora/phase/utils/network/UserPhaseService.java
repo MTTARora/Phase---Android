@@ -2,6 +2,7 @@ package com.rora.phase.utils.network;
 
 import com.rora.phase.model.Game;
 import com.rora.phase.model.Host;
+import com.rora.phase.model.Transaction;
 import com.rora.phase.model.User;
 import com.rora.phase.model.Wallet;
 import com.rora.phase.model.api.FindingHostResponse;
@@ -51,6 +52,12 @@ public interface UserPhaseService {
     @GET("./wallet-information")
     Call<BaseResponse<Wallet>> getWallet();
 
+    @GET("./transactions")
+    Call<BaseResponse<List<Transaction>>> getTransactions();
+
+    @POST("./deposit")
+    Call<BaseResponse<String>> deposit(@Body Double amount);
+
     //-------------- LIBRARY ---------------
 
     @GET("./favorite")
@@ -78,7 +85,4 @@ public interface UserPhaseService {
 
     @POST("./play/prepare-app")
     Call<BaseResponse<String>> prepareApp(@Body PrepareAppModel data);
-
-    @POST("./deposit")
-    Call<BaseResponse<String>> deposit(@Body Double amount);
 }

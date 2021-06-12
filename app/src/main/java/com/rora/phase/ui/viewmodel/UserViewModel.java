@@ -11,6 +11,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.google.gson.Gson;
 import com.rora.phase.R;
 import com.rora.phase.model.Game;
+import com.rora.phase.model.Transaction;
 import com.rora.phase.model.User;
 import com.rora.phase.model.Wallet;
 import com.rora.phase.model.api.LoginCredential;
@@ -38,6 +39,7 @@ public class UserViewModel extends AndroidViewModel {
     private MutableLiveData<List<Game>> recentPlayList;
     private MutableLiveData<Boolean> triggerLoginListener;
     private MutableLiveData<DataResult<Wallet>> walletResult;
+    private MutableLiveData<DataResult<List<Transaction>>> transactionsResult;
 
     public UserViewModel(@NonNull Application application) {
         super(application);
@@ -55,6 +57,7 @@ public class UserViewModel extends AndroidViewModel {
         triggerLoginListener = new MutableLiveData<>();
         updateFavoriteResult = new MutableLiveData<>();
         walletResult = new MutableLiveData<>();
+        transactionsResult = new MutableLiveData<>();
     }
 
     //-------------------GET/SET--------------------
@@ -101,6 +104,10 @@ public class UserViewModel extends AndroidViewModel {
 
     public MutableLiveData<DataResult<Wallet>> getWalletResult() {
         return walletResult;
+    }
+
+    public MutableLiveData<DataResult<List<Transaction>>> getTransactionsResult() {
+        return transactionsResult;
     }
 
     //----------------------------------------------
@@ -230,7 +237,20 @@ public class UserViewModel extends AndroidViewModel {
                 if (err.equals("401"))
                     triggerLogin();
             }
+
             walletResult.setValue(result);
+        });
+    }
+
+    public void getTransactions() {
+        userRepository.getTransactions((err, transactions) -> {
+            DataResult<List<Transaction>> result = new DataResult<>(err, transactions);
+            if (err != null && !err.isEmpty()) {
+                if (err.equals("401"))
+                    triggerLogin();
+            }
+
+            transactionsResult.setValue(result);
         });
     }
 

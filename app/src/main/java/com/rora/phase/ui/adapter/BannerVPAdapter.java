@@ -70,7 +70,7 @@ public class BannerVPAdapter extends BaseRVAdapter {
     }
 }
 
-class BannerViewHolder extends BaseRVViewHolder {
+class BannerViewHolder extends BaseRVViewHolder<Banner> {
 
     private ImageView bannerImv;
 
@@ -81,9 +81,9 @@ class BannerViewHolder extends BaseRVViewHolder {
     }
 
     @Override
-    public <T> void bindData(T data) {
+    public void bindData(Banner data) {
 
-        MediaHelper.loadImage(bannerImv, ((Banner)data).getAvailableLink(Media.Quality.LOW));
+        MediaHelper.loadImage(bannerImv, data.getAvailableLink(Media.Quality.LOW));
     }
 
 }

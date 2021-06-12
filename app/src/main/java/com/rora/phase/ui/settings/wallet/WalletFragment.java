@@ -7,12 +7,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.rora.phase.R;
+import com.rora.phase.model.Transaction;
 import com.rora.phase.ui.viewmodel.UserViewModel;
+import com.rora.phase.utils.DataResult;
 import com.rora.phase.utils.ui.BaseFragment;
 import com.rora.phase.utils.ui.ListWithNotifyView;
+
+import java.util.List;
 
 public class WalletFragment extends BaseFragment {
 
@@ -45,6 +52,8 @@ public class WalletFragment extends BaseFragment {
 
     private void setupView(View root) {
         showActionbar(root, null, true, null);
+
+        activityLnv.setupList(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false), new TransactionAdapter());
     }
 
     private void initData() {
@@ -57,6 +66,15 @@ public class WalletFragment extends BaseFragment {
 
             balanceTv.setText(walletDataResult.getData().getCash() + "$");
             hideLoadingScreen();
+        });
+
+        userViewModel.getTransactionsResult().observe(getViewLifecycleOwner(), data -> {
+            if (data.getMsg() != null && !data.getMsg().isEmpty()) {
+                hideLoadingScreen();
+                return;
+            }
+
+            activityLnv.getAdapter(true, data.getData()).bindData(data.getData());
         });
 
         activityLnv.stopLoading(getString(R.string.nothing_here_msg));
