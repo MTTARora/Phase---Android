@@ -10,6 +10,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -57,6 +58,13 @@ public class MediaViewerActivity extends AppCompatActivity {
         super.onConfigurationChanged(newConfig);
         mediaViewerVp.setAdapter(new MediaViewerAdapter(mediaImageList, 0));
         mediaViewerVp.setCurrentItem(currentPosition);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home)
+            onBackPressed();
+        return true;
     }
 
     private void setupViews() {
