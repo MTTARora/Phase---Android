@@ -141,7 +141,7 @@ public class PaymentFragment extends BaseFragment {
                                         .addHeader("Authorization", "Bearer " + SharedPreferencesHelper.newInstance(getContext()).getUserToken())
                                         .build();
                                 Response response = okHttpClient.newCall(request).execute();
-                                return new WebResourceResponse(response.header("text/html", response.body().contentType().type()), // You can set something other as default content-type
+                                return new WebResourceResponse(response.header("text/html", "application/json"), // You can set something other as default content-type
                                         response.header("content-encoding", "utf-8"),  // Again, you can set another encoding as default
                                         response.body().byteStream());
                             } catch (IOException e) {
