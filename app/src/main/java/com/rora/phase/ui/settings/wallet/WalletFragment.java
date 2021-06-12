@@ -20,6 +20,7 @@ import com.rora.phase.utils.DataResult;
 import com.rora.phase.utils.ui.BaseFragment;
 import com.rora.phase.utils.ui.ListWithNotifyView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class WalletFragment extends BaseFragment {
@@ -52,6 +53,12 @@ public class WalletFragment extends BaseFragment {
             getActivity().onBackPressed();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        userViewModel.getTransactionsResult().setValue(new DataResult<>(null, new ArrayList<>()));
+    }
+
     private void setupView(View root) {
         showActionbar(root, null, true, null);
 
@@ -79,6 +86,7 @@ public class WalletFragment extends BaseFragment {
         userViewModel.getTransactionsResult().observe(getViewLifecycleOwner(), data -> {
             if (data.getMsg() != null && !data.getMsg().isEmpty()) {
                 hideLoadingScreen();
+                activityLnv.stopLoading(getString(R.string.undetected_error_from_server));
                 return;
             }
 
