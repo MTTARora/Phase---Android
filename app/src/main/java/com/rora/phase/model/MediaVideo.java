@@ -85,11 +85,11 @@ public class MediaVideo extends Media {
 
         switch (quality) {
             case LOW:
-                if (!get_640x360().isEmpty())
-                    return get_640x360();
-
                 if (!get_320x180().isEmpty())
                     return get_320x180();
+
+                if (!get_640x360().isEmpty())
+                    return get_640x360();
 
                 if (!get_854x480().isEmpty())
                     return get_854x480();
