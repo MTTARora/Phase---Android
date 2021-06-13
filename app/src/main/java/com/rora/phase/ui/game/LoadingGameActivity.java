@@ -217,7 +217,7 @@ public class LoadingGameActivity extends FragmentActivity {
     }
 
     private void stopConnect() {
-        new Thread(() -> managerBinder.stopConnect(playProgressCallBack)).start();
+        //new Thread(() -> managerBinder.stopConnect(playProgressCallBack)).start();
         unbindService(serviceConnection);
     }
 

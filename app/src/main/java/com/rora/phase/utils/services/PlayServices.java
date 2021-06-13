@@ -562,7 +562,7 @@ public class PlayServices extends Service {
     }
 
     private void stopNvdiaConnect() {
-        if (pollingTuple.computer == null)
+        if (pollingTuple == null || pollingTuple.computer == null)
             return;
         new Thread(() -> {
             try {
