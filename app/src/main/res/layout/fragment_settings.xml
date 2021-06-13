@@ -93,16 +93,16 @@
 
                 <TextView
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:clickable="false"
-                    android:drawablePadding="@dimen/normal_space"
                     android:gravity="center|start"
                     android:text="@string/wallet_title"
                     android:textColor="@color/colorText"
                     android:textSize="@dimen/sub_title_text_size"
                     android:textStyle="bold"
-                    app:drawableStartCompat="?attr/actionModeCopyDrawable" />
+                    android:drawablePadding="@dimen/normal_space"
+                    app:drawableStartCompat="@drawable/ic_wallet" />
 
                 <TextView
                     android:id="@+id/wallet_title_settings_tv"

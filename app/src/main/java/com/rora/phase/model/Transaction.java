@@ -32,7 +32,7 @@ public class Transaction {
     }
 
     public String getAmountInString() {
-        return (new DecimalFormat("#.00")).format(amount);
+        return (new DecimalFormat("0.00")).format(amount);
     }
 
     public void setAmount(double amount) {

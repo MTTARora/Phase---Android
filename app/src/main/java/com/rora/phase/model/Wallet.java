@@ -32,7 +32,7 @@ public class Wallet {
     }
 
     public String getCashInString() {
-        return (new DecimalFormat("#.00")).format(cash);
+        return (new DecimalFormat("0.00")).format(cash);
     }
 
     public void setCash(double cash) {

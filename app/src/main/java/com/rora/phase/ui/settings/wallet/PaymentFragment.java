@@ -107,9 +107,9 @@ public class PaymentFragment extends BaseFragment {
         });
 
         root.findViewById(R.id.confirm_deposit_btn).setOnClickListener(v -> deposit());
-        root.findViewById(R.id.one_dollar_btn).setOnClickListener(v -> amountEdt.setText("1"));
-        root.findViewById(R.id.ten_dollar_btn).setOnClickListener(v -> amountEdt.setText("10"));
-        root.findViewById(R.id.one_hundred_dollar_btn).setOnClickListener(v -> amountEdt.setText("100"));
+        root.findViewById(R.id.one_dollar_btn).setOnClickListener(v -> amountEdt.setText("1.00"));
+        root.findViewById(R.id.ten_dollar_btn).setOnClickListener(v -> amountEdt.setText("10.00"));
+        root.findViewById(R.id.one_hundred_dollar_btn).setOnClickListener(v -> amountEdt.setText("100.00"));
 
         root.setOnClickListener(v -> {
             hideSoftKeyboard();
@@ -125,13 +125,14 @@ public class PaymentFragment extends BaseFragment {
         String amount = amountEdt.getText().toString();
 
         if (!amount.isEmpty())
+            showLoadingScreen();
             userViewModel.deposit(amount, 1, poliMethod.isChecked() ? 4 : 4, (errMsg, data) -> {
                 if (errMsg != null && !errMsg.isEmpty()) {
                     webView.setVisibility(View.GONE);
                     Toast.makeText(getContext(), errMsg, Toast.LENGTH_LONG).show();
                 }
                 else {
-
+                    hideLoadingScreen();
                     webView.setVisibility(View.VISIBLE);
                     webView.setWebViewClient(new WebViewClient() {
                         public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest webResourceRequest) {
