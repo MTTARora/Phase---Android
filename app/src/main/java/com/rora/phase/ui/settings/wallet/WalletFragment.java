@@ -79,7 +79,7 @@ public class WalletFragment extends BaseFragment {
                 return;
             }
 
-            balanceTv.setText(walletDataResult.getData().getCash() + "$");
+            balanceTv.setText(walletDataResult.getData().getCashInString() + "$");
             hideLoadingScreen();
         });
 

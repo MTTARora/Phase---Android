@@ -3,13 +3,15 @@ package com.rora.phase.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.text.DecimalFormat;
+
 public class Wallet {
     @SerializedName("walletId")
     @Expose
     private String id;
     @SerializedName("cash")
     @Expose
-    private String cash;
+    private double cash;
     @SerializedName("totalCredit")
     @Expose
     private String totalCredit;
@@ -25,11 +27,15 @@ public class Wallet {
         this.id = id;
     }
 
-    public String getCash() {
-        return cash == null ? "0.00" : cash;
+    public double getCash() {
+        return cash;
     }
 
-    public void setCash(String cash) {
+    public String getCashInString() {
+        return (new DecimalFormat("#.00")).format(cash);
+    }
+
+    public void setCash(double cash) {
         this.cash = cash;
     }
 

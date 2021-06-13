@@ -58,7 +58,7 @@ public class SettingsFragment extends BaseFragment {
             startActivity(intent);
         });
 
-        root.findViewById(R.id.wallet_title_settings_tv).setOnClickListener(v -> moveTo(new WalletFragment(), WalletFragment.class.getSimpleName(), false));
+        root.findViewById(R.id.frame_wallet_settings_tv).setOnClickListener(v -> moveTo(new WalletFragment(), WalletFragment.class.getSimpleName(), false));
 
         setupViews();
         initData();
@@ -88,7 +88,7 @@ public class SettingsFragment extends BaseFragment {
         userViewModel.getWalletResult().observe(getViewLifecycleOwner(), result -> {
             Wallet wallet = result.getData();
             if (wallet != null)
-                walletTv.setText(getText(R.string.wallet_title) + ": " + wallet.getCash() + "$");
+                walletTv.setText(wallet.getCashInString() + "$");
 
             hideLoadingScreen();
         });

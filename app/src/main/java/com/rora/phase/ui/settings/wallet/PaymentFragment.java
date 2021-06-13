@@ -99,6 +99,7 @@ public class PaymentFragment extends BaseFragment {
 
         amountEdt.setOnKeyListener((v, keyCode, event) -> {
             if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+                hideSoftKeyboard();
                 amountEdt.clearFocus();
                 return true;
             }

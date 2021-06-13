@@ -3,6 +3,8 @@ package com.rora.phase.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.text.DecimalFormat;
+
 public class Transaction {
     @SerializedName("transactionId")
     @Expose
@@ -27,6 +29,10 @@ public class Transaction {
 
     public double getAmount() {
         return amount;
+    }
+
+    public String getAmountInString() {
+        return (new DecimalFormat("#.00")).format(amount);
     }
 
     public void setAmount(double amount) {

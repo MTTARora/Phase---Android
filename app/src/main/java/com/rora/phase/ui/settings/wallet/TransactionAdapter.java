@@ -67,7 +67,7 @@ class TransactionVH extends BaseRVViewHolder<Transaction> {
 
     @Override
     public void bindData(Transaction data) {
-        tvAmount.setText(data.getAmount() + "$");
+        tvAmount.setText(data.getAmountInString() + "$");
         tvId.setText("#" + data.getId());
         tvDate.setText(DateTimeHelper.formatIncludeTime(data.getDate()));
         tvState.setText(data.getState());

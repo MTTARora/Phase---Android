@@ -78,24 +78,43 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/normal_space"
-            android:paddingHorizontal="@dimen/normal_space"
-            android:orientation="vertical"
             android:background="@color/colorAccent"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/normal_space"
             app:layout_constraintTop_toBottomOf="@id/frame_user_avatar">
 
-            <TextView
-                android:id="@+id/wallet_title_settings_tv"
+            <LinearLayout
+                android:id="@+id/frame_wallet_settings_tv"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:gravity="center|start"
-                android:paddingVertical="@dimen/normal_space"
-                android:text="@string/wallet_title"
-                android:textColor="@color/colorText"
-                android:textSize="@dimen/sub_title_text_size"
-                android:textStyle="bold"
-                android:drawablePadding="@dimen/normal_space"
-                app:drawableStartCompat="?attr/actionModeCopyDrawable"/>
+                android:orientation="horizontal"
+                android:paddingVertical="@dimen/normal_space">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:clickable="false"
+                    android:drawablePadding="@dimen/normal_space"
+                    android:gravity="center|start"
+                    android:text="@string/wallet_title"
+                    android:textColor="@color/colorText"
+                    android:textSize="@dimen/sub_title_text_size"
+                    android:textStyle="bold"
+                    app:drawableStartCompat="?attr/actionModeCopyDrawable" />
+
+                <TextView
+                    android:id="@+id/wallet_title_settings_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:clickable="false"
+                    android:gravity="center|start"
+                    android:text="--"
+                    android:textColor="@color/colorText"
+                    android:textSize="@dimen/title_text_size"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
@@ -107,14 +126,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:drawablePadding="@dimen/normal_space"
                 android:gravity="center|start"
                 android:paddingVertical="@dimen/normal_space"
                 android:text="@string/two_fa_title"
                 android:textColor="@color/colorText"
                 android:textSize="@dimen/sub_title_text_size"
                 android:textStyle="bold"
-                android:drawablePadding="@dimen/normal_space"
-                app:drawableStartCompat="?android:attr/fingerprintAuthDrawable"/>
+                app:drawableStartCompat="?android:attr/fingerprintAuthDrawable" />
 
             <View
                 android:layout_width="match_parent"
@@ -126,14 +145,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:drawablePadding="@dimen/normal_space"
                 android:gravity="center|start"
                 android:paddingVertical="@dimen/normal_space"
                 android:text="@string/social_title"
                 android:textColor="@color/colorText"
                 android:textSize="@dimen/sub_title_text_size"
                 android:textStyle="bold"
-                android:drawablePadding="@dimen/normal_space"
-                app:drawableStartCompat="@android:drawable/stat_notify_chat"/>
+                app:drawableStartCompat="@android:drawable/stat_notify_chat" />
 
         </LinearLayout>
 
@@ -143,9 +162,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/max_space"
-            android:paddingHorizontal="@dimen/normal_space"
-            android:orientation="vertical"
             android:background="@color/colorAccent"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/normal_space"
             app:layout_constraintTop_toBottomOf="@id/frame_user_settings">
 
             <TextView
@@ -153,14 +172,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:drawablePadding="@dimen/normal_space"
                 android:gravity="center|start"
                 android:paddingVertical="@dimen/normal_space"
                 android:text="@string/notification_title"
                 android:textColor="@color/colorText"
                 android:textSize="@dimen/sub_title_text_size"
                 android:textStyle="bold"
-                android:drawablePadding="@dimen/normal_space"
-                app:drawableStartCompat="@android:drawable/ic_popup_reminder"/>
+                app:drawableStartCompat="@android:drawable/ic_popup_reminder" />
 
             <View
                 android:layout_width="match_parent"
@@ -172,14 +191,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:drawablePadding="@dimen/normal_space"
                 android:gravity="center|start"
                 android:paddingVertical="@dimen/normal_space"
                 android:text="@string/parental_title"
                 android:textColor="@color/colorText"
                 android:textSize="@dimen/sub_title_text_size"
                 android:textStyle="bold"
-                android:drawablePadding="@dimen/normal_space"
-                app:drawableStartCompat="@android:drawable/ic_menu_myplaces"/>
+                app:drawableStartCompat="@android:drawable/ic_menu_myplaces" />
 
             <View
                 android:layout_width="match_parent"
@@ -191,14 +210,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:drawablePadding="@dimen/normal_space"
                 android:gravity="center|start"
                 android:paddingVertical="@dimen/normal_space"
                 android:text="@string/game_settings_title"
                 android:textColor="@color/colorText"
                 android:textSize="@dimen/sub_title_text_size"
                 android:textStyle="bold"
-                android:drawablePadding="@dimen/normal_space"
-                app:drawableStartCompat="?attr/actionModeSelectAllDrawable"/>
+                app:drawableStartCompat="?attr/actionModeSelectAllDrawable" />
 
             <View
                 android:layout_width="match_parent"
@@ -210,13 +229,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:drawablePadding="@dimen/normal_space"
                 android:gravity="center|start"
                 android:paddingVertical="@dimen/normal_space"
                 android:text="@string/location_title"
                 android:textColor="@color/colorText"
                 android:textSize="@dimen/sub_title_text_size"
                 android:textStyle="bold"
-                android:drawablePadding="@dimen/normal_space"
                 app:drawableStartCompat="@android:drawable/ic_dialog_map" />
 
             <View
@@ -229,14 +248,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:drawablePadding="@dimen/normal_space"
                 android:gravity="center|start"
                 android:paddingVertical="@dimen/normal_space"
                 android:text="@string/customer_service_title"
                 android:textColor="@color/colorText"
                 android:textSize="@dimen/sub_title_text_size"
                 android:textStyle="bold"
-                android:drawablePadding="@dimen/normal_space"
-                app:drawableStartCompat="@android:drawable/stat_sys_headset"/>
+                app:drawableStartCompat="@android:drawable/stat_sys_headset" />
 
         </LinearLayout>
 
@@ -246,11 +265,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/max_space"
             android:background="@color/colorAccent"
+            android:gravity="start|center"
+            android:paddingHorizontal="@dimen/normal_space"
             android:text="@string/sign_out_text"
             android:textAllCaps="false"
             android:textColor="@color/colorPrimary"
-            android:gravity="start|center"
-            android:paddingHorizontal="@dimen/normal_space"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/frame_app_settings" />
