@@ -217,7 +217,7 @@ public class LoadingGameActivity extends FragmentActivity {
     }
 
     private void stopConnect() {
-        //new Thread(() -> managerBinder.stopConnect(playProgressCallBack)).start();
+        new Thread(() -> managerBinder.stopConnect(playProgressCallBack)).start();
         unbindService(serviceConnection);
     }
 
@@ -235,8 +235,6 @@ public class LoadingGameActivity extends FragmentActivity {
         public void onConnectionEstablished(boolean isSuccess) {
             LoadingGameActivity.this.runOnUiThread(() -> {
                 if (!isSuccess) {
-                    stopConnect();
-                    LoadingGameActivity.this.runOnUiThread(() -> Toast.makeText(getApplicationContext(), getResources().getString(R.string.undetected_error_from_server), Toast.LENGTH_LONG).show());
                     LoadingGameActivity.this.finish();
                     return;
                 }
