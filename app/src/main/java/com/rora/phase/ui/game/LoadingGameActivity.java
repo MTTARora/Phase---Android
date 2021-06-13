@@ -226,7 +226,7 @@ public class LoadingGameActivity extends FragmentActivity {
         @Override
         public void onStart(boolean isDone) {
             LoadingGameActivity.this.runOnUiThread(() -> {
-                tvLoadingProgress.setText(getResources().getString(R.string.getting_data_from_server_play_msg));
+                tvLoadingProgress.setText(getResources().getString(R.string.conn_establishing_title));
                 pbLoadingProgress.setProgress(isDone ? 1 : 2);
             });
         }

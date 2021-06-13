@@ -81,7 +81,7 @@
     <string name="check_ports_msg">Check your firewall and port forwarding rules for port(s):</string>
 
     <!-- Start application messages -->
-    <string name="conn_establishing_title">Establishing Connection</string>
+    <string name="conn_establishing_title">Establishing connection</string>
     <string name="conn_establishing_msg">Starting connection</string>
     <string name="conn_metered">Warning: Your active network connection is metered!</string>
     <string name="conn_client_latency">Average frame decoding latency:</string>
