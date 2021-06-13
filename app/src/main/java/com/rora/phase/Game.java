@@ -200,6 +200,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
                     // Wait for the binder to be ready
                     //localBinder.waitForReady();
                     managerBinder = localBinder;
+                    managerBinder.connectedToHost(true);
                     Game.this.runOnUiThread(() -> managerBinder.setStateListener().observe(Game.this, playingStateObserver));
                 }
             }.start();

@@ -36,6 +36,7 @@ import com.rora.phase.nvstream.mdns.MdnsDiscoveryListener;
 import com.rora.phase.repository.UserRepository;
 import com.rora.phase.utils.NetHelper;
 import com.rora.phase.utils.ServerHelper;
+import com.rora.phase.utils.callback.OnResultCallBack;
 import com.rora.phase.utils.callback.PlayGameProgressCallBack;
 import com.rora.phase.utils.network.realtime.playhub.PlayHub;
 import com.rora.phase.utils.network.realtime.playhub.PlayHubListener;
@@ -173,7 +174,7 @@ public class PlayServices extends Service {
     /**
      * Start play progress
      */
-    public void startConnectProgress(Activity activity, Game game, PlayGameProgressCallBack callBack) {
+    public void startProgress(Activity activity, Game game, PlayGameProgressCallBack callBack) {
         if (state.getValue() != UserPlayingData.PlayingState.IDLE)
             return;
 
@@ -203,6 +204,7 @@ public class PlayServices extends Service {
                         RoraLog.info("Play game - STEP 2: Establishing connection with server failed - " + msg);
                         listener.onConnectionEstablished(false);
                         callBack.onConnectionEstablished(false);
+                        stopConnect(callBack, msg);
                         return;
                     }
 
@@ -468,7 +470,6 @@ public class PlayServices extends Service {
         }
     }
 
-
     /**
      * STEP 5: Start remote connect
      */
@@ -477,11 +478,23 @@ public class PlayServices extends Service {
             ServerHelper.doStart(activity, pollingTuple.computer.getRemoteApp(), pollingTuple.computer, managerBinder);
             return null;
         } else
-            return "Couldn't find necessary app from host!";
+            return activity.getString(R.string.could_not_find_selected_app_msg);
     }
 
     /**
-     * STEP 6 - FINAL: Counting playtime
+     * STEP 8: Notify the server that we're already connected to host
+     */
+    private void connectedToHost(boolean isSuccess) {
+        userRepository.connectedToHost(isSuccess, new OnResultCallBack<String>() {
+            @Override
+            public void onResult(String errMsg, String data) {
+
+            }
+        });
+    }
+
+    /**
+     * STEP 9 - FINAL: Counting playtime
      */
     public void startCountingPlaytime() {
 
@@ -549,6 +562,8 @@ public class PlayServices extends Service {
     }
 
     private void stopNvdiaConnect() {
+        if (pollingTuple.computer == null)
+            return;
         new Thread(() -> {
             try {
                 NvHTTP http = new NvHTTP(pollingTuple.computer.activeAddress, idManager.getUniqueId(), pollingTuple.computer.serverCert, PlatformBinding.getCryptoProvider(this));
@@ -586,7 +601,11 @@ public class PlayServices extends Service {
         private static final int MDNS_QUERY_PERIOD_MS = 1000;
 
         public void startConnectProgress(Activity activity, Game selectedGame, PlayGameProgressCallBack playProgressCallBack) {
-            PlayServices.this.startConnectProgress(activity, selectedGame, playProgressCallBack);
+            PlayServices.this.startProgress(activity, selectedGame, playProgressCallBack);
+        }
+
+        public void connectedToHost(boolean isSuccess) {
+            PlayServices.this.connectedToHost(isSuccess);
         }
 
         public void pauseSession() {
@@ -674,7 +693,6 @@ public class PlayServices extends Service {
         public Game getCurrentGame() {
             return PlayServices.this.currentGame;
         }
-
     }
 
     private class ComputerServices {

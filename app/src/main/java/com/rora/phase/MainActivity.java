@@ -411,8 +411,10 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
             if (!isDone)
                 return;
 
-            if (err != null)
-                MainActivity.this.runOnUiThread(() -> Toast.makeText(getApplicationContext(), err, Toast.LENGTH_LONG).show());
+            if (err != null) {
+                Dialog.displayNotifyDialog(MainActivity.this, getString(R.string.err), err, null, null);
+            }
+                //MainActivity.this.runOnUiThread(() -> Toast.makeText(getApplicationContext(), err, Toast.LENGTH_LONG).show());
 
             resetQueueData();
             gameViewModel.setCurrentGame(null);

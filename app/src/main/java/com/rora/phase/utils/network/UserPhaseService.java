@@ -81,4 +81,7 @@ public interface UserPhaseService {
 
     @POST("./play/prepare-app")
     Call<BaseResponse<String>> prepareApp(@Body PrepareAppModel data);
+
+    @POST("./play/connected-host")
+    Call<BaseResponse<String>> connectedToHost(@Query("isSuccess") boolean isSuccess);
 }

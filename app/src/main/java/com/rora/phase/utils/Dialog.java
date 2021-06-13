@@ -24,8 +24,7 @@ public class Dialog implements Runnable {
 
     private static final ArrayList<Dialog> rundownDialogs = new ArrayList<>();
 
-    private Dialog(Activity activity, String title, String message, @Nullable String positiveBtnTitle, @Nullable String negativeBtnTitle, Runnable runOnPositiveDismiss, Runnable runOnNegativeDismiss)
-    {
+    private Dialog(Activity activity, String title, String message, @Nullable String positiveBtnTitle, @Nullable String negativeBtnTitle, Runnable runOnPositiveDismiss, Runnable runOnNegativeDismiss) {
         this.activity = activity;
         this.title = title;
         this.message = message;
@@ -35,8 +34,7 @@ public class Dialog implements Runnable {
         this.runOnNegativeDismiss = runOnNegativeDismiss;
     }
 
-    public static void closeDialogs()
-    {
+    public static void closeDialogs() {
         try {
             synchronized (rundownDialogs) {
                 for (Dialog d : rundownDialogs) {
@@ -47,13 +45,12 @@ public class Dialog implements Runnable {
 
                 rundownDialogs.clear();
             }
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    public static void displayDialog(final Activity activity, String title, String message, @Nullable String positiveBtnTitle, @Nullable String negativeBtnTitle, Runnable runOnPositiveDismiss, @Nullable Runnable runOnNegativeDismiss, final boolean endAfterDismiss)
-    {
+    public static void displayDialog(final Activity activity, String title, String message, @Nullable String positiveBtnTitle, @Nullable String negativeBtnTitle, Runnable runOnPositiveDismiss, @Nullable Runnable runOnNegativeDismiss, final boolean endAfterDismiss) {
         activity.runOnUiThread(new Dialog(activity, title, message, positiveBtnTitle, negativeBtnTitle, () -> {
             if (endAfterDismiss) {
                 activity.finish();
@@ -65,13 +62,11 @@ public class Dialog implements Runnable {
         }));
     }
 
-    public static void displayNotifyDialog(final Activity activity, String title, String message, @Nullable String positiveBtnTitle, Runnable runOnPositiveDismiss)
-    {
+    public static void displayNotifyDialog(final Activity activity, String title, String message, @Nullable String positiveBtnTitle, Runnable runOnPositiveDismiss) {
         activity.runOnUiThread(new Dialog(activity, title, message, positiveBtnTitle, null, runOnPositiveDismiss, null));
     }
 
-    public static void displayDialog(final Activity activity, String title, String message, final boolean endAfterDismiss)
-    {
+    public static void displayDialog(final Activity activity, String title, String message, final boolean endAfterDismiss) {
         activity.runOnUiThread(new Dialog(activity, title, message, null, null, () -> {
             if (endAfterDismiss) {
                 activity.finish();
@@ -83,13 +78,11 @@ public class Dialog implements Runnable {
         }));
     }
 
-    public static void displayDialog(Activity activity, String title, String message, @Nullable String positiveBtnTitle, @Nullable String negativeBtnTitle, Runnable runOnPositiveDismiss, @Nullable Runnable runOnNegativeDismiss)
-    {
+    public static void displayDialog(Activity activity, String title, String message, @Nullable String positiveBtnTitle, @Nullable String negativeBtnTitle, Runnable runOnPositiveDismiss, @Nullable Runnable runOnNegativeDismiss) {
         activity.runOnUiThread(new Dialog(activity, title, message, positiveBtnTitle, negativeBtnTitle, runOnPositiveDismiss, runOnNegativeDismiss));
     }
 
-    public static void displayDialog(Activity activity, String title, String message, Runnable runOnPositiveDismiss)
-    {
+    public static void displayDialog(Activity activity, String title, String message, Runnable runOnPositiveDismiss) {
         activity.runOnUiThread(new Dialog(activity, title, message, null, null, runOnPositiveDismiss, null));
     }
 
@@ -105,14 +98,15 @@ public class Dialog implements Runnable {
         alert.setMessage(message);
         alert.setCancelable(true);
         alert.setCanceledOnTouchOutside(true);
- 
+
         alert.setButton(AlertDialog.BUTTON_POSITIVE, positiveBtnTitle == null ? activity.getResources().getText(android.R.string.ok) : positiveBtnTitle, (dialog, which) -> {
             synchronized (rundownDialogs) {
                 rundownDialogs.remove(Dialog.this);
                 alert.dismiss();
             }
 
-            runOnPositiveDismiss.run();
+            if (runOnPositiveDismiss != null)
+                runOnPositiveDismiss.run();
         });
 
         //alert.setButton(AlertDialog.BUTTON_NEUTRAL, activity.getResources().getText(R.string.help), new DialogInterface.OnClickListener() {
@@ -130,13 +124,13 @@ public class Dialog implements Runnable {
 
         if (negativeBtnTitle != null || runOnNegativeDismiss != null)
             alert.setButton(AlertDialog.BUTTON_NEGATIVE, negativeBtnTitle == null ? activity.getResources().getText(android.R.string.cancel) : negativeBtnTitle, (dialog, which) -> {
-               synchronized (rundownDialogs) {
-                   rundownDialogs.remove(Dialog.this);
-                   alert.dismiss();
-               }
+                synchronized (rundownDialogs) {
+                    rundownDialogs.remove(Dialog.this);
+                    alert.dismiss();
+                }
 
-               if (runOnNegativeDismiss != null)
-                runOnNegativeDismiss.run();
+                if (runOnNegativeDismiss != null)
+                    runOnNegativeDismiss.run();
             });
 
         alert.setOnShowListener(dialog -> {

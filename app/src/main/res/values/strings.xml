@@ -345,5 +345,6 @@
     <string name="wallet_balance_txt">Wallet Balance</string>
     <string name="activity_title">Activity</string>
     <string name="payment_method_title">Pay with</string>
+    <string name="could_not_find_selected_app_msg">Couldn\'t find necessary app from host!</string>
 
 </resources>

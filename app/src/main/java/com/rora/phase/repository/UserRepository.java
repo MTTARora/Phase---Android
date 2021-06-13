@@ -229,6 +229,17 @@ public class UserRepository {
         });
     }
 
+    public void connectedToHost(boolean isSuccess, OnResultCallBack<String> resultCallBack) {
+        APIServicesHelper<String> apiServicesHelper = new APIServicesHelper<>();
+
+        apiServicesHelper.request(userAuthenticatedServices.connectedToHost(isSuccess), ((err, data) -> {
+            if (err != null && !err.contains("success"))
+                resultCallBack.onResult(err, null);
+            else
+                resultCallBack.onResult(null, data);
+        }));
+    }
+
     public void getWallet(OnResultCallBack<Wallet> onResultCallBack) {
         APIServicesHelper<Wallet> apiServicesHelper = new APIServicesHelper<>();
 

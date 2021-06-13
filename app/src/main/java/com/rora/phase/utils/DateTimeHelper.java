@@ -11,7 +11,8 @@ public class DateTimeHelper {
 
     public static String format(String data) {
         //SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.US);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        //SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.US);
         SimpleDateFormat newFormat = new SimpleDateFormat("MMM dd, yyyy");
         String result = "--";
         try {
