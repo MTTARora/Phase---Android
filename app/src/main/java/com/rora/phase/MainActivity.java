@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
 
     private GameViewModel gameViewModel;
     private UserViewModel userViewModel;
+    private boolean alreadyMoveToLogin = false;
     private MenuItem currentBottomTab;
     private Menu bottomMenu;
     private PlayServices.ComputerManagerBinder managerBinder;
@@ -133,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
     protected void onRestart() {
         super.onRestart();
 
+        alreadyMoveToLogin = false;
         queueViewMain.setVisibility(managerBinder.getCurrentState() == UserPlayingData.PlayingState.IN_QUEUE ? VISIBLE : GONE);
     }
 
@@ -162,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
 
     private void setupData() {
         userViewModel.triggerLoginListener().observe(this, requireLogin -> {
-            if (requireLogin)
+            if (requireLogin && alreadyMoveToLogin)
                 goToLoginScreen();
         });
     }
@@ -228,6 +230,7 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
     }
 
     private void goToLoginScreen() {
+        alreadyMoveToLogin = true;
         runOnUiThread(() -> Toast.makeText(this, getString(R.string.require_login_msg), Toast.LENGTH_LONG).show());
         Intent intent = new Intent(MainActivity.this, AuthActivity.class);
         intent.putExtra(AuthActivity.START_IN_APP_PARAM, true);
