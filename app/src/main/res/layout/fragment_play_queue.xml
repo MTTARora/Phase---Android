@@ -14,7 +14,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:scaleType="fitXY"
-        android:src="@drawable/banner_test"
         app:layout_constraintDimensionRatio="1:0.5625"
         app:carbon_cornerRadius="@dimen/medium_radius"
         app:layout_constraintBottom_toBottomOf="@id/frame_info_queue"
@@ -37,7 +36,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:lines="2"
-            android:text="PUBG" />
+            android:text="--" />
 
         <TextView
             android:id="@+id/queue_tv"

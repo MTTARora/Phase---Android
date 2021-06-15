@@ -150,7 +150,7 @@ public class MediaView extends ConstraintLayout implements Player.Listener {
 
         mediaController.setPlayWhenReady(playWhenReady);
         mediaController.seekTo(currentWindow, playbackPosition);
-        mediaController.prepare();
+        //mediaController.prepare();
     }
 
     public void releasePlayer() {

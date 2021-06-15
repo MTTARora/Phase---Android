@@ -485,11 +485,9 @@ public class PlayServices extends Service {
      * STEP 8: Notify the server that we're already connected to host
      */
     private void connectedToHost(boolean isSuccess) {
-        userRepository.connectedToHost(isSuccess, new OnResultCallBack<String>() {
-            @Override
-            public void onResult(String errMsg, String data) {
-
-            }
+        userRepository.connectedToHost(isSuccess, (errMsg, data) -> {
+            if (isSuccess && errMsg != null && !errMsg.isEmpty())
+                stopConnect(null, errMsg);
         });
     }
 
@@ -528,6 +526,10 @@ public class PlayServices extends Service {
             return;
 
         try {
+            if (state.getValue() == UserPlayingData.PlayingState.PLAYING) {
+                connectedToHost(false);
+            }
+
             setCurrentState(UserPlayingData.PlayingState.IN_STOP_PROGRESS);
             RoraLog.info("Play game: Stop connecting");
             listener.onStopConnect(false, err);
