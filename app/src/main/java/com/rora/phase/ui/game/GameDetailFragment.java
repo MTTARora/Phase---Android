@@ -17,8 +17,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.core.view.ViewCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -48,7 +46,6 @@ import com.rora.phase.utils.ui.CustomToolbar;
 import com.rora.phase.utils.ui.ExpandableTextView;
 import com.rora.phase.utils.ui.MediaView;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -175,11 +172,6 @@ public class GameDetailFragment extends BaseFragment {
 
 
     private void initView() {
-        //ViewCompat.setOnApplyWindowInsetsListener(toolbar, (v, insets) -> {
-        //    toolbar.setPadding(0, insets.getSystemWindowInsetTop(), 0, 0);
-        //    return insets;
-        //});
-
         setupRecyclerView(rclvPlatform, new PlatformRVAdapter(), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         setupRecyclerView(rclvCategory, new CategoryRVAdapter(AUTO_SIZE, false, NONE_SELECT), new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         setupRecyclerView(rclvVideos, new MediaAdapter(false, 0.65, true), new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
@@ -196,10 +188,10 @@ public class GameDetailFragment extends BaseFragment {
                 return;
             }
 
-            if (gameViewModel.getCurrentGame().getValue() != null && gameViewModel.getCurrentGame().getValue().getId() != game.getId()) {
-                Dialog.displayDialog(getActivity(), "Switch Game", "You are playing " + gameViewModel.getCurrentGame().getValue().getName() + ", do you want to switch to " + game.getName() + " ?", null, null, () -> {
+            if (gameViewModel.getCurrentPlayingGame().getValue() != null && gameViewModel.getCurrentPlayingGame().getValue().getId() != game.getId()) {
+                Dialog.displayDialog(getActivity(), "Switch Game", getString(R.string.are_playing_msg) + " " + gameViewModel.getCurrentPlayingGame().getValue().getName() + ", " + getString(R.string.switch_game_msg) + " " + game.getName() + " ?", null, null, () -> {
                     try {
-                        playServicesMsgSenderCallback.sendMessage(PlayServicesMessageSender.MsgCode.STOP);
+                        playServicesMsgSenderCallback.sendMessage(PlayServicesMessageSender.MsgCode.SWITCH);
                         Thread.sleep(500);
 
                         startConnect();
@@ -208,11 +200,10 @@ public class GameDetailFragment extends BaseFragment {
                     }
                 }, () -> {
                 });
-
                 return;
             }
 
-            startConnect();
+            Dialog.displayDialog(getActivity(), getString(R.string.start_playing_msg) + " " + game.getName(), null, null, null, this::startConnect, () -> { });
         });
 
         btnFavorite.setOnClickListener(v -> {
@@ -232,8 +223,8 @@ public class GameDetailFragment extends BaseFragment {
 
     private void initData() {
         gameViewModel.getGameData().observe(getViewLifecycleOwner(), this::bindData);
-        gameViewModel.getCurrentGame().observe(getViewLifecycleOwner(), game -> {
-            isPlayingThisGame = game != null;
+        gameViewModel.getCurrentPlayingGame().observe(getViewLifecycleOwner(), game -> {
+            isPlayingThisGame = game != null && game.getId() == this.game.getId();
 
             MediaHelper.loadSvg(btnPlayImv, isPlayingThisGame ? android.R.drawable.ic_lock_power_off : R.drawable.ic_play);
             btnPlay.setText(isPlayingThisGame ? R.string.stop_text : R.string.play_title);

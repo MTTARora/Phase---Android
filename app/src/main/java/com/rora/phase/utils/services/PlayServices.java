@@ -327,6 +327,7 @@ public class PlayServices extends Service {
             String err = startPairing(callBack);
             if (err != null) {
                 RoraLog.info("Play Game - Error: " + err);
+                connectedToHost(false);
                 stopConnect(callBack, err);
                 return;
             }
@@ -397,6 +398,7 @@ public class PlayServices extends Service {
             userRepository.sendPinToHost(pinStr, (errMsg, data) -> {
                 if (errMsg != null) {
                     RoraLog.info("Play Game - Error: " + errMsg);
+                    connectedToHost(false);
                     stopConnect(callBack, errMsg);
                 }
             });
@@ -692,7 +694,7 @@ public class PlayServices extends Service {
             return PlayServices.this.state;
         }
 
-        public Game getCurrentGame() {
+        public Game getCurrentPlayingGame() {
             return PlayServices.this.currentGame;
         }
     }

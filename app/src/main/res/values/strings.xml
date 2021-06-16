@@ -346,5 +346,8 @@
     <string name="activity_title">Activity</string>
     <string name="payment_method_title">Pay with</string>
     <string name="could_not_find_selected_app_msg">Couldn\'t find necessary app from host!</string>
+    <string name="start_playing_msg">Start playing</string>
+    <string name="are_playing_msg">You are playing</string>
+    <string name="switch_game_msg">do you want to switch to</string>
 
 </resources>

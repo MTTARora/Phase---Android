@@ -52,7 +52,7 @@ public class GameViewModel extends AndroidViewModel {
         return similarGameList;
     }
 
-    public MutableLiveData<Game> getCurrentGame() {
+    public MutableLiveData<Game> getCurrentPlayingGame() {
         return currentGame;
     }
 

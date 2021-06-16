@@ -19,7 +19,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
@@ -197,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
     }
 
     private void quitSession() {
-        if (managerBinder == null || managerBinder.getCurrentGame() == null)
+        if (managerBinder == null || managerBinder.getCurrentPlayingGame() == null)
             return;
 
         if(managerBinder.getCurrentState() == UserPlayingData.PlayingState.PAUSED) {
@@ -216,17 +215,17 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
     private void goToGameDetails() {
         Fragment currentDisplayScreen = FragmentManagerHelper.getCurrentFrag(getSupportFragmentManager(), R.id.main_container);
         if (currentDisplayScreen != null && currentDisplayScreen instanceof GameDetailFragment) {
-            if(((GameDetailFragment) currentDisplayScreen).getCurrentGameId() != managerBinder.getCurrentGame().getId()) {
+            if(((GameDetailFragment) currentDisplayScreen).getCurrentGameId() != managerBinder.getCurrentPlayingGame().getId()) {
                 findViewById(R.id.main_loading_view).setVisibility(VISIBLE);
                 getSupportFragmentManager().popBackStack();
-                FragmentManagerHelper.replace(getSupportFragmentManager(), R.id.main_container, GameDetailFragment.newInstance(managerBinder.getCurrentGame()), GameDetailFragment.class.getSimpleName());
+                FragmentManagerHelper.replace(getSupportFragmentManager(), R.id.main_container, GameDetailFragment.newInstance(managerBinder.getCurrentPlayingGame()), GameDetailFragment.class.getSimpleName());
             }
 
             return;
         }
 
         findViewById(R.id.main_loading_view).setVisibility(VISIBLE);
-        FragmentManagerHelper.replace(getSupportFragmentManager(), R.id.main_container, GameDetailFragment.newInstance(managerBinder.getCurrentGame()), GameDetailFragment.class.getSimpleName());
+        FragmentManagerHelper.replace(getSupportFragmentManager(), R.id.main_container, GameDetailFragment.newInstance(managerBinder.getCurrentPlayingGame()), GameDetailFragment.class.getSimpleName());
     }
 
     private void goToLoginScreen() {
@@ -240,11 +239,11 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
     //---------------------------------- PLAY QUEUE ----------------------------------
 
     private void initQueueData(int position) {
-        if (managerBinder == null || managerBinder.getCurrentGame() == null)
+        if (managerBinder == null || managerBinder.getCurrentPlayingGame() == null)
             return;
 
-        Game game = managerBinder.getCurrentGame();
-        gameViewModel.setCurrentGame(managerBinder.getCurrentGame());
+        Game game = managerBinder.getCurrentPlayingGame();
+        gameViewModel.setCurrentGame(managerBinder.getCurrentPlayingGame());
         MainActivity.this.runOnUiThread(() -> {
             MediaHelper.loadImage(imvQueueMain, game.getBanner().get_640x360());
             MediaHelper.loadImage(imvQueue, game.getBanner().get_640x360());
@@ -258,11 +257,11 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
     }
 
     private void initGameSessionData() {
-        if (managerBinder == null || managerBinder.getCurrentGame() == null)
+        if (managerBinder == null || managerBinder.getCurrentPlayingGame() == null)
             return;
 
-        Game game = managerBinder.getCurrentGame();
-        gameViewModel.setCurrentGame(managerBinder.getCurrentGame());
+        Game game = managerBinder.getCurrentPlayingGame();
+        gameViewModel.setCurrentGame(managerBinder.getCurrentPlayingGame());
         MainActivity.this.runOnUiThread(() -> {
             MediaHelper.loadImage(imvQueueMain, game.getBanner().get_640x360());
             MediaHelper.loadImage(imvQueue, game.getBanner().get_640x360());
@@ -290,7 +289,7 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
     }
 
     private void updateQueuePosition(int position) {
-        if (managerBinder == null || managerBinder.getCurrentGame() == null)
+        if (managerBinder == null || managerBinder.getCurrentPlayingGame() == null)
             return;
 
         MainActivity.this.runOnUiThread(() -> {
@@ -431,6 +430,9 @@ public class MainActivity extends AppCompatActivity implements PlayServicesMessa
     public void sendMessage(PlayServicesMessageSender.MsgCode code) {
         switch (code) {
             case PLAY:
+                break;
+            case SWITCH:
+                managerBinder.stopConnect(null);
                 break;
             case RESUME:
             case STOP:
