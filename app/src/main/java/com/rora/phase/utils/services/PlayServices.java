@@ -327,8 +327,7 @@ public class PlayServices extends Service {
             String err = startPairing(callBack);
             if (err != null) {
                 RoraLog.info("Play Game - Error: " + err);
-                connectedToHost(false);
-                stopConnect(callBack, err);
+                connectedToHost(err, callBack);
                 return;
             }
             listener.onPairPc(true);
@@ -342,7 +341,7 @@ public class PlayServices extends Service {
             err = getNecessaryAppFromNvidia();
             if (err != null) {
                 RoraLog.info("Play Game - Error: " + err);
-                stopConnect(callBack, err);
+                connectedToHost(err, callBack);
                 return;
             }
             listener.onGetHostApps(true);
@@ -355,7 +354,7 @@ public class PlayServices extends Service {
             userRepository.prepareAppHost(currentGame.getId().toString(), "1", null, null, (error, data) -> {
                 if (error != null) {
                     RoraLog.info("Play Game - Error: " + error);
-                    stopConnect(callBack, error);
+                    connectedToHost(error, callBack);
                     return;
                 }
             });
@@ -363,7 +362,7 @@ public class PlayServices extends Service {
             callBack.onPrepareHost(true);
         } catch (Exception e) {
             RoraLog.info("Play Game - Error: " + e.getMessage());
-            stopConnect(callBack, e.getMessage());
+            connectedToHost(e.getMessage(), callBack);
         }
     }
 
@@ -398,8 +397,7 @@ public class PlayServices extends Service {
             userRepository.sendPinToHost(pinStr, (errMsg, data) -> {
                 if (errMsg != null) {
                     RoraLog.info("Play Game - Error: " + errMsg);
-                    connectedToHost(false);
-                    stopConnect(callBack, errMsg);
+                    connectedToHost(errMsg, callBack);
                 }
             });
 
@@ -486,10 +484,15 @@ public class PlayServices extends Service {
     /**
      * STEP 8: Notify the server that we're already connected to host
      */
-    private void connectedToHost(boolean isSuccess) {
+    private void connectedToHost(String err, PlayGameProgressCallBack callBack) {
+        boolean isSuccess = err == null;
         userRepository.connectedToHost(isSuccess, (errMsg, data) -> {
-            if (isSuccess && errMsg != null && !errMsg.isEmpty())
-                stopConnect(null, errMsg);
+            if (isSuccess) {
+                if (errMsg != null && !errMsg.isEmpty())
+                    stopConnect(null, errMsg);
+            } else {
+                stopConnect(callBack, err);
+            }
         });
     }
 
@@ -528,10 +531,6 @@ public class PlayServices extends Service {
             return;
 
         try {
-            if (state.getValue() == UserPlayingData.PlayingState.PLAYING) {
-                connectedToHost(false);
-            }
-
             setCurrentState(UserPlayingData.PlayingState.IN_STOP_PROGRESS);
             RoraLog.info("Play game: Stop connecting");
             listener.onStopConnect(false, err);
@@ -608,8 +607,8 @@ public class PlayServices extends Service {
             PlayServices.this.startProgress(activity, selectedGame, playProgressCallBack);
         }
 
-        public void connectedToHost(boolean isSuccess) {
-            PlayServices.this.connectedToHost(isSuccess);
+        public void connectedToHost(String err) {
+            PlayServices.this.connectedToHost(err, null);
         }
 
         public void pauseSession() {
