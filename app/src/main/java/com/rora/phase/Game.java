@@ -148,7 +148,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
     private boolean connected = false;
     private boolean surfaceCreated = false;
     private boolean attemptedConnection = false;
-    private boolean isPaused = true;
+    private boolean isPaused = false;
 
     private InputCaptureProvider inputCaptureProvider;
     private int modifierFlags = 0;

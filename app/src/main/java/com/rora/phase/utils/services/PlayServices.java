@@ -504,6 +504,9 @@ public class PlayServices extends Service {
     }
 
     public void pauseSession() {
+        if (pollingTuple == null)
+            return;
+
         if (pollingTuple.computer.getRemoteApp() != null) {
             setCurrentState(UserPlayingData.PlayingState.PAUSED);
             listener.onPaused(null);
