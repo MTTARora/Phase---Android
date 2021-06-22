@@ -6,8 +6,8 @@ import com.rora.phase.nvstream.http.ComputerDetails;
 
 public class UserPlayingData {
 
-    private PlayingState state;
-    private ComputerDetails computer;
+    private double balance;
+    private int playtime;
 
     public enum PlayingState {
         IDLE("0"),
@@ -26,34 +26,23 @@ public class UserPlayingData {
     }
 
     public UserPlayingData() {
+        this.balance = 0;
+        this.playtime = 0;
     }
 
-    public UserPlayingData(@Nullable PlayingState state, @Nullable ComputerDetails computer) {
-        this.state = state;
-        this.computer = computer;
+    public double getBalance() {
+        return balance;
     }
 
-    public UserPlayingData(PlayingState state) {
-        this.state = state;
+    public void setBalance(double balance) {
+        this.balance = balance;
     }
 
-    public UserPlayingData(ComputerDetails computer) {
-        this.computer = computer;
+    public int getPlaytime() {
+        return playtime;
     }
 
-    public PlayingState getState() {
-        return state;
-    }
-
-    public void setState(PlayingState state) {
-        this.state = state;
-    }
-
-    public ComputerDetails getComputer() {
-        return computer;
-    }
-
-    public void setComputer(ComputerDetails computer) {
-        this.computer = computer;
+    public void setPlaytime(int playtime) {
+        this.playtime = playtime;
     }
 }

@@ -233,7 +233,7 @@ public class UserRepository {
         APIServicesHelper<String> apiServicesHelper = new APIServicesHelper<>();
 
         apiServicesHelper.request(userAuthenticatedServices.connectedToHost(isSuccess), ((err, data) -> {
-            if (err != null && !err.contains("success"))
+            if (err != null && !err.contains("Success"))
                 resultCallBack.onResult(err, null);
             else
                 resultCallBack.onResult(null, data);

@@ -44,11 +44,13 @@ public class PlayHub {
             }
         });
 
-        hubConnection.on("ConnectionEstablished", listener::onConnectionEstablished, String.class, boolean.class);
-        hubConnection.on("OnAppReady", listener::onAppReady, boolean.class);
-        hubConnection.on("PlayingError", (String err) -> listener.onDisconnected(500), String.class);
         hubConnection.on("OnHostAvailable", listener::onHostAvailable, Host.class);
         hubConnection.on("UpdatePlayQueue", listener::onUpdatePlayQueue, int.class);
+        hubConnection.on("PlayingError", (String err) -> listener.onDisconnected(500), String.class);
+        hubConnection.on("ConnectionEstablished", listener::onConnectionEstablished, String.class, boolean.class);
+        hubConnection.on("OnAppReady", listener::onAppReady, boolean.class);
+        hubConnection.on("CountingPlayTime", listener::onCountingPlaytime, int.class, int.class);
+        hubConnection.on("RunOutOfMoney", listener::onRunOutMoneyWarning, boolean.class, String.class);
     }
 
     public void stopConnect() {

@@ -13,6 +13,7 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.SystemClock;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
@@ -60,13 +61,16 @@ public class PlayServices extends Service {
     private final ComputerServices computerServices = new ComputerServices();
 
     private MutableLiveData<UserPlayingData.PlayingState> state = new MutableLiveData<>();
+    private MutableLiveData<UserPlayingData> playingData = new MutableLiveData<>();
+    private UserPlayingData dumpPlayingData = new UserPlayingData();
     private PollingTuple pollingTuple;
     private PlayGameProgressCallBack listener = null;
     private IdentityManager idManager;
-    UserRepository userRepository;
+    private UserRepository userRepository;
     private PlayHub playHub;
     private Thread connectThread;
     private Game currentGame;
+    private boolean isPaused = false;
 
     private DiscoveryService.DiscoveryBinder discoveryBinder;
     private final ServiceConnection discoveryServiceConnection = new ServiceConnection() {
@@ -306,6 +310,17 @@ public class PlayServices extends Service {
 
                     RoraLog.info("Play Game - Hub disconnected!");
                     stopConnect(callBack, err);
+                }
+
+                @Override
+                public void onCountingPlaytime(int playtime, int availablePlaytime) {
+                    RoraLog.info("Counting play time: " + playtime + "/" + availablePlaytime);
+                    setPlayingData(0, playtime);
+                }
+
+                @Override
+                public void onRunOutMoneyWarning(boolean isOutOfMoney, String msg) {
+
                 }
             });
         });
@@ -592,13 +607,20 @@ public class PlayServices extends Service {
         return isPaused ? UserPlayingData.PlayingState.PAUSED : state.getValue();
     }
 
-    private boolean isPaused = false;
-
     private void setCurrentState(UserPlayingData.PlayingState state) {
         isPaused = state == UserPlayingData.PlayingState.PAUSED;
         this.state.postValue(state);
     }
 
+    private LiveData<UserPlayingData> getPlayingData() {
+        return playingData;
+    }
+
+    private void setPlayingData(double balance, int playtime) {
+        dumpPlayingData.setBalance(balance);
+        dumpPlayingData.setPlaytime(playtime);
+        playingData.setValue(dumpPlayingData);
+    }
 
     //--------------------------------- Support Classes -------------------------------
 
